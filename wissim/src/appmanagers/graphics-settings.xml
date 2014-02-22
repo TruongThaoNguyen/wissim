@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Settings for projects -->
+<settings>
+	<network bg-color="#ffffff" />
+	<node type="circle" size="10" color="#dcdcdc"/>
+	<obstacle color="#cc9999" border-thickness="1"/>
+	
+	<paths>
+		<path type="greedy" color="#660033" thickness="2"/>
+		<path type="shortest" color="#330066" thickness="2"/>
+		<path type="user-defined" color="#ff3d3d" thickness="2"/> 
+	</paths>
+	
+	<diagrams>
+		<diagram type="voronoi" color="" thickness=""/>
+		<diagram type="delaunay" color="" thickness=""/>
+		<diagram type="rng" color="" thickness=""/>
+		<diagram type="gg" color="" thickness=""/>
+	</diagrams>
+		
+	<patterns>
+		<pattern id="1" desc="Rectangle">
+			<point x="0" y="0"/>
+			<point x="0" y="3"/>
+			<point x="6" y="3"/>
+			<point x="6" y="0"/>
+		</pattern>
+		<pattern id="2" desc="Star">
+			<point x="3" y="0"/>
+			<point x="6" y="6"/>
+			<point x="0" y="9"/>
+			<point x="7" y="9"/>
+			<point x="9" y="14"/>
+			<point x="11" y="9"/>
+			<point x="18" y="9"/>
+			<point x="12" y="6"/>
+			<point x="15" y="0"/>
+			<point x="9" y="4"/>
+		</pattern>
+	</patterns>
+</settings>

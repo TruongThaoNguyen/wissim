@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<trace><!-- Full trace file for WiSSim Visualizer -->
+	<network width="" length="" time=""/> 
+	<nodes><!-- Node info -->
+		<node id="" range="" x="" y="" energy="">
+			<labels>
+				<label id=""/>
+				<label id=""/>
+			</labels>
+		</node>
+		<node id="" range="" x="" y="" energy=""></node>
+		<node id="" range="" x="" y="" energy=""></node>
+		<node id="" range="" x="" y="" energy=""></node>
+	</nodes>
+	
+	<packets><!-- Packet info -->
+		<packet id=""  type="" source-id="" source-port="" dest-id="" dest-port="" size="">
+			<headers>
+				<header type="">
+					<field name=""></field>
+					<field name=""></field>
+					<field name=""></field>
+				</header>				
+			</headers>
+			<payload size=""><!-- payload content here --></payload>
+		</packet>
+	</packets>
+	
+	<events><!-- Events info -->
+		<event type="send" time="" packet-id="" source-id="" source-port="" dest-id="" dest-port="" remain-energy="" buffer-length=""></event>
+		<event type="forward" time="" packet-id="" source-id="" source-port="" dest-id="" dest-port="" remain-energy="" buffer-length=""></event>
+		<event type="receive" time="" packet-id="" source-id="" source-port="" dest-id="" dest-port="" remain-energy="" buffer-length=""></event>		
+		<event type="drop" time="" packet-id="" node-id="" reason="" remain-energy="" buffer-length=""></event>		
+		<event type="sleep" time="" node-id="" remain-energy=""></event>
+		<event type="wake" time="" node-id="" remain-energy=""></event>
+		<event type="move" node-id="" curr-x="" curr-y="" curr-z="" dest-x="" dest-y="" dest-z="" speed=""></event>
+	</events>
+</trace>
