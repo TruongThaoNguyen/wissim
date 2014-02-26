@@ -1,8 +1,4 @@
-/appmanagers
-/composites
-/control
-/dialogs
-/graphicscomponents
-/helpers
-/model
+/controllers
+/models
+/org
 /view

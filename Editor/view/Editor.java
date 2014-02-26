@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
-import model.Project;
+import models.Project;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
@@ -28,8 +28,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.wb.swt.ResourceManager;
 
-import control.manager.ApplicationManager;
-import control.manager.ApplicationSettings;
+import controllers.managers.ApplicationManager;
+import controllers.managers.ApplicationSettings;
 
 /*
  * Author: Trong Nguyen
@@ -48,7 +48,7 @@ public class Editor extends MainContent implements Observer {
 		super(parent, menuManager, statusLineManager);
 		
 		try {
-			ApplicationSettings.loadConfig();
+//			ApplicationSettings.loadConfig();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

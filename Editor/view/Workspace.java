@@ -4,16 +4,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import graphicscomponents.GNetwork;
-import graphicscomponents.GObstacle;
-import graphicscomponents.GSelectableObject;
-import graphicscomponents.GWirelessNode;
-import managers.CareTaker;
-import model.Project;
-import model.networkComponent.Node;
-import model.networkComponent.WirelessNode;
-import networkcomponents.features.Area;
-import networkcomponents.features.Label;
+import models.Project;
+import models.managers.CareTaker;
+import models.networkcomponents.Node;
+import models.networkcomponents.WirelessNode;
+import models.networkcomponents.features.Area;
+import models.networkcomponents.features.Label;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -32,9 +28,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
-import wissim.RulerScrolledComposite;
-import appmanagers.WorkspacePropertyManager;
-import dialogs.ViewProjectInfoDialog;
+import controllers.graphicscomponents.GNetwork;
+import controllers.graphicscomponents.GObstacle;
+import controllers.graphicscomponents.GSelectableObject;
+import controllers.graphicscomponents.GWirelessNode;
+import controllers.managers.WorkspacePropertyManager;
+import views.dialogs.ViewProjectInfoDialog;
+import views.wissims.RulerScrolledComposite;
 
 public class Workspace extends Composite {
 	public final static int OVERVIEW = 0, EXTEND = 1;

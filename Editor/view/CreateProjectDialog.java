@@ -1,7 +1,7 @@
 package view;
 
-import model.DialogResult;
-import model.DialogResult.CreateProjectResult;
+import models.DialogResult;
+import models.DialogResult.CreateProjectResult;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Dialog;
@@ -18,9 +18,9 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Composite;
 
-import control.helper.Helper;
-import control.helper.Validator;
-import control.manager.ApplicationSettings;
+import controllers.helpers.Helper;
+import controllers.helpers.Validator;
+import controllers.managers.ApplicationSettings;
 
 public class CreateProjectDialog extends Dialog {
 	protected Object result;
