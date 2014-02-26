@@ -23,19 +23,26 @@ import javax.imageio.ImageIO;
 
 
 
+
+
+
+
+
+
+
 import algorithms.BFSAlgorithm;
 import algorithms.DijikstraAlgorithm;
 import algorithms.GreedyAlgorithm;
 import managers.Parser;
 import managers.ScriptGenerator;
 import model.Project;
-import networkcomponents.Node;
-import networkcomponents.WirelessNetwork;
-import networkcomponents.WirelessNode;
-import networkcomponents.events.AppEvent;
-import networkcomponents.events.NodeEvent;
+import model.event.AppEvent;
+import model.event.NodeEvent;
+import model.networkComponent.Node;
+import model.networkComponent.WirelessNetwork;
+import model.networkComponent.WirelessNode;
+import model.protocol.ApplicationProtocol;
 import networkcomponents.features.*;
-import networkcomponents.protocols.ApplicationProtocol;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 

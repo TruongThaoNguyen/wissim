@@ -31,6 +31,11 @@ import org.eclipse.wb.swt.ResourceManager;
 import control.manager.ApplicationManager;
 import control.manager.ApplicationSettings;
 
+/*
+ * Author: Trong Nguyen
+ * 
+ */
+
 public class Editor extends MainContent implements Observer {
 
 	/**

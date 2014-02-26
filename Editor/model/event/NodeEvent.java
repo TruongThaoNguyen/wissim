@@ -1,6 +1,7 @@
-package networkcomponents.events;
+package model.event;
 
-import networkcomponents.WirelessNode;
+import model.networkComponent.WirelessNode;
+
 
 /**
  * Represents an event of a node.

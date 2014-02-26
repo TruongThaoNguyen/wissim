@@ -1,9 +1,9 @@
-package networkcomponents;
+package model.networkComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import networkcomponents.events.NodeEvent;
+import model.event.NodeEvent;
 
 public class WirelessNode extends Node {
 	// position of node

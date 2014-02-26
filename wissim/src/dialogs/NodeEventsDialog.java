@@ -1,7 +1,6 @@
 package dialogs;
 
-import networkcomponents.WirelessNode;
-import networkcomponents.events.NodeEvent;
+import model.networkComponent.WirelessNode;
 
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;

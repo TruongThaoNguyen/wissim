@@ -10,8 +10,8 @@ import graphicscomponents.GSelectableObject;
 import graphicscomponents.GWirelessNode;
 import managers.CareTaker;
 import model.Project;
-import networkcomponents.Node;
-import networkcomponents.WirelessNode;
+import model.networkComponent.Node;
+import model.networkComponent.WirelessNode;
 import networkcomponents.features.Area;
 import networkcomponents.features.Label;
 

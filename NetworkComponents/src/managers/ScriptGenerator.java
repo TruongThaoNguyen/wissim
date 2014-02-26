@@ -9,12 +9,12 @@ import java.util.Set;
 
 import control.manager.ProjectManager;
 import model.Project;
-import networkcomponents.Node;
-import networkcomponents.WirelessNetwork;
-import networkcomponents.WirelessNode;
-import networkcomponents.events.AppEvent;
-import networkcomponents.protocols.ApplicationProtocol;
-import networkcomponents.protocols.TransportProtocol;
+import model.event.AppEvent;
+import model.networkComponent.Node;
+import model.networkComponent.WirelessNetwork;
+import model.networkComponent.WirelessNode;
+import model.protocol.ApplicationProtocol;
+import model.protocol.TransportProtocol;
 
 /**
  * Generate scripts for simulation
@@ -330,17 +330,5 @@ public class ScriptGenerator {
 		
 		return snippet;
 	}
-	
-	public static void main(String[] args) {
-		WirelessNetwork nw = new WirelessNetwork("Test", 150, 300, 250);
-		Project project = new Project("D:\\test.wis", nw);
-		ProjectManager.createRandomNodes(project, 50, 40, null);
-		
-		try {
-			generateTcl(project, "C:\\Users\\leecom\\Desktop\\gen.txt", true, true);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+
 }

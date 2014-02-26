@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.UUID;
 
+import model.networkComponent.Node;
 import networkcomponents.*;
 
 public class Label extends Observable {

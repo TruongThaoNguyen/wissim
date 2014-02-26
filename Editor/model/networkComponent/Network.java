@@ -1,4 +1,4 @@
-package networkcomponents;
+package model.networkComponent;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -24,8 +24,8 @@ import model.DialogResult.CreateSingleNodeResult;
 import model.DialogResult.EditNetworkSizeResult;
 import model.DialogResult.ImportLocationDataResult;
 import model.DialogResult.NodeLocationResult;
-import networkcomponents.Node;
-import networkcomponents.WirelessNode;
+import model.networkComponent.Node;
+import model.networkComponent.WirelessNode;
 import networkcomponents.features.Area;
 
 import org.eclipse.jface.dialogs.MessageDialog;

@@ -1,4 +1,4 @@
-package networkcomponents.protocols;
+package model.protocol;
 
 import java.util.HashMap;
 

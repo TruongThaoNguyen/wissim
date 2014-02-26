@@ -6,7 +6,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import model.Project;
-import networkcomponents.WirelessNode;
+import model.networkComponent.WirelessNode;
 import networkcomponents.features.Area;
 import networkcomponents.features.GraphicLabel;
 import networkcomponents.features.Label;

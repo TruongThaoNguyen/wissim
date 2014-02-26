@@ -1,9 +1,9 @@
-package networkcomponents.protocols;
+package model.protocol;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import networkcomponents.Node;
+import model.networkComponent.Node;
 
 public class TransportProtocol extends Protocol {
 	public static final int TCP = 0, UDP = 1;

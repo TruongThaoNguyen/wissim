@@ -38,14 +38,13 @@ import dialogs.CreateLabelDialog;
 import dialogs.CreateNodeSetDialog;
 import dialogs.NetworkPropertiesDialog;
 import view.Workspace;
-import networkcomponents.Node;
-import networkcomponents.WirelessNetwork;
-import networkcomponents.WirelessNode;
 import networkcomponents.features.Area;
 import networkcomponents.features.GraphicLabel;
 import networkcomponents.features.Label;
 import model.Project;
 import model.DialogResult.CreateNodeSetResult;
+import model.networkComponent.WirelessNetwork;
+import model.networkComponent.WirelessNode;
 
 
 public class GNetwork extends Canvas {

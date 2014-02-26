@@ -1,4 +1,4 @@
-package networkcomponents.events;
+package model.event;
 
 import java.util.Observable;
 

@@ -1,6 +1,7 @@
-package networkcomponents.events;
+package model.event;
 
-import networkcomponents.protocols.ApplicationProtocol;
+import model.protocol.ApplicationProtocol;
+
 
 /**
  * Represents an event of Application

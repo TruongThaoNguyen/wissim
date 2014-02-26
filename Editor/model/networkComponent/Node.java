@@ -1,10 +1,10 @@
-package networkcomponents;
+package model.networkComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
-import networkcomponents.protocols.TransportProtocol;
+import model.protocol.TransportProtocol;
 
 public abstract class Node extends Observable {
 	// id of node (assign one time, never change)

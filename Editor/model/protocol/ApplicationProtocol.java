@@ -1,10 +1,10 @@
-package networkcomponents.protocols;
+package model.protocol;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import networkcomponents.Node;
-import networkcomponents.events.AppEvent;
+import model.event.AppEvent;
+import model.networkComponent.Node;
 
 public class ApplicationProtocol extends Protocol {
 	public final static int CBR = 0, VBR = 1, FTP = 2, PARETO = 3, TELNET = 4;

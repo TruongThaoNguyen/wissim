@@ -2,11 +2,9 @@ package view;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -14,17 +12,14 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.custom.CBanner;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.Separator;
+
+/*
+ * Author: Trong Nguyen
+ * 
+ */
 
 public class MainWindow extends ApplicationWindow {
 	private Button btnEditor;
@@ -33,12 +28,6 @@ public class MainWindow extends ApplicationWindow {
 	private Analyzer analyzer;
 	private Composite mainComposite;
 	private MenuManager menuManager;
-	private MenuManager menuManager_File;
-	private Action actNew;
-	private Action actOpen;
-	private Action actSave;
-	private Action actSaveAs;
-	private Action actClose;
 	private StatusLineManager statusLineManager;
 
 	/**
@@ -104,27 +93,6 @@ public class MainWindow extends ApplicationWindow {
 	 * Create the actions.
 	 */
 	private void createActions() {
-		// Create the actions
-		{
-			actNew = new Action("New ...") {
-			};
-		}
-		{
-			actOpen = new Action("Open ...") {
-			};
-		}
-		{
-			actSave = new Action("Save") {
-			};
-		}
-		{
-			actSaveAs = new Action("Save as ...") {
-			};
-		}
-		{
-			actClose = new Action("Close") {
-			};
-		}
 	}
 
 	/**
