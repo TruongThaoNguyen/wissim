@@ -1,11 +1,12 @@
-package models.converters;
+package models.converter;
 
 public class ParseException extends Exception {
 	public static String InvalidSymbol		= "Invalid symbol";
 	public static String InvalidArgument 	= "Invalid argument";
+	public static String InvalidBackslash	= "Invalid backslash";
 	public static String MissArgument 		= "Miss arugement";
 	public static String MissQuote			= "Miss quotation mark";
-	public static String BracketNotMatch	= "Braces is not match";	
+	public static String BracketNotMatch	= "Bracket is not match";
 	public static String Comment			= "Comment is only alow in new command\nDo you miss ';'";
 	
 	/**

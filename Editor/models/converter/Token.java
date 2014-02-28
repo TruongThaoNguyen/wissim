@@ -1,4 +1,4 @@
-package models.converters;
+package models.converter;
 
 public class Token {	
 	public TokenType Type;

@@ -5,7 +5,7 @@
  * @Version 2.0
  */
 
-package controllers.converters;
+package controllers.converter;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -17,10 +17,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import controllers.converters.tclObjects.GlobalObject;
-import controllers.converters.tclObjects.TclObject;
+import controllers.converter.tclObject.GlobalObject;
 import models.Project;
-import models.converters.*;
+import models.converter.ParseException;
 import models.networkcomponents.Node;
 import models.networkcomponents.WirelessNode;
 import models.networkcomponents.events.AppEvent;
@@ -74,8 +73,7 @@ public class Converter {
 	 */
 	public Project CTD(String text) throws ParseException
 	{
-		GlobalObject global = new GlobalObject();
-		(new Parser()).Parse(global, text);				
+		GlobalObject global = Parser.parse(text);				
 
 		// TODO convert GlobalObject to Project
 		
