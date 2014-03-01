@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
-import views.wissims.RulerScrolledComposite;
+import views.RulerScrolledComposite;
 
 public class RulerController extends Canvas {
 

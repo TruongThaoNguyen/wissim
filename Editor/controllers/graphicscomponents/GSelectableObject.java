@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
 import controllers.managers.WorkspacePropertyManager;
-import view.Workspace;
+import views.Workspace;
 
 /**
  * Express a graphic object that can be selected 

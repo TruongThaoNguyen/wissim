@@ -1,4 +1,4 @@
-package view;
+package views;
 
 import java.awt.Container;
 import java.io.IOException;
@@ -28,8 +28,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.wb.swt.ResourceManager;
 
+import view.AboutWindow;
+import view.MainContent;
+import view.MainWindow;
 import controllers.managers.ApplicationManager;
 import controllers.managers.ApplicationSettings;
+import org.eclipse.swt.custom.ScrolledComposite;
 
 /*
  * Author: Trong Nguyen
@@ -63,7 +67,11 @@ public class Editor extends MainContent implements Observer {
 	 * createContent
 	 */
 	private void createContent() {
-		setLayout(new GridLayout(1, false));
+		setLayout(new GridLayout(2, false));
+		
+		Label lblNewLabel = new Label(this, SWT.NONE);
+		lblNewLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		lblNewLabel.setText("Editor");
 
 		// ------------- toolbar ------------- //
 		
@@ -71,6 +79,25 @@ public class Editor extends MainContent implements Observer {
 		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		
 		toolBarManager = new ToolBarManager(toolBar);
+		
+				
+				// ------------- properties composite ------------- //
+				Composite propertiesComposite = new Composite(this,  SWT.BORDER);
+				GridData gd_propertiesComposite = new GridData(SWT.RIGHT, SWT.FILL, false, true);
+				gd_propertiesComposite.heightHint = 98;
+				propertiesComposite.setLayoutData(gd_propertiesComposite);
+				
+				Label lblNewLabel_1 = new Label(propertiesComposite, SWT.NONE);
+				lblNewLabel_1.setBounds(0, 0, 59, 95);
+				lblNewLabel_1.setText("Network");
+				
+				Label lblNewLabel_2 = new Label(propertiesComposite, SWT.NONE);
+				lblNewLabel_2.setBounds(0, 116, 59, 14);
+				lblNewLabel_2.setText("Node");
+				
+				Label lblSss = new Label(propertiesComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+				lblSss.setText("sss");
+				lblSss.setBounds(-5, 101, 64, 22);
 		
 		// ------------- main composite ------------- //
 		
@@ -95,12 +122,12 @@ public class Editor extends MainContent implements Observer {
 				
 				CTabItem tbtmDesign = new CTabItem(tabFolder, SWT.PUSH);
 				tbtmDesign.setText("Design");
-
-		
-		// ------------- properties composite ------------- //
-		Composite propertiesComposite = new Composite(sashForm,  SWT.BORDER);
-		propertiesComposite.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, true));
-		sashForm.setWeights(new int[] {305, 132});
+				
+				ScrolledComposite scrolledComposite = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+				tbtmDesign.setControl(scrolledComposite);
+				scrolledComposite.setExpandHorizontal(true);
+				scrolledComposite.setExpandVertical(true);
+		sashForm.setWeights(new int[] {305});
 	}
 
 	@Override

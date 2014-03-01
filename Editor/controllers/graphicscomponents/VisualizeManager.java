@@ -16,7 +16,7 @@ import models.networkcomponents.algorithms.delaunay.Triangulation;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 
-import view.Workspace;
+import views.Workspace;
 import controllers.managers.ProjectManager;
 
 public class VisualizeManager {

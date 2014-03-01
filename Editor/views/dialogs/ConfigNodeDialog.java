@@ -23,7 +23,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
 import controllers.managers.ApplicationSettings;
-import view.Workspace;
+import views.Workspace;
 
 
 public class ConfigNodeDialog extends Dialog {

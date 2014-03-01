@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import view.Workspace;
+import views.Workspace;
 import controllers.managers.ProjectManager;
 
 public class LabelDialog extends Dialog {

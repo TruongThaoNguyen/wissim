@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import view.Workspace;
+import views.Workspace;
 
 public class NetworkPropertiesDialog extends Dialog {
 

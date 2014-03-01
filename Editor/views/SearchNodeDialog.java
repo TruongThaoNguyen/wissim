@@ -1,4 +1,4 @@
-package views.wissims;
+package views;
 
 import java.util.ArrayList;
 
@@ -15,7 +15,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import view.Workspace;
 import controllers.graphicscomponents.GWirelessNode;
 import controllers.managers.ProjectManager;
 

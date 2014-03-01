@@ -1,4 +1,4 @@
-package view;
+package views;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -34,7 +34,6 @@ import controllers.graphicscomponents.GSelectableObject;
 import controllers.graphicscomponents.GWirelessNode;
 import controllers.managers.WorkspacePropertyManager;
 import views.dialogs.ViewProjectInfoDialog;
-import views.wissims.RulerScrolledComposite;
 
 public class Workspace extends Composite {
 	public final static int OVERVIEW = 0, EXTEND = 1;

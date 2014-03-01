@@ -16,6 +16,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.custom.StackLayout;
 
+import views.Editor;
+
 /*
  * Author: Trong Nguyen
  * 

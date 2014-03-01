@@ -33,7 +33,7 @@ import controllers.managers.ApplicationManager;
 import controllers.managers.ApplicationSettings;
 import controllers.managers.ProjectManager;
 import controllers.managers.WorkspacePropertyManager;
-import view.Workspace;
+import views.Workspace;
 import views.dialogs.NodeEventsDialog;
 
 public class GWirelessNode extends GSelectableObject {

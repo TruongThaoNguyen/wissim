@@ -44,8 +44,10 @@ import controllers.graphicscomponents.GWirelessNode;
 import controllers.graphicscomponents.GraphicPath;
 import controllers.helpers.Helper;
 import controllers.helpers.Validator;
-import view.CreateProjectDialog;
-import view.Workspace;
+import views.CreateProjectDialog;
+import views.MainWindow;
+import views.SearchNodeDialog;
+import views.Workspace;
 import views.dialogs.CreateNodeDialog;
 import views.dialogs.CreateNodeSetDialog;
 import views.dialogs.EditNetworkSizeDialog;
@@ -58,8 +60,6 @@ import views.dialogs.NodePropertiesDialog;
 import views.dialogs.TrafficFlowManagerDialog;
 import views.dialogs.ViewPathInfo;
 import views.helpers.PrintHelper;
-import views.wissims.MainWindow;
-import views.wissims.SearchNodeDialog;
 
 public class ApplicationManager {
 	private static int newProjectCount = 1;

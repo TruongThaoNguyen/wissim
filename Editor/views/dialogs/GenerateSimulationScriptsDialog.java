@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Group;
 import controllers.helpers.Helper;
 import controllers.helpers.Validator;
 import controllers.managers.ProjectManager;
-import view.Workspace;
+import views.Workspace;
 
 public class GenerateSimulationScriptsDialog extends Dialog {
 

@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.events.SelectionEvent;
 
 import controllers.managers.ApplicationSettings;
-import view.Workspace;
+import views.Workspace;
 
 /**
  * Represents an obstacle in the network

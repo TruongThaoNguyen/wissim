@@ -26,7 +26,7 @@ import controllers.helpers.Helper;
 import controllers.helpers.Validator;
 import controllers.managers.ApplicationManager;
 import controllers.managers.ProjectManager;
-import view.Workspace;
+import views.Workspace;
 
 public class ExportImageDialog extends Dialog {
 

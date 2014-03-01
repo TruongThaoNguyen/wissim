@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 import controllers.graphicscomponents.GWirelessNode;
-import view.Workspace;
+import views.Workspace;
 
 public class NodePropertiesDialog extends Dialog {
 

@@ -1,4 +1,5 @@
-package views.wissims;
+package views;
+
 
 public class StatesHandler {
 	MainWindow window;

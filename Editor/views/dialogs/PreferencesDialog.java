@@ -16,12 +16,12 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Button;
 
-import view.Workspace;
+import views.MainWindow;
+import views.Workspace;
 import views.dialogs.preferences.composites.PreferenceGeneralComposite;
 import views.dialogs.preferences.composites.PreferenceNetworkComposite;
 import views.dialogs.preferences.composites.PreferenceObstacleComposite;
 import views.dialogs.preferences.composites.PreferencePathsComposite;
-import views.wissims.MainWindow;
 import controllers.managers.ApplicationSettings;
 
 public class PreferencesDialog extends Dialog {

@@ -1,4 +1,4 @@
-package views.wissims;
+package views;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -12,7 +12,6 @@ import org.eclipse.swt.widgets.Control;
 import controllers.graphicscomponents.GHorizontalRuler;
 import controllers.graphicscomponents.GVerticalRuler;
 import controllers.graphicscomponents.RulerController;
-import view.Workspace;
 
 public class RulerScrolledComposite extends ScrolledComposite {
 	GHorizontalRuler horizontalRuler;

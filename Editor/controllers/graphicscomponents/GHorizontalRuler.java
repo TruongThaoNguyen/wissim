@@ -14,7 +14,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
-import view.Workspace;
+import views.Workspace;
 
 public class GHorizontalRuler extends Canvas {
 	public static final int minPixel = 20;
