@@ -1,18 +1,28 @@
 package models.converter;
 
+/**
+ * Token.java
+ * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and Technology
+ * @Author Duc-Trong Nguyen
+ * @Version 2.0
+ */
+
 public class Token {	
+	/**
+	 * type of Token
+	 */
 	public TokenType Type;
-	public String Value;
 	
-	public Token(TokenType type) {
-		this.Type = type;
-		this.Value = "";
-	}
+	/**
+	 * Value of token
+	 */
+	public String Value;	
 	
-	public Token(TokenType type, String value) {
-		this.Type = type;
+	public Token(TokenType type, String value) 
+	{
+		this.Type  = type;
 		this.Value = value;
-	}
+	}	
 
 //	public void ChecKeyword()
 //	{
@@ -43,7 +53,22 @@ public class Token {
 //		}
 //	}
 	
-	public void print() {
-		System.out.print("<" + Type.toString() + "> " + Value + " ");		
+	/**
+	 * print without space
+	 * @return
+	 */
+	public String print() 
+	{
+		switch (Type) 
+		{
+			case Identify:		return Value;
+			case Referent:		return '$' + Value;
+			case Brace:			return '{' + Value + '}';		
+			case Bracket:		return '[' + Value + ']';
+			case Parenthesis:	return '(' + Value + ')';
+			case Quote:			return '"' + Value + '"'; 
+		}
+		
+		return Value;
 	}
 }

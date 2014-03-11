@@ -2,8 +2,14 @@ package controllers.converter.tclObject;
 
 import java.util.List;
 
-import models.converter.ParseException;
+/**
+ * InsProc.java
+ * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and Technology
+ * @Author Duc-Trong Nguyen
+ * @Version 2.0
+ */
 
-abstract class InsProc {
-	public abstract TclObject run(List<String> words) throws ParseException;
+public abstract class InsProc 
+{
+	public abstract String run(List<String> command) throws Exception;
 }

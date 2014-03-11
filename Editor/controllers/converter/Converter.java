@@ -1,41 +1,44 @@
-/*
- * Parser.java
- * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and Technology
- * @Author Duc-Trong Nguyen
- * @Version 2.0
- */
-
 package controllers.converter;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import controllers.converter.tclObject.GlobalObject;
+import controllers.converter.tclObject.TclObject;
+import controllers.converter.tclObject.TopographyObject;
 import models.Project;
 import models.converter.ParseException;
 import models.networkcomponents.Node;
+import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.WirelessNode;
 import models.networkcomponents.events.AppEvent;
 import models.networkcomponents.protocols.ApplicationProtocol;
 import models.networkcomponents.protocols.TransportProtocol;
 
+/**
+ * Parser.java
+ * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and Technology
+ * @Author Duc-Trong Nguyen
+ * @Version 2.0
+ */
 public class Converter {
-	private Project model = null;
-	private String code = "";		// empty
+	private Project project = null;	
+	private GlobalObject global;
+	private String code;
 	
 	/**
 	 * Constructor
 	 * @param project
 	 */
-	public Converter(Project project) {
-		this.model = project;
+	public Converter(Project project) 
+	{					
+		this.project = project;
 	}
 	
 	public static void main(String[] args)  throws IOException, ParseException {		
@@ -58,8 +61,10 @@ public class Converter {
 		}
 		
 		String everything = sb.toString();
-		Converter parser = new Converter(null);
-		parser.CTD(everything);
+		Converter converter = new Converter(new Project("", new WirelessNetwork("", 400, 400)));
+		converter.CTD(everything);
+								
+		System.out.print(converter.DTC());
 	}
 	
 	// region ------------- functions for CTD ------------- //
@@ -73,36 +78,77 @@ public class Converter {
 	 */
 	public Project CTD(String text) throws ParseException
 	{
-		GlobalObject global = Parser.parse(text);				
-
-		// TODO convert GlobalObject to Project
+		global = Parser.parse(text);		
 		
-		return model;
+		String value;
+		value = global.insObj.get(global.simObject.insVar.get("-channel")).value;	project.setSelectedChannel(value); if (global.insObj.containsKey(value)) project.getChannels().put(value, global.insObj.get(value).insVar);		
+		value = global.simObject.insVar.get("-antType");		project.setSelectedAntenna(value);			if (global.insObj.containsKey(value)) project.getAntennas().put(value, global.insObj.get(value).insVar);										
+		value = global.simObject.insVar.get("-ifqType");		project.setSelectedInterfaceQueue(value);	if (global.insObj.containsKey(value)) project.getInterfaceQueues().put(value, global.insObj.get(value).insVar);		
+		value = global.simObject.insVar.get("-llType");			project.setSelectedLinkLayer(value);		if (global.insObj.containsKey(value)) project.getLinkLayers().put(value, global.insObj.get(value).insVar);		
+		value = global.simObject.insVar.get("-macType");		project.setSelectedMac(value);				if (global.insObj.containsKey(value)) project.getMacs().put(value, global.insObj.get(value).insVar);		
+		value = global.simObject.insVar.get("-phyType");		project.setSelectedNetworkInterface(value);	if (global.insObj.containsKey(value)) project.getNetworkInterfaces().put(value, global.insObj.get(value).insVar);		
+		value = global.simObject.insVar.get("-propType");		project.setSelectedPropagationModel(value);	if (global.insObj.containsKey(value)) project.getPropagationModels().put(value, global.insObj.get(value).insVar);	
+		value = global.simObject.insVar.get("-adhocRouting");	project.setSelectedRoutingProtocol(value);	if (global.insObj.containsKey(value)) project.getRoutingProtocols().put(value, global.insObj.get(value).insVar);								
+		value = global.simObject.insVar.get("-ifqLen");			project.setQueueLength(Integer.parseInt(value));
+		value = global.simObject.insVar.get("-idlePower");		project.setIddleEnergy(Double.parseDouble(value));
+		value = global.simObject.insVar.get("-rxPower");		project.setReceptionEnergy(Double.parseDouble(value));
+		value = global.simObject.insVar.get("-txPower");		project.setTransmissionEnergy(Double.parseDouble(value));
+		value = global.simObject.insVar.get("-sleepPower");		project.setSleepEnergy(Double.parseDouble(value));
+								
+		// size
+		
+		value = global.simObject.insVar.get("-propType");
+		int xSize = 0;
+		int ySize = 0;
+		
+		for (TclObject obj : global.insObj.values()) 
+		{
+			if (obj.value.equals(value)) 
+			{
+				TclObject topo = global.insObj.get(obj.insVar.get("topography"));
+				xSize = Integer.parseInt(topo.insVar.get("width"));
+				ySize = Integer.parseInt(topo.insVar.get("width"));
+			}
+		}
+		
+		WirelessNetwork network = new WirelessNetwork(project.getNetwork().getName(), xSize, ySize);
+		project.setNetwork(network);		
+		
+		// node list
+		
+		Double v = global.simObject.At.get("stop");
+		if (v != null)	network.setTime((int)(double)v);
+		else 			throw new ParseException("Missing End Simulation");
+		
+		network.getNodeList().clear();
+		for (TclObject node : global.simObject.Node) 
+		{
+			try 
+			{
+				new WirelessNode(
+								network, 
+								Integer.parseInt(node.insVar.get("X_")), 
+								Integer.parseInt(node.insVar.get("Y_")), 
+								project.getNodeRange());
+			} 
+			catch (Exception e)
+			{
+				throw new ParseException(ParseException.InvalidArgument);
+			}
+		}		
+		
+		return project;
 	}
 	
 	// endregion
 	
-	// region ------------- function for DTC -------------- //
-	
-	/**
-	 * DTC - Design to Code
-	 * Create Tcl code from a Project model
-	 * @return
-	 */
-	public String DTC()
+	// region ------------- functions for DTC ------------- //
+
+	public String DTC() throws ParseException
 	{
-		if (code == "")
-		{
-			// code is empty, create generate Tcl code by default form from model
-			code = initializeTcl(model);
-		}
-		else
-		{
-			// TODO
-		}
-		return code;
-	}	
-	
+		return initializeTcl(project);	
+	}
+
 	private String initializeTcl(Project project) {
 		StringBuilder sb = new StringBuilder();
 		
@@ -192,7 +238,7 @@ public class Converter {
 		putLine(sb, "				 	-idlePower " + project.getIddleEnergy() + " \\");
 		putLine(sb, "				 	-rxPower " + project.getReceptionEnergy() + " \\");
 		putLine(sb, "				 	-txPower " + project.getTransmissionEnergy() + " \\");
-		putLine(sb, "			    	-sleepPower " + project.getSleepEnergy() + " \\");
+		putLine(sb, "			    		-sleepPower " + project.getSleepEnergy() + " \\");
 		putLine(sb, "				 	-initialEnergy $opt(initialenergy)");
 		breakLine(sb);
 		
@@ -221,17 +267,22 @@ public class Converter {
 		putLine(sb, "}");
 		breakLine(sb);
 		
-		for (Node n : project.getNetwork().getNodeList()) {
-			for (TransportProtocol tp : n.getTransportPrototolList()) {
-				for (ApplicationProtocol ap : tp.getAppList()) {
+		for (Node n : project.getNetwork().getNodeList()) 
+		{
+			for (TransportProtocol tp : n.getTransportPrototolList()) 
+			{
+				for (ApplicationProtocol ap : tp.getAppList()) 
+				{
 					// set up a udp connection
-					switch (tp.getType()) {
-					case TransportProtocol.TCP:
-						putLine(sb, "set " + tp.getName() + " [new Agent/TCP]");
-						break;
-					case TransportProtocol.UDP:
-						putLine(sb, "set " + tp.getName() + " [new Agent/UDP]");
-						break;
+					switch (tp.getType()) 
+					{
+						case TransportProtocol.TCP:
+							putLine(sb, "set " + tp.getName() + " [new Agent/TCP]");
+							break;
+					
+						case TransportProtocol.UDP:
+							putLine(sb, "set " + tp.getName() + " [new Agent/UDP]");
+							break;
 					}			
 					
 					WirelessNode destNode = (WirelessNode)ap.getDestNode();

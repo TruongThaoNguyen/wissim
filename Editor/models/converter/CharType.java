@@ -1,5 +1,12 @@
 package models.converter;
 
+/**
+ * CharType.java
+ * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and Technology
+ * @Author Duc-Trong Nguyen
+ * @Version 2.0
+ */
+
 public enum CharType {
 	Unknow,
 	/**
@@ -7,9 +14,13 @@ public enum CharType {
 	 */
 	Space,
 	/**
-	 * ; and \n
+	 * \n
 	 */
 	Separator,
+	/**
+	 * ;
+	 */
+	Semicolon,
 	/**
 	 * \
 	 */
@@ -60,8 +71,11 @@ public enum CharType {
 	{
 		switch (ch) 
 		{
-			case '\t' :	
-			case ' ' : return Space;			
+			case '\t':	
+			case ' ' : return Space;
+			case '\n': return Separator;
+			case ';' : return Semicolon;
+			case '\\': return BackSlash; 
 			case '#' : return Comment;								
 			case '"' : return Quote;				
 			case '[' : return BracketOpen;
@@ -71,6 +85,7 @@ public enum CharType {
 			case '$' : return Referent;				
 			case '(' : return ParenthesisOpen;
 			case ')' : return ParenthesisClose;
+//			case '-' : return Argument;
 			case '1' : case '2' : case '3' : case '4' : case '5' : case '6' : case '7' : case '8' :	case '9' : case '0' :
 			case 'Q' : case 'W' : case 'E' : case 'R' : case 'T' : case 'Y' : case 'U' : case 'I' : case 'O' : case 'P' : 
 			case 'A' : case 'S' : case 'D' : case 'F' : case 'G' : case 'H' : case 'J' : case 'K' : case 'L' : 
@@ -79,8 +94,9 @@ public enum CharType {
 			case 'a' : case 's' : case 'd' : case 'f' : case 'g' : case 'h' : case 'j' : case 'k' : case 'l' : 
 			case 'z' : case 'x' : case 'c' : case 'v' : case 'b' : case 'n' : case 'm' :
 			case '@' : case '_' : case '.' : case ',' : case '`' : case '\'' :
-			case '~' : case '!' : case '%' : case '^' : case '&' : case '*' : case '-' : case '+' : case '=' : case '|' : case '/' : case ':' :case '?' : 			
-						return Letter;
+			case '~' : case '!' : case '%' : case '^' : case '&' : case '*' : case '+' : case '=' : case '|' : case '/' : 
+			case ':' : case '?' : case '<' : case '>' :	case '-' :
+						return Letter;			
 			default:	return Unknow;
 		}
 	}

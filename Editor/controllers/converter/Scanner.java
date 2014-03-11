@@ -8,278 +8,348 @@ import models.converter.ParseException;
 import models.converter.Token;
 import models.converter.TokenType;
 
-class Scanner {
-	private static String code;
-	private static int line;
-	private static int index;
+/**
+ * Scanner.java
+ * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and Technology
+ * @Author Duc-Trong Nguyen
+ * @Version 2.0
+ */
+
+public class Scanner {
+	private String code;
+	private int line;
+	private int index;
 	
-	public static List<List<Token>> scan(String text) throws ParseException
+	public int getLine() { return line; }
+	
+	public Scanner(String text)	
 	{
-		code = text;					
+		this.code = text;
 		line = 0;
-		index = 0;
-		List<List<Token>> script = new ArrayList<List<Token>>();			
-		List<Token> command = new ArrayList<Token>();
+		index = 0;			
+	}
+
+	public boolean haveNext() {
+		return index < code.length();
+	}
+
+
+	/**
+	 * Split tcl code to words.
+	 * Command is list of words
+	 * @return List of String
+	 * @throws ParseException 
+	 */
+	public List<String> scanCommand() throws ParseException
+	{	
+		List<String> command = new ArrayList<String>();		
 		
 		while (index < code.length())
 		{
-			switch (CharType.TypeOf(code.charAt(index))) 
+			CharType type = CharType.TypeOf(code.charAt(index));
+			if (type == CharType.Separator)
 			{
-				case Space:	// skip space // do nothing
+				index++;
+				line++;
+			}
+			else if (type == CharType.Space) index++;
+			else break;
+		}		
+
+		int i = index;
+		
+		while (index < code.length())
+		{
+			switch (CharType.TypeOf(code.charAt(index)))
+			{
+				case Space:
+					if (index > i) command.add(code.substring(i, index));					
+					while (index < code.length() && CharType.TypeOf(code.charAt(index)) == CharType.Space) index++;
+					i = index;
+					break;
+				
+				case Semicolon:
+					String word  = code.substring(i, index);
+					if (!word.isEmpty()) command.add(word);										
+					index++;					
+					return command;
+					
+				case Separator:				
+					if (index > i) command.add(code.substring(i, index));					
+					return command;
+					
+				case Comment:
+					if (command.size() != 0) throw new ParseException(ParseException.Comment);				
+					while (index < code.length() && CharType.TypeOf(code.charAt(index)) != CharType.Separator) index++;
 					index++;
+					line++;
+					i = index;
 					break;
 
-				case Separator:
+				case BackSlash:
+					index++;
+					if (index >= code.length() || CharType.TypeOf(code.charAt(index)) != CharType.Separator) 
+						throw new ParseException(ParseException.InvalidSymbol);
+					index++;
 					line++;
-					script.add(command);
-					command = new ArrayList<Token>();
-					index++;
+					i = index;
+					break;
+
+				case BraceOpen:
+					scanBrace();
 					break;
 					
-				case Comment:		// #		
-					if (command.isEmpty())				
-						command.add(new Token(TokenType.Comment, scanComment()));					
-					else 
-						throw new ParseException(ParseException.Comment);
-					break;			
-					
-				case BraceOpen:		// {
-					command.add(new Token(TokenType.Brace, scanBrace()));
-					index++;
-					break;
-				
-				case BraceClose:	
-					throw new ParseException(ParseException.BracketNotMatch);					
-									
 				case BracketOpen:
-					command.add(new Token(TokenType.Bracket, scanBracket()));
-					index++;
+					scanBracket();
 					break;
 					
-				case BracketClose:	
-					throw new ParseException(ParseException.BracketNotMatch);
-				
 				case ParenthesisOpen:
-					command.add(new Token(TokenType.Parenthesis, scanParenthesis()));
-					index++;					
+					scanParenthesis();
 					break;
-					
-				case ParenthesisClose: 
-					throw new ParseException(ParseException.BracketNotMatch);
 					
 				case Quote:
-					command.add(new Token(TokenType.Quote, scanQuote()));
-					index++;
+					scanQuote();
 					break;
-				
-				case Referent:			
-					index++;
-					command.add(new Token(TokenType.Referent, scanLetter()));
-					break;
-			
+
 				case Letter:
-					command.add(new Token(TokenType.Identify, scanLetter()));					
-					break;			
-				
-				case BackSlash:
-					if (CharType.TypeOf(code.charAt(index + 1)) == CharType.Separator)
-						index = index + 2;
-					else
-						throw new ParseException(ParseException.InvalidSymbol);
+				case Referent:
+				case BraceClose:
+				case BracketClose:
+				case ParenthesisClose:
+					index++;				
 					break;
-					
-				case Unknow:
-					throw new ParseException(ParseException.InvalidSymbol);
-			
-			}	
+
+				case Unknow: throw new ParseException(ParseException.InvalidSymbol);
+			}
 		}
 		
-		return script;
+		if (index > i) command.add(code.substring(i, index));
+		return command;
 	}
 
-	private static String scanQuote() throws ParseException 
+	/**
+	 * Split word to tokens
+	 * @return List of tokens
+	 * @throws ParseException
+	 */
+	public List<Token> scanWord() throws ParseException
 	{
-		if (CharType.TypeOf(code.charAt(index)) != CharType.Quote) return "";	
+		List<Token> tokenList = new ArrayList<Token>();
 		
+		while (index < code.length())
+		{
+			switch (CharType.TypeOf(code.charAt(index)))
+			{
+				case Separator: line++;
+				case Semicolon:					
+					index++;
+					return tokenList;
+							
+				case BackSlash:
+					index++;
+					if (index >= code.length() || CharType.TypeOf(code.charAt(index)) != CharType.Separator) 
+						throw new ParseException(ParseException.InvalidSymbol);
+					index++;
+					line++;
+					break;
+					
+				case Comment:
+					while (index < code.length() && code.charAt(index) != '\n') index++;
+					index++;
+					line++;
+					break;
+			
+				case Quote:
+					tokenList.add(new Token(TokenType.Quote, scanQuote()));
+					break;
+					
+				case ParenthesisOpen:
+					tokenList.add(new Token(TokenType.Parenthesis, scanParenthesis()));
+					break;
+		
+				case BracketOpen:
+					tokenList.add(new Token(TokenType.Bracket, scanBracket()));
+					break;
+					
+				case BraceOpen:
+					tokenList.add(new Token(TokenType.Brace, scanBrace()));
+					break;				
+
+				case Referent:
+					index++;
+					tokenList.add(new Token(TokenType.Referent, scanReferent()));
+					break;
+					
+				case Letter:
+					tokenList.add(new Token(TokenType.Identify, scanIdentify()));					
+					break;				
+					
+				case BraceClose:
+				case BracketClose:
+				case ParenthesisClose:														
+				case Space:
+				case Unknow:
+					throw new ParseException(ParseException.InvalidSymbol);
+			}
+		}
+		
+		return tokenList;
+	}	
+	
+	/**
+	 * Scan Identify.
+	 * Identify = Letter
+	 * Identify = Letter + Parenthesis
+	 * Put index to next of letter list.
+	 * @return
+	 * @throws ParseException 
+	 */
+	private String scanIdentify() throws ParseException 
+	{
+		int i =  index;
+		while (index < code.length() && CharType.TypeOf(code.charAt(index)) == CharType.Letter)	index++;		
+		return code.substring(i, index);
+	}
+	
+	/**
+	 * Scan Referent.
+	 * Identify = Letter
+	 * Identify = Letter + Parenthesis
+	 * Put index to next of letter list.
+	 * @return
+	 * @throws ParseException 
+	 */
+	private String scanReferent() throws ParseException 
+	{
+		int i =  index;
+		while (index < code.length() && CharType.TypeOf(code.charAt(index)) == CharType.Letter)	index++;
+		
+		if (index < code.length() && CharType.TypeOf(code.charAt(index)) == CharType.ParenthesisOpen) scanParenthesis();
+		return code.substring(i, index);
+	}
+
+	/**
+	 * Scan quote.
+	 * Put index to next of '"'
+	 */
+	private String scanQuote() throws ParseException 
+	{					
 		int i = ++index;
 		for (;index < code.length(); index++)
 		{
 			switch(CharType.TypeOf(code.charAt(index)))
-			{
-				case BackSlash:
-					index++;
-					break;
+			{					
+				case Quote:	return code.substring(i, index++);
 				
 				case Separator:
 					line++;
 					break;
-				
+					
 				case Unknow: throw new ParseException(ParseException.InvalidSymbol);
-					
-				case Quote:	return code.substring(i, index);							
-					
-				case BraceClose:
-				case BraceOpen:
-				case BracketClose:
-				case BracketOpen:
-				case Comment:
-				case Letter:
-				case ParenthesisClose:
-				case ParenthesisOpen:
-				case Referent:				
-				case Space:
-					// do nothing
-					break;											
+				
+				default: break;
 			}
 		}
 				
 		throw new ParseException(ParseException.MissQuote);
 	}
-
-	private static String scanLetter() 
-	{
-		if (CharType.TypeOf(code.charAt(index)) != CharType.Letter) return "";
-		
-		int i = index;
-		for (;index < code.length(); index++)
-		{
-			if (CharType.TypeOf(code.charAt(index)) != CharType.Letter) break;
-		} 
-		return code.substring(i, index);
-	}
-
-	private static String scanParenthesis() throws ParseException 
-	{
-		if (CharType.TypeOf(code.charAt(index)) != CharType.ParenthesisOpen) return "";
-		
+	
+	/**
+	 * Scan parenthesis.
+	 * Put index to next of ')'
+	 */
+	private String scanParenthesis() throws ParseException 
+	{				
 		int count = 1;
 		int i = ++index;
 		for (; index < code.length(); index++)
 		{
 			switch (CharType.TypeOf(code.charAt(index)))
-			{
-				case BackSlash:
-					index++;
-					break;
-				
-				case Separator:
-					line++;
-					break;
-				
-				case Unknow: throw new ParseException(ParseException.InvalidSymbol);
-					
+			{								
 				case ParenthesisOpen:
 					count++;
 					break;
 				
 				case ParenthesisClose:
 					count--;
-					if (count == 0) return code.substring(i, index);						
+					if (count == 0) return code.substring(i, index++);						
 					break;						
 					
-				case BraceClose:
-				case BraceOpen:
-				case BracketClose:
-				case BracketOpen:
-				case Comment:
-				case Letter:
-				case Quote:
-				case Referent:
-				case Space:
-					// do nothing
-					break;					
+				case Separator:
+					line++;
+					break;
+					
+				case Unknow: throw new ParseException(ParseException.InvalidSymbol);
+				
+				default: break;				
 			}
 		}
 		throw new ParseException(ParseException.BracketNotMatch);
 	}
 
-	private static String scanBracket() throws ParseException 
-	{
-		if (CharType.TypeOf(code.charAt(index)) != CharType.BraceOpen) return "";
-		
+	/**
+	 * Scan bracket.
+	 * Put index to next of ']'
+	 */
+	private String scanBracket() throws ParseException 
+	{	
 		int count = 1;
 		int i = ++index;
 		for (; index < code.length(); index++)
 		{
 			switch (CharType.TypeOf(code.charAt(index)))
-			{
-				case BackSlash:
-					index++;
-					break;
-				
-				case Separator:
-					line++;
-					break;
-				
-				case Unknow: throw new ParseException(ParseException.InvalidSymbol);
-			
+			{							
 				case BracketOpen:
 					count++;
 					break;
 				case BracketClose:
 					count--;
-					if (count == 0) return code.substring(i, index);						
+					if (count == 0) return code.substring(i, index++);						
 					break;				
 
-				case BraceClose:
-				case BraceOpen:								
-				case Comment:
-				case Letter:
-				case ParenthesisClose:
-				case ParenthesisOpen:
-				case Quote:
-				case Referent:
-				case Space:
-					// do nothing
-					break;			
+				case Separator:
+					line++;
+					break;
+					
+				case Unknow: throw new ParseException(ParseException.InvalidSymbol);
+				
+				default: break;			
 			}			
 		}
 		throw new ParseException(ParseException.BracketNotMatch);
 	}
 
-	private static String scanBrace() throws ParseException 
+	/**
+	 * Scan brace.
+	 * Put index to next of ')'
+	 * @throws ParseException 
+	 */
+	private String scanBrace() throws ParseException 
 	{
-		if (CharType.TypeOf(code.charAt(index)) != CharType.BraceOpen) return ""; 
-		
 		int count = 1;
 		int i = ++index;
 		for (; index < code.length(); index++)
 		{
 			switch (CharType.TypeOf(code.charAt(index)))
-			{
-				case BackSlash:
-					index++;
-					break;
-				
-				case Separator:
-					line++;
-					break;
-				
-				case Unknow: throw new ParseException(ParseException.InvalidSymbol);
-			
+			{			
 				case BraceOpen:	
 					count++;
 					break;
 					
 				case BraceClose:
 					count--;
-					if (count == 0) return code.substring(i, index);
+					if (count == 0) return code.substring(i, index++);
 					break;
 				
-				default: 
+				case Separator:
+					line++;
 					break;
+					
+				case Unknow: throw new ParseException(ParseException.InvalidSymbol);
+				
+				default: break;
 			}
 		} 
 		throw new ParseException(ParseException.BracketNotMatch);
-	}
-
-	private static String scanComment() 
-	{		
-		if (CharType.TypeOf(code.charAt(index)) != CharType.Comment) return "";
-		
-		int i = ++index;
-		while (index < code.length() && CharType.TypeOf(code.charAt(index)) != CharType.Separator) index++;
-		line++;
-		return code.substring(i, index);
 	}
 }
