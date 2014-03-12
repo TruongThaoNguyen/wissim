@@ -77,7 +77,8 @@ public class EditorActionController {
 //		if (project != null)
 			editor.showProject(project);
 		
-		editor.getWorkspace().getSelectableObject().get(editor.getWorkspace().getSelectableObject().size() - 1).moveAbove(null);
+		if(editor.getWorkspace() != null)
+			editor.getWorkspace().getSelectableObject().get(editor.getWorkspace().getSelectableObject().size() - 1).moveAbove(null);
 	}
 	
 	public GWirelessNode actionCopy(Workspace workspace) {

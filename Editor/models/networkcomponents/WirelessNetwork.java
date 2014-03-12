@@ -179,6 +179,8 @@ public class WirelessNetwork extends Network {
 		return true;		
 	}
 	
+	
+	
 	private WirelessNode getNodeByPosition(int x, int y) {
 		for (Node n : getNodeList()) {
 			WirelessNode wn  = (WirelessNode) n;

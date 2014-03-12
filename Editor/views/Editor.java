@@ -40,6 +40,7 @@ import controllers.managers.ApplicationSettings;
 import controllers.managers.ProjectManager;
 import controllers.managers.WorkspacePropertyManager;
 import view.MainContent;
+import org.eclipse.swt.custom.StyledText;
 
 /*
  * Author: Trong Nguyen
@@ -140,46 +141,36 @@ public class Editor extends MainContent implements Observer {
 	 * createContent
 	 */
 	private void createContent() {
-		setLayout(new GridLayout(2, false));
+		setLayout(new GridLayout(1, false));
 		
-		Label lblNewLabel = new Label(this, SWT.NONE);
-		lblNewLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		lblNewLabel.setText("Editor");
 
 		// ------------- toolbar ------------- //
 		
-		ToolBar toolBar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
-		GridData gd_toolBar = new GridData(SWT.FILL, SWT.TOP, true, false);
-		gd_toolBar.heightHint = 78;
-		toolBar.setLayoutData(gd_toolBar);
+//		Composite toolbarComposite = new Composite(this,  SWT.BORDER);
+//		GridData gd_toolbarComposite = new GridData(SWT.LEFT, SWT.TOP, true, false, 1, 1);
+//		gd_toolbarComposite.heightHint = 33;
+//		toolbarComposite.setLayoutData(gd_toolbarComposite);
+		
+		ToolBar toolBar = new ToolBar(this, SWT.RIGHT);	
+//		toolBar.setBounds(0, 0, 727, 53);
+		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		
 		toolBarManager = new ToolBarManager(toolBar);
 		
 				
-				// ------------- properties composite ------------- //
-				propertiesComposite = new Composite(this,  SWT.BORDER);
-				GridData gd_propertiesComposite = new GridData(SWT.RIGHT, SWT.FILL, false, true);
-				gd_propertiesComposite.heightHint = 98;
-				propertiesComposite.setLayoutData(gd_propertiesComposite);
 				
-				Label lblNewLabel_1 = new Label(propertiesComposite, SWT.NONE);
-				lblNewLabel_1.setBounds(0, 0, 59, 95);
-				lblNewLabel_1.setText("Network");
-				
-				Label lblNewLabel_2 = new Label(propertiesComposite, SWT.NONE);
-				lblNewLabel_2.setBounds(0, 116, 59, 14);
-				lblNewLabel_2.setText("Node");
-				
-				Label lblSss = new Label(propertiesComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
-				lblSss.setText("sss");
-				lblSss.setBounds(-5, 101, 64, 22);
 		
 		// ------------- main composite ------------- //
 		
-		sashForm = new SashForm(this, SWT.NONE);
+		sashForm = new SashForm(this, SWT.HORIZONTAL);
 		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
-		contentComposite = new Composite(sashForm, SWT.NONE);
+		// ------------- properties composite ------------- //
+		
+		
+		SashForm subSashForm = new SashForm(sashForm, SWT.VERTICAL);
+		
+		contentComposite = new Composite(subSashForm, SWT.NONE);
 		contentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		contentComposite.setLayout(new FillLayout());
 		
@@ -193,16 +184,43 @@ public class Editor extends MainContent implements Observer {
 				tbtmEdit.setControl(composite);
 				composite.setLayout(new FillLayout(SWT.HORIZONTAL));
 				
+				
 				text = new Text(composite, SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
 				
 				CTabItem tbtmDesign = new CTabItem(tabFolder, SWT.PUSH);
 				tbtmDesign.setText("Design");
-				
 				scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 				tbtmDesign.setControl(scrolledComposite);
 				scrolledComposite.setExpandHorizontal(true);
 				scrolledComposite.setExpandVertical(true);
-		sashForm.setWeights(new int[] {305});
+				
+				Composite bottomComposite = new Composite(subSashForm, SWT.NONE);
+				bottomComposite.setLayout(new GridLayout(1, false));
+
+								StyledText styledText = new StyledText(bottomComposite, SWT.BORDER);
+								styledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+				
+				subSashForm.setWeights(new int[] {215, 83});
+				propertiesComposite = new Composite(sashForm,  SWT.BORDER);
+				GridData gd_propertiesComposite = new GridData(SWT.RIGHT, SWT.FILL, false, true);
+				
+				propertiesComposite.setLayoutData(gd_propertiesComposite);
+				gd_propertiesComposite.heightHint = 50;
+				
+				Label lblNewLabel_1 = new Label(propertiesComposite, SWT.NONE);
+				lblNewLabel_1.setBounds(0, 0, 59, 95);
+				lblNewLabel_1.setText("Network");
+				
+				Label lblNewLabel_2 = new Label(propertiesComposite, SWT.NONE);
+				lblNewLabel_2.setBounds(0, 116, 59, 14);
+				lblNewLabel_2.setText("Node");
+				
+				Label lblSss = new Label(propertiesComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+				lblSss.setText("sss");
+				lblSss.setBounds(-5, 101, 64, 22);
+				sashForm.setWeights(new int[] {373, 120});
+
+
 	}
 
 	@Override
@@ -687,7 +705,7 @@ public class Editor extends MainContent implements Observer {
 		};
 		actMouseCreateArea.setToolTipText("Create new area (CTRL + A)");
 		actMouseCreateArea.setChecked(false);
-		actMouseCreateArea.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/PolygonSetIcon.png"));
+		actMouseCreateArea.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/arrow_cursor.png"));
 
 		actManagePaths = new Action("Path Manager") {
 			public void run() {
