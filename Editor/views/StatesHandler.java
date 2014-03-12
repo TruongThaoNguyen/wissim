@@ -2,9 +2,9 @@ package views;
 
 
 public class StatesHandler {
-	MainWindow window;
+	Editor window;
 	
-	public StatesHandler(MainWindow window) {
+	public StatesHandler(Editor window) {
 		this.window = window;
 	}
 	
@@ -111,8 +111,8 @@ public class StatesHandler {
 		window.getActMouseHand().setChecked(false);
 		window.getActMouseCreateNode().setChecked(false);
 		window.getActMouseCreateArea().setChecked(true);
-		window.getActiveWorkspace().disableNodes();
-		window.getActiveWorkspace().enableNetwork();
+		window.getWorkspace().disableNodes();
+		window.getWorkspace().enableNetwork();
 	}
 	
 	public void activeMouseHand() {
@@ -120,8 +120,8 @@ public class StatesHandler {
 		window.getActMouseHand().setChecked(true);
 		window.getActMouseCreateNode().setChecked(false);
 		window.getActMouseCreateArea().setChecked(false);
-		window.getActiveWorkspace().disableNetwork();
-		window.getActiveWorkspace().getGraphicNetwork().clearSelectedArea();
+		window.getWorkspace().disableNetwork();
+		window.getWorkspace().getGraphicNetwork().clearSelectedArea();
 	}
 	
 	public void activeMouseCreateNode() {
@@ -129,9 +129,9 @@ public class StatesHandler {
 		window.getActMouseHand().setChecked(false);
 		window.getActMouseCreateNode().setChecked(true);
 		window.getActMouseCreateArea().setChecked(false);
-		window.getActiveWorkspace().disableNodes();
-		window.getActiveWorkspace().enableNetwork();
-		window.getActiveWorkspace().getGraphicNetwork().clearSelectedArea();
+		window.getWorkspace().disableNodes();
+		window.getWorkspace().enableNetwork();
+		window.getWorkspace().getGraphicNetwork().clearSelectedArea();
 	}
 	
 	public void activeMouseCursor() {
@@ -139,7 +139,7 @@ public class StatesHandler {
 		window.getActMouseHand().setChecked(false);
 		window.getActMouseCreateNode().setChecked(false);
 		window.getActMouseCreateArea().setChecked(false);
-		window.getActiveWorkspace().enableNodes();
-		window.getActiveWorkspace().getGraphicNetwork().clearSelectedArea();
+		window.getWorkspace().enableNodes();
+		window.getWorkspace().getGraphicNetwork().clearSelectedArea();
 	}
 }

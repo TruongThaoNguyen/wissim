@@ -6,34 +6,40 @@ import java.util.Observable;
 import java.util.Observer;
 
 import models.Project;
-import nu.xom.ParsingException;
-import nu.xom.ValidityException;
+import models.managers.CareTaker;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.CoolItem;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.wb.swt.ResourceManager;
+import org.eclipse.wb.swt.SWTResourceManager;
 
-import view.AboutWindow;
-import view.MainContent;
-import view.MainWindow;
+import controllers.actions.EditorActionController;
+import controllers.graphicscomponents.GWirelessNode;
 import controllers.managers.ApplicationManager;
 import controllers.managers.ApplicationSettings;
-import org.eclipse.swt.custom.ScrolledComposite;
+import controllers.managers.ProjectManager;
+import controllers.managers.WorkspacePropertyManager;
+import view.MainContent;
 
 /*
  * Author: Trong Nguyen
@@ -52,7 +58,7 @@ public class Editor extends MainContent implements Observer {
 		super(parent, menuManager, statusLineManager);
 		
 		try {
-//			ApplicationSettings.loadConfig();
+			ApplicationSettings.loadConfig();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -61,6 +67,73 @@ public class Editor extends MainContent implements Observer {
 		createAction();
 		createMenu();	
 		createToolBar();
+		
+		Display.getCurrent().addFilter(SWT.KeyDown, new Listener() {			
+			@Override
+			public void handleEvent(Event arg0) {
+				Workspace workspace = getWorkspace();
+				if (workspace != null) {
+					switch (arg0.keyCode) {
+					case SWT.CTRL:
+						workspace.getPropertyManager().setControlKeyPressed(true);
+						break;
+					case SWT.SHIFT:
+						workspace.getPropertyManager().setShiftKeyPressed(true);
+						break;
+					}
+				}
+			}
+		});
+		
+		Display.getCurrent().addFilter(SWT.KeyUp,  new Listener() {			
+			@Override
+			public void handleEvent(Event arg0) {
+				Workspace workspace = getWorkspace();
+				if (workspace != null) {
+					if (arg0.keyCode == SWT.CTRL)
+						workspace.getPropertyManager().setControlKeyPressed(false);
+					if (arg0.keyCode == SWT.SHIFT)
+						workspace.getPropertyManager().setShiftKeyPressed(false);
+				}
+			}
+		});
+		
+		Display.getCurrent().addFilter(SWT.MouseWheel, new Listener() {
+			@Override
+			public void handleEvent(Event arg0) {
+				Workspace workspace = getWorkspace();
+				if (workspace != null) {
+					if (workspace.getPropertyManager().isControlKeyPressed() == true) {
+						if ((workspace.getMode() == Workspace.OVERVIEW && arg0.count > 0) || workspace.getMode() == Workspace.EXTEND) {												
+							if (workspace.getScale() >= 1 && workspace.getScale() <= 3) {
+								workspace.setScale(workspace.getScale() + ((double) arg0.count) / 100);
+								
+								if (workspace.getScale() < 1)
+									workspace.setScale(1);
+								if (workspace.getScale() > 3)
+									workspace.setScale(3);
+								
+								int x = (int)(workspace.getGraphicNetwork().getInitLocation().x * 2 + workspace.getGraphicNetwork().getInitSize().x * workspace.getScale());
+								int y = (int)(workspace.getGraphicNetwork().getInitLocation().y * 2 + workspace.getGraphicNetwork().getInitSize().y * workspace.getScale());
+								
+								ScrolledComposite sc = (ScrolledComposite) workspace.getParent();
+								
+								if (x < sc.getClientArea().width || y < sc.getClientArea().height) {							
+									workspace.setSize(sc.getClientArea().width + sc.getVerticalBar().getSize().x, 
+											sc.getClientArea().height + sc.getHorizontalBar().getSize().y);
+									workspace.setScale(1);
+								} else
+									workspace.setSize(x, y);
+							}
+						}						
+					}
+					
+				}				
+			}
+		});		
+
+		statesHandler = new StatesHandler(this);
+		statesHandler.initialize();
 	}
 	
 	/**
@@ -76,13 +149,15 @@ public class Editor extends MainContent implements Observer {
 		// ------------- toolbar ------------- //
 		
 		ToolBar toolBar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
-		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		GridData gd_toolBar = new GridData(SWT.FILL, SWT.TOP, true, false);
+		gd_toolBar.heightHint = 78;
+		toolBar.setLayoutData(gd_toolBar);
 		
 		toolBarManager = new ToolBarManager(toolBar);
 		
 				
 				// ------------- properties composite ------------- //
-				Composite propertiesComposite = new Composite(this,  SWT.BORDER);
+				propertiesComposite = new Composite(this,  SWT.BORDER);
 				GridData gd_propertiesComposite = new GridData(SWT.RIGHT, SWT.FILL, false, true);
 				gd_propertiesComposite.heightHint = 98;
 				propertiesComposite.setLayoutData(gd_propertiesComposite);
@@ -101,10 +176,10 @@ public class Editor extends MainContent implements Observer {
 		
 		// ------------- main composite ------------- //
 		
-		SashForm sashForm = new SashForm(this, SWT.NONE);
+		sashForm = new SashForm(this, SWT.NONE);
 		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
-		Composite contentComposite = new Composite(sashForm, SWT.NONE);
+		contentComposite = new Composite(sashForm, SWT.NONE);
 		contentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		contentComposite.setLayout(new FillLayout());
 		
@@ -123,7 +198,7 @@ public class Editor extends MainContent implements Observer {
 				CTabItem tbtmDesign = new CTabItem(tabFolder, SWT.PUSH);
 				tbtmDesign.setText("Design");
 				
-				ScrolledComposite scrolledComposite = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+				scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 				tbtmDesign.setControl(scrolledComposite);
 				scrolledComposite.setExpandHorizontal(true);
 				scrolledComposite.setExpandVertical(true);
@@ -147,95 +222,9 @@ public class Editor extends MainContent implements Observer {
 
 		menuManager_File = new MenuManager("&File");
 		menuManager_File.add(actNew);
-//		menuManager_File.add(actOpen);
-//		menuManager_File.add(actSave);
-//		menuManager_File.add(actSaveAs);
-//		menuManager_File.add(actSaveAll);
-//		menuManager_File.add(new Separator());
-//		menuManager_File.add(actImport);
-//		{
-//			MenuManager menuManager_2 = new MenuManager("Export");
-//			menuManager_File.add(menuManager_2);
-//			menuManager_2.add(actToImage);
-//			//menuManager_2.add(actToPDF);			
-//		}
-//		menuManager_File.add(actPrint);
-//		menuManager_File.add(new Separator());
-//		menuManager_File.add(actClose);
-//		menuManager_File.add(actExit);
+//		
 	}
-	/*
-	{	// ------------- Edit ------------- //
-		menuManager_Edit = new MenuManager("&Edit");		
-		menuManager_Edit.add(actUndo);
-		menuManager_Edit.add(actRedo);
-		menuManager_Edit.add(new Separator());
-		menuManager_Edit.add(actChangeNetworkSize);
-		menuManager_Edit.add(actConfigureNodes);
-		{
-			MenuManager menuManager_2 = new MenuManager("Create");
-			menuManager_Edit.add(menuManager_2);
-			menuManager_2.add(actCreateASingleNode);
-			menuManager_2.add(actCreateASetOfNodes);
-			menuManager_2.add(new Separator());
-			menuManager_2.add(actCreateARandomNode);
-		}
-		menuManager_Edit.add(new Separator());
-		menuManager_Edit.add(actDeleteNodes);
-		menuManager_Edit.add(actDeleteAllNodes);
-	}
-	{	// ------------- View ------------- //
-		menuManager_View = new MenuManager("&View");		
-		menuManager_View.add(actZoomIn);
-		menuManager_View.add(actZoomOut);
-		menuManager_View.add(new Separator());
-		menuManager_View.add(actViewNetworkInfo);
-		menuManager_View.add(actViewNodeInfo);
-		menuManager_View.add(new Separator());
-		menuManager_View.add(actShowRange);
-		menuManager_View.add(actShowNeighbors);
-		menuManager_View.add(new Separator());
-		menuManager_View.add(actShowConnection);
-		menuManager_View.add(actShowObstacles);
-		menuManager_View.add(new Separator());
-		menuManager_View.add(actShowRulers);
-	}
-	{	// ------------- Feature ------------- //
-		menuManager_Feature = new MenuManager("Features");
-		menuManager_Feature.add(actSearchNode);
-		menuManager_Feature.add(actIdentifyBoundary);
-		menuManager_Feature.add(new Separator());
-		menuManager_Feature.add(actCheckConnectivity);
-		{
-			MenuManager menuManager_2 = new MenuManager("Planar Graph");
-			menuManager_Feature.add(menuManager_2);
-			menuManager_2.add(actViewRNGGraph);
-			menuManager_2.add(actViewGGGraph);
-		}
-		menuManager_Feature.add(actViewVoronoiDiagram);
-		menuManager_Feature.add(actViewDelaunayTriangulation);
-		menuManager_Feature.add(new Separator());
-		menuManager_Feature.add(actFindPathByGreedy);
-		menuManager_Feature.add(actViewShortestPath);
-		menuManager_Feature.add(actViewShortestPathTree);
-	}
-	{	// ------------- Manager ------------- //
-		menuManager_Manage = new MenuManager("Manager");
-		menuManager_Manage.add(actManageLabels);
-		menuManager_Manage.add(actManagePaths);
-		menuManager_Manage.add(actManageTrafficFlow);
-	}
-	{	// ------------- Generate ------------- //
-		menuManager_Generate = new MenuManager("&Generate");
-		menuManager_Generate.add(actGenerateSimulationScripts);
-		menuManager_Generate.add(actGenerateNodeLocationData);
-	}
-	{	// ------------- Setting ------------- //
-		menuMenager_Setting = new MenuManager("&Settings");
-		menuMenager_Setting.add(actDefaultConfiguration);
-		menuMenager_Setting.add(actVisualizeSettings);
-	}
-	*/
+	
 	{	// ------------- Help ------------- //
 		menuManager_Help = new MenuManager("&Help");		
 		//menuManager_Help.add(actDocumentation);
@@ -249,22 +238,483 @@ public class Editor extends MainContent implements Observer {
 	 * Create the actions.
 	 */
 	private void createAction() {
+		final EditorActionController ec = new EditorActionController(getParent().getShell());
 		actNew = new Action("New") {
 			public void run() {
-				Project project = ApplicationManager.newProject(getParent().getShell()); 
-				if (project != null)
-					showProject(project);
+				ec.actionNew(Editor.this);
+			}
+			
+		};
+		actNew.setToolTipText("Create a new project (CTRL + N)");
+		actNew.setAccelerator(SWT.CTRL | 'N');
+		actNew.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/application_add.png"));
+
+
+		actOpen = new Action("Open") {
+			public void run() {
+				ec.actionOpen(Editor.this);
 			}
 		};
-		actNew.setToolTipText("Create a new project");
-		actNew.setAccelerator(SWT.CTRL | 'N');
-		actNew.setImageDescriptor(ResourceManager.getImageDescriptor(MainWindow.class, "/icons/application_add.png"));
+		actOpen.setToolTipText("Open existing project (CTRL + O)");
+		actOpen.setAccelerator(SWT.CTRL | 'O');
+		actOpen.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/folder.png"));
 		
-		actAbout = new Action("About") {
+		
+		actMouseHand = new Action("Mouse Hand") {
 			public void run() {
-				new AboutWindow(null).open();					
+				ec.actionMouseHand(Editor.this,getWorkspace());
+			}
+		};
+		actMouseHand.setToolTipText("Mouse Hand (CTRL + U)");
+		actMouseHand.setChecked(false);
+		actMouseHand.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/closed_hand.png"));
+
+
+		actSave = new Action("Save") {
+			public void run() {						
+				ec.actionSave(Editor.this);
+			}
+		};
+		actSave.setToolTipText("Save current project (CTRL + S)");
+		actSave.setAccelerator(SWT.CTRL | 'S');
+		actSave.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/disk.png"));
+
+
+		actSaveAs = new Action("Save As") {
+			public void run() {
+				Workspace workspace = getWorkspace();
+				ApplicationManager.saveWorkspaceAs(workspace);
+			}
+		};
+		actSaveAs.setToolTipText("Save As  (ALT + S)");
+//		actSaveAs.setAccelerator(SWT.ALT | SWT.CTRL | 'S');
+
+
+		actToImage = new Action("To Image") {
+			public void run() {
+				ec.actionToImage(getWorkspace());
+			}
+		};
+		actToImage.setToolTipText("To Image (SHIFT + I)");
+
+
+		actClose = new Action("Close") {
+			public void run() {
+				ec.actionClose(getWorkspace());			
+			}
+		};
+//		actClose.setAccelerator(SWT.CTRL | SWT.F4);
+		actClose.setToolTipText("Close (CTRL + W)");
+		actClose.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/cross.png"));
+
+
+		actExit = new Action("Exit") {
+			public void run() {
+				ec.actionExit();
+			}
+		};	
+		actExit.setToolTipText("Exit (SHIFT + W)");
+
+		actUndo = new Action("Undo") {
+			public void run() {
+				ec.actionUndo(getWorkspace());
+			}
+		};
+		actUndo.setToolTipText("Undo (CTRL + Z)");
+		actUndo.setAccelerator(SWT.CTRL | 'Z');
+		actUndo.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/arrow_undo.png"));
+
+		actRedo = new Action("Redo") {
+			public void run() {
+				ec.actionRedo(getWorkspace());
+			}
+		};
+		actRedo.setToolTipText("Redo (CTRL+Y)");
+		actRedo.setAccelerator(SWT.CTRL | 'Y');
+		actRedo.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/arrow_redo.png"));
+
+		actConfigureNodes = new Action("Configure Node(s)") {
+			public void run() {
+				ec.actionConfigureNode(getWorkspace());				
+			}
+		};
+		actConfigureNodes.setToolTipText("Configure Node (ATL + F)");
+		actConfigureNodes.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/ruby_gear.png"));
+
+		actCreateASingleNode = new Action("A Single Node") {
+			public void run() {
+				ec.actionCreateASingleNode(getWorkspace());
+			}
+		};
+		actCreateASingleNode.setToolTipText("Create a single Node (SHIFT + N)");
+		actCreateASingleNode.setAccelerator(SWT.ALT | SWT.CTRL | SWT.SHIFT | 'N');
+		actCreateASingleNode.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/bullet_blue.png"));		
+
+		actCreateASetOfNodes = new Action("A Set of Nodes") {
+			public void run() {
+				ec.actionCreateASetOfNode(getWorkspace());
+			}
+		};
+		actCreateASetOfNodes.setToolTipText("Create a set of Nodes (SHIFT + M)");
+		actCreateASetOfNodes.setAccelerator(SWT.ALT | SWT.CTRL | SWT.SHIFT | 'M');
+		actCreateASetOfNodes.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/brick_add.png"));
+
+		actManageTrafficFlow = new Action("Traffic Flow Manager") {
+			public void run() {
+				ec.actionManageTrafficFlow(getWorkspace());
+			}
+		};
+		actManageTrafficFlow.setToolTipText("Traffic Flow Manager (ALT + T)");
+
+		actDeleteNodes = new Action("Delete Node(s)") {
+			public void run() {
+				ec.actionDeleteNodes(getWorkspace());
+			}
+		};
+		actDeleteNodes.setToolTipText("Delete Nodes(s) (DELETE)");		
+		actDeleteNodes.setAccelerator(SWT.DEL);
+		actDeleteNodes.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/delete.png"));
+		
+
+		actViewNetworkInfo = new Action("Network Properties") {
+			public void run() {
+				ec.actionViewNetworkInfo(getWorkspace());
+			}
+		};
+		actViewNetworkInfo.setToolTipText("View Network Infomation (ALT + I)");
+		actViewNetworkInfo.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/world.png"));
+
+
+		actViewNodeInfo = new Action("Node Properties") {
+			public void run() {
+				ec.actionViewNodeInfo(getWorkspace());
+			}
+		};
+		actViewNodeInfo.setToolTipText("View Node Infomation (CTRL + I)");
+		actViewNodeInfo.setAccelerator(SWT.CTRL | 'I');
+		actViewNodeInfo.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/contrast.png"));
+
+
+		actShowObstacles = new Action("Show Obstacle(s)") {
+			public void run() {
+				ec.actionShowObstacles(getWorkspace());
 			}
 		};		
+		actShowObstacles.setToolTipText("Show obstacles (ALT + O)");
+		actShowObstacles.setAccelerator(SWT.ALT | SWT.CTRL | 'O');
+		actShowObstacles.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/contrast.png"));
+
+		actShowNeighbors = new Action("Show Neighbors") {
+			public void run() {
+				ec.actionShowNeighbors(getWorkspace());
+			}
+		};	
+		actShowNeighbors.setToolTipText("Show neighbors of the selected node(s) (SHIFT + S)");
+		actShowNeighbors.setAccelerator(SWT.ALT | SWT.CTRL | 'N');
+		actShowNeighbors.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/shape_ungroup.png"));
+
+		actSearchNode = new Action("Search Node") {
+			public void run() {
+				ec.actionSearchNode(getWorkspace());
+			}
+		};
+		actSearchNode.setToolTipText("Search Node (CTRL + F)");
+		actSearchNode.setAccelerator(SWT.CTRL | 'F');
+		actSearchNode.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/find.png"));
+
+		actIdentifyBoundary = new Action("Boundary Identification") {
+			public void run() {
+				ec.actionIdentifyBoundary();
+			}
+		};	
+		actIdentifyBoundary.setToolTipText("Boundary Idenfication (CTRL + B)");
+
+		actGenerateNodeLocationData = new Action("Node Location Data") {
+			public void run() {
+				ec.actionGenerateNodeLocationData(getWorkspace());
+			}
+		};	
+		actGenerateNodeLocationData.setAccelerator(SWT.ALT | SWT.CTRL | 'D');
+		actGenerateNodeLocationData.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/script_code.png"));
+		actGenerateNodeLocationData.setToolTipText("Generate location node data (CTRL + G)");
+		
+
+		actCheckConnectivity = new Action("Check Connectivity") {
+			public void run() {
+				ec.actionCheckConnectivity(getWorkspace());
+			}
+		};
+		actCheckConnectivity.setToolTipText("Check the connectivity of network (SHIFT + C)");
+
+		actFindConnectivityParts = new Action("Connectivity Parts") {
+		};
+		actFindConnectivityParts.setToolTipText("Find out connectivity parts in the network");
+
+		actChangeNetworkSize = new Action("Change Network Size") {
+			public void run() {
+				ec.actionChangeNetworkSize(getWorkspace());
+			}
+		};
+		actChangeNetworkSize.setToolTipText("Change network size (SHIFT + L)");
+		actChangeNetworkSize.setAccelerator(SWT.ALT | SWT.CTRL | SWT.SHIFT | 'D');
+		actChangeNetworkSize.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/arrow_inout.png"));
+
+		actGenerateSimulationScripts = new Action("Simulation Scripts") {
+			public void run() {
+				ec.actionGenerateSimulationScript(getWorkspace());
+			}
+		};
+		actGenerateSimulationScripts.setToolTipText("Generate simulation script (ALT + G)");
+		actGenerateSimulationScripts.setAccelerator(SWT.ALT | SWT.CTRL | 'G');
+		actGenerateSimulationScripts.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/script.png"));
+
+		actViewDelaunayTriangulation = new Action("Delaunay Triangulation") {
+			public void run() {
+				ec.actionViewDelaunayTriangulation(getWorkspace());
+			}
+			
+		};	
+
+		actViewVoronoiDiagram = new Action("Voronoi Diagram") {
+			public void run() {
+				ec.actionViewVoronoiDiagram(getWorkspace());
+			}
+		};	
+
+		actViewShortestPathTree = new Action("Shortest Path Tree") {
+			
+		};	
+
+		actViewShortestPath = new Action("Shortest Path") {
+			public void run() {
+				Workspace workspace = getWorkspace();
+				if (workspace == null) return;
+
+				if (workspace.getSelectedObject().size() == 2) {				
+					GWirelessNode gStartNode = (GWirelessNode) workspace.getSelectedObject().get(0);
+					GWirelessNode gEndNode = (GWirelessNode) workspace.getSelectedObject().get(1);
+					ApplicationManager.findShortestPath(gStartNode, gEndNode);
+				}
+			}
+		};
+
+		actFindPathByGreedy = new Action("Path by Greedy") {
+			public void run() {
+				Workspace workspace = getWorkspace();
+				if (workspace == null) return;				
+
+				if (workspace.getSelectedObject().size() == 2) {
+					
+					GWirelessNode gStartNode = (GWirelessNode) workspace.getSelectedObject().get(0);
+					GWirelessNode gEndNode = (GWirelessNode) workspace.getSelectedObject().get(1);	
+					ApplicationManager.findGreedyPath(gStartNode, gEndNode);
+				}
+			}
+		};	
+
+		actViewRNGGraph = new Action("RNG") {
+			public void run() {
+				Workspace workspace = getWorkspace();
+				if (workspace != null)
+					ApplicationManager.showRNG(workspace);
+			}
+		};
+
+		actViewGGGraph = new Action("GG") {
+			public void run() {
+				Workspace workspace = getWorkspace();
+				if (workspace != null)
+					ApplicationManager.showGG(workspace);
+			}
+		};	
+
+		actVisualizeSettings = new Action("Preferences") {
+			public void run() {
+				ec.actionVisualizeSetting(Editor.this);
+			}
+		};
+		actVisualizeSettings.setImageDescriptor(null);
+		actVisualizeSettings.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/cog.png"));
+		actVisualizeSettings.setToolTipText("Preferences (SHIFT + P)");
+
+		actDefaultConfiguration = new Action("Node Default Configuration") {
+			public void run() {
+				ec.actionDefaultConfiguration();
+			}
+		};	
+		actDefaultConfiguration.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/wrench.png"));
+		actDefaultConfiguration.setToolTipText("Configure of node at default mode (SHIFT + K)");
+
+		actDocumentation = new Action("Documentation") {
+			public void run() {
+				ec.actionDocumentation();
+			}
+		};	
+		actDocumentation.setToolTipText("Documentation (SHIFT + D)");
+		actDocumentation.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/book.png"));
+
+		actDemos = new Action("Demos") {
+			public void run() {
+				ec.actionDemos();
+			}
+		};	
+		actDemos.setToolTipText("Demos (ALT + D)");
+		actDemos.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/dvd.png"));
+
+		actAbout = new Action("About") {
+			public void run() {
+				ec.actionAbout();					
+			}
+		};		
+		actAbout.setToolTipText("About (ALT + A)");
+		actAbout.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/information.png"));
+
+		actPrint = new Action("Print") {
+			public void run() {
+				ec.actionPrint(getWorkspace());
+			}
+		};
+		actPrint.setToolTipText("Print (CTRL + P)");
+		actPrint.setAccelerator(SWT.CTRL | 'P');
+		actPrint.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/printer.png"));
+
+
+		actSaveAll = new Action("Save All") {
+			public void run() {
+				try {
+					Project project = ProjectManager.getProject();
+						ProjectManager.saveProject(project);
+				} catch (IOException e) {
+					MessageDialog.openError(getShell(), "Saving Error", "Something wrong happened. Cannot save all projects");
+				}
+			}
+		};
+		actSaveAll.setToolTipText("Save all opened project");
+		actSaveAll.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/disk_multiple.png"));
+
+
+		actZoomIn = new Action("Zoom In") {
+			public void run() {
+				ec.actionZoomIn(getWorkspace());
+			}
+		};
+		actZoomIn.setToolTipText("Zoom In (CTRL+)");
+		actZoomIn.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/zoom_in.png"));
+		actZoomIn.setAccelerator(SWT.CTRL | '=');
+
+
+		actZoomOut = new Action("Zoom Out") {
+			public void run() {
+				ec.actionZoomOut(getWorkspace());
+			}
+		};
+		actZoomOut.setToolTipText("Zoom Out (CTRL-)");
+		actZoomOut.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/zoom_out.png"));
+		actZoomOut.setAccelerator(SWT.CTRL | '-');
+
+
+		actCreateARandomNode = new Action("A Random Node") {
+			public void run() {
+				ec.actionCreateARandomNode(getWorkspace());
+			}
+		};
+		actCreateARandomNode.setToolTipText("Create a random node (CTRL + R)");
+		actCreateARandomNode.setAccelerator(SWT.CTRL | 'R');
+		actCreateARandomNode.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/bullet_feed.png"));
+
+
+		actDeleteAllNodes = new Action("Delete All Nodes") {
+			public void run() {
+				ec.actionDeleteAllNodes(getWorkspace());
+			}
+		};
+		actDeleteAllNodes.setToolTipText("Delete all nodes (SHIFT+DELETE)");
+		actDeleteAllNodes.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/basket_delete.png"));
+		
+		actShowRange = new Action("Show Range") {
+			public void run() {
+				ec.actionShowRange(getWorkspace());
+			}
+		};
+		actShowRange.setToolTipText("Show radio range of the selected node(s) (ALT + R)");
+		actShowRange.setAccelerator(SWT.ALT | SWT.CTRL | 'R');
+		actShowRange.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/eye.png"));
+
+		actShowConnection = new Action("Show Connection") {
+			public void run() {
+				ec.actionShowConnection(actShowConnection,getWorkspace());
+			}
+		};
+		actShowConnection.setToolTipText("Show network connection (ALT + C)");
+		actShowConnection.setChecked(false);
+		actShowConnection.setAccelerator(SWT.ALT | SWT.CTRL | 'C');
+
+		actMouseCursor = new Action("Mouse Cursor") {
+			public void run() {
+				Workspace workspace = getWorkspace();
+				if (workspace != null) {
+					
+					workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);
+					workspace.enableNetwork();
+				}				
+			}
+		};
+		actMouseCursor.setToolTipText("Mouse Cursor");
+		actMouseCursor.setChecked(true);
+		actMouseCursor.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/arrow_cursor.png"));
+
+		actMouseCreateNode = new Action("Create New Node by Mouse Click") {
+			public void run() {
+				ec.actionMouseCreateNode(getWorkspace());
+			}
+		};
+		actMouseCreateNode.setToolTipText("Create new nodes by mouse click (CTRL + M)");
+		actMouseCreateNode.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/Point-Black.png"));
+		actMouseCreateNode.setChecked(false);
+
+		actShowRulers = new Action("Show Rulers") {
+			public void run() {
+				ec.actionShowRulers(actShowRulers,getWorkspace());
+			}
+		};
+		actShowRulers.setToolTipText("Show Rulers (SHIFT + L)");
+		actShowRulers.setChecked(true);
+
+		actMouseCreateArea = new Action("Create New Area") {
+			public void run() {
+				ec.actionMouseCreateArea(getWorkspace());	
+			}
+		};
+		actMouseCreateArea.setToolTipText("Create new area (CTRL + A)");
+		actMouseCreateArea.setChecked(false);
+		actMouseCreateArea.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/PolygonSetIcon.png"));
+
+		actManagePaths = new Action("Path Manager") {
+			public void run() {
+				ec.actionManagePath(getWorkspace());
+			}
+		};
+		actManagePaths.setToolTipText("Path Manager (ALT + M)");
+
+		actManageLabels = new Action("Label Manager") {
+			public void run() {
+				ec.actionManageLabels(getWorkspace());
+			}
+		};
+		actManageLabels.setToolTipText("Label Manager (ALT + L)");
+		
+
+		{
+			actImport = new Action("Import Location Data") {
+				public void run() {
+					ec.actionImport(getWorkspace());
+				}
+			};
+			actImport.setToolTipText("Import Location Data (ALT + I)");
+			
+			
+		}
+		
 	}
 	
 	private void createToolBar()
@@ -272,55 +722,53 @@ public class Editor extends MainContent implements Observer {
 		toolBarManager.add(actAbout);
 		
 		
-//		toolBarManager.add(actNew);
-//		toolBarManager.add(actOpen);
-//		toolBarManager.add(actSave);
-//		
-////		toolBarManager.add(actSaveAll);
-//		Separator separator = new Separator();
-//		toolBarManager.add(separator);
-//		toolBarManager.add(actMouseHand);
-//		toolBarManager.add(actMouseCursor);
-//		Separator separator2 = new Separator();
-//		toolBarManager.add(separator2);
-//		
-//		toolBarManager.add(actMouseCreateNode);
-//		toolBarManager.add(actMouseCreateArea);
-//		
-//		toolBarManager.add(actCreateARandomNode);
-//		toolBarManager.add(actCreateASingleNode);
-//		toolBarManager.add(actCreateASetOfNodes);
-//		toolBarManager.add(actDefaultConfiguration);
-//		toolBarManager.add(actConfigureNodes);
-//		toolBarManager.add(actDeleteNodes);
-//		toolBarManager.add(actDeleteAllNodes);
-//		toolBarManager.add(actShowNeighbors);
-//		toolBarManager.add(actShowRange);
-//		toolBarManager.add(actViewNodeInfo);
-//		
-//		
-//		Separator separator3 = new Separator();
-//		toolBarManager.add(separator3);
-//		toolBarManager.add(actChangeNetworkSize);
-//		toolBarManager.add(actVisualizeSettings);
-//		toolBarManager.add(actViewNetworkInfo);
-//		
-//		Separator separator1 = new Separator();
-//		toolBarManager.add(separator1);
-//		toolBarManager.add(actUndo);
-//		toolBarManager.add(actRedo);
-//		toolBarManager.add(actZoomIn);
-//		toolBarManager.add(actZoomOut);
-//		toolBarManager.add(actSearchNode);
-//		Separator separator4 = new Separator();
-//		toolBarManager.add(separator4);
-//		toolBarManager.add(actGenerateNodeLocationData);
-//		toolBarManager.add(actGenerateSimulationScripts);
-//		
-//		Separator separator5 = new Separator();
-//		toolBarManager.add(separator5);
-//		toolBarManager.add(actRunNS2);
-//		toolBarManager.add(actConfigNS2);
+		toolBarManager.add(actNew);
+		toolBarManager.add(actOpen);
+		toolBarManager.add(actSave);
+		
+//		toolBarManager.add(actSaveAll);
+		Separator separator = new Separator();
+		toolBarManager.add(separator);
+		toolBarManager.add(actMouseHand);
+		toolBarManager.add(actMouseCursor);
+		Separator separator2 = new Separator();
+		toolBarManager.add(separator2);
+		
+		toolBarManager.add(actMouseCreateNode);
+		toolBarManager.add(actMouseCreateArea);
+		
+		toolBarManager.add(actCreateARandomNode);
+		toolBarManager.add(actCreateASingleNode);
+		toolBarManager.add(actCreateASetOfNodes);
+		toolBarManager.add(actDefaultConfiguration);
+		toolBarManager.add(actConfigureNodes);
+		toolBarManager.add(actDeleteNodes);
+		toolBarManager.add(actDeleteAllNodes);
+		toolBarManager.add(actShowNeighbors);
+		toolBarManager.add(actShowRange);
+		toolBarManager.add(actViewNodeInfo);
+		
+		
+		Separator separator3 = new Separator();
+		toolBarManager.add(separator3);
+		toolBarManager.add(actChangeNetworkSize);
+		toolBarManager.add(actVisualizeSettings);
+		toolBarManager.add(actViewNetworkInfo);
+		
+		Separator separator1 = new Separator();
+		toolBarManager.add(separator1);
+		toolBarManager.add(actUndo);
+		toolBarManager.add(actRedo);
+		toolBarManager.add(actZoomIn);
+		toolBarManager.add(actZoomOut);
+		toolBarManager.add(actSearchNode);
+		Separator separator4 = new Separator();
+		toolBarManager.add(separator4);
+		toolBarManager.add(actGenerateNodeLocationData);
+		toolBarManager.add(actGenerateSimulationScripts);
+		
+		Separator separator5 = new Separator();
+		toolBarManager.add(separator5);
 //		
 //		
 //		
@@ -328,11 +776,219 @@ public class Editor extends MainContent implements Observer {
 		toolBarManager.update(true);
 	}
 	
-	private void showProject(Project project)
+	public void showProject(Project project)
 	{
-		// TODO
+		final Workspace workspaceInner = new Workspace(scrolledComposite, SWT.NONE, project);
+		workspaceInner.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+		workspaceInner.setSize(scrolledComposite.getClientArea().width, scrolledComposite.getClientArea().height);
+		scrolledComposite.setContent(workspaceInner);
+
+		workspaceInner.setFocus();	
+		scrolledComposite.initializeRulers();
+		
+		// add MainWindow as an observer to track changes of workspace property
+		WorkspacePropertyManager propManager = workspaceInner.getPropertyManager();
+		propManager.addObserver(this);
+		
+		workspaceInner.getCareTaker().addObserver(this);
+		
+		statesHandler.activeProject();
 	}
 	
+	public Workspace getWorkspace() {
+//		return workspace;
+		return (Workspace)((ScrolledComposite)scrolledComposite).getContent();
+	}
+	
+	public Action getActMouseHand() {
+		return actMouseHand;
+	}
+
+	public Action getActClose() {
+		return actClose;
+	}
+
+	public Action getActConfigureNodes() {
+		return actConfigureNodes;
+	}
+
+	public Action getActCreateASingleNode() {
+		return actCreateASingleNode;
+	}
+
+	public Action getActCreateASetOfNodes() {
+		return actCreateASetOfNodes;
+	}
+
+	public Action getActManageTrafficFlow() {
+		return actManageTrafficFlow;
+	}
+
+	public Action getActDeleteNodes() {
+		return actDeleteNodes;
+	}
+
+	public Action getActIdentifyBoundary() {
+		return actIdentifyBoundary;
+	}
+
+	public Action getActGenerateNodeLocationData() {
+		return actGenerateNodeLocationData;
+	}
+
+	public Action getActCheckConnectivity() {
+		return actCheckConnectivity;
+	}
+
+	public Action getActFindConnectivityParts() {
+		return actFindConnectivityParts;
+	}
+
+	public Action getActChangeNetworkSize() {
+		return actChangeNetworkSize;
+	}
+
+	public Action getActGenerateSimulationScripts() {
+		return actGenerateSimulationScripts;
+	}
+
+	public Action getActFindPathByGreedy() {
+		return actFindPathByGreedy;
+	}
+
+	public Action getActCreateARandomNode() {
+		return actCreateARandomNode;
+	}
+
+	public Action getActDeleteAllNodes() {
+		return actDeleteAllNodes;
+	}
+
+	public Action getActMouseCursor() {
+		return actMouseCursor;
+	}
+
+	public Action getActMouseCreateNode() {
+		return actMouseCreateNode;
+	}
+
+	public Action getActManagePaths() {
+		return actManagePaths;
+	}
+
+	public Action getActManageLabels() {
+		return actManageLabels;
+	}
+
+	public Action getActImport() {
+		return actImport;
+	}
+
+	public Action getActSave() {
+		return actSave;
+	}
+
+	public Action getActSaveAs() {
+		return actSaveAs;
+	}
+
+	public Action getActToImage() {
+		return actToImage;
+	}
+
+//	public Action getActToPDF() {
+//		return actToPDF;
+//	}
+
+	public Action getActUndo() {
+		return actUndo;
+	}
+
+	public Action getActRedo() {
+		return actRedo;
+	}
+
+	public Action getActViewNetworkInfo() {
+		return actViewNetworkInfo;
+	}
+
+	public Action getActViewNodeInfo() {
+		return actViewNodeInfo;
+	}
+
+	public Action getActShowObstacles() {
+		return actShowObstacles;
+	}
+
+	public Action getActShowNeighbors() {
+		return actShowNeighbors;
+	}
+
+	public Action getActSearchNode() {
+		return actSearchNode;
+	}
+
+	public Action getActViewDelaunayTriangulation() {
+		return actViewDelaunayTriangulation;
+	}
+
+	public Action getActViewVoronoiDiagram() {
+		return actViewVoronoiDiagram;
+	}
+
+	public Action getActViewShortestPathTree() {
+		return actViewShortestPathTree;
+	}
+
+	public Action getActViewShortestPath() {
+		return actViewShortestPath;
+	}
+
+	public Action getActViewRNGGraph() {
+		return actViewRNGGraph;
+	}
+
+	public Action getActViewGGGraph() {
+		return actViewGGGraph;
+	}
+
+	public Action getActPrint() {
+		return actPrint;
+	}
+
+	public Action getActSaveAll() {
+		return actSaveAll;
+	}
+
+	public Action getActZoomIn() {
+		return actZoomIn;
+	}
+
+	public Action getActZoomOut() {
+		return actZoomOut;
+	}
+
+	public Action getActShowRange() {
+		return actShowRange;
+	}
+
+	public Action getActShowConnection() {
+		return actShowConnection;
+	}
+
+	public Action getActShowRulers() {
+		return actShowRulers;
+	}
+
+	public Action getActMouseCreateArea() {
+		return actMouseCreateArea;
+	}
+
+	private StatesHandler statesHandler;
+	private RulerScrolledComposite scrolledComposite;
+	private SashForm sashForm;
+	private Composite contentComposite;
+	private Composite propertiesComposite;
 	private ToolBarManager toolBarManager;
 	
 	private MenuManager menuManager_File;
@@ -401,6 +1057,48 @@ public class Editor extends MainContent implements Observer {
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		// TODO Auto-generated method stub
+		Workspace workspace = getWorkspace();
+		if (arg0 instanceof WorkspacePropertyManager) {
+			String desc = (String) arg1;
+			
+			switch (desc) {
+			case "SetMouseModeCursor":
+				statesHandler.activeMouseCursor();
+				break;
+			case "SetMouseModeHand":
+				statesHandler.activeMouseHand();
+				break;
+			case "SetMouseModeNodeGen":
+				statesHandler.activeMouseCreateNode();
+				break;
+			case "SetMouseModeCreateArea":
+				statesHandler.activeMouseCreateArea();
+				break;
+			case "ShowVisualization":
+				workspace.setObstaclesVisible(false);
+				break;
+			case "TurnVisualizeOff":
+				workspace.getGraphicNetwork().redraw();
+				break;
+			}
+		}
 		
+		if (arg0 instanceof CareTaker) {
+			// get current state index
+			
+			int currState = (int) arg1;
+			
+			// check whether it can be undo or redo
+			if (currState == 0) 
+				actUndo.setEnabled(false); 
+			else 
+				actUndo.setEnabled(true);
+			
+			if (currState == workspace.getCareTaker().getSize() - 1) 
+				actRedo.setEnabled(false); 
+			else 
+				actRedo.setEnabled(true);
+		}
+			
 	}
 }

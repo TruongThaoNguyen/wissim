@@ -45,7 +45,7 @@ import controllers.graphicscomponents.GraphicPath;
 import controllers.helpers.Helper;
 import controllers.helpers.Validator;
 import views.CreateProjectDialog;
-import views.MainWindow;
+import views.Editor;
 import views.SearchNodeDialog;
 import views.Workspace;
 import views.dialogs.CreateNodeDialog;
@@ -64,9 +64,9 @@ import views.helpers.PrintHelper;
 public class ApplicationManager {
 	private static int newProjectCount = 1;
 	
-	public static Project newProject(Shell shell) {
+	public static Project newProject(Editor editor) {
 		String defaultName = "Untitled" + newProjectCount;
-		CreateProjectResult result = (CreateProjectResult)new CreateProjectDialog(shell, SWT.SHEET, defaultName).open();				
+		CreateProjectResult result = (CreateProjectResult)new CreateProjectDialog(editor.getParent().getShell(), SWT.SHEET, defaultName).open();				
 		if (result == null) return null;
 
 		// set up path to save file
@@ -76,7 +76,7 @@ public class ApplicationManager {
 
 		boolean confirmed = true;
 		if (f.exists() == true)
-			confirmed = MessageDialog.openQuestion(shell, "File Existed", "File existed in the selected directory. Do you want to override the existing file by the new one?");
+			confirmed = MessageDialog.openQuestion(editor.getShell(), "File Existed", "File existed in the selected directory. Do you want to override the existing file by the new one?");
 
 		if (confirmed == true) {
 			Project project;
@@ -94,7 +94,7 @@ public class ApplicationManager {
 		return null;
 	}
 	
-	public static Project openProject(MainWindow mainWindow) {
+	public static Project openProject(Editor mainWindow) {
 		// open Open Dialog
 		FileDialog openDialog = new FileDialog(mainWindow.getShell(), SWT.OPEN);
 		openDialog.setText("Open");
@@ -115,8 +115,8 @@ public class ApplicationManager {
 		return null;
 	}
 
-	public static void saveWorkspace(MainWindow mainWindow) {	
-		Workspace workspace = mainWindow.getActiveWorkspace();
+	public static void saveWorkspace(Editor mainWindow) {	
+		Workspace workspace = mainWindow.getWorkspace();
 		
 		if (workspace == null) return;
 		try {					
@@ -337,6 +337,37 @@ public class ApplicationManager {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	public static GWirelessNode copyNode(Workspace workspace) {
+		GWirelessNode gn = null;
+		for (GSelectableObject o : workspace.getSelectedObject()) {
+			if (o instanceof GWirelessNode) {
+				gn = (GWirelessNode)o;
+			}
+		}
+		return gn;
+	}
+	
+	public static void pasteNode(Workspace workspace, int x, int y, int range) {
+		WirelessNode wnode = ProjectManager.createSingleNode(workspace.getProject(), x, y, range);
+		
+		if (wnode != null) {
+			workspace.getCareTaker().save(workspace.getProject(), "Create a single node");
+			workspace.updateLayout();
+			
+			// handle select- deselect
+			workspace.deselectGraphicObjects();				
+			workspace.getGraphicNodeByNode(wnode).setSelect(true);
+			workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);				
+			workspace.getGraphicNetwork().redraw();
+		} else {
+			MessageDialog.openInformation(workspace.getShell(), "Cannot create node", "Cannot create node at specified location.\r\n" +
+					"Some reasons may happen:\r\n" +
+					"- Location is out of network boundary\r\n" +
+					"- There is existing node at that location, or \r\n" +
+					"- Location is inside some obstacles");
 		}
 	}
 	

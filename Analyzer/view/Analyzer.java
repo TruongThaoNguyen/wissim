@@ -13,7 +13,7 @@ public class Analyzer extends MainContent {
 	 */
 	public Analyzer(Composite parent, MenuManager menuManager, StatusLineManager statusLineManager) {
 		super(parent, menuManager, statusLineManager);
-
+		
 	}
 
 	@Override

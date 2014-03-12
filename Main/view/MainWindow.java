@@ -5,6 +5,7 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -70,6 +71,7 @@ public class MainWindow extends ApplicationWindow {
 			public void handleEvent(Event e) 
 			{
 				((StackLayout)mainComposite.getLayout()).topControl = editor;
+//				mainComposite.setLayout(new FillLayout());
 				mainComposite.layout();						
 				editor.UpdateMenu();					
 			}
@@ -147,6 +149,6 @@ public class MainWindow extends ApplicationWindow {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(450, 300);
+		return new Point(720, 490);
 	}
 }

@@ -67,6 +67,9 @@ public class ProjectManager {
 	
 	// list of projects available in the program
 	public static Project project = null;
+	public static Project getProject() {
+		return project;
+	}
 
 	/**
 	 *  Create initial project with specified path and network

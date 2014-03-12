@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Button;
 
-import views.MainWindow;
+import views.Editor;
 import views.Workspace;
 import views.dialogs.preferences.composites.PreferenceGeneralComposite;
 import views.dialogs.preferences.composites.PreferenceNetworkComposite;
@@ -34,14 +34,14 @@ public class PreferencesDialog extends Dialog {
 	List list;
 	Composite composite = null;
 	
-	private MainWindow mainWindow;
+	private Editor mainWindow;
 
 	/**
 	 * Create the dialog.
 	 * @param parent
 	 * @param style
 	 */
-	public PreferencesDialog(Shell parent, int style, MainWindow mainWindow) {
+	public PreferencesDialog(Shell parent, int style, Editor mainWindow) {
 		super(parent, style);
 		setText("SWT Dialog");
 		
@@ -83,10 +83,9 @@ public class PreferencesDialog extends Dialog {
 				try {
 					ApplicationSettings.saveGraphicConfig();
 					
-					for (Workspace w : mainWindow.getWorkspaceList()) {
+					Workspace w = mainWindow.getWorkspace();
 						for (Control c : w.getChildren())
 							c.redraw();
-					}
 				} catch (IOException e1) {
 					MessageDialog.openError(getParent(), "Error", "Cannot save preference changes.\r\n" +
 							"Please try again later");
