@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
@@ -23,9 +24,9 @@ import models.networkcomponents.protocols.TransportProtocol;
 
 /**
  * Parser.java
- * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and Technology
- * @Author Duc-Trong Nguyen
- * @Version 2.0
+ * @copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and Technology
+ * @author Duc-Trong Nguyen
+ * @version 2.0
  */
 public class Converter {
 	private Project project = null;	
@@ -82,6 +83,7 @@ public class Converter {
 		
 		String value;
 		value = global.insObj.get(global.simObject.insVar.get("-channel")).value;	project.setSelectedChannel(value); if (global.insObj.containsKey(value)) project.getChannels().put(value, global.insObj.get(value).insVar);		
+		
 		value = global.simObject.insVar.get("-antType");		project.setSelectedAntenna(value);			if (global.insObj.containsKey(value)) project.getAntennas().put(value, global.insObj.get(value).insVar);										
 		value = global.simObject.insVar.get("-ifqType");		project.setSelectedInterfaceQueue(value);	if (global.insObj.containsKey(value)) project.getInterfaceQueues().put(value, global.insObj.get(value).insVar);		
 		value = global.simObject.insVar.get("-llType");			project.setSelectedLinkLayer(value);		if (global.insObj.containsKey(value)) project.getLinkLayers().put(value, global.insObj.get(value).insVar);		
@@ -96,7 +98,6 @@ public class Converter {
 		value = global.simObject.insVar.get("-sleepPower");		project.setSleepEnergy(Double.parseDouble(value));
 								
 		// size
-		
 		value = global.simObject.insVar.get("-propType");
 		int xSize = 0;
 		int ySize = 0;
@@ -114,26 +115,70 @@ public class Converter {
 		WirelessNetwork network = new WirelessNetwork(project.getNetwork().getName(), xSize, ySize);
 		project.setNetwork(network);		
 		
-		// node list
+		// node list		
+		HashMap<TclObject, Node> NodeMap = new HashMap<TclObject, Node>(); 
 		
 		Double v = global.simObject.At.get("stop");
 		if (v != null)	network.setTime((int)(double)v);
 		else 			throw new ParseException("Missing End Simulation");
 		
 		network.getNodeList().clear();
-		for (TclObject node : global.simObject.Node) 
+		
+		for (TclObject obj : global.simObject.Node) 
 		{
 			try 
 			{
-				new WirelessNode(
-								network, 
-								Integer.parseInt(node.insVar.get("X_")), 
-								Integer.parseInt(node.insVar.get("Y_")), 
-								project.getNodeRange());
+				WirelessNode newNode = new WirelessNode(	network, 
+									Integer.parseInt(obj.insVar.get("X_")), 
+									Integer.parseInt(obj.insVar.get("Y_")),	
+									project.getNodeRange());
+				
+				NodeMap.put(obj, newNode);
 			} 
 			catch (Exception e)
 			{
+				// TODO
 				throw new ParseException(ParseException.InvalidArgument);
+			}
+		}	
+		
+		// transport 
+		for (TclObject obj : global.simObject.Node) 
+		{
+			Node newNode = NodeMap.get(obj); 
+			
+			for (TclObject tclTP : obj.attachList) 
+			{
+				TransportProtocol tp = new TransportProtocol(tclTP.value.equals("Agent/TCP") ? 0 : 1, tclTP.value, newNode);
+				tp.setParameters(tclTP.insVar);
+				
+				for (TclObject tclAP : tclTP.attachList) 
+				{
+					int type;
+					switch (tclAP.value)
+					{
+						case "Agent/CBR" 		: type = 0; break;
+						case "Agent/VBR" 		: type = 1; break;
+						case "Agent/FTP" 		: type = 2; break;
+						case "Agent/PARETO" 	: type = 3; break;
+						case "Agent/, TELNET" 	: type = 4; break;							
+						default: type = 0;
+					}
+					
+					ApplicationProtocol ap = new ApplicationProtocol(type, tclAP.value, tp, NodeMap.get(tclTP.connectAgent.attachAgent));
+					ap.setParameters(tclAP.insVar);
+					
+					for (String event : tclAP.At.keySet()) 
+					{
+						switch (event) 
+						{
+							case "start" :	type = 1;	break;
+							case "stop" :	type = 0;	break;
+							default : type = 0;
+						}						
+						new AppEvent(type, (int)(double)tclAP.At.get(event), ap);
+					}
+				}
 			}
 		}		
 		
@@ -210,8 +255,8 @@ public class Converter {
 		breakLine(sb);
 		putLine(sb, "# run the simulator");
 		putLine(sb, "$ns_ trace-all $tracefd");
-		putLine(sb, "$ns_ nam-trace-all-wireless $namtrace $opt(x) $opt(y)");
-		putLine(sb, "$ns_ wissim-trace-all $wissimtrace");
+		putLine(sb, "$ns_ namtrace-all-wireless $namtrace $opt(x) $opt(y)");
+		//putLine(sb, "$ns_ wissim-trace-all $wissimtrace");
 		breakLine(sb);
 		putLine(sb, "$topo load_flatgrid $opt(x) $opt(y) ");
 		putLine(sb, "$prop topography $topo");
@@ -249,10 +294,11 @@ public class Converter {
 		breakLine(sb);
 		
 		putLine(sb, "# node location data");
-		for (Node n : project.getNetwork().getNodeList()) {
-			putLine(sb, "$mnode_(" + n.getId() + ") set X_ " + ((WirelessNode)n).getX());
-			putLine(sb, "$mnode_(" + n.getId() + ") set Y_ " + ((WirelessNode)n).getY());
-			putLine(sb, "$mnode_(" + n.getId() + ") set Z_ 0");
+		for (Node n : project.getNetwork().getNodeList()) 
+		{
+			putLine(sb, "$mnode_(" + n.getId() + ") set X_ " + ((WirelessNode)n).getX() + "\t; " +
+						"$mnode_(" + n.getId() + ") set Y_ " + ((WirelessNode)n).getY() + "\t; " + 
+						"$mnode_(" + n.getId() + ") set Z_ 0");
 		}
 		breakLine(sb);
 		
@@ -356,7 +402,7 @@ public class Converter {
 		putLine(sb, "	$ns_ flush-trace");
 		putLine(sb, "	close $tracefd");
 		putLine(sb, "	close $namtrace");
-		putLine(sb, "	close $wissimtrace");
+		//putLine(sb, "	close $wissimtrace");
 		putLine(sb, "	exit 0");
 		putLine(sb, "}");
 		breakLine(sb);

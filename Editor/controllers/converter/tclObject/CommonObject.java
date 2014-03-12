@@ -1,5 +1,7 @@
 package controllers.converter.tclObject;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import models.converter.ParseException;
@@ -12,8 +14,8 @@ import controllers.converter.Parser;
  * @Version 2.0
  */
 
-public class CommonObject extends TclObject {
-
+public class CommonObject extends TclObject 
+{	
 	public CommonObject(String value) {
 		super(value);
 	}
@@ -31,7 +33,8 @@ public class CommonObject extends TclObject {
 		
 		String arg = Parser.parseIdentify(command.remove(0));
 		
-		if (insProc.containsKey(arg)) return insProc.get(arg).run(command);		
+		if (insProc.containsKey(arg)) 
+			return insProc.get(arg).run(command);		
 
 		// Undefined insProc 		
 		String newInsVar = "";		
@@ -82,5 +85,8 @@ public class CommonObject extends TclObject {
 		
 		return "";	
 	}
+
+	
+	
 	
 }

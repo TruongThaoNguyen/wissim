@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import controllers.converter.Parser;
+import controllers.converter.Scanner;
 import models.converter.ParseException;
 
 /**
@@ -17,12 +18,10 @@ import models.converter.ParseException;
 public class SimulatorObject extends CommonObject
 {
 	public List<TclObject> Node;
-	public HashMap<String, Double> At;
 	
 	public SimulatorObject(String value) {
 		super(value);
 		Node = new ArrayList<TclObject>();
-		At = new HashMap<String, Double>();
 	}
 
 	@Override
@@ -91,14 +90,31 @@ public class SimulatorObject extends CommonObject
 
 	private String insporcAt(List<String> command) throws Exception {
 		if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);
-		String key = Parser.parseIdentify(command.get(1));		
-		Double val;
 		
-		String t = Parser.parseIdentify(command.get(0));
-		val = Double.parseDouble(t);
+		String arg = Parser.parseIdentify(command.get(1));		
+		Double time = Double.parseDouble(Parser.parseIdentify(command.get(0)));
+				
+		Scanner scanner = new Scanner(arg);
+		List<String> sc = scanner.scanCommand();
 		
-		At.put(key, val);
-		return key;
+		if (sc.size() > 1)
+		{
+			TclObject obj = Parser.global.insObj.get(sc.remove(0));
+			if (obj != null)
+			{
+				arg = "";
+				for (String s : sc) 
+				{
+					arg += s;
+				}
+				
+				obj.At.put(arg, time);
+				return arg;
+			}
+		}									
+		
+		At.put(arg, time);
+		return arg;
 	}
 
 	private String insprocNode(List<String> command) throws Exception {

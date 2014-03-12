@@ -16,8 +16,9 @@ import models.converter.ParseException;
  */
 public abstract class TclObject {
 	public String value;
-	public HashMap<String, String> insVar;
+	public HashMap<String, String> 	insVar;
 	public HashMap<String, InsProc> insProc;
+	public HashMap<String, Double> 	At;
 	
 	public List<TclObject>	attachList;		// List of attaching agent
 	public TclObject		attachAgent;	// Agent attached
@@ -29,9 +30,9 @@ public abstract class TclObject {
 	public TclObject(String value)
 	{
 		this.value = value;
-		insVar 	= new LinkedHashMap<String, String>();
-		insProc = new LinkedHashMap<String, InsProc>();
-		
+		insVar 	= new HashMap<String, String>();
+		insProc = new HashMap<String, InsProc>();
+		At 		= new HashMap<String, Double>();
 		attachList 	 = new ArrayList<TclObject>();
 		attachAgent  = null;
 		connectAgent = null;
