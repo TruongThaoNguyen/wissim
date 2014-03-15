@@ -1,4 +1,4 @@
-package view;
+package views;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
