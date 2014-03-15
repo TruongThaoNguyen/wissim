@@ -22,12 +22,19 @@ public class TopographyObject extends CommonObject {
 	protected void addInsProc() {
 		super.addInsProc();
 		
-		insProc.put("load_flatgrid", new InsProc() {			
+		new InsProc(this, "load_flatgrid") {			
 			@Override
 			public String run(List<String> command) throws Exception {
+				record(this, command);
 				return insprocLoadFlatgrid(command);
 			}
-		});
+
+			@Override
+			public String print(List<String> command) throws Exception {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		};
 	}
 
 	protected String insprocLoadFlatgrid(List<String> command) throws Exception {

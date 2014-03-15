@@ -7,7 +7,6 @@ import java.util.List;
 
 import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.features.*;
-import models.networkcomponents.*;
 
 /**
  * Represents a project. A Project will contain the main network and everything related to the project itself (obstacles, labels,...)
@@ -71,6 +70,19 @@ public class Project {
 	public Project(String path, WirelessNetwork network) {
 		this.path = path;
 		this.network = network;
+		
+		labelList = new ArrayList<Label>();
+		obstacleList = new ArrayList<Area>();
+		obstacleIndex = 0;
+		
+		// set current time as created date
+		createdDate = new Date();
+		lastSavedDate = new Date();
+	}
+	
+	public Project() {
+		this.path = "";
+		this.network = null;
 		
 		labelList = new ArrayList<Label>();
 		obstacleList = new ArrayList<Area>();

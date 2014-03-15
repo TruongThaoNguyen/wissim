@@ -1,7 +1,5 @@
 package controllers.converter.tclObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import models.converter.ParseException;
@@ -30,42 +28,46 @@ public class CommonObject extends TclObject
 	public String parse(List<String> command) throws Exception
 	{
 		if (command.isEmpty()) throw new ParseException(ParseException.MissArgument);
-		
-		String arg = Parser.parseIdentify(command.remove(0));
-		
-		if (insProc.containsKey(arg)) 
-			return insProc.get(arg).run(command);		
-
-		// Undefined insProc 		
-		String newInsVar = "";		
-		for (String word : command) 
+				
+		InsProc proc = insProc.get(Parser.parseIdentify(command.get(0)));
+		if (proc != null)
 		{
-			newInsVar += Parser.parseIdentify(word) + " ";
-		}				
-		if (newInsVar.length() > 1) newInsVar = newInsVar.substring(0, newInsVar.length() - 1);
-		
-		System.out.print("\nUndefine InsProc: " + arg + " " + newInsVar + "\n");
-		
-		return insVar.put(arg, newInsVar);
+			command.remove(0);
+			return proc.run(command);
+		}
+		else 		
+			return insProc.get("undefined").run(command);
 	}
 
 	@Override
 	protected void addInsProc() {
 		super.addInsProc();
 		
-		insProc.put("setdest", new InsProc() {			
+		new InsProc(this, "setdest") {			
 			@Override
 			public String run(List<String> command) throws Exception {
+				record(this, command);
 				return insprocSetDest(command);
 			}
-		});
+
+			@Override
+			public String print(List<String> command) throws Exception {
+				return parent.value + " " + insprocName + " " + parent.insVar.get("X_") + " " + parent.insVar.get("Y_") + " " + parent.insVar.get("Z_");   
+			}
+		};
 				
-		insProc.put("attach-agent", new InsProc(){
+		new InsProc(this, "attach-agent"){
 			@Override
 			public String run(List<String> command) throws Exception {
+				record(this, command);
 				return insprocAttachAgent(command);
+			}
+
+			@Override
+			public String print(List<String> command) throws Exception {
+				return parent.value + " " + insprocName + " " + parent.attachAgent.value;
 			}			
-		});
+		};
 	}
 	
 	protected String insprocSetDest(List<String> command) throws Exception {

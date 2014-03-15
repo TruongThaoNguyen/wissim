@@ -27,7 +27,7 @@ public class Parser
 	 */
 	public static GlobalObject parse(String text) throws ParseException	
 	{	
-		global = new GlobalObject("global");
+		global = new GlobalObject("");
 		global.parse(text);
 		return global;
 	}	
@@ -79,7 +79,6 @@ public class Parser
 		return result;
 	}
 	
-	
 	/**
 	 * Parse Quote string.
 	 * Replace Referent token with this value 
@@ -110,8 +109,12 @@ public class Parser
 		return result.substring(0, result.length() - 1);
 	}
 
-	public static String newIndentify() {
+	public static String newIndentify() 
+	{
 		while (global.insObj.containsKey("_o" + newObjectID)) newObjectID++;
 		return "_o" + newObjectID;
 	}
+
+
+
 }

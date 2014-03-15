@@ -194,7 +194,7 @@ public class ApplicationManager {
         
         //draw edge of image with black
         g2d.setColor(Color.BLACK);
-        g2d.drawRect(0, 0, width-1, height-1);
+        g2d.drawRect(0, 0, width - 1, height - 1);
         
         // draw nodes
         int x, y;

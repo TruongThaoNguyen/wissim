@@ -1,6 +1,7 @@
 package controllers.converter.tclObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class GlobalObject extends TclObject
 {		
 	public SimulatorObject simObject;
 	
-	public LinkedHashMap<String, TclObject> insObj;	
+	public HashMap<String, TclObject> insObj;	
 	
 	
 	public GlobalObject(String value)
@@ -30,8 +31,8 @@ public class GlobalObject extends TclObject
 		insObj = new LinkedHashMap<String, TclObject>();
 		simObject = new SimulatorObject("Simulator");
 		insObj.put("_o0", simObject);
-	}
-		
+	}	
+	
 	public void parse(String code) throws ParseException
 	{
 		Scanner scanner = new Scanner(code);
@@ -40,9 +41,9 @@ public class GlobalObject extends TclObject
 		{			
 			List<String> command = scanner.scanCommand();
 			
-			System.out.print((scanner.getLine() + 1) + ":\t");
-			for (String word : command) System.out.print(word + " ");
-			System.out.println();
+//			System.out.print((scanner.getLine() + 1) + ":\t");
+//			for (String word : command) System.out.print(word + " ");
+//			System.out.println();
 			
 			try 
 			{
@@ -65,41 +66,49 @@ public class GlobalObject extends TclObject
 	{		
 		if (command.isEmpty()) return null;
 		
-		String arg = Parser.parseIdentify(command.remove(0));
+		String arg = Parser.parseIdentify(command.get(0));
 		
-		if (insProc.containsKey(arg)) 
-			return insProc.get(arg).run(command);		
+		if (insProc.containsKey(arg))
+		{
+			command.remove(0);
+			return insProc.get(arg).run(command);
+		}
 	
 		TclObject obj = insObj.get(arg);
 		if (obj != null)	
-			return obj.parse(command);		
+		{
+			command.remove(0);
+			return obj.parse(command);
+		}
 		
 		obj = new CommonObject(arg);
-		if (obj.insProc.containsKey(Parser.parseIdentify(command.get(0))))
-		{
+		if (obj.insProc.containsKey(Parser.parseIdentify(command.get(1))))
+		{			
 			insObj.put(arg, obj);
+			command.remove(0);
 			return obj.parse(command);
 		}
 		
 		// Undefined insProc 
-		String newInsVar = "";		
-		for (String word : command) 
+		return insProc.get("undefined").run(command);
+	}
+		
+	@Override
+	public String printf() 
+	{
+		for (String i : insObj.keySet()) 
 		{
-			newInsVar += " " + Parser.parseIdentify(word);
+			insObj.get(i).printf();
+		}
+		
+		for (String i : insVar.keySet()) 
+		{
+			System.out.println("set " + i + " " + insVar.get(i));	
 		}		
 		
-		System.out.print("\nUndefine InsProc: " + arg + " " + newInsVar + "\n");
-		
-		return insVar.put(arg, newInsVar);	
+		return "";
 	}
-		
-	private String parseExpr(String code) throws Exception
-	{
-		Scanner scanner = new Scanner(code);
-		List<String> command = scanner.scanCommand();
-		if (scanner.haveNext()) throw new ParseException(ParseException.InvalidArgument);
-		return insprocExpr(command);
-	}
+	
 	// region ------------- InsProc ------------- //	
 	
 	@Override
@@ -107,47 +116,89 @@ public class GlobalObject extends TclObject
 	{
 		super.addInsProc();
 		
-		insProc.put("clock", new InsProc() {
+		new InsProc(this, "clock") {
 			@Override
-			public String run(List<String> command) throws Exception {
+			protected String run(List<String> command) throws Exception {
+				record(this, command);
 				return insprocClock(command);
-			}			
-		});
-		
-		insProc.put("new", new InsProc() {
-			@Override
-			public String run(List<String> token) throws Exception {
-				return insprocNew(token);
-			}			
-		});
-	
-		insProc.put("open", new InsProc() {
-			@Override
-			public String run(List<String> token) throws Exception {
-				return insprocOpen(token);
-			}			
-		});
-	
-		insProc.put("for", new InsProc() {
-			@Override
-			public String run(List<String> command) throws Exception {
-				return insprocFor(command);
-			}			
-		});
+			}
 
-		insProc.put("incr", new InsProc() {
 			@Override
-			public String run(List<String> command) throws Exception {
-				return insprocIncr(command);
+			public String print(List<String> command) throws Exception {
+				// TODO Auto-generated method stub
+				return null;
 			}			
-		});
+		};
 		
-		insProc.put("expr", new InsProc() {
+		new InsProc(this, "new") {
 			@Override
-			public String run(List<String> command) throws Exception {
-				return insprocExpr(command);
+			protected String run(List<String> command) throws Exception {
+				record(this, command);
+				return insprocNew(command);
+			}
+
+			@Override
+			public String print(List<String> command) throws Exception {
+				// TODO Auto-generated method stub
+				return null;
 			}			
-		});
+		};
+	
+		new InsProc(this, "open") {
+			@Override
+			protected String run(List<String> command) throws Exception {
+				record(this, command);
+				return insprocOpen(command);
+			}
+
+			@Override
+			public String print(List<String> command) throws Exception {
+				// TODO Auto-generated method stub
+				return null;
+			}			
+		};
+	
+		new InsProc(this, "for") {
+			@Override
+			protected String run(List<String> command) throws Exception {
+				record(this, command);
+				return insprocFor(command);
+			}
+
+			@Override
+			public String print(List<String> command) throws Exception {
+				// TODO Auto-generated method stub
+				return null;
+			}			
+		};
+
+		new InsProc(this, "incr") {
+			@Override
+			protected String run(List<String> command) throws Exception {				
+				record(this, command);
+				return insprocIncr(command);
+			}
+
+			@Override
+			public String print(List<String> command) throws Exception {
+				// TODO Auto-generated method stub
+				return null;
+			}			
+		};
+		
+		new InsProc(this, "expr") {
+			@Override
+			protected String run(List<String> command) throws Exception {
+				record(this, command);
+				return insprocExpr(command);
+			}
+
+			@Override
+			public String print(List<String> command) throws Exception {
+				// TODO Auto-generated method stub
+				return null;
+			}			
+		};
 	}
 
 	protected String insprocExpr(List<String> command) {
@@ -175,13 +226,13 @@ public class GlobalObject extends TclObject
 			arg[i] = token.get(0).Value;
 		}
 		
-//		Scanner scanner = new Scanner(arg[1]);
-//		List<String> arg1 = scanner.scanCommand();
-//		if (scanner.haveNext()) throw new ParseException(ParseException.InvalidArgument);
+		Scanner scanner = new Scanner(arg[1]);
+		List<String> arg1 = scanner.scanCommand();
+		if (scanner.haveNext()) throw new ParseException(ParseException.InvalidArgument);
 		
 		int limit = 10000;
 		parse(arg[0]);
-		while (Boolean.parseBoolean(parseExpr(arg[1])) && limit > 0)			
+		while (Boolean.parseBoolean(parse(new ArrayList<String>(arg1))) && limit > 0)			
 		{
 			parse(arg[3]);			
 			parse(arg[2]);
