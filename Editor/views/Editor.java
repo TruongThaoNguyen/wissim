@@ -34,13 +34,16 @@ import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import controllers.actions.EditorActionController;
+import controllers.converter.Converter;
 import controllers.graphicscomponents.GWirelessNode;
 import controllers.managers.ApplicationManager;
 import controllers.managers.ApplicationSettings;
 import controllers.managers.ProjectManager;
 import controllers.managers.WorkspacePropertyManager;
 import view.MainContent;
+
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionAdapter;
 
 /*
  * Author: Trong Nguyen
@@ -68,6 +71,8 @@ public class Editor extends MainContent implements Observer {
 		createAction();
 		createMenu();	
 		createToolBar();
+		
+		actionGetTab();
 		
 		Display.getCurrent().addFilter(SWT.KeyDown, new Listener() {			
 			@Override
@@ -174,7 +179,7 @@ public class Editor extends MainContent implements Observer {
 		contentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		contentComposite.setLayout(new FillLayout());
 		
-				CTabFolder tabFolder = new CTabFolder(contentComposite, SWT.BORDER | SWT.FLAT | SWT.BOTTOM);
+				tabFolder = new CTabFolder(contentComposite, SWT.BORDER | SWT.FLAT | SWT.BOTTOM);
 				tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 				
 				CTabItem tbtmEdit = new CTabItem(tabFolder, SWT.PUSH);
@@ -184,8 +189,7 @@ public class Editor extends MainContent implements Observer {
 				tbtmEdit.setControl(composite);
 				composite.setLayout(new FillLayout(SWT.HORIZONTAL));
 				
-				
-				text = new Text(composite, SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
+				styledText = new StyledText(composite, SWT.BORDER);
 				
 				CTabItem tbtmDesign = new CTabItem(tabFolder, SWT.PUSH);
 				tbtmDesign.setText("Design");
@@ -198,7 +202,9 @@ public class Editor extends MainContent implements Observer {
 				bottomComposite.setLayout(new GridLayout(1, false));
 
 								StyledText styledText = new StyledText(bottomComposite, SWT.BORDER);
-								styledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+								GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true);
+								gd_styledText.heightHint = 91;
+								styledText.setLayoutData(gd_styledText);
 				
 				subSashForm.setWeights(new int[] {215, 83});
 				propertiesComposite = new Composite(sashForm,  SWT.BORDER);
@@ -218,9 +224,25 @@ public class Editor extends MainContent implements Observer {
 				Label lblSss = new Label(propertiesComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 				lblSss.setText("sss");
 				lblSss.setBounds(-5, 101, 64, 22);
-				sashForm.setWeights(new int[] {373, 120});
+				sashForm.setWeights(new int[] {418, 75});
 
 
+	}
+	
+	public void actionGetTab() {
+		
+		
+		tabFolder.addSelectionListener(new SelectionAdapter() {
+			  public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
+				  if(tabFolder.getSelectionIndex() == 0){
+					  ec.updateEditToDesign(Editor.this, styledText);
+				  }
+				  else{
+					  System.out.println("vao day ngay tab 1");
+				  }
+//			    tabFolder.getSelection()[0]; // This should be your TabItem/CTabItem
+			  }
+			});
 	}
 
 	@Override
@@ -256,7 +278,7 @@ public class Editor extends MainContent implements Observer {
 	 * Create the actions.
 	 */
 	private void createAction() {
-		final EditorActionController ec = new EditorActionController(getParent().getShell());
+		ec = new EditorActionController(getParent().getShell());
 		actNew = new Action("New") {
 			public void run() {
 				ec.actionNew(Editor.this);
@@ -818,6 +840,10 @@ public class Editor extends MainContent implements Observer {
 		return (Workspace)((ScrolledComposite)scrolledComposite).getContent();
 	}
 	
+	public StyledText getStyledText() {
+		return styledText;
+	}
+	
 	public Action getActMouseHand() {
 		return actMouseHand;
 	}
@@ -1001,7 +1027,19 @@ public class Editor extends MainContent implements Observer {
 	public Action getActMouseCreateArea() {
 		return actMouseCreateArea;
 	}
-
+	
+	public Project getProject() {
+		return project;
+	}
+	
+	public void setProject(Project projectSet) {
+		this.project = projectSet;
+	}
+	
+	public CTabFolder getCTabFolder(){
+		return tabFolder;
+	}
+	private CTabFolder tabFolder;
 	private StatesHandler statesHandler;
 	private RulerScrolledComposite scrolledComposite;
 	private SashForm sashForm;
@@ -1071,7 +1109,12 @@ public class Editor extends MainContent implements Observer {
 	private Action actManagePaths;
 	private Action actManageLabels;
 	private Action actImport;
-	private Text text;
+	
+	private StyledText styledText;
+	private EditorActionController ec;
+	
+	private Project project;
+	
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		// TODO Auto-generated method stub
@@ -1117,6 +1160,9 @@ public class Editor extends MainContent implements Observer {
 			else 
 				actRedo.setEnabled(true);
 		}
+		ec.updateDesign(this, styledText);
+		actionGetTab();
+//		ec.updateEditToDesign(this,styledText);
 			
 	}
 }

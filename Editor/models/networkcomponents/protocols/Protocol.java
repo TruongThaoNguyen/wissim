@@ -25,6 +25,8 @@ public abstract class Protocol {
 	
 	public HashMap<String, String> getParameters() { return params; }
 	
+	public void setParameters(HashMap<String, String> params) { this.params = params; }
+	
 	public void addParameter(String param, String value) {
 		params.put(param, value);
 	}

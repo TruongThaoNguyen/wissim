@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 import models.Project;
+import models.converter.ParseException;
 import models.managers.ScriptGenerator;
 import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.WirelessNode;
@@ -32,6 +33,7 @@ import views.dialogs.ConfigNodeDialog;
 import views.dialogs.GenerateNodeLocationDataDialog;
 import views.dialogs.GenerateSimulationScriptsDialog;
 import views.dialogs.PreferencesDialog;
+import controllers.converter.Converter;
 import controllers.graphicscomponents.GSelectableObject;
 import controllers.graphicscomponents.GWirelessNode;
 import controllers.managers.ApplicationManager;
@@ -76,9 +78,11 @@ public class EditorActionController {
 		if(project == null) return;
 //		if (project != null)
 			editor.showProject(project);
-		
+		editor.setProject(project);
 		if(editor.getWorkspace() != null)
 			editor.getWorkspace().getSelectableObject().get(editor.getWorkspace().getSelectableObject().size() - 1).moveAbove(null);
+		
+		updateDesign(editor,editor.getStyledText());
 	}
 	
 	public GWirelessNode actionCopy(Workspace workspace) {
@@ -102,8 +106,28 @@ public class EditorActionController {
 		}
 	}
 	
-	public void updateDesign() {
+	public void updateDesign(Editor editor,StyledText styledText) {
+		Workspace workspace = editor.getWorkspace();
+		try {
+			StringBuilder sb = ScriptGenerator.generateTclText(workspace.getProject(), false, false);
+			styledText.setText(sb.toString());
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
+	}
+	
+	public void updateEditToDesign(Editor editor,StyledText text){
+		Converter cvrt = new Converter(editor.getProject());
+		try {
+			System.out.println("vao day ngay");
+//			cvrt.CTD(text.getText());
+			editor.setProject(cvrt.CTD(text.getText()));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void updateNodeInfoLabel(Label eventLabel,Workspace workspace) {

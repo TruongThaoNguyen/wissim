@@ -67,10 +67,12 @@ public class GlobalObject extends TclObject
 		
 		String arg = Parser.parseIdentify(command.remove(0));
 		
-		if (insProc.containsKey(arg)) return insProc.get(arg).run(command);		
+		if (insProc.containsKey(arg)) 
+			return insProc.get(arg).run(command);		
 	
 		TclObject obj = insObj.get(arg);
-		if (obj != null)	return obj.parse(command);		
+		if (obj != null)	
+			return obj.parse(command);		
 		
 		obj = new CommonObject(arg);
 		if (obj.insProc.containsKey(Parser.parseIdentify(command.get(0))))
@@ -90,12 +92,14 @@ public class GlobalObject extends TclObject
 		
 		return insVar.put(arg, newInsVar);	
 	}
-	
-	private String parseExpr(String string) {
-		// TODO Auto-generated method stub
-		return null;
+		
+	private String parseExpr(String code) throws Exception
+	{
+		Scanner scanner = new Scanner(code);
+		List<String> command = scanner.scanCommand();
+		if (scanner.haveNext()) throw new ParseException(ParseException.InvalidArgument);
+		return insprocExpr(command);
 	}
-	
 	// region ------------- InsProc ------------- //	
 	
 	@Override
@@ -171,13 +175,13 @@ public class GlobalObject extends TclObject
 			arg[i] = token.get(0).Value;
 		}
 		
-		Scanner scanner = new Scanner(arg[1]);
-		List<String> arg1 = scanner.scanCommand();
-		if (scanner.haveNext()) throw new ParseException(ParseException.InvalidArgument);
+//		Scanner scanner = new Scanner(arg[1]);
+//		List<String> arg1 = scanner.scanCommand();
+//		if (scanner.haveNext()) throw new ParseException(ParseException.InvalidArgument);
 		
-		int limit = 1000;
+		int limit = 10000;
 		parse(arg[0]);
-		while (Boolean.parseBoolean(parse(new ArrayList<String>(arg1))) && limit > 0)			
+		while (Boolean.parseBoolean(parseExpr(arg[1])) && limit > 0)			
 		{
 			parse(arg[3]);			
 			parse(arg[2]);

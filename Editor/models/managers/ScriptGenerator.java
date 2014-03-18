@@ -1,16 +1,13 @@
 package models.managers;
 
 import java.io.FileNotFoundException;
-import java.io.ObjectInputStream.GetField;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import controllers.managers.ProjectManager;
 import models.Project;
 import models.networkcomponents.Node;
-import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.WirelessNode;
 import models.networkcomponents.events.AppEvent;
 import models.networkcomponents.protocols.ApplicationProtocol;
@@ -29,7 +26,7 @@ public class ScriptGenerator {
 	 * @return <i>true</i> if generate successful
 	 * @throws FileNotFoundException 
 	 */
-	public static boolean generateTcl(Project project, String path, boolean isNamTrace, boolean isWissimTrace) throws FileNotFoundException {
+	public static StringBuilder generateTclText(Project project, boolean isNamTrace, boolean isWissimTrace) throws FileNotFoundException {
 		StringBuilder sb = new StringBuilder();
 		
 		// set up global variables
@@ -250,6 +247,12 @@ public class ScriptGenerator {
 		
 		putLine(sb, "########### end script #####################");
 
+		
+		return sb;
+	}
+	
+	public static boolean generateTcl(Project project, String path, boolean isNamTrace, boolean isWissimTrace) throws FileNotFoundException {
+		StringBuilder sb = generateTclText(project,isNamTrace,isWissimTrace);
 		Parser.saveTxt(sb.toString(), path);
 		return false;
 	}
