@@ -94,7 +94,7 @@ public class GNetwork extends Canvas {
 				switch (workspacePropertyManager.getMouseMode()) {
 				case WorkspacePropertyManager.CURSOR:					
 					if (workspacePropertyManager.getNodeIdShowedNeighbors() != -1) {
-						workspacePropertyManager.setNodeIdShowedNeighbors(- 1);
+						workspacePropertyManager.setNodeIdShowedNeighbors(-1);
 						redraw();
 					}
 					
@@ -114,8 +114,8 @@ public class GNetwork extends Canvas {
 							// config location
 							if(x<4) 
 								x=4;
-							if(x>(workspace.getGraphicNetwork().getNetwork().getWidth()-4))
-								x=(workspace.getGraphicNetwork().getNetwork().getWidth()-4);
+							if(x>(workspace.getGraphicNetwork().getNetwork().getWidth() - 4))
+								x=(workspace.getGraphicNetwork().getNetwork().getWidth() - 4);
 							
 							int y = (int) ((double) arg0.y / getRatio()); 
 							if(y<4) 

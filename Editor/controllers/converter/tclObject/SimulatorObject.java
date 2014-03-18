@@ -1,7 +1,6 @@
 package controllers.converter.tclObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import controllers.converter.Parser;
@@ -29,41 +28,76 @@ public class SimulatorObject extends CommonObject
 	{
 		super.addInsProc();
 		
-		insProc.put("trace-all", new InsProc() {
+		new InsProc(this, "trace-all") {
 			@Override
 			public String run(List<String> command) throws Exception {
+				record(this, command);
 				return insprocTraceAll(command);
-			}			
-		});
-	
-		insProc.put("node-config", new InsProc() {
+			}
+
 			@Override
-			public String run(List<String> command) throws Exception {
-				insprocNodeConfig(command);
+			public String print(List<String> command) throws Exception {
+				// TODO Auto-generated method stub
 				return null;
 			}			
-		});
-		
-		insProc.put("node", new InsProc() {
-			@Override
-			public String run(List<String> command) throws Exception {
-				return insprocNode(command);
-			}			
-		});
+		};
 	
-		insProc.put("at", new InsProc() {
+		new InsProc(this, "node-config") {
 			@Override
 			public String run(List<String> command) throws Exception {
-				return insporcAt(command);
+				record(this, command);
+				insprocNodeConfig(command);
+				return null;
+			}
+
+			@Override
+			public String print(List<String> command) throws Exception {
+				// TODO Auto-generated method stub
+				return null;
 			}			
-		});
+		};
 		
-		insProc.put("connect", new InsProc(){
+		new InsProc(this, "node") {
 			@Override
 			public String run(List<String> command) throws Exception {
-				return insprocConnect(command);
+				record(this, command);
+				return insprocNode(command);
+			}
+
+			@Override
+			public String print(List<String> command) throws Exception {
+				// TODO Auto-generated method stub
+				return null;
 			}			
-		});
+		};
+	
+		new InsProc(this, "at") {
+			@Override
+			public String run(List<String> command) throws Exception {
+				record(this, command);
+				return insporcAt(command);
+			}
+
+			@Override
+			public String print(List<String> command) throws Exception {
+				// TODO Auto-generated method stub
+				return null;
+			}			
+		};
+		
+		new InsProc(this, "connect"){
+			@Override
+			public String run(List<String> command) throws Exception {
+				record(this, command);
+				return insprocConnect(command);
+			}
+
+			@Override
+			public String print(List<String> command) throws Exception {
+				// TODO Auto-generated method stub
+				return null;
+			}			
+		};
 	}
 
 	private String insprocConnect(List<String> command) throws Exception {

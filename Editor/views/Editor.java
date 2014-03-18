@@ -40,7 +40,7 @@ import controllers.managers.ApplicationManager;
 import controllers.managers.ApplicationSettings;
 import controllers.managers.ProjectManager;
 import controllers.managers.WorkspacePropertyManager;
-import view.MainContent;
+import views.MainContent;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;

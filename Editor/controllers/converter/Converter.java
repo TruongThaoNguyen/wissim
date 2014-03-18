@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import controllers.converter.tclObject.GlobalObject;
+import controllers.converter.tclObject.InsProc;
 import controllers.converter.tclObject.TclObject;
 import controllers.converter.tclObject.TopographyObject;
 import models.Project;
@@ -29,20 +30,33 @@ import models.networkcomponents.protocols.TransportProtocol;
  * @version 2.0
  */
 public class Converter {
-	private Project project = null;	
+	private Project project;	
 	private GlobalObject global;
-	private String code;
 	
 	/**
-	 * Constructor
+	 * Constructor for new project.
+	 * Recommend: set default setting for this project before call DTC.
 	 * @param project
+	 * @throws Exception 
 	 */
-	public Converter(Project project) 
+	public Converter(Project project) throws Exception 
 	{					
-		this.project = project;
+		this.project = project;		
+		global = new GlobalObject("");
 	}
 	
-	public static void main(String[] args)  throws IOException, ParseException {		
+	/**
+	 * Constructor for open exiting TCL script.
+	 * Recommend: call CTD to get new project that corresponding with this script.
+	 * @param text - TCL script
+	 * @throws ParseException 
+	 */
+	public Converter() throws ParseException
+	{
+		this.project = new Project();
+	}	
+	
+	public static void main(String[] args)  throws Exception {		
 		BufferedReader br = new BufferedReader(new FileReader("/home/trongnguyen/scripts/30/ehds/simulate.tcl"));
 		StringBuilder sb = null;
 		try {
@@ -55,7 +69,6 @@ public class Converter {
 		        line = br.readLine();
 		    }		    
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 		    br.close();
@@ -65,7 +78,9 @@ public class Converter {
 		Converter converter = new Converter(new Project("", new WirelessNetwork("", 400, 400)));
 		converter.CTD(everything);
 								
-		System.out.print(converter.DTC());
+		System.out.println("\n------------------------------\n");
+		
+		converter.DTC();
 	}
 	
 	// region ------------- functions for CTD ------------- //
@@ -79,7 +94,12 @@ public class Converter {
 	 */
 	public Project CTD(String text) throws ParseException
 	{
+		InsProc.commandList.clear();
+		InsProc.insProcList.clear();
+		
 		global = Parser.parse(text);		
+		
+		// region --------------- put global to project --------------- //
 		
 		String value;
 		value = global.insObj.get(global.simObject.insVar.get("-channel")).value;	project.setSelectedChannel(value); if (global.insObj.containsKey(value)) project.getChannels().put(value, global.insObj.get(value).insVar);		
@@ -106,9 +126,10 @@ public class Converter {
 		{
 			if (obj.value.equals(value)) 
 			{
-				TclObject topo = global.insObj.get(obj.insVar.get("topography"));
+				String a = obj.insVar.get("topography");
+				TclObject topo = global.insObj.get(a);
 				xSize = Integer.parseInt(topo.insVar.get("width"));
-				ySize = Integer.parseInt(topo.insVar.get("width"));
+				ySize = Integer.parseInt(topo.insVar.get("height"));
 			}
 		}
 		
@@ -180,18 +201,27 @@ public class Converter {
 					}
 				}
 			}
-		}		
+		}
+		
+		// endregion
 		
 		return project;
 	}
-	
-	// endregion
+
+	// endregion	
 	
 	// region ------------- functions for DTC ------------- //
 
-	public String DTC() throws ParseException
+	public String DTC() throws Exception
 	{
-		return initializeTcl(project);	
+		
+		// region --------------- put project to global object --------------- //
+
+			// TODO:
+
+		// endregion
+		
+		return global.printf();			
 	}
 
 	private String initializeTcl(Project project) {

@@ -1,11 +1,10 @@
-package view;
+package views;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -17,15 +16,23 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.custom.StackLayout;
 
+import views.Analyzer;
 import views.Editor;
 
-/*
+/**
  * Author: Trong Nguyen
  * 
  */
 
 public class MainWindow extends ApplicationWindow {
+	/**
+	 * button to switch to Editor.
+	 */
 	private Button btnEditor;
+	
+	/**
+	 * 
+	 */
 	private Button btnAnalyzer;
 	private Editor editor;
 	private Analyzer analyzer;

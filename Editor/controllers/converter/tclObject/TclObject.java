@@ -30,7 +30,7 @@ public abstract class TclObject {
 	public TclObject(String value)
 	{
 		this.value = value;
-		insVar 	= new HashMap<String, String>();
+		insVar 	= new LinkedHashMap<String, String>();
 		insProc = new HashMap<String, InsProc>();
 		At 		= new HashMap<String, Double>();
 		attachList 	 = new ArrayList<TclObject>();
@@ -48,26 +48,87 @@ public abstract class TclObject {
 	 */
 	public abstract String parse(List<String> command) throws Exception;
 	
-	protected void addInsProc() 
+
+	public String printf() 
 	{
-		insProc.put("set", new InsProc() 
+		for (String i : insVar.keySet()) 
+		{
+			System.out.println(value + " set " + i + " " + insVar.get(i));	
+		}	
+		
+		return "";
+	}
+	
+	protected void addInsProc() 
+	{		
+		new InsProc(this, "undefined") {
+			@Override
+			protected String run(List<String> command) throws Exception {
+				record(this, command);
+				return insprocUndefined(command);
+			}
+
+			@Override
+			public String print(List<String> command) throws Exception {
+				String st = parent.value + " " + insprocName;
+				for (String string : command) {
+					st += string;
+				}
+				return st;
+			}			
+		};
+		
+		new InsProc(this, "set") 
 		{			
 			@Override
-			public String run(List<String> command) throws Exception 
+			protected String run(List<String> command) throws Exception 
 			{
+				record(this, command);
 				return insprocSet(command);
 			}
-		});	
 
-		insProc.put("<", new InsProc() {
 			@Override
-			public String run(List<String> command) throws Exception {
-				return inspocLessThan(command);
-			}			
-		});
-	}	
+			public String print(List<String> command) throws Exception {
+				String arg = command.get(0);
+				String value = parent.insVar.get(arg);
+				if (value != null)	
+					return parent.value + " " + insprocName + " " + arg + " " + value;
+				else 
+					return null;
+			}
+		};	
 
-	private String insprocSet(List<String> command) throws Exception 
+		new InsProc(this, "<") {
+			@Override
+			protected String run(List<String> command) throws Exception {
+				record(this, command);
+				return inspocLessThan(command);
+			}
+
+			@Override
+			public String print(List<String> command) throws Exception {
+				// TODO
+				return parent.value + " < " + command.get(0);
+			}			
+		};
+	}	
+	
+	protected String insprocUndefined(List<String> command) throws Exception {
+		String arg = command.remove(0);
+		String newInsVar = "";		
+		
+		for (String word : command) 
+		{
+			newInsVar += Parser.parseIdentify(word) + " ";
+		}		
+		if (newInsVar.length() > 1) newInsVar = newInsVar.substring(0, newInsVar.length() - 1);
+		
+		System.out.print("\nUndefine InsProc: " + arg + " " + newInsVar + "\n");
+		
+		return insVar.put(arg, newInsVar);	
+	}
+
+	protected String insprocSet(List<String> command) throws Exception 
 	{
 		switch (command.size()) 
 		{

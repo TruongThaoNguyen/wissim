@@ -1,8 +1,10 @@
-package view;
+package views;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.widgets.Composite;
+
+import views.MainContent;
 
 public class Analyzer extends MainContent {
 

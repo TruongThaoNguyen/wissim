@@ -1,4 +1,4 @@
-package view;
+package views;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
