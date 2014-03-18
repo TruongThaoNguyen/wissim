@@ -119,15 +119,16 @@ public class EditorActionController {
 	}
 	
 	public void updateEditToDesign(Editor editor,StyledText text){
-		Converter cvrt = new Converter(editor.getProject());
+		Converter cvrt;
 		try {
-			System.out.println("vao day ngay");
-//			cvrt.CTD(text.getText());
+			cvrt = new Converter(editor.getProject());
 			editor.setProject(cvrt.CTD(text.getText()));
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
 	}
 	
 	public void updateNodeInfoLabel(Label eventLabel,Workspace workspace) {
