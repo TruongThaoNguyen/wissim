@@ -37,7 +37,7 @@ public class Scanner {
 	/**
 	 * Split tcl code to words.
 	 * Command is list of words
-	 * @return List of words
+	 * @return List of String
 	 * @throws ParseException 
 	 */
 	public List<String> scanCommand() throws ParseException
@@ -51,17 +51,10 @@ public class Scanner {
 			{
 				index++;
 				line++;
-				break;
 			}
 			else if (type == CharType.Space) index++;
 			else break;
 		}		
-		while (index < code.length())
-		{
-			if (CharType.TypeOf(code.charAt(index)) == CharType.Space) index++;
-			else break;
-		}
-		
 
 		int i = index;
 		
@@ -77,24 +70,21 @@ public class Scanner {
 				
 				case Semicolon:
 					String word  = code.substring(i, index);
-					if (!word.isEmpty()) command.add(word);					
-					index++;		
-					while (index < code.length() && CharType.TypeOf(code.charAt(index)) == CharType.Space) index++;
-					if (CharType.TypeOf(code.charAt(index)) == CharType.Separator) command.add(";\n");
-					else command.add(";"); 
+					if (!word.isEmpty()) command.add(word);										
+					index++;					
 					return command;
 					
 				case Separator:				
-					if (index > i) command.add(code.substring(i, index));	
-					command.add("\n");
+					if (index > i) command.add(code.substring(i, index));					
 					return command;
 					
 				case Comment:
 					if (command.size() != 0) throw new ParseException(ParseException.Comment);				
-					while (index < code.length() && CharType.TypeOf(code.charAt(index)) != CharType.Separator) index++;					
-					command.add(code.substring(i, index));
-					command.add("\n");
-					return command;
+					while (index < code.length() && CharType.TypeOf(code.charAt(index)) != CharType.Separator) index++;
+					index++;
+					line++;
+					i = index;
+					break;
 
 				case BackSlash:
 					index++;
@@ -133,11 +123,7 @@ public class Scanner {
 			}
 		}
 		
-		if (index > i)
-		{
-			command.add(code.substring(i, index));
-			command.add("\n");
-		}
+		if (index > i) command.add(code.substring(i, index));
 		return command;
 	}
 
