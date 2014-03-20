@@ -6,8 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import models.networkcomponents.WirelessNetwork;
-import models.networkcomponents.features.Area;
-import models.networkcomponents.features.Label;
+import models.networkcomponents.features.*;
 
 /**
  * Represents a project. A Project will contain the main network and everything related to the project itself (obstacles, labels,...)
@@ -24,10 +23,8 @@ public class Project {
 	// last saved date
 	private Date lastSavedDate;
 	
-	/**
-	 *  the wireless network this project works with
-	 */
-	protected WirelessNetwork network;
+	// the wireless network this project works with
+	private WirelessNetwork network;
 	
 	// list of labels
 	private List<Label> labelList;
@@ -67,10 +64,13 @@ public class Project {
 	private double sleepEnergy;	
 	
 	/**
-	 * Create new project.
+	 * Create new project from path
+	 * @param path Path of project
 	 */
-	public Project()
-	{		
+	public Project(String path, WirelessNetwork network) {
+		this.path = path;
+		this.network = network;
+		
 		labelList = new ArrayList<Label>();
 		obstacleList = new ArrayList<Area>();
 		obstacleIndex = 0;
@@ -80,13 +80,9 @@ public class Project {
 		lastSavedDate = new Date();
 	}
 	
-	/**
-	 * Create new project from path
-	 * @param path Path of project
-	 */
-	public Project(String path, WirelessNetwork network) {
-		this.path = path;
-		this.network = network;
+	public Project() {
+		this.path = "";
+		this.network = null;
 		
 		labelList = new ArrayList<Label>();
 		obstacleList = new ArrayList<Area>();

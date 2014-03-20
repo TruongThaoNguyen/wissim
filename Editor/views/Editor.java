@@ -34,12 +34,16 @@ import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import controllers.actions.EditorActionController;
+import controllers.converter.Converter;
 import controllers.graphicscomponents.GWirelessNode;
 import controllers.managers.ApplicationManager;
 import controllers.managers.ApplicationSettings;
 import controllers.managers.ProjectManager;
 import controllers.managers.WorkspacePropertyManager;
 import views.MainContent;
+
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionAdapter;
 
 /*
  * Author: Trong Nguyen
@@ -67,6 +71,8 @@ public class Editor extends MainContent implements Observer {
 		createAction();
 		createMenu();	
 		createToolBar();
+		
+		actionGetTab();
 		
 		Display.getCurrent().addFilter(SWT.KeyDown, new Listener() {			
 			@Override
@@ -140,27 +146,72 @@ public class Editor extends MainContent implements Observer {
 	 * createContent
 	 */
 	private void createContent() {
-		setLayout(new GridLayout(2, false));
+		setLayout(new GridLayout(1, false));
 		
-		Label lblNewLabel = new Label(this, SWT.NONE);
-		lblNewLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		lblNewLabel.setText("Editor");
 
 		// ------------- toolbar ------------- //
 		
-		ToolBar toolBar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
-		GridData gd_toolBar = new GridData(SWT.FILL, SWT.TOP, true, false);
-		gd_toolBar.heightHint = 78;
-		toolBar.setLayoutData(gd_toolBar);
+//		Composite toolbarComposite = new Composite(this,  SWT.BORDER);
+//		GridData gd_toolbarComposite = new GridData(SWT.LEFT, SWT.TOP, true, false, 1, 1);
+//		gd_toolbarComposite.heightHint = 33;
+//		toolbarComposite.setLayoutData(gd_toolbarComposite);
+		
+		ToolBar toolBar = new ToolBar(this, SWT.RIGHT);	
+//		toolBar.setBounds(0, 0, 727, 53);
+		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		
 		toolBarManager = new ToolBarManager(toolBar);
 		
 				
-				// ------------- properties composite ------------- //
-				propertiesComposite = new Composite(this,  SWT.BORDER);
+				
+		
+		// ------------- main composite ------------- //
+		
+		sashForm = new SashForm(this, SWT.HORIZONTAL);
+		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		
+		// ------------- properties composite ------------- //
+		
+		
+		SashForm subSashForm = new SashForm(sashForm, SWT.VERTICAL);
+		
+		contentComposite = new Composite(subSashForm, SWT.NONE);
+		contentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		contentComposite.setLayout(new FillLayout());
+		
+				tabFolder = new CTabFolder(contentComposite, SWT.BORDER | SWT.FLAT | SWT.BOTTOM);
+				tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+				
+				CTabItem tbtmEdit = new CTabItem(tabFolder, SWT.PUSH);
+				tbtmEdit.setText("Edit");
+				
+				Composite composite = new Composite(tabFolder, SWT.BORDER);
+				tbtmEdit.setControl(composite);
+				composite.setLayout(new FillLayout(SWT.HORIZONTAL));
+				
+				styledText = new StyledText(composite, SWT.BORDER);
+				
+				CTabItem tbtmDesign = new CTabItem(tabFolder, SWT.PUSH);
+				tbtmDesign.setText("Design");
+				scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+				tbtmDesign.setControl(scrolledComposite);
+				scrolledComposite.setExpandHorizontal(true);
+				scrolledComposite.setExpandVertical(true);
+				
+				Composite bottomComposite = new Composite(subSashForm, SWT.NONE);
+				bottomComposite.setLayout(new GridLayout(1, false));
+
+								StyledText styledText = new StyledText(bottomComposite, SWT.BORDER);
+								GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true);
+								gd_styledText.heightHint = 91;
+								styledText.setLayoutData(gd_styledText);
+				
+				subSashForm.setWeights(new int[] {215, 83});
+				propertiesComposite = new Composite(sashForm,  SWT.BORDER);
 				GridData gd_propertiesComposite = new GridData(SWT.RIGHT, SWT.FILL, false, true);
-				gd_propertiesComposite.heightHint = 98;
+				
 				propertiesComposite.setLayoutData(gd_propertiesComposite);
+				gd_propertiesComposite.heightHint = 50;
 				
 				Label lblNewLabel_1 = new Label(propertiesComposite, SWT.NONE);
 				lblNewLabel_1.setBounds(0, 0, 59, 95);
@@ -173,36 +224,25 @@ public class Editor extends MainContent implements Observer {
 				Label lblSss = new Label(propertiesComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 				lblSss.setText("sss");
 				lblSss.setBounds(-5, 101, 64, 22);
+				sashForm.setWeights(new int[] {418, 75});
+
+
+	}
+	
+	public void actionGetTab() {
 		
-		// ------------- main composite ------------- //
 		
-		sashForm = new SashForm(this, SWT.NONE);
-		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
-		contentComposite = new Composite(sashForm, SWT.NONE);
-		contentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		contentComposite.setLayout(new FillLayout());
-		
-				CTabFolder tabFolder = new CTabFolder(contentComposite, SWT.BORDER | SWT.FLAT | SWT.BOTTOM);
-				tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
-				
-				CTabItem tbtmEdit = new CTabItem(tabFolder, SWT.PUSH);
-				tbtmEdit.setText("Edit");
-				
-				Composite composite = new Composite(tabFolder, SWT.BORDER);
-				tbtmEdit.setControl(composite);
-				composite.setLayout(new FillLayout(SWT.HORIZONTAL));
-				
-				text = new Text(composite, SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
-				
-				CTabItem tbtmDesign = new CTabItem(tabFolder, SWT.PUSH);
-				tbtmDesign.setText("Design");
-				
-				scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-				tbtmDesign.setControl(scrolledComposite);
-				scrolledComposite.setExpandHorizontal(true);
-				scrolledComposite.setExpandVertical(true);
-		sashForm.setWeights(new int[] {305});
+		tabFolder.addSelectionListener(new SelectionAdapter() {
+			  public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
+				  if(tabFolder.getSelectionIndex() == 0){
+					  ec.updateEditToDesign(Editor.this, styledText);
+				  }
+				  else{
+					  System.out.println("vao day ngay tab 1");
+				  }
+//			    tabFolder.getSelection()[0]; // This should be your TabItem/CTabItem
+			  }
+			});
 	}
 
 	@Override
@@ -238,7 +278,7 @@ public class Editor extends MainContent implements Observer {
 	 * Create the actions.
 	 */
 	private void createAction() {
-		final EditorActionController ec = new EditorActionController(getParent().getShell());
+		ec = new EditorActionController(getParent().getShell());
 		actNew = new Action("New") {
 			public void run() {
 				ec.actionNew(Editor.this);
@@ -687,7 +727,7 @@ public class Editor extends MainContent implements Observer {
 		};
 		actMouseCreateArea.setToolTipText("Create new area (CTRL + A)");
 		actMouseCreateArea.setChecked(false);
-		actMouseCreateArea.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/PolygonSetIcon.png"));
+		actMouseCreateArea.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/arrow_cursor.png"));
 
 		actManagePaths = new Action("Path Manager") {
 			public void run() {
@@ -798,6 +838,10 @@ public class Editor extends MainContent implements Observer {
 	public Workspace getWorkspace() {
 //		return workspace;
 		return (Workspace)((ScrolledComposite)scrolledComposite).getContent();
+	}
+	
+	public StyledText getStyledText() {
+		return styledText;
 	}
 	
 	public Action getActMouseHand() {
@@ -983,7 +1027,19 @@ public class Editor extends MainContent implements Observer {
 	public Action getActMouseCreateArea() {
 		return actMouseCreateArea;
 	}
-
+	
+	public Project getProject() {
+		return project;
+	}
+	
+	public void setProject(Project projectSet) {
+		this.project = projectSet;
+	}
+	
+	public CTabFolder getCTabFolder(){
+		return tabFolder;
+	}
+	private CTabFolder tabFolder;
 	private StatesHandler statesHandler;
 	private RulerScrolledComposite scrolledComposite;
 	private SashForm sashForm;
@@ -1053,7 +1109,12 @@ public class Editor extends MainContent implements Observer {
 	private Action actManagePaths;
 	private Action actManageLabels;
 	private Action actImport;
-	private Text text;
+	
+	private StyledText styledText;
+	private EditorActionController ec;
+	
+	private Project project;
+	
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		// TODO Auto-generated method stub
@@ -1099,6 +1160,9 @@ public class Editor extends MainContent implements Observer {
 			else 
 				actRedo.setEnabled(true);
 		}
+		ec.updateDesign(this, styledText);
+		actionGetTab();
+//		ec.updateEditToDesign(this,styledText);
 			
 	}
 }
