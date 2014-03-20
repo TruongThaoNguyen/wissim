@@ -1,8 +1,8 @@
-package controllers.converter.tclObject;
+package controllers.converter;
 
 import java.util.List;
 
-import controllers.converter.Parser;
+import models.converter.InsProc;
 import models.converter.ParseException;
 
 /**
@@ -12,15 +12,20 @@ import models.converter.ParseException;
  * @Version 2.0
  */
 
-public class TopographyObject extends CommonObject {
+public class STopographyObject extends SCommonObject {
 
-	public TopographyObject(String value) {
-		super(value);		
+	public int width;
+	public int height;
+
+	public STopographyObject(String value) {
+		super(value);
+		
+		width = 0;
+		height = 0;
 	}
-
-	@Override
+	
 	protected void addInsProc() {
-		super.addInsProc();
+		//super.addInsProc();
 		
 		new InsProc(this, "load_flatgrid") {			
 			@Override
@@ -30,7 +35,7 @@ public class TopographyObject extends CommonObject {
 			}
 
 			@Override
-			public String print(List<String> command) throws Exception {
+			public String print(List<String> command) {
 				// TODO Auto-generated method stub
 				return null;
 			}
@@ -40,8 +45,8 @@ public class TopographyObject extends CommonObject {
 	protected String insprocLoadFlatgrid(List<String> command) throws Exception {
 		if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);
 		
-		insVar.put("width",  Parser.parseIdentify(command.get(0)));
-		insVar.put("height", Parser.parseIdentify(command.get(1)));
+		width = Integer.parseInt(Converter.parseIdentify(command.get(0)));
+		height = Integer.parseInt(Converter.parseIdentify(command.get(1)));
 		
 		return "";		
 	}

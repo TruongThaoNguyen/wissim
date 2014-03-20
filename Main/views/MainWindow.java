@@ -4,7 +4,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -19,20 +18,10 @@ import org.eclipse.swt.custom.StackLayout;
 import views.Analyzer;
 import views.Editor;
 
-/**
- * Author: Trong Nguyen
- * 
- */
+//author
 
 public class MainWindow extends ApplicationWindow {
-	/**
-	 * button to switch to Editor.
-	 */
 	private Button btnEditor;
-	
-	/**
-	 * 
-	 */
 	private Button btnAnalyzer;
 	private Editor editor;
 	private Analyzer analyzer;
@@ -128,9 +117,9 @@ public class MainWindow extends ApplicationWindow {
 
 	/**
 	 * Launch the application.
-	 * @param args
+	 * @param args Arguments
 	 */
-	public static void main(String args[]) {
+	public static void main(final String[] args) {
 		try {
 			MainWindow window = new MainWindow();
 			window.setBlockOnOpen(true);
@@ -142,20 +131,12 @@ public class MainWindow extends ApplicationWindow {
 	}
 
 	/**
-	 * Configure the shell.
-	 * @param newShell
+	 * configure Shell.
+	 * @param newShell Shell to configure.
 	 */
 	@Override
-	protected void configureShell(Shell newShell) {
+	protected final void configureShell(final Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Wissim");
-	}
-
-	/**
-	 * Return the initial size of the window.
-	 */
-	@Override
-	protected Point getInitialSize() {
-		return new Point(720, 490);
 	}
 }

@@ -500,7 +500,7 @@ public class Pnt {
         matrix[simplex.length] = this.extend(1, this.dot(this));
         double d = determinant(matrix);
         int result = (d < 0)? -1 : ((d > 0)? +1 : 0);
-        if (content(simplex) < 0) result = -result;
+        if (content(simplex) < 0) result = - result;
         return result;
     }
 
