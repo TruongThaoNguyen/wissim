@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="Main"/>
+	<classpathentry kind="src" path="Editor"/>
+	<classpathentry kind="src" path="Analyzer"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+
+	<classpathentry kind="lib" path="lib/eclipse-ui-forms-3.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.core.runtime.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.equinox.common_3.3.0.v20070426.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.jface-3.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.wb.swt.SWTResourceManager.jar"/>
+	<classpathentry kind="lib" path="lib/org.osgi.core-4.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/swt.jar"/>
+	<classpathentry kind="lib" path="lib/xom-1.2.10.jar"/>
+	<classpathentry kind="lib" path="lib/icons.jar"/>
+	<classpathentry kind="output" path="wissim/bin"/>
+	
+</classpath>

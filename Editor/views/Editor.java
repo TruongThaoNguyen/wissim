@@ -19,6 +19,7 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
+//import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -41,6 +42,7 @@ import controllers.managers.ApplicationSettings;
 import controllers.managers.ProjectManager;
 import controllers.managers.WorkspacePropertyManager;
 import views.MainContent;
+import views.RulerScrolledComposite;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -193,10 +195,11 @@ public class Editor extends MainContent implements Observer {
 				
 				CTabItem tbtmDesign = new CTabItem(tabFolder, SWT.PUSH);
 				tbtmDesign.setText("Design");
-				scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-				tbtmDesign.setControl(scrolledComposite);
-				scrolledComposite.setExpandHorizontal(true);
-				scrolledComposite.setExpandVertical(true);
+//				scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+////				scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+//				tbtmDesign.setControl(scrolledComposite);
+//				scrolledComposite.setExpandHorizontal(true);
+//				scrolledComposite.setExpandVertical(true);
 				
 				Composite bottomComposite = new Composite(subSashForm, SWT.NONE);
 				bottomComposite.setLayout(new GridLayout(1, false));
@@ -818,6 +821,11 @@ public class Editor extends MainContent implements Observer {
 	
 	public void showProject(Project project)
 	{
+		final RulerScrolledComposite scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+//		scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		tabFolder.getItem(1).setControl(scrolledComposite);
+		scrolledComposite.setExpandHorizontal(true);
+		scrolledComposite.setExpandVertical(true);
 		final Workspace workspaceInner = new Workspace(scrolledComposite, SWT.NONE, project);
 		workspaceInner.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_DARK_SHADOW));
 		workspaceInner.setSize(scrolledComposite.getClientArea().width, scrolledComposite.getClientArea().height);
@@ -837,7 +845,7 @@ public class Editor extends MainContent implements Observer {
 	
 	public Workspace getWorkspace() {
 //		return workspace;
-		return (Workspace)((ScrolledComposite)scrolledComposite).getContent();
+		return (Workspace)((ScrolledComposite)tabFolder.getItem(1).getControl()).getContent();
 	}
 	
 	public StyledText getStyledText() {
@@ -1041,7 +1049,8 @@ public class Editor extends MainContent implements Observer {
 	}
 	private CTabFolder tabFolder;
 	private StatesHandler statesHandler;
-	private RulerScrolledComposite scrolledComposite;
+//	private RulerScrolledComposite scrolledComposite;
+	
 	private SashForm sashForm;
 	private Composite contentComposite;
 	private Composite propertiesComposite;
@@ -1114,6 +1123,8 @@ public class Editor extends MainContent implements Observer {
 	private EditorActionController ec;
 	
 	private Project project;
+	
+	private RulerScrolledComposite scrolledComposite;
 	
 	@Override
 	public void update(Observable arg0, Object arg1) {
