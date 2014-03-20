@@ -14,6 +14,11 @@ public class WirelessNetwork extends Network {
 	// options for network size changing
 	public static final int LEFT = 0, CENTER = 1, RIGHT = 2, TOP = 0, BOTTOM = 2;
 	
+	public WirelessNetwork(String name)
+	{
+		super(name);
+	}
+	
 	public WirelessNetwork(String name, int xSize, int ySize) {
 		super(name);
 		
@@ -178,8 +183,6 @@ public class WirelessNetwork extends Network {
 		
 		return true;		
 	}
-	
-	
 	
 	private WirelessNode getNodeByPosition(int x, int y) {
 		for (Node n : getNodeList()) {
