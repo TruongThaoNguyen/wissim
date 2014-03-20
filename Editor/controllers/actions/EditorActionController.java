@@ -121,8 +121,8 @@ public class EditorActionController {
 	public void updateEditToDesign(Editor editor,StyledText text){
 		Converter cvrt;
 		try {
-			cvrt = new Converter(editor.getProject());
-			editor.setProject(cvrt.CTD(text.getText()));
+		//	cvrt = new Converter(editor.getProject());
+		//	editor.setProject(cvrt.CTD(text.getText()));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
