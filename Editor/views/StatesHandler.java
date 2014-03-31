@@ -55,6 +55,8 @@ public class StatesHandler {
 		window.getActViewVoronoiDiagram().setEnabled(false);
 		window.getActZoomIn().setEnabled(false);
 		window.getActZoomOut().setEnabled(false);		
+		window.getActNetworkReferenceRemain().setEnabled(false);
+		window.getActScriptReferenceRemain().setEnabled(false);
 	}
 	
 	public void activeProject() {
@@ -103,7 +105,9 @@ public class StatesHandler {
 		window.getActViewShortestPathTree().setEnabled(true);
 		window.getActViewVoronoiDiagram().setEnabled(true);
 		window.getActZoomIn().setEnabled(true);
-		window.getActZoomOut().setEnabled(true);			
+		window.getActZoomOut().setEnabled(true);
+		window.getActNetworkReferenceRemain().setEnabled(true);
+		window.getActScriptReferenceRemain().setEnabled(true);
 	}
 
 	public void activeMouseCreateArea() {

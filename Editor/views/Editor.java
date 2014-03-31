@@ -29,6 +29,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.wb.swt.ResourceManager;
@@ -43,9 +45,14 @@ import controllers.managers.ProjectManager;
 import controllers.managers.WorkspacePropertyManager;
 import views.MainContent;
 import views.RulerScrolledComposite;
+import views.Workspace;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 
 /*
  * Author: Trong Nguyen
@@ -75,6 +82,7 @@ public class Editor extends MainContent implements Observer {
 		createToolBar();
 		
 		actionGetTab();
+		actionEvent();
 		
 		Display.getCurrent().addFilter(SWT.KeyDown, new Listener() {			
 			@Override
@@ -158,7 +166,7 @@ public class Editor extends MainContent implements Observer {
 //		gd_toolbarComposite.heightHint = 33;
 //		toolbarComposite.setLayoutData(gd_toolbarComposite);
 		
-		ToolBar toolBar = new ToolBar(this, SWT.RIGHT);	
+		toolBar = new ToolBar(this, SWT.RIGHT);	
 //		toolBar.setBounds(0, 0, 727, 53);
 		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		
@@ -210,7 +218,7 @@ public class Editor extends MainContent implements Observer {
 								styledText.setLayoutData(gd_styledText);
 				
 				subSashForm.setWeights(new int[] {215, 83});
-				propertiesComposite = new Composite(sashForm,  SWT.BORDER);
+				propertiesComposite = new Composite(sashForm,  SWT.BORDER | SWT.H_SCROLL);
 				GridData gd_propertiesComposite = new GridData(SWT.RIGHT, SWT.FILL, false, true);
 				
 				propertiesComposite.setLayoutData(gd_propertiesComposite);
@@ -224,7 +232,7 @@ public class Editor extends MainContent implements Observer {
 				lblNewLabel_2.setBounds(0, 116, 59, 14);
 				lblNewLabel_2.setText("Node");
 				
-				Label lblSss = new Label(propertiesComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+				Label lblSss = new Label(propertiesComposite, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.CENTER);
 				lblSss.setText("sss");
 				lblSss.setBounds(-5, 101, 64, 22);
 				sashForm.setWeights(new int[] {418, 75});
@@ -639,6 +647,7 @@ public class Editor extends MainContent implements Observer {
 		actZoomIn = new Action("Zoom In") {
 			public void run() {
 				ec.actionZoomIn(getWorkspace());
+//				actionZoomIn();
 			}
 		};
 		actZoomIn.setToolTipText("Zoom In (CTRL+)");
@@ -758,13 +767,217 @@ public class Editor extends MainContent implements Observer {
 			
 		}
 		
+		actNetworkReferenceRemain = new Action() {
+			public void run() {
+				final Menu menu = new Menu(getShell(), SWT.POP_UP);
+				
+			      MenuItem managerTrafficFlowItem = new MenuItem(menu, SWT.PUSH);
+			      managerTrafficFlowItem.setText("Manager Traffic Flow ");
+			      managerTrafficFlowItem.addSelectionListener(new SelectionListener() {
+					
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+//						actionManageTrafficFlow();
+						ec.actionManageTrafficFlow(getWorkspace());
+					}
+					
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						ec.actionManageTrafficFlow(getWorkspace());
+					}
+				});
+			      
+			      MenuItem managerPathsItem = new MenuItem(menu, SWT.PUSH);
+			      managerPathsItem.setText("Manager Paths ");
+			      managerPathsItem.addSelectionListener(new SelectionListener() {
+					
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						ec.actionManagePath(getWorkspace());
+					}
+					
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						ec.actionManagePath(getWorkspace());
+					}
+				});
+			      
+			      MenuItem managerLabelsItem = new MenuItem(menu, SWT.PUSH);
+			      managerLabelsItem.setText("Manager Labels");
+			      managerLabelsItem.addSelectionListener(new SelectionListener() {
+					
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						ec.actionManageLabels(getWorkspace());
+					}
+					
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						ec.actionManageLabels(getWorkspace());
+					}
+				});
+			    
+			      MenuItem showRulersItem = new MenuItem(menu, SWT.PUSH);
+			      showRulersItem.setText("Show Rulers");
+			      showRulersItem.addSelectionListener(new SelectionListener() {
+					
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						ec.actionShowRulers(actShowRulers, getWorkspace());
+					}
+					
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						ec.actionShowRulers(actShowRulers, getWorkspace());
+					}
+				});
+			      
+			    Rectangle rect = new Rectangle(10, 10, 20, 20);
+			    Point pt = new Point(rect.x, rect.y + rect.height);
+			    
+			    
+			    pt = toolBar.toDisplay(pt);
+			    menu.setLocation(pt.x+412, pt.y);
+		        menu.setVisible(true);
+			}
+		};
+		actNetworkReferenceRemain.setToolTipText("External tools");
+		actNetworkReferenceRemain.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/ruby.png"));
+		
+		actScriptReferenceRemain = new Action() {
+			public void run() {
+				final Menu menu = new Menu(getShell(), SWT.POP_UP);
+			      MenuItem importItem = new MenuItem(menu, SWT.PUSH);
+			      importItem.setText("Import");
+			      importItem.addSelectionListener(new SelectionListener() {
+					
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						ec.actionImport(getWorkspace());
+					}
+					
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						ec.actionImport(getWorkspace());
+						
+					}
+				});
+			      
+			      MenuItem toImageItem = new MenuItem(menu, SWT.PUSH);
+			      toImageItem.setText("Images Export");
+			      toImageItem.addSelectionListener(new SelectionListener() {
+					
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						
+						ec.actionToImage(getWorkspace());
+					}
+					
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						ec.actionToImage(getWorkspace());
+					}
+				});
+			      
+			      MenuItem documentItem = new MenuItem(menu, SWT.PUSH);
+			      documentItem.setText("Document Export");
+			      documentItem.addSelectionListener(new SelectionListener() {
+					
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						ec.actionDocumentation();
+						
+					}
+					
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						ec.actionDocumentation();
+					}
+				});
+			      
+			      MenuItem demosItem = new MenuItem(menu, SWT.PUSH);
+			      demosItem.setText("Demos");
+			      demosItem.addSelectionListener(new SelectionListener() {
+					
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						ec.actionDemos();
+					}
+					
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						ec.actionDemos();
+					}
+				});
+			      
+			      MenuItem printItem = new MenuItem(menu, SWT.PUSH);
+			      printItem.setText("Print");
+			      printItem.addSelectionListener(new SelectionListener() {
+					
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						ec.actionPrint(getWorkspace());
+					}
+					
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						ec.actionPrint(getWorkspace());
+					}
+				});
+			      
+			      MenuItem aboutItem = new MenuItem(menu, SWT.PUSH);
+			      aboutItem.setText("About");
+			      aboutItem.addSelectionListener(new SelectionListener() {
+					
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						ec.actionAbout();
+						
+					}
+					
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
+						// TODO Auto-generated method stub
+						ec.actionAbout();
+					}
+				});
+			      
+			    
+			    Rectangle rect = new Rectangle(10, 10, 20, 20);
+			    Point pt = new Point(rect.x, rect.y + rect.height);
+			    
+			    
+			    pt = toolBar.toDisplay(pt);
+			    menu.setLocation(pt.x+672, pt.y);
+		        menu.setVisible(true);
+			}
+		};
+		actScriptReferenceRemain.setToolTipText("External tools");
+		actScriptReferenceRemain.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/ruby.png"));
+		
 	}
 	
 	private void createToolBar()
 	{
-		toolBarManager.add(actAbout);
-		
-		
 		toolBarManager.add(actNew);
 		toolBarManager.add(actOpen);
 		toolBarManager.add(actSave);
@@ -790,7 +1003,7 @@ public class Editor extends MainContent implements Observer {
 		toolBarManager.add(actShowNeighbors);
 		toolBarManager.add(actShowRange);
 		toolBarManager.add(actViewNodeInfo);
-		
+		toolBarManager.add(actNetworkReferenceRemain);
 		
 		Separator separator3 = new Separator();
 		toolBarManager.add(separator3);
@@ -809,6 +1022,7 @@ public class Editor extends MainContent implements Observer {
 		toolBarManager.add(separator4);
 		toolBarManager.add(actGenerateNodeLocationData);
 		toolBarManager.add(actGenerateSimulationScripts);
+		toolBarManager.add(actScriptReferenceRemain);
 		
 		Separator separator5 = new Separator();
 		toolBarManager.add(separator5);
@@ -819,13 +1033,67 @@ public class Editor extends MainContent implements Observer {
 		toolBarManager.update(true);
 	}
 	
+	public void actionEvent(){
+		getShell().getDisplay().addFilter(SWT.KeyDown, new Listener() {
+		    public void handleEvent(Event e) {
+		    	if(tabFolder.getSelectionIndex() == 1){
+		    		
+		    		if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'F' || e.keyCode == 'f')){
+		    			
+		    			ec.actionSearchNode(getWorkspace());
+		    		}
+			    	
+			    	if(((e.stateMask & SWT.SHIFT) == SWT.SHIFT) && (e.keyCode == '=')){
+			    		ec.actionZoomIn(getWorkspace());
+			    	}
+			    	
+			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == '-')){
+			    		ec.actionZoomOut(getWorkspace());
+			    	}
+			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'R' || e.keyCode == 'r')){
+			    		ec.actionCreateARandomNode(getWorkspace());
+			        }
+			    	
+			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'N' || e.keyCode == 'n')){
+			    		ec.actionNew(Editor.this);
+			    	}
+			    	
+			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'O' || e.keyCode == 'o')){
+			    		ec.actionOpen(Editor.this);
+			    	}
+			    	
+			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'S' || e.keyCode == 's')){
+			    		ec.actionSave(Editor.this);
+			    	}
+			    	
+			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'Z' || e.keyCode == 'z')){
+			    		ec.actionUndo(getWorkspace());
+			    	}
+			    	
+			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'Y' || e.keyCode == 'y')){
+			    		ec.actionRedo(getWorkspace());
+			    	}
+			    	
+			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'I' || e.keyCode == 'i')){
+			    		ec.actionViewNodeInfo(getWorkspace());				
+			    	}
+			    	
+//			    	if((e.stateMask & SWT.DEL) == SWT.DEL){
+			    	if(e.character == SWT.DEL){
+			    		ec.actionDeleteNodes(getWorkspace());
+			    	}
+		    	}	
+		    }
+		});
+	}
+	
 	public void showProject(Project project)
 	{
 		final RulerScrolledComposite scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 //		scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		tabFolder.getItem(1).setControl(scrolledComposite);
-		scrolledComposite.setExpandHorizontal(true);
-		scrolledComposite.setExpandVertical(true);
+		scrolledComposite.setExpandHorizontal(false);
+		scrolledComposite.setExpandVertical(false);
 		final Workspace workspaceInner = new Workspace(scrolledComposite, SWT.NONE, project);
 		workspaceInner.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_DARK_SHADOW));
 		workspaceInner.setSize(scrolledComposite.getClientArea().width, scrolledComposite.getClientArea().height);
@@ -844,8 +1112,10 @@ public class Editor extends MainContent implements Observer {
 	}
 	
 	public Workspace getWorkspace() {
-//		return workspace;
-		return (Workspace)((ScrolledComposite)tabFolder.getItem(1).getControl()).getContent();
+		Workspace workspace = (Workspace)((ScrolledComposite)tabFolder.getItem(1).getControl()).getContent();
+		if(workspace != null)
+			return workspace;
+		return null;
 	}
 	
 	public StyledText getStyledText() {
@@ -1036,6 +1306,14 @@ public class Editor extends MainContent implements Observer {
 		return actMouseCreateArea;
 	}
 	
+	public Action getActNetworkReferenceRemain() {
+		return actNetworkReferenceRemain;
+	}
+	
+	public Action getActScriptReferenceRemain() {
+		return actScriptReferenceRemain;
+	}
+	
 	public Project getProject() {
 		return project;
 	}
@@ -1119,12 +1397,17 @@ public class Editor extends MainContent implements Observer {
 	private Action actManageLabels;
 	private Action actImport;
 	
+	private Action actScriptReferenceRemain;
+	private Action actNetworkReferenceRemain;
+	
 	private StyledText styledText;
 	private EditorActionController ec;
 	
 	private Project project;
 	
 	private RulerScrolledComposite scrolledComposite;
+	
+	private ToolBar toolBar;
 	
 	@Override
 	public void update(Observable arg0, Object arg1) {

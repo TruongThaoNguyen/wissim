@@ -44,7 +44,7 @@ public class WirelessNode extends Node {
 		
 		neighborList = new ArrayList<WirelessNode>();
 		eventList = new ArrayList<NodeEvent>();
-		
+		/*to overcome time lost*/
 		setRange(range);
 		setPosition(x, y);
 	}
@@ -111,7 +111,7 @@ public class WirelessNode extends Node {
 			this.x = x;
 			this.y = y;
 			
-			wn.onUpdateNeighbors(this);
+//			wn.onUpdateNeighbors(this);
 			
 			setChanged();
 			notifyObservers("Position");

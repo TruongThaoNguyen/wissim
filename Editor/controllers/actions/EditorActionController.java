@@ -121,8 +121,11 @@ public class EditorActionController {
 	public void updateEditToDesign(Editor editor,StyledText text){
 		Converter cvrt;
 		try {
-		//	cvrt = new Converter(editor.getProject());
-		//	editor.setProject(cvrt.CTD(text.getText()));
+			cvrt = new Converter();
+			Project pj = cvrt.CTD(text.getText());
+			System.out.println(pj.getPath());
+			editor.getWorkspace().setProject(cvrt.CTD(text.getText()));
+//			editor.setProject(cvrt.CTD(text.getText()));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -257,14 +260,17 @@ public class EditorActionController {
 	}
 	
 	public void actionCheckConnectivity(Workspace workspace) {
+		if (workspace == null) return;
 		ApplicationManager.checkConnectivity(workspace);
 	}
 	
 	public void actionChangeNetworkSize(Workspace workspace) {
+		if (workspace == null) return;
 		ApplicationManager.changeNetworkSize(workspace);
 	}
 	
 	public void actionGenerateSimulationScript(Workspace workspace) {
+		if (workspace == null) return;
 		new GenerateSimulationScriptsDialog(shellRoot, SWT.SHEET, workspace).open();
 	}
 	
@@ -314,31 +320,37 @@ public class EditorActionController {
 	}
 	
 	public void actionPrint(Workspace workspace) {
+		if (workspace == null) return;
 		ApplicationManager.print(workspace);
 	}
 	
 	public void actionZoomIn(Workspace workspace) {
+		if (workspace == null) return;
 		workspace.setSize(workspace.getSize().x + 10, workspace.getSize().y + 10);
 	}
 	
 	public void actionZoomOut(Workspace workspace) {
+		if (workspace == null) return;
 		workspace.setSize(workspace.getSize().x - 10, workspace.getSize().y - 10);
 	}
 	
 	public void actionCreateARandomNode(Workspace workspace) {
+		if (workspace == null) return;
 		ApplicationManager.createARandomNode(workspace);
 	}
 	
 	public void actionDeleteAllNodes(Workspace workspace) {
+		if (workspace == null) return;
 		ApplicationManager.deleteAllNodes(workspace);
 	}
 	
 	public void actionShowRange(Workspace workspace) {
+		if (workspace == null) return;
 		ApplicationManager.showRange(workspace);
 	}
 	
 	public void actionShowConnection(Action actShowConnection,Workspace workspace) {
-		
+		if (workspace == null) return;
 		if (workspace.getPropertyManager().isShowConnection()) {
 			ApplicationManager.showConnection(workspace, false);
 			actShowConnection.setChecked(false);
@@ -385,10 +397,12 @@ public class EditorActionController {
 	}
 	
 	public void actionManagePath(Workspace workspace) {
+		if (workspace == null) return;
 		ApplicationManager.managePaths(workspace);
 	}
 	
 	public void actionManageLabels(Workspace workspace) {
+		if (workspace == null) return;
 		ApplicationManager.manageLabels(workspace);
 	}
 	
@@ -397,6 +411,7 @@ public class EditorActionController {
 	}
 	
 	public void actionImport(Workspace workspace) {
+		if (workspace == null) return;
 		ApplicationManager.importLocationData(workspace);
 	}
 

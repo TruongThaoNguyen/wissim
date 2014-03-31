@@ -158,10 +158,6 @@ public class Converter
 		return result.substring(0, result.length() - 1);
 	}
 
-
-	
-	
-	
 	public static void main(String[] args)  throws Exception {		
 		BufferedReader br = new BufferedReader(new FileReader("/home/trongnguyen/scripts/30/ehds/simulate.tcl"));
 		StringBuilder sb = null;
