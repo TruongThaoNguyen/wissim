@@ -137,7 +137,8 @@ public class CreateProjectDialog extends Dialog {
 				DirectoryDialog browseDialog = new DirectoryDialog(shlCreateNewProject, SWT.NONE);
 				browseDialog.setText("Browse");
 				browseDialog.setFilterPath("C:/");
-				txtDirectory.setText(browseDialog.open());
+				if(browseDialog.open() != null)
+					txtDirectory.setText(browseDialog.open());
 			}
 		});
 		btnBrowse.setBounds(340, 59, 75, 25);

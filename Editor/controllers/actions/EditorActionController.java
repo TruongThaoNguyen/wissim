@@ -80,7 +80,8 @@ public class EditorActionController {
 			editor.showProject(project);
 		editor.setProject(project);
 		if(editor.getWorkspace() != null)
-			editor.getWorkspace().getSelectableObject().get(editor.getWorkspace().getSelectableObject().size() - 1).moveAbove(null);
+			if(editor.getWorkspace().getSelectableObject() != null)
+				editor.getWorkspace().getSelectableObject().get(editor.getWorkspace().getSelectableObject().size() - 1).moveAbove(null);
 		
 		updateDesign(editor,editor.getStyledText());
 	}
@@ -119,12 +120,12 @@ public class EditorActionController {
 	}
 	
 	public void updateEditToDesign(Editor editor,StyledText text){
-		Converter cvrt;
+//		Converter cvrt;
 		try {
-			cvrt = new Converter();
-			Project pj = cvrt.CTD(text.getText());
-			System.out.println(pj.getPath());
-			editor.getWorkspace().setProject(cvrt.CTD(text.getText()));
+//			cvrt = new Converter();
+			Project pj = Converter.CTD(text.getText());
+			System.out.println(pj.getSelectedAntenna());
+//			editor.getWorkspace().setProject(cvrt.CTD(text.getText()));
 //			editor.setProject(cvrt.CTD(text.getText()));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

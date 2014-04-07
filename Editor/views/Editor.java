@@ -1,12 +1,24 @@
 package views;
 
 import java.awt.Container;
+import java.awt.Desktop;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import models.Project;
 import models.managers.CareTaker;
+import models.managers.ScriptGenerator;
+import models.networkcomponents.WirelessNetwork;
+import models.networkcomponents.WirelessNode;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
@@ -27,6 +39,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -38,6 +51,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 
 import controllers.actions.EditorActionController;
 import controllers.converter.Converter;
+import controllers.graphicscomponents.GSelectableObject;
 import controllers.graphicscomponents.GWirelessNode;
 import controllers.managers.ApplicationManager;
 import controllers.managers.ApplicationSettings;
@@ -46,6 +60,10 @@ import controllers.managers.WorkspacePropertyManager;
 import views.MainContent;
 import views.RulerScrolledComposite;
 import views.Workspace;
+import views.dialogs.ConfigNodeDialog;
+import views.dialogs.GenerateNodeLocationDataDialog;
+import views.dialogs.GenerateSimulationScriptsDialog;
+import views.dialogs.PreferencesDialog;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -77,7 +95,7 @@ public class Editor extends MainContent implements Observer {
 		}
 		
 		createContent();
-		createAction();
+		createActions();
 		createMenu();	
 		createToolBar();
 		
@@ -200,6 +218,7 @@ public class Editor extends MainContent implements Observer {
 				composite.setLayout(new FillLayout(SWT.HORIZONTAL));
 				
 				styledText = new StyledText(composite, SWT.BORDER);
+				tbtmEdit.setControl(composite);
 				
 				CTabItem tbtmDesign = new CTabItem(tabFolder, SWT.PUSH);
 				tbtmDesign.setText("Design");
@@ -212,10 +231,10 @@ public class Editor extends MainContent implements Observer {
 				Composite bottomComposite = new Composite(subSashForm, SWT.NONE);
 				bottomComposite.setLayout(new GridLayout(1, false));
 
-								StyledText styledText = new StyledText(bottomComposite, SWT.BORDER);
+								styledTextConsole = new StyledText(bottomComposite, SWT.BORDER);
 								GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true);
 								gd_styledText.heightHint = 91;
-								styledText.setLayoutData(gd_styledText);
+								styledTextConsole.setLayoutData(gd_styledText);
 				
 				subSashForm.setWeights(new int[] {215, 83});
 				propertiesComposite = new Composite(sashForm,  SWT.BORDER | SWT.H_SCROLL);
@@ -234,7 +253,7 @@ public class Editor extends MainContent implements Observer {
 				
 				Label lblSss = new Label(propertiesComposite, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.CENTER);
 				lblSss.setText("sss");
-				lblSss.setBounds(-5, 101, 64, 22);
+				lblSss.setBounds(0, 101, 64, 14);
 				sashForm.setWeights(new int[] {418, 75});
 
 
@@ -288,11 +307,11 @@ public class Editor extends MainContent implements Observer {
 	/**
 	 * Create the actions.
 	 */
-	private void createAction() {
-		ec = new EditorActionController(getParent().getShell());
+	private void createActions() {
+		// Create the actions		
 		actNew = new Action("New") {
 			public void run() {
-				ec.actionNew(Editor.this);
+				actionNew();
 			}
 			
 		};
@@ -303,7 +322,7 @@ public class Editor extends MainContent implements Observer {
 
 		actOpen = new Action("Open") {
 			public void run() {
-				ec.actionOpen(Editor.this);
+				actionOpen();
 			}
 		};
 		actOpen.setToolTipText("Open existing project (CTRL + O)");
@@ -313,7 +332,13 @@ public class Editor extends MainContent implements Observer {
 		
 		actMouseHand = new Action("Mouse Hand") {
 			public void run() {
-				ec.actionMouseHand(Editor.this,getWorkspace());
+				
+				Workspace workspace = getWorkspace();
+
+				if (workspace != null) {
+					workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.HAND);
+					workspace.disableNetwork();
+				}				
 			}
 		};
 		actMouseHand.setToolTipText("Mouse Hand (CTRL + U)");
@@ -323,7 +348,7 @@ public class Editor extends MainContent implements Observer {
 
 		actSave = new Action("Save") {
 			public void run() {						
-				ec.actionSave(Editor.this);
+				actionSave();
 			}
 		};
 		actSave.setToolTipText("Save current project (CTRL + S)");
@@ -343,7 +368,7 @@ public class Editor extends MainContent implements Observer {
 
 		actToImage = new Action("To Image") {
 			public void run() {
-				ec.actionToImage(getWorkspace());
+				actionToImage();
 			}
 		};
 		actToImage.setToolTipText("To Image (SHIFT + I)");
@@ -351,7 +376,7 @@ public class Editor extends MainContent implements Observer {
 
 		actClose = new Action("Close") {
 			public void run() {
-				ec.actionClose(getWorkspace());			
+				actionClose();			
 			}
 		};
 //		actClose.setAccelerator(SWT.CTRL | SWT.F4);
@@ -361,14 +386,14 @@ public class Editor extends MainContent implements Observer {
 
 		actExit = new Action("Exit") {
 			public void run() {
-				ec.actionExit();
+				actionExit();
 			}
 		};	
 		actExit.setToolTipText("Exit (SHIFT + W)");
 
 		actUndo = new Action("Undo") {
 			public void run() {
-				ec.actionUndo(getWorkspace());
+				actionUndo();
 			}
 		};
 		actUndo.setToolTipText("Undo (CTRL + Z)");
@@ -377,7 +402,7 @@ public class Editor extends MainContent implements Observer {
 
 		actRedo = new Action("Redo") {
 			public void run() {
-				ec.actionRedo(getWorkspace());
+				actionRedo();
 			}
 		};
 		actRedo.setToolTipText("Redo (CTRL+Y)");
@@ -386,7 +411,7 @@ public class Editor extends MainContent implements Observer {
 
 		actConfigureNodes = new Action("Configure Node(s)") {
 			public void run() {
-				ec.actionConfigureNode(getWorkspace());				
+				actionConfigureNode();				
 			}
 		};
 		actConfigureNodes.setToolTipText("Configure Node (ATL + F)");
@@ -394,7 +419,7 @@ public class Editor extends MainContent implements Observer {
 
 		actCreateASingleNode = new Action("A Single Node") {
 			public void run() {
-				ec.actionCreateASingleNode(getWorkspace());
+				actionCreateASingleNode();
 			}
 		};
 		actCreateASingleNode.setToolTipText("Create a single Node (SHIFT + N)");
@@ -403,7 +428,7 @@ public class Editor extends MainContent implements Observer {
 
 		actCreateASetOfNodes = new Action("A Set of Nodes") {
 			public void run() {
-				ec.actionCreateASetOfNode(getWorkspace());
+				actionCreateASetOfNode();
 			}
 		};
 		actCreateASetOfNodes.setToolTipText("Create a set of Nodes (SHIFT + M)");
@@ -412,14 +437,14 @@ public class Editor extends MainContent implements Observer {
 
 		actManageTrafficFlow = new Action("Traffic Flow Manager") {
 			public void run() {
-				ec.actionManageTrafficFlow(getWorkspace());
+				actionManageTrafficFlow();
 			}
 		};
 		actManageTrafficFlow.setToolTipText("Traffic Flow Manager (ALT + T)");
 
 		actDeleteNodes = new Action("Delete Node(s)") {
 			public void run() {
-				ec.actionDeleteNodes(getWorkspace());
+				actionDeleteNodes();
 			}
 		};
 		actDeleteNodes.setToolTipText("Delete Nodes(s) (DELETE)");		
@@ -429,7 +454,7 @@ public class Editor extends MainContent implements Observer {
 
 		actViewNetworkInfo = new Action("Network Properties") {
 			public void run() {
-				ec.actionViewNetworkInfo(getWorkspace());
+				actionViewNetworkInfo();
 			}
 		};
 		actViewNetworkInfo.setToolTipText("View Network Infomation (ALT + I)");
@@ -438,7 +463,7 @@ public class Editor extends MainContent implements Observer {
 
 		actViewNodeInfo = new Action("Node Properties") {
 			public void run() {
-				ec.actionViewNodeInfo(getWorkspace());
+				actionViewNodeInfo();
 			}
 		};
 		actViewNodeInfo.setToolTipText("View Node Infomation (CTRL + I)");
@@ -448,7 +473,7 @@ public class Editor extends MainContent implements Observer {
 
 		actShowObstacles = new Action("Show Obstacle(s)") {
 			public void run() {
-				ec.actionShowObstacles(getWorkspace());
+				actionShowObstacles();
 			}
 		};		
 		actShowObstacles.setToolTipText("Show obstacles (ALT + O)");
@@ -457,7 +482,7 @@ public class Editor extends MainContent implements Observer {
 
 		actShowNeighbors = new Action("Show Neighbors") {
 			public void run() {
-				ec.actionShowNeighbors(getWorkspace());
+				actionShowNeighbors();
 			}
 		};	
 		actShowNeighbors.setToolTipText("Show neighbors of the selected node(s) (SHIFT + S)");
@@ -466,7 +491,7 @@ public class Editor extends MainContent implements Observer {
 
 		actSearchNode = new Action("Search Node") {
 			public void run() {
-				ec.actionSearchNode(getWorkspace());
+				actionSearchNode();
 			}
 		};
 		actSearchNode.setToolTipText("Search Node (CTRL + F)");
@@ -475,14 +500,14 @@ public class Editor extends MainContent implements Observer {
 
 		actIdentifyBoundary = new Action("Boundary Identification") {
 			public void run() {
-				ec.actionIdentifyBoundary();
+				actionIdentifyBoundary();
 			}
 		};	
 		actIdentifyBoundary.setToolTipText("Boundary Idenfication (CTRL + B)");
 
 		actGenerateNodeLocationData = new Action("Node Location Data") {
 			public void run() {
-				ec.actionGenerateNodeLocationData(getWorkspace());
+				actionGenerateNodeLocationData();
 			}
 		};	
 		actGenerateNodeLocationData.setAccelerator(SWT.ALT | SWT.CTRL | 'D');
@@ -492,7 +517,7 @@ public class Editor extends MainContent implements Observer {
 
 		actCheckConnectivity = new Action("Check Connectivity") {
 			public void run() {
-				ec.actionCheckConnectivity(getWorkspace());
+				actionCheckConnectivity();
 			}
 		};
 		actCheckConnectivity.setToolTipText("Check the connectivity of network (SHIFT + C)");
@@ -503,7 +528,7 @@ public class Editor extends MainContent implements Observer {
 
 		actChangeNetworkSize = new Action("Change Network Size") {
 			public void run() {
-				ec.actionChangeNetworkSize(getWorkspace());
+				actionChangeNetworkSize();
 			}
 		};
 		actChangeNetworkSize.setToolTipText("Change network size (SHIFT + L)");
@@ -512,7 +537,7 @@ public class Editor extends MainContent implements Observer {
 
 		actGenerateSimulationScripts = new Action("Simulation Scripts") {
 			public void run() {
-				ec.actionGenerateSimulationScript(getWorkspace());
+				actionGenerateSimulationScript();
 			}
 		};
 		actGenerateSimulationScripts.setToolTipText("Generate simulation script (ALT + G)");
@@ -521,14 +546,14 @@ public class Editor extends MainContent implements Observer {
 
 		actViewDelaunayTriangulation = new Action("Delaunay Triangulation") {
 			public void run() {
-				ec.actionViewDelaunayTriangulation(getWorkspace());
+				actionViewDelaunayTriangulation();
 			}
 			
 		};	
 
 		actViewVoronoiDiagram = new Action("Voronoi Diagram") {
 			public void run() {
-				ec.actionViewVoronoiDiagram(getWorkspace());
+				actionViewVoronoiDiagram();
 			}
 		};	
 
@@ -552,6 +577,7 @@ public class Editor extends MainContent implements Observer {
 		actFindPathByGreedy = new Action("Path by Greedy") {
 			public void run() {
 				Workspace workspace = getWorkspace();
+
 				if (workspace == null) return;				
 
 				if (workspace.getSelectedObject().size() == 2) {
@@ -581,7 +607,7 @@ public class Editor extends MainContent implements Observer {
 
 		actVisualizeSettings = new Action("Preferences") {
 			public void run() {
-				ec.actionVisualizeSetting(Editor.this);
+				actionVisualizeSetting();
 			}
 		};
 		actVisualizeSettings.setImageDescriptor(null);
@@ -590,7 +616,7 @@ public class Editor extends MainContent implements Observer {
 
 		actDefaultConfiguration = new Action("Node Default Configuration") {
 			public void run() {
-				ec.actionDefaultConfiguration();
+				actionDefaultConfiguration();
 			}
 		};	
 		actDefaultConfiguration.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/wrench.png"));
@@ -598,7 +624,7 @@ public class Editor extends MainContent implements Observer {
 
 		actDocumentation = new Action("Documentation") {
 			public void run() {
-				ec.actionDocumentation();
+				actionDocumentation();
 			}
 		};	
 		actDocumentation.setToolTipText("Documentation (SHIFT + D)");
@@ -606,7 +632,7 @@ public class Editor extends MainContent implements Observer {
 
 		actDemos = new Action("Demos") {
 			public void run() {
-				ec.actionDemos();
+				actionDemos();
 			}
 		};	
 		actDemos.setToolTipText("Demos (ALT + D)");
@@ -614,7 +640,7 @@ public class Editor extends MainContent implements Observer {
 
 		actAbout = new Action("About") {
 			public void run() {
-				ec.actionAbout();					
+				actionAbout();					
 			}
 		};		
 		actAbout.setToolTipText("About (ALT + A)");
@@ -622,32 +648,16 @@ public class Editor extends MainContent implements Observer {
 
 		actPrint = new Action("Print") {
 			public void run() {
-				ec.actionPrint(getWorkspace());
+				actionPrint();
 			}
 		};
 		actPrint.setToolTipText("Print (CTRL + P)");
 		actPrint.setAccelerator(SWT.CTRL | 'P');
 		actPrint.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/printer.png"));
 
-
-		actSaveAll = new Action("Save All") {
-			public void run() {
-				try {
-					Project project = ProjectManager.getProject();
-						ProjectManager.saveProject(project);
-				} catch (IOException e) {
-					MessageDialog.openError(getShell(), "Saving Error", "Something wrong happened. Cannot save all projects");
-				}
-			}
-		};
-		actSaveAll.setToolTipText("Save all opened project");
-		actSaveAll.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/disk_multiple.png"));
-
-
 		actZoomIn = new Action("Zoom In") {
 			public void run() {
-				ec.actionZoomIn(getWorkspace());
-//				actionZoomIn();
+				actionZoomIn();
 			}
 		};
 		actZoomIn.setToolTipText("Zoom In (CTRL+)");
@@ -657,7 +667,7 @@ public class Editor extends MainContent implements Observer {
 
 		actZoomOut = new Action("Zoom Out") {
 			public void run() {
-				ec.actionZoomOut(getWorkspace());
+				actionZoomOut();
 			}
 		};
 		actZoomOut.setToolTipText("Zoom Out (CTRL-)");
@@ -667,7 +677,7 @@ public class Editor extends MainContent implements Observer {
 
 		actCreateARandomNode = new Action("A Random Node") {
 			public void run() {
-				ec.actionCreateARandomNode(getWorkspace());
+				actionCreateARandomNode();
 			}
 		};
 		actCreateARandomNode.setToolTipText("Create a random node (CTRL + R)");
@@ -677,7 +687,7 @@ public class Editor extends MainContent implements Observer {
 
 		actDeleteAllNodes = new Action("Delete All Nodes") {
 			public void run() {
-				ec.actionDeleteAllNodes(getWorkspace());
+				actionDeleteAllNodes();
 			}
 		};
 		actDeleteAllNodes.setToolTipText("Delete all nodes (SHIFT+DELETE)");
@@ -685,7 +695,7 @@ public class Editor extends MainContent implements Observer {
 		
 		actShowRange = new Action("Show Range") {
 			public void run() {
-				ec.actionShowRange(getWorkspace());
+				actionShowRange();
 			}
 		};
 		actShowRange.setToolTipText("Show radio range of the selected node(s) (ALT + R)");
@@ -694,7 +704,7 @@ public class Editor extends MainContent implements Observer {
 
 		actShowConnection = new Action("Show Connection") {
 			public void run() {
-				ec.actionShowConnection(actShowConnection,getWorkspace());
+				actionShowConnection();
 			}
 		};
 		actShowConnection.setToolTipText("Show network connection (ALT + C)");
@@ -704,6 +714,7 @@ public class Editor extends MainContent implements Observer {
 		actMouseCursor = new Action("Mouse Cursor") {
 			public void run() {
 				Workspace workspace = getWorkspace();
+
 				if (workspace != null) {
 					
 					workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);
@@ -717,7 +728,7 @@ public class Editor extends MainContent implements Observer {
 
 		actMouseCreateNode = new Action("Create New Node by Mouse Click") {
 			public void run() {
-				ec.actionMouseCreateNode(getWorkspace());
+				actionMouseCreateNode();
 			}
 		};
 		actMouseCreateNode.setToolTipText("Create new nodes by mouse click (CTRL + M)");
@@ -726,7 +737,7 @@ public class Editor extends MainContent implements Observer {
 
 		actShowRulers = new Action("Show Rulers") {
 			public void run() {
-				ec.actionShowRulers(actShowRulers,getWorkspace());
+				actionShowRulers();
 			}
 		};
 		actShowRulers.setToolTipText("Show Rulers (SHIFT + L)");
@@ -734,32 +745,48 @@ public class Editor extends MainContent implements Observer {
 
 		actMouseCreateArea = new Action("Create New Area") {
 			public void run() {
-				ec.actionMouseCreateArea(getWorkspace());	
+				actionMouseCreateArea();	
 			}
 		};
 		actMouseCreateArea.setToolTipText("Create new area (CTRL + A)");
 		actMouseCreateArea.setChecked(false);
-		actMouseCreateArea.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/arrow_cursor.png"));
+		actMouseCreateArea.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/PolygonSetIcon.png"));
 
 		actManagePaths = new Action("Path Manager") {
 			public void run() {
-				ec.actionManagePath(getWorkspace());
+				actionManagePath();
 			}
 		};
 		actManagePaths.setToolTipText("Path Manager (ALT + M)");
 
 		actManageLabels = new Action("Label Manager") {
 			public void run() {
-				ec.actionManageLabels(getWorkspace());
+				actionManageLabels();
 			}
 		};
 		actManageLabels.setToolTipText("Label Manager (ALT + L)");
+		
+		actConfigNS2 = new Action("Configure NS2 path"){
+			public void run() {
+				ns2Config();
+			}
+		};
+		actConfigNS2.setToolTipText("Configure NS2 path (ALT + P)");
+		actConfigNS2.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/control_repeat_blue.png"));
+		
+		actRunNS2 = new Action("Run NS2"){
+			public void run() {
+				actionRunNS2();
+			}
+		};
+		actRunNS2.setToolTipText("Run with NS2 (CTRL + F11)");
+		actRunNS2.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/control_play_blue.png"));
 		
 
 		{
 			actImport = new Action("Import Location Data") {
 				public void run() {
-					ec.actionImport(getWorkspace());
+					actionImport();
 				}
 			};
 			actImport.setToolTipText("Import Location Data (ALT + I)");
@@ -778,14 +805,13 @@ public class Editor extends MainContent implements Observer {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-//						actionManageTrafficFlow();
-						ec.actionManageTrafficFlow(getWorkspace());
+						actionManageTrafficFlow();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						ec.actionManageTrafficFlow(getWorkspace());
+						actionManageTrafficFlow();
 					}
 				});
 			      
@@ -796,13 +822,13 @@ public class Editor extends MainContent implements Observer {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						ec.actionManagePath(getWorkspace());
+						actionManagePath();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						ec.actionManagePath(getWorkspace());
+						actionManagePath();
 					}
 				});
 			      
@@ -813,13 +839,13 @@ public class Editor extends MainContent implements Observer {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						ec.actionManageLabels(getWorkspace());
+						actionManageLabels();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						ec.actionManageLabels(getWorkspace());
+						actionManageLabels();
 					}
 				});
 			    
@@ -830,13 +856,13 @@ public class Editor extends MainContent implements Observer {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						ec.actionShowRulers(actShowRulers, getWorkspace());
+						actionShowRulers();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						ec.actionShowRulers(actShowRulers, getWorkspace());
+						actionShowRulers();
 					}
 				});
 			      
@@ -845,7 +871,7 @@ public class Editor extends MainContent implements Observer {
 			    
 			    
 			    pt = toolBar.toDisplay(pt);
-			    menu.setLocation(pt.x+412, pt.y);
+			    menu.setLocation(pt.x+550, pt.y);
 		        menu.setVisible(true);
 			}
 		};
@@ -862,13 +888,13 @@ public class Editor extends MainContent implements Observer {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						ec.actionImport(getWorkspace());
+						actionImport();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						ec.actionImport(getWorkspace());
+						actionImport();
 						
 					}
 				});
@@ -880,14 +906,13 @@ public class Editor extends MainContent implements Observer {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						
-						ec.actionToImage(getWorkspace());
+						actionToImage();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						ec.actionToImage(getWorkspace());
+						actionToImage();
 					}
 				});
 			      
@@ -898,14 +923,13 @@ public class Editor extends MainContent implements Observer {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						ec.actionDocumentation();
-						
+						actionDocumentation();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						ec.actionDocumentation();
+						actionDocumentation();
 					}
 				});
 			      
@@ -916,13 +940,13 @@ public class Editor extends MainContent implements Observer {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						ec.actionDemos();
+						actionDemos();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						ec.actionDemos();
+						actionDemos();
 					}
 				});
 			      
@@ -933,13 +957,13 @@ public class Editor extends MainContent implements Observer {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						ec.actionPrint(getWorkspace());
+						actionPrint();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						ec.actionPrint(getWorkspace());
+						actionPrint();
 					}
 				});
 			      
@@ -950,14 +974,14 @@ public class Editor extends MainContent implements Observer {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						ec.actionAbout();
+						actionAbout();
 						
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
 						// TODO Auto-generated method stub
-						ec.actionAbout();
+						actionAbout();
 					}
 				});
 			      
@@ -967,14 +991,459 @@ public class Editor extends MainContent implements Observer {
 			    
 			    
 			    pt = toolBar.toDisplay(pt);
-			    menu.setLocation(pt.x+672, pt.y);
+			    menu.setLocation(pt.x+800, pt.y);
 		        menu.setVisible(true);
 			}
 		};
 		actScriptReferenceRemain.setToolTipText("External tools");
 		actScriptReferenceRemain.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/ruby.png"));
+	}
+	
+	public void ns2Config() {
+		String preNS2Path = "";
+		if(nsFilePath!=null){
+			preNS2Path = nsFilePath;
+		}
+		String filePathString = "NS2_path_store";
+			File file = new File(filePathString);
+			
+			FileDialog dialog = new FileDialog(getShell(), SWT.MULTI);
+	    dialog.open();
+	    if(dialog.getFilterPath() == null || dialog.getFileName() == null) nsFilePath = preNS2Path;
+	    else nsFilePath = dialog.getFilterPath() + "/" +dialog.getFileName();
+	    
+	    try {
+	    if (!file.exists()) {
+			
+				file.createNewFile();
+		}
+	    FileWriter fw = new FileWriter(file.getAbsoluteFile());
+		BufferedWriter bw = new BufferedWriter(fw);
+		bw.write(nsFilePath);
+		bw.close();
+	    } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void actionOpen(){
+
+		Project project = ApplicationManager.openProject(Editor.this);
+		if(project == null) return;
+//		if (project != null)
+			showProject(project);
+		
+		getWorkspace().getSelectableObject().get(getWorkspace().getSelectableObject().size() - 1).moveAbove(null);
+		updateNetworkInfoLabel();
+		updateDesign();
+	}
+	
+	public GWirelessNode actionCopy() {
+		Workspace workspace = getWorkspace();
+		return ApplicationManager.copyNode(workspace);
 		
 	}
+	
+	public void actionPaste(GWirelessNode gn){
+		Workspace workspace = getWorkspace();
+		WirelessNode wn = gn.getWirelessNode();
+		ApplicationManager.pasteNode(workspace,wn.getX()+1 , wn.getY()+1, wn.getRange());
+	}
+	
+	public void saveScript() {
+		Workspace workspace = getWorkspace();
+		fileProject = fileProject.replace(".wis", ".tcl");
+		System.out.println(fileProject);
+		try {
+			ScriptGenerator.generateTcl(workspace.getProject(), fileProject, false, false);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateDesign() {
+		Workspace workspace = getWorkspace();
+		try {
+			StringBuilder sb = ScriptGenerator.generateTclText(workspace.getProject(), false, false);
+			styledText.setText(sb.toString());
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateNodeInfoLabel() {
+		Workspace workspace = getWorkspace();
+		String str = "Node Info" + "\n";
+		if (workspace == null) str += "";
+		else{
+			
+			List<GSelectableObject> objList = workspace.getSelectedObject();
+			if (objList.size() == 1 && objList.get(0) instanceof GWirelessNode) {
+				WirelessNode wn = ((GWirelessNode) objList.get(0)).getWirelessNode();
+				
+				str += "+ID : " + wn.getId() + "+\n+Location : \n("
+						+ wn.getX() + " , " + wn.getY() + ")+\n"
+						+ "+Range : " + wn.getRange() + "+\n+Neighbors \nNumber:"
+						+ wn.getNeighborList().size() + "+"
+						;
+				
+			}
+			else str += "";
+		}
+//		eventLabel.setText(str);
+	}
+	
+	public void updateNetworkInfoLabel() {
+		Workspace workspace = getWorkspace();
+		WirelessNetwork network = workspace.getProject().getNetwork();
+		String str = "Networks" + "\n" + "Size : " + network.getWidth() 
+					+ "x" + network.getLength() + "\nNodes : " + network.getNodeList().size()
+					+ "\n" + "Times : " + network.getTime();
+//		networkLabel.setText(str);
+		
+	}
+	
+//	public void editorInfo(){
+//		Label titleLabel = new Label(containerInnerLeft, SWT.BORDER);
+//		titleLabel.setText("Editor");
+//		titleLabel.setLayoutData(new GridLayout(2,false));
+//		GridData titleData = new GridData(GridData.FILL, GridData.FILL, true, false);
+//		titleData.heightHint = 25;
+//		titleLabel.setLayoutData(titleData);
+//	    
+//	    networkLabel = new Label(containerInnerLeft, SWT.BORDER);
+//	    networkLabel.setText("Networks");
+//	    networkLabel.setLayoutData(new GridLayout(2,false));
+//	    GridData dataNetwork = new GridData(GridData.FILL, GridData.FILL, true, false);
+//	    dataNetwork.heightHint = 200;
+//	    networkLabel.setLayoutData(dataNetwork);
+//	    
+//	    eventLabel = new Label(containerInnerLeft, SWT.BORDER);
+//	    eventLabel.setText("Node Info");
+//	    eventLabel.setLayoutData(new GridLayout(2,false));
+//	    GridData dataEvent = new GridData(GridData.FILL, GridData.FILL, true, false);
+//	    dataEvent.heightHint = 400;
+//	    eventLabel.setLayoutData(dataEvent);
+//	}
+	
+	public void actionNew() {
+		Project project = ApplicationManager.newProject(Editor.this); 
+		if (project == null) return;
+		
+			showProject(project);
+		updateNetworkInfoLabel();
+		updateDesign();
+	}
+	
+	public void actionSave() {
+		ApplicationManager.saveWorkspace(Editor.this);
+	}
+	
+	public void actionToImage() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.exportToImage(workspace);
+	}
+	
+	public void actionClose() {
+		Workspace workspace = getWorkspace();				
+		ApplicationManager.closeWorkspace(workspace);
+	}
+	
+	public void actionExit() {
+		getShell().close();
+	}
+	
+	public void actionUndo() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.undoState(workspace);
+	}
+	
+	public void actionRedo() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.redoState(workspace);
+	}
+	
+	public void actionConfigureNode() {
+		Workspace workspace = getWorkspace();
+		
+		if (workspace != null)
+			new ConfigNodeDialog(getShell(), SWT.SHEET, ConfigNodeDialog.PROJECT_CONFIG, workspace).open();
+	}
+	
+	public void actionCreateASingleNode() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.createASingleNode(workspace);
+	}
+	
+	public void actionCreateASetOfNode() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.createASetOfNodes(workspace);
+	}
+	
+	public void actionManageTrafficFlow() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.manageTrafficFlow(workspace);
+	}
+	
+	public void actionDeleteNodes() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.deleteNodes(workspace);
+	}
+	
+	public void actionViewNetworkInfo() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.viewNetworkInfo(workspace);
+	}
+	
+	public void actionViewNodeInfo() {
+		Workspace workspace = getWorkspace();
+		if (workspace == null) return;
+		
+		List<GSelectableObject> objList = workspace.getSelectedObject();
+		if (objList.size() == 1 && objList.get(0) instanceof GWirelessNode)
+			ApplicationManager.viewNodeInfo(workspace, (GWirelessNode) objList.get(0));
+	}
+	
+	public void actionShowObstacles() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.showObstacles(workspace);
+	}
+	
+	public void actionShowNeighbors() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.showNeighbors(workspace);
+	}
+	
+	public void actionSearchNode() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.searchNodes(workspace);
+	}
+	
+	public void actionIdentifyBoundary() {
+		MessageDialog.openInformation(getShell(), "Unavailable feature", "This feature is currently unavailable. Please wait for the next version");
+	}
+	
+	public void actionGenerateNodeLocationData() {
+		Workspace workspace = getWorkspace();
+
+		if (workspace != null)
+			new GenerateNodeLocationDataDialog(getShell(), SWT.SHEET, workspace.getProject()).open();
+	}
+	
+	public void actionCheckConnectivity() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.checkConnectivity(workspace);
+	}
+	
+	public void actionChangeNetworkSize() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.changeNetworkSize(workspace);
+	}
+	
+	public void actionGenerateSimulationScript() {
+		new GenerateSimulationScriptsDialog(getShell(), SWT.SHEET, getWorkspace()).open();
+	}
+	
+	public void actionViewDelaunayTriangulation() {
+		Workspace workspace = getWorkspace();
+		if (workspace != null) {
+			ApplicationManager.showDelaunayTriangulation(workspace);
+			
+		}
+	}
+	
+	public void actionViewVoronoiDiagram() {
+		Workspace workspace = getWorkspace();
+		if (workspace != null)
+			ApplicationManager.showVoronoiDiagram(workspace);
+	}
+	
+	public void actionVisualizeSetting() {
+		new PreferencesDialog(getShell(), SWT.SHEET, Editor.this).open();
+	}
+	
+	public void actionDefaultConfiguration() {
+		new ConfigNodeDialog(getShell(), SWT.SHEET, ConfigNodeDialog.APP_CONFIG, null).open();
+	}
+	
+	public void actionDocumentation() {
+		Desktop dt = Desktop.getDesktop();
+		File docFile = null;
+		try {
+			docFile = new File(Editor.class.getResource("help.chm").getPath());
+			dt.open(docFile);
+		} catch (Exception e) {
+			docFile = new File("doc/help.chm");
+			
+			try {
+			dt.open(docFile);
+			} catch (IOException ex) {
+				MessageDialog.openError(getShell(), "Cannot open documentation", "The documentation may not exist or has been deleted");
+			}
+		}
+	}
+	
+	public void actionDemos() {
+		MessageDialog.openInformation(getShell(), "Ten Ten", "Will be available in the next version.");
+	}
+	
+	public void actionAbout(){
+		new AboutWindow(null).open();	
+	}
+	
+	public void actionPrint() {
+		ApplicationManager.print(getWorkspace());
+	}
+	
+	public void actionZoomIn() {
+		Workspace w = getWorkspace();
+		w.setSize(w.getSize().x + 10, w.getSize().y + 10);
+	}
+	
+	public void actionZoomOut() {
+		Workspace w = getWorkspace();
+		w.setSize(w.getSize().x - 10, w.getSize().y - 10);
+	}
+	
+	public void actionCreateARandomNode() {
+		Workspace w = getWorkspace();
+		ApplicationManager.createARandomNode(w);
+	}
+	
+	public void actionDeleteAllNodes() {
+		Workspace w = getWorkspace();
+		ApplicationManager.deleteAllNodes(w);
+	}
+	
+	public void actionShowRange() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.showRange(workspace);
+	}
+	
+	public void actionShowConnection() {
+		Workspace workspace = getWorkspace();
+		
+		if (workspace.getPropertyManager().isShowConnection()) {
+			ApplicationManager.showConnection(workspace, false);
+			actShowConnection.setChecked(false);
+		} else {
+			ApplicationManager.showConnection(workspace, true);
+			actShowConnection.setChecked(true);					
+		}
+	}
+	
+	public void actionMouseCreateNode() {
+		Workspace workspace = getWorkspace();
+
+		if (workspace != null) {
+			workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.NODE_GEN);
+			workspace.enableNetwork();
+		}
+	}
+	
+	public void actionShowRulers() {
+		Workspace workspace = getWorkspace();
+
+		if (workspace != null) {
+			RulerScrolledComposite sc = (RulerScrolledComposite) workspace.getParent();
+
+			if (!sc.isRulersShown()) {
+				sc.showRulers();
+				actShowRulers.setChecked(true);
+			}
+			else {
+				sc.hideRulers();
+				actShowRulers.setChecked(false);
+			}
+		}
+	}
+	
+	public void actionMouseCreateArea() {
+		Workspace workspace = getWorkspace();
+
+		if (workspace != null) {
+			workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.AREA);
+			workspace.enableNetwork();
+			
+			workspace.disableNodes();
+			workspace.getPropertyManager().turnVisualizeOff();
+			workspace.deselectGraphicObjects();
+		}
+	}
+	
+	public void actionManagePath() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.managePaths(workspace);
+	}
+	
+	public void actionManageLabels() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.manageLabels(workspace);
+	}
+	
+	public void actionRunNS2() {
+		try {
+			String filePathString = "NS2_path_store";
+  			File file = new File(filePathString);
+  			if (!file.exists()) {
+  				boolean confirmed = MessageDialog.openQuestion(getShell(), "NS2 configuration", "NS2 configuration don't exists!. Please configure NS2 path to using this features!");
+  				if(confirmed == true) {
+  					ns2Config();
+  				}
+  				else return;
+  			}
+  			else {
+  				FileReader fr = new FileReader(file.getAbsoluteFile());
+  				BufferedReader br = new BufferedReader(fr);
+  				String temp = "";
+  				String sCurrentLine;
+  				while ((sCurrentLine = br.readLine()) != null) {
+  					temp += sCurrentLine;
+  				}
+  				System.out.println(temp);
+  				if(temp == "") {
+  					boolean confirmed = MessageDialog.openQuestion(getShell(), "NS2 configuration", "NS2 configuration don't exists!. Please configure NS2 path to using this features!");
+	  				if(confirmed == true) {
+	  					ns2Config();
+	  				}
+	  				else return;
+  				}
+  				nsFilePath = temp;
+  				
+  				br.close();
+  			}
+    	      String line;
+    	      saveScript();
+    	      Process p = Runtime.getRuntime().exec(
+    	    	      new String[]{
+//    	    	    		  "/bin/sh", "-c", "l"
+//    	    	    		  "/bin/bash","-c","/home/khaclinh/datasection/EE/workspace/ex2/aa.sh"
+    	    	    		  
+//    	    	    		  "/home/khaclinh/ns-allinone-2.34/ns-2.34/ns","simu.tcl"
+    	    	    		  nsFilePath,fileProject
+    	    	    		  });
+    	      p.waitFor();
+    	      BufferedReader input = new BufferedReader(
+    	          new InputStreamReader(p.getInputStream()));
+    	      String results = "";
+    	      while ((line = input.readLine()) != null) {
+    	        results += line+ "\n";
+    	      }
+    	      input.close();
+    	      styledTextConsole.setText(results);
+    	    } catch (Exception err) {
+    	      err.printStackTrace();
+    	    }
+	}
+	
+	public void actionImport() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.importLocationData(workspace);
+	}
+
 	
 	private void createToolBar()
 	{
@@ -1026,10 +1495,9 @@ public class Editor extends MainContent implements Observer {
 		
 		Separator separator5 = new Separator();
 		toolBarManager.add(separator5);
-//		
-//		
-//		
-//		
+		toolBarManager.add(actRunNS2);
+		toolBarManager.add(actConfigNS2);
+
 		toolBarManager.update(true);
 	}
 	
@@ -1089,6 +1557,8 @@ public class Editor extends MainContent implements Observer {
 	
 	public void showProject(Project project)
 	{
+		
+		
 		final RulerScrolledComposite scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 //		scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		tabFolder.getItem(1).setControl(scrolledComposite);
@@ -1112,6 +1582,8 @@ public class Editor extends MainContent implements Observer {
 	}
 	
 	public Workspace getWorkspace() {
+		if(tabFolder.getItem(1) == null) return null;
+		if(tabFolder.getItem(1).getControl() == null) return null;
 		Workspace workspace = (Workspace)((ScrolledComposite)tabFolder.getItem(1).getControl()).getContent();
 		if(workspace != null)
 			return workspace;
@@ -1314,6 +1786,30 @@ public class Editor extends MainContent implements Observer {
 		return actScriptReferenceRemain;
 	}
 	
+	public String getNS2FilePath() {
+		return nsFilePath;
+	}
+	
+	public Action getActConfigNS2() {
+		return actConfigNS2;
+	}
+	
+	public Action getActRunNS2() {
+		return actRunNS2;
+	}
+	
+	public StyledText getStyledTextConsole() {
+		return styledTextConsole;
+	}
+	
+	public String getFileProject() {
+		return fileProject;
+	}
+	
+	public void setFileProject(String fileProject) {
+		this.fileProject = fileProject;
+	}
+	
 	public Project getProject() {
 		return project;
 	}
@@ -1396,11 +1892,15 @@ public class Editor extends MainContent implements Observer {
 	private Action actManagePaths;
 	private Action actManageLabels;
 	private Action actImport;
+	private Action actRunNS2;
+	private Action actConfigNS2;
 	
 	private Action actScriptReferenceRemain;
 	private Action actNetworkReferenceRemain;
 	
 	private StyledText styledText;
+	private StyledText styledTextConsole;
+	
 	private EditorActionController ec;
 	
 	private Project project;
@@ -1408,6 +1908,9 @@ public class Editor extends MainContent implements Observer {
 	private RulerScrolledComposite scrolledComposite;
 	
 	private ToolBar toolBar;
+	
+	private String nsFilePath;
+	private String fileProject;
 	
 	@Override
 	public void update(Observable arg0, Object arg1) {
@@ -1454,7 +1957,7 @@ public class Editor extends MainContent implements Observer {
 			else 
 				actRedo.setEnabled(true);
 		}
-		ec.updateDesign(this, styledText);
+//		ec.updateDesign(this, styledText);
 		actionGetTab();
 //		ec.updateEditToDesign(this,styledText);
 			

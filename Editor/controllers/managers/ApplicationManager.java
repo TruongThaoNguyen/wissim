@@ -64,35 +64,42 @@ import views.helpers.PrintHelper;
 public class ApplicationManager {
 	private static int newProjectCount = 1;
 	
-	public static Project newProject(Editor editor) {
+	public static Project newProject(Editor mainWindow) {
 		String defaultName = "Untitled" + newProjectCount;
-		CreateProjectResult result = (CreateProjectResult)new CreateProjectDialog(editor.getParent().getShell(), SWT.SHEET, defaultName).open();				
+		CreateProjectResult result = (CreateProjectResult)new CreateProjectDialog(mainWindow.getShell(), SWT.SHEET, defaultName).open();				
 		if (result == null) return null;
 
 		// set up path to save file
-		String path = Validator.getFilePath(result.path, Helper.getFileNameWithExt(result.name, "wis"));
-
-		File f = new File(path);
-
 		boolean confirmed = true;
-		if (f.exists() == true)
-			confirmed = MessageDialog.openQuestion(editor.getShell(), "File Existed", "File existed in the selected directory. Do you want to override the existing file by the new one?");
-
-		if (confirmed == true) {
-			Project project;
-			try {
-				project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "wis"), result.width, result.height, result.time);				
-				ApplicationSettings.applyDefaultSettingsToProject(project);
-				newProjectCount++;
-				
-				return project; 
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}		
+		File dir=new File(result.path);
+		if(!dir.exists()) {
+			dir.mkdir();
+		}
 		
+			String path = Validator.getFilePath(result.path, Helper.getFileNameWithExt(result.name, "wis"));
+	
+			File f = new File(path);
+	
+			
+			if (f.exists() == true)
+				confirmed = MessageDialog.openQuestion(mainWindow.getShell(), "File Existed", "File existed in the selected directory. Do you want to override the existing file by the new one?");
+	
+			if (confirmed == true) {
+				Project project;
+				try {
+					project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "wis"), result.width, result.height, result.time);
+					ApplicationSettings.applyDefaultSettingsToProject(project);
+					newProjectCount++;
+					
+					return project;
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}		
+		mainWindow.setFileProject(result.path+"/"+result.name);
 		return null;
 	}
+
 	
 	public static Project openProject(Editor mainWindow) {
 		// open Open Dialog
@@ -109,6 +116,7 @@ public class ApplicationManager {
 		// open project
 		try {					
 			Project project = ProjectManager.loadProject(path);
+			mainWindow.setFileProject(path);
 			return project;
 		} catch (Exception e) {}
 		

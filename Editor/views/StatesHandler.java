@@ -34,7 +34,6 @@ public class StatesHandler {
 		window.getActPrint().setEnabled(false);
 		window.getActRedo().setEnabled(false);
 		window.getActSave().setEnabled(false);
-		window.getActSaveAll().setEnabled(false);
 		window.getActSaveAs().setEnabled(false);
 		window.getActSearchNode().setEnabled(false);
 		window.getActShowConnection().setEnabled(false);
@@ -54,7 +53,9 @@ public class StatesHandler {
 		window.getActViewShortestPathTree().setEnabled(false);
 		window.getActViewVoronoiDiagram().setEnabled(false);
 		window.getActZoomIn().setEnabled(false);
-		window.getActZoomOut().setEnabled(false);		
+		window.getActZoomOut().setEnabled(false);
+		window.getActConfigNS2().setEnabled(false);
+		window.getActRunNS2().setEnabled(false);
 		window.getActNetworkReferenceRemain().setEnabled(false);
 		window.getActScriptReferenceRemain().setEnabled(false);
 	}
@@ -85,7 +86,6 @@ public class StatesHandler {
 		window.getActPrint().setEnabled(true);
 		window.getActRedo().setEnabled(true);
 		window.getActSave().setEnabled(true);
-		window.getActSaveAll().setEnabled(true);
 		window.getActSaveAs().setEnabled(true);
 		window.getActSearchNode().setEnabled(true);
 		window.getActShowConnection().setEnabled(true);
@@ -106,6 +106,8 @@ public class StatesHandler {
 		window.getActViewVoronoiDiagram().setEnabled(true);
 		window.getActZoomIn().setEnabled(true);
 		window.getActZoomOut().setEnabled(true);
+		window.getActConfigNS2().setEnabled(true);
+		window.getActRunNS2().setEnabled(true);
 		window.getActNetworkReferenceRemain().setEnabled(true);
 		window.getActScriptReferenceRemain().setEnabled(true);
 	}

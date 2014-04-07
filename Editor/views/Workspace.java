@@ -333,6 +333,7 @@ public class Workspace extends Composite {
 			if (c instanceof GSelectableObject)
 				selectableList.add((GSelectableObject)c);
 		
+		if(selectableList == null) return null;
 		return selectableList;
 	}
 	

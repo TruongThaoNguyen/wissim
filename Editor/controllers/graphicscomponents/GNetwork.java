@@ -1096,7 +1096,7 @@ public class GNetwork extends Canvas {
             gc.fillOval(x-r, y-r, r+r, r+r);
             gc.setBackground(temp);
         }
-        gc.drawOval(x-r, y-r, r+r, r+r);
+//        gc.drawOval(x-r, y-r, r+r, r+r);
     }
 
     /**

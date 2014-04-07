@@ -73,6 +73,7 @@ public enum CharType {
 		{
 			case '\t':	
 			case ' ' : return Space;
+			case '\r':
 			case '\n': return Separator;
 			case ';' : return Semicolon;
 			case '\\': return BackSlash; 
