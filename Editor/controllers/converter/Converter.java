@@ -22,7 +22,6 @@ public class Converter
 {		
 	static SProject global;	
 	public static List<Entry> generateEntry = new ArrayList<Entry>();
-	private static int newObjectID = 1;
 	
 	/**
 	 * CTD - Code to Design
@@ -88,7 +87,7 @@ public class Converter
 					break;
 
 				case Referent:
-					result.append(global.insVar.get(parseIdentify(token.Value)));
+					result.append(global.getInsVar(parseIdentify(token.Value)).Value);
 					break;
 					
 				case Bracket:
@@ -119,16 +118,6 @@ public class Converter
 	}
 	
 	/**
-	 * get new Identify name for new Object.
-	 * @return new ID
-	 */
-	static String newIndentify() 
-	{
-		while (global.insObj.containsKey("_o" + newObjectID)) newObjectID++;
-		return "_o" + newObjectID;
-	}
-
-	/**
 	 * Parse Quote string.
 	 * Replace Referent token with this value 
 	 * @return string with replaced referent token
@@ -148,7 +137,7 @@ public class Converter
 			for (Token token : tokenList) 
 			{
 				if (token.Type == TokenType.Referent)				
-					result.append(global.insVar.get(parseIdentify(token.Value)));
+					result.append(global.getInsVar(parseIdentify(token.Value)));
 				else				
 					result.append(token.print());				
 			}
@@ -158,6 +147,10 @@ public class Converter
 		return result.substring(0, result.length() - 1);
 	}
 
+
+	
+	
+	
 	public static void main(String[] args)  throws Exception {		
 		BufferedReader br = new BufferedReader(new FileReader("/home/trongnguyen/scripts/30/ehds/simulate.tcl"));
 		StringBuilder sb = null;
@@ -176,12 +169,24 @@ public class Converter
 		    br.close();
 		}
 		
-		String everything = sb.toString();
-		CTD(everything);
+		String code = sb.toString();
+		
+		
+		// ------------ using converter
+		
+		Converter.CTD(code);
 								
 		System.out.println("\n------------------------------\n");		
 		
-		DTC();				
+		// Do something with project object
+		
+		Converter.DTC();
+		
+//		
+//		for (String string : Converter.DTC()) {
+//			System.out.print(string);
+//		}
+		
 	}
 
 }

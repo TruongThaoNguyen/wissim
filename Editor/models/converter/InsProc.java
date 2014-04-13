@@ -40,20 +40,36 @@ public abstract class InsProc
 				print(command);
 	}
 	
-	protected abstract String print(List<String> command);
-
-	public static void record(InsProc proc, List<String> command)
-	{		
-		String l = command.get(command.size() - 1);
-		CharType type = CharType.TypeOf(l.charAt(0));
-		if (type == CharType.Semicolon || type == CharType.Separator) 
-		{
-			command.remove(l);
-			Converter.generateEntry.add(new Entry(proc, command, l));
+	protected String print(List<String> command)
+	{
+		StringBuilder sb = new StringBuilder();
+		for (String string : command) {
+			sb.append(string + " ");
 		}
-		else
+		return sb.toString();
+	}
+
+	public void record(InsProc proc, List<String> command)
+	{				
+		if (command.size() > 1)
 		{
-			Converter.generateEntry.add(new Entry(proc, command, "\n"));
+			String l = command.get(command.size() - 1);
+			CharType type = CharType.TypeOf(l.charAt(0));
+			if (type == CharType.Semicolon || type == CharType.Separator) 
+			{
+				command.remove(l);
+				Entry e = new Entry(proc, command, l);
+				Converter.generateEntry.add(e);
+				parent.setEntry(e);
+			}
+			else
+			{
+				Converter.generateEntry.add(new Entry(proc, command, "\n"));
+			}
+		}
+		else 
+		{
+			Converter.generateEntry.add(new Entry(proc, "\n"));
 		}
 	}
 //	

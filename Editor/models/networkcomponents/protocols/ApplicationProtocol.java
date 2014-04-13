@@ -6,35 +6,37 @@ import java.util.List;
 import models.networkcomponents.Node;
 import models.networkcomponents.events.AppEvent;
 
-public class ApplicationProtocol extends Protocol {
+public abstract class ApplicationProtocol extends Protocol {
 	public final static int CBR = 0, VBR = 1, FTP = 2, PARETO = 3, TELNET = 4;
 	
-	// the transport protocol which this protocol bases on
-	TransportProtocol transportProtocol;
+	/**
+	 *  the transport protocol which this protocol bases on
+	 */
+	private TransportProtocol transportProtocol = null;
 	
-	// list of events on this application protocol
-	List<AppEvent> eventList;
-	
-	// the destination node
-	Node destNode;
+	/**
+	 *  list of events on this application protocol
+	 */
+	List<AppEvent> eventList = new ArrayList<AppEvent>();
 	
 	int type; 
 
-	/**
-	 * Constructor
-	 * @param name Name of this protocol
-	 * @param protocol The transport protocol in the lower layer of network protocol
-	 */
-	public ApplicationProtocol(int type, String name, TransportProtocol protocol, Node destNode) {
-		super(name);
-		
-		this.transportProtocol = protocol;
-		protocol.addApp(this);
-		eventList = new ArrayList<AppEvent>();
-		this.type = type;
-		this.destNode = destNode;
+	public TransportProtocol getTransportProtocol() {
+		return transportProtocol;
 	}
 
+	public void setTransportProtocol(TransportProtocol transportProtocol) {
+		this.transportProtocol = transportProtocol;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+		
+	public int getType() { return type; }
+	
+	public abstract Node getDestNode();
+	
 	/**
 	 * Adds an event to the chain of events of this application protocol
 	 * @param e Event will be added
@@ -65,8 +67,4 @@ public class ApplicationProtocol extends Protocol {
 	 * @return
 	 */
 	public List<AppEvent> getEventList() { return eventList; }
-	
-	public int getType() { return type; }
-	
-	public Node getDestNode() { return destNode; }
 }

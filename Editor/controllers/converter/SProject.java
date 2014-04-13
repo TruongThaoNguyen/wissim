@@ -3,12 +3,16 @@ package controllers.converter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Stack;
 
 import models.Project;
+import models.converter.Entry;
 import models.converter.InsProc;
+import models.converter.InsVar;
 import models.converter.ParseException;
 import models.converter.Token;
 import models.converter.TokenType;
+import models.networkcomponents.WirelessNetwork;
 
 /**
  * GlobalObject.java
@@ -18,25 +22,29 @@ import models.converter.TokenType;
  */
 public class SProject  extends Project implements TclObject
 {
-	public HashMap<String, String> 		insVar;
-	public HashMap<String, InsProc> 	insProc;		
-	public HashMap<String, TclObject>	insObj;
+	private HashMap<String, TclObject>	insObj = new HashMap<String, TclObject>();
+	private List<Entry> entryList = new ArrayList<Entry>();
+	private HashMap<String, InsProc> insProc = new HashMap<String, InsProc>();
+	private HashMap<String, InsVar>  insVar = new HashMap<String, InsVar>();
+	private HashMap<String, Double> event = new HashMap<String, Double>(); 
+	
+	private SNetwork network;
 	
 	public SProject()
 	{
 		super();
-		network = new SNetwork("[new Simulator]");
-		
-		insVar 	= new HashMap<String, String>();
-		insProc = new HashMap<String, InsProc>();
-		insObj 	= new HashMap<String, TclObject>();
-		insObj.put("_o0", (TclObject) network);
+		network = new SNetwork("_o0");
+		insObj.put("_o0", (TclObject) network);		
 		
 		addInsProc();
 
 		//		entryList = new ArrayList<Entry>();		
 	}	
 	
+	// region ------------------- TCL feature ------------------- //	
+	
+	// region ------------------- Parse ------------------- //
+
 	public void parse(String code) throws ParseException
 	{
 		Scanner scanner = new Scanner(code);
@@ -67,8 +75,8 @@ public class SProject  extends Project implements TclObject
 	@Override
 	public String parse(List<String> command) throws Exception
 	{		
-		if (command.isEmpty()) 		return null;		
-		if (command.size() <= 2)	return getInsProc(null).Run(command);					
+		if (command.isEmpty()) 	return null;		
+		if (command.size() < 2)	return getInsProc(null).Run(command);					
 		
 		String arg = Converter.parseIdentify(command.get(0));
 		
@@ -100,6 +108,15 @@ public class SProject  extends Project implements TclObject
 		return getInsProc(null).Run(command);
 	}	
 
+	// endregion Parse
+
+	@Override
+	public void addEvent(Double time, String arg) {
+		event.put(arg, time);		
+	}
+	
+	// region ------------------- Label ------------------- //
+
 	@Override
 	public String getLabel() {
 		return null;
@@ -110,19 +127,97 @@ public class SProject  extends Project implements TclObject
 		// Do nothing
 	}
 	
+	// endregion Label
+	
+	// region ------------------- Object list ------------------- //
+
+	private static int newObjectID = 1;
+	
+	/**
+	 * get new Identify name for new Object.
+	 * @return new ID
+	 */
+	private String newIndentify() 
+	{
+		while (insObj.containsKey("_o" + newObjectID)) newObjectID++;
+		return "_o" + newObjectID;
+	}
+
+	public String addObject(TclObject obj)
+	{
+		String id = newIndentify();
+		insObj.put(id, obj);
+		obj.setLabel(id);
+		return id;
+	}
+
+	public TclObject getObject(String key)
+	{
+		return insObj.get(key);
+	}
+	
+	public TclObject removeObject(String key)
+	{
+		return insObj.remove(key);
+	}
+	
+	public TclObject removeObject(TclObject obj)
+	{
+		for (String s : insObj.keySet())
+			if (insObj.get(s) == obj)
+				return insObj.remove(s);
+		return null;
+	}
+	
+	// endregion Object list
+	
+	// region ------------------- Generate Entry ------------------- //
+
+	@Override
+	public void setEntry(Entry e) {
+		entryList.add(e);		
+	}
+	
+	@Override
+	public List<Entry> getEntry() {
+		return entryList;
+	}
+
+	// endregion Generate Entry
+	
 	// region ------------------- InsVar ------------------- //
 	
 	@Override
-	public String getInsVar(String key) 
+	public HashMap<String, InsVar> getInsVar() {
+		return insVar;
+	}
+	
+	@Override
+	public InsVar getInsVar(String key) 
 	{
 		return insVar.get(key);
 	}
 	
 	@Override
-	public String setInsVar(String key, String value) {
-		TclObject obj = insObj.get(value);
-		if (obj != null) obj.setLabel("$" + key);
-		return insVar.put(key, value);
+	public InsVar setInsVar(String key, String value) {		
+		InsVar i = insVar.get(key);
+		if (i != null)
+		{
+			i.Value = value;
+		}
+		else
+		{
+			i = new InsVar(value);
+			insVar.put(key, i);
+		}
+		return i;
+	}
+	
+	@Override
+	public InsVar setInsVar(String key, String value, String label) {
+		InsVar i = new InsVar(value, label);		
+		insVar.put(key, i);
+		return i;
 	}
 
 	// endregion InsVar	
@@ -140,22 +235,12 @@ public class SProject  extends Project implements TclObject
 		insProc.put(p.insprocName, p);
 	}
 	
-	protected void addInsProc()
-	{			
+	protected void addInsProc()	{			
 		new InsProc(this, null) {
 			@Override
 			protected String run(List<String> command) throws Exception {				
 				return null;
 			}
-
-			@Override
-			public String print(List<String> command) {
-				StringBuilder sb = new StringBuilder();
-				for (String s : command) {
-					sb.append(s);
-				}
-				return sb.toString();
-			}			
 		};
 		
 		new InsProc(this, "set") {
@@ -164,23 +249,22 @@ public class SProject  extends Project implements TclObject
 				switch (command.size()) 
 				{
 					case 0 : throw new ParseException(ParseException.MissArgument);
-					case 1 : return getInsVar(Converter.parseIdentify(command.get(0)));
-					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)));
+					case 1 : return getInsVar(Converter.parseIdentify(command.get(0))).Value;
+					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).Value;
 					default: throw new ParseException(ParseException.InvalidArgument);
 				}
 			}
 
 			@Override
-			public String print(List<String> command) {
-				String arg = parent.getInsVar(command.get(0));
-				TclObject obj = Converter.global.insObj.get(arg);
+			public String print(List<String> command) 
+			{
+				InsVar arg = parent.getInsVar(command.get(0));
+				TclObject obj = Converter.global.insObj.get(arg.Value);
 				if (obj != null)
-					//return command.get(0) + " " + obj.getLabel();
 					return command.get(0) + " " + command.get(1);
 				else
 					return command.get(0) + " " + arg;
-			}
-			
+			}			
 		};
 			
 		new InsProc(this, "new") {
@@ -248,40 +332,92 @@ public class SProject  extends Project implements TclObject
 			protected String run(List<String> command) throws Exception {
 				return insprocExpr(command);
 			}
-
-			@Override
-			public String print(List<String> command) {
-				StringBuilder sb = new StringBuilder();
-				for (String string : command) {
-					sb.append(string);
-				}
-				return sb.toString();
-			}			
 		};
-	
-//		new InsProc(this, "<") {
-//			@Override
-//			protected String run(List<String> command) throws Exception {
-//				return inspocLessThan(command);
-//			}
-//
-//			@Override
-//			public String print(List<String> command) throws Exception {
-//				// TODO
-//				return parent.value + " < " + command.get(0);
-//			}			
-//		};
 	}
-	
-	private String insprocExpr(List<String> command) {
-		// TODO:
-		return "0";
+
+	private int checkOperator(String s)	{
+		if (s.equals("*") || s.equals("/") || s.equals("%")) return 6;
+		if (s.equals("+") || s.equals("-")) return 5;
+		if (s.equals("<") || s.equals(">") || s.equals("<=") || s.equals(">=")) return 4;
+		if (s.equals("==") || s.equals("!=")) return 3;
+		if (s.equals("&&")) return 2;
+		if (s.equals("||")) return 1;
+		return 0;
+	}
+		
+	private String insprocExpr(List<String> command) throws Exception {
+		Stack<String> stack = new Stack<String>();
+		List<String> prefix = new ArrayList<String>();		
+		
+		// convert to prefix
+		for (String c : command)
+		{
+			Scanner scanner = new Scanner(c);
+			for (String s : scanner.scanOperator())
+			{				
+				int i = checkOperator(s);
+				if (i > 0)
+				{									
+					while (!stack.isEmpty() && checkOperator(stack.peek()) >= i)
+					{
+						prefix.add(stack.pop());
+					}
+					stack.push(s);
+				}
+				else
+				{
+					prefix.add(Converter.parseIdentify(s));
+				}
+			}
+		}		
+		while (!stack.isEmpty()) 
+		{
+			prefix.add(stack.pop());
+		}
+		
+		// calculate value
+		while (!prefix.isEmpty())
+		{
+			String i = prefix.remove(0);
+			if (checkOperator(i) > 0)
+			{
+				String b = stack.pop();
+				String a = stack.pop();				
+				
+				switch (i) 
+				{
+					case "*" : stack.push((Double.parseDouble(a) *  Double.parseDouble(b)) + ""); break;
+					case "/" : stack.push((Double.parseDouble(a) /  Double.parseDouble(b)) + ""); break;
+					case "%" : stack.push((Double.parseDouble(a) %  Double.parseDouble(b)) + ""); break;
+					case "+" : stack.push((Double.parseDouble(a) +  Double.parseDouble(b)) + ""); break;
+					case "-" : stack.push((Double.parseDouble(a) -  Double.parseDouble(b)) + ""); break;
+					case "<" : stack.push((Double.parseDouble(a) <  Double.parseDouble(b)) + ""); break;
+					case ">" : stack.push((Double.parseDouble(a) >  Double.parseDouble(b)) + ""); break;
+					case "<=": stack.push((Double.parseDouble(a) <= Double.parseDouble(b)) + ""); break;
+					case ">=": stack.push((Double.parseDouble(a) >= Double.parseDouble(b)) + ""); break;
+					case "==": stack.push((Double.parseDouble(a) == Double.parseDouble(b)) + ""); break;
+					case "!=": stack.push((Double.parseDouble(a) != Double.parseDouble(b)) + ""); break;
+					case "&&": stack.push(((Double.parseDouble(a) == 0 || Boolean.parseBoolean(a)) && 
+										   (Double.parseDouble(b) == 0 || Boolean.parseBoolean(b)))	+ ""); break;
+					case "||": stack.push(((Double.parseDouble(a) == 0 || Boolean.parseBoolean(a)) || 
+							   			   (Double.parseDouble(b) == 0 || Boolean.parseBoolean(b)))	+ ""); break;							
+				}
+			}
+			else
+			{
+				stack.push(i);
+			}
+		}
+		
+		return stack.pop();
 	}
 
 	private String insprocIncr(List<String> command) throws Exception {
 		if (command.size() != 1) throw new ParseException(ParseException.InvalidArgument);
-		String arg = Converter.parseIdentify(command.get(0));
-		return insVar.put(arg, (Integer.parseInt(insVar.get(arg)) + 1) + "");
+		
+		InsVar i = insVar.get(Converter.parseIdentify(command.get(0)));		
+		
+		return i.Value = Integer.parseInt(i.Value) + 1 + "";
 	}
 
 	private String insprocFor(List<String> command) throws Exception {
@@ -304,7 +440,7 @@ public class SProject  extends Project implements TclObject
 		
 		int limit = 10000;
 		parse(arg[0]);
-		while (Boolean.parseBoolean(parse(new ArrayList<String>(arg1))) && limit > 0)			
+		while (Boolean.parseBoolean(insprocExpr(new ArrayList<String>(arg1))) && limit > 0)			
 		{
 			parse(arg[3]);			
 			parse(arg[2]);
@@ -319,23 +455,13 @@ public class SProject  extends Project implements TclObject
 		if (command.size() >  1)	throw new ParseException(ParseException.InvalidArgument);
 		
 		String arg = Converter.parseIdentify(command.get(0));
-		switch (arg) 
-		{
-			case "Simulator":
-				return "_o0";
-	
-			case "Topography":
-				String id = Converter.newIndentify();
-				TclObject newObj =  new STopographyObject("[new " + arg + "]");
-				insObj.put(id, newObj);
-				return id;
-				
-			default:
-				id = Converter.newIndentify();
-				newObj = new SCommonObject("[new " + arg + "]"); 
-				insObj.put(id, newObj);
-				return id;
-		}
+		
+		if (arg.equals("Simulator")) 				return "_o0";
+		if (arg.equals("Topography"))				return addObject(new STopographyObject("[new " + arg + "]"));		
+		if (arg.equals("Application/Traffic/CBR"))	return addObject(new SApplicationProtocol()); 
+		if (arg.startsWith("Agent/"))				return addObject(new STransportProtocol(arg.replace("Agent/",  "")));
+		
+		return addObject(new SCommonObject("[new " + arg + "]"));
 	}
 
 	private String insprocOpen(List<String> command) throws Exception {
@@ -347,6 +473,333 @@ public class SProject  extends Project implements TclObject
 		
 		return "[open " + Converter.parseIdentify(command.get(0)) + " " + command.get(1) + "]";		
 	}
-	
+
 	// endregion
+	
+	// endregion TCL feature
+	
+	
+	// region ------------------- Project feature ------------------- //
+	
+	@Override
+	public WirelessNetwork getNetwork() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setNodeRange(int nodeRange) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setQueueLength(int queueLength) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setIddleEnergy(double iddleEnergy) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setReceptionEnergy(double receptionEnergy) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSleepEnergy(double sleepEnergy) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setTransmissionEnergy(double transmissionEnergy) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public double getSleepEnergy() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getTransmissionEnergy() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getQueueLength() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getNodeRange() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getIddleEnergy() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getReceptionEnergy() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setRoutingProtocols(HashMap<String, HashMap<String, String>> ps) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setTransportProtocols(
+			HashMap<String, HashMap<String, String>> ps) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setLinkLayers(HashMap<String, HashMap<String, String>> ps) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setApplicationProtocols(
+			HashMap<String, HashMap<String, String>> ps) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setMacs(HashMap<String, HashMap<String, String>> ps) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setChannels(HashMap<String, HashMap<String, String>> ps) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setPropagationModels(HashMap<String, HashMap<String, String>> ps) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setNetworkInterfaces(HashMap<String, HashMap<String, String>> ps) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setAntennas(HashMap<String, HashMap<String, String>> ps) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setInterfaceQueues(HashMap<String, HashMap<String, String>> ps) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public HashMap<String, HashMap<String, String>> getApplicationProtocols() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashMap<String, HashMap<String, String>> getMacs() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashMap<String, HashMap<String, String>> getChannels() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashMap<String, HashMap<String, String>> getPropagationModels() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashMap<String, HashMap<String, String>> getNetworkInterfaces() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashMap<String, HashMap<String, String>> getAntennas() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashMap<String, HashMap<String, String>> getInterfaceQueues() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashMap<String, HashMap<String, String>> getRoutingProtocols() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashMap<String, HashMap<String, String>> getTransportProtocols() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashMap<String, HashMap<String, String>> getLinkLayers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setSelectedRoutingProtocol(String selected) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSelectedTransportProtocol(String selected) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSelectedApplicationProtocol(String selected) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSelectedLinkLayer(String selected) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSelectedMac(String selected) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSelectedAntenna(String selected) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSelectedChannel(String selected) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSelectedPropagationModel(String selected) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSelectedInterfaceQueue(String selected) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSelectedNetworkInterface(String selected) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getSelectedRoutingProtocol() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSelectedTransportProtocol() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSelectedApplicationProtocol() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSelectedLinkLayer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSelectedMac() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSelectedChannel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSelectedPropagationModel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSelectedAntenna() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSelectedInterfaceQueue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSelectedNetworkInterface() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	// endregion Project feature
 }

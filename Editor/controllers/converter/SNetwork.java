@@ -1,11 +1,16 @@
 package controllers.converter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import models.converter.Entry;
 import models.converter.InsProc;
+import models.converter.InsVar;
 import models.converter.ParseException;
+import models.networkcomponents.Node;
 import models.networkcomponents.WirelessNetwork;
+import models.networkcomponents.WirelessNode;
 
 /**
  * SimulatorObject.java
@@ -15,16 +20,26 @@ import models.networkcomponents.WirelessNetwork;
  */
 
 public class SNetwork extends WirelessNetwork implements TclObject
-{	
-	private String label;
-	private HashMap<String, InsProc> insProc;
-	private HashMap<String, String>  insVar;
+{		
+	// region ------------------- TCL properties ------------------- //
 
-	public SNetwork(String label) {
+	private String label;
+	private List<Entry> entryList = new ArrayList<Entry>();
+	private HashMap<String, InsProc> insProc = new HashMap<String, InsProc>();
+	private HashMap<String, InsVar>  insVar = new HashMap<String, InsVar>();
+	private HashMap<String, Double> event = new HashMap<String, Double>();
+	
+	private SCommonObject nodeConfig; 
+	
+	/**
+	 * Create new Shadow Network Object.
+	 * @param value
+	 */
+	public SNetwork(String label)
+	{
 		super(label);
-		this.label = label;
-		this.insProc = new HashMap<String, InsProc>();
-		this.insVar = new HashMap<String, String>();
+		this.label = label;	
+		nodeConfig = new SCommonObject("node-config");
 		addInsProc();
 	}
 
@@ -43,22 +58,20 @@ public class SNetwork extends WirelessNetwork implements TclObject
 	}
 
 	@Override
-	public String getInsVar(String key) {
-		return insVar.get(key);
+	public void addEvent(Double time, String arg) {
+		event.put(arg, time);		
 	}
-
-	@Override
-	public String setInsVar(String key, String value) 
-	{
-		switch (key) 
-		{
-			
 	
-			default:	return insVar.put(key, value);
-		}
-		
+	@Override
+	public void setEntry(Entry e) {
+		entryList.add(e);	
 	}
-
+	
+	@Override
+	public List<Entry> getEntry() {
+		return entryList;
+	}
+	
 	@Override
 	public String getLabel() {
 		return label;
@@ -68,7 +81,46 @@ public class SNetwork extends WirelessNetwork implements TclObject
 	public void setLabel(String label) {
 		this.label = label;	
 	}
+
 	
+	// region ------------------- InsVar ------------------- //
+	
+	@Override
+	public HashMap<String, InsVar> getInsVar() {
+		return insVar;
+	}
+	
+	@Override
+	public InsVar getInsVar(String key) {
+		return insVar.get(key);
+	}
+
+	@Override
+	public InsVar setInsVar(String key, String value) {		
+		InsVar i = insVar.get(key);
+		if (i != null)
+		{
+			i.Value = value;
+		}
+		else
+		{
+			i = new InsVar(value);
+			insVar.put(key, i);
+		}
+		return i;
+	}
+	
+	@Override
+	public InsVar setInsVar(String key, String value, String label) {
+		InsVar i = new InsVar(value, label);
+		insVar.put(key, i);
+		return i;
+	}
+
+	// endregion InsVar
+
+	// region ------------------- InsProc ------------------- //
+
 	@Override
 	public InsProc getInsProc(String key) {
 		return insProc.get(key);
@@ -79,8 +131,7 @@ public class SNetwork extends WirelessNetwork implements TclObject
 		insProc.put(p.insprocName, p);
 	}
 	
-	protected void addInsProc()
-	{		
+	protected void addInsProc()	{		
 		new InsProc(this, null) {
 			@Override
 			protected String run(List<String> command) throws Exception {				
@@ -103,20 +154,15 @@ public class SNetwork extends WirelessNetwork implements TclObject
 				switch (command.size()) 
 				{
 					case 0 : throw new ParseException(ParseException.MissArgument);
-					case 1 : return getInsVar(Converter.parseIdentify(command.get(0)));
-					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)));
+					case 1 : return getInsVar(Converter.parseIdentify(command.get(0))).Value;
+					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).Value;
 					default: throw new ParseException(ParseException.InvalidArgument);
 				}
 			}
 
 			@Override
 			public String print(List<String> command) {
-				String arg = parent.getInsVar(command.get(0));
-				TclObject obj = Converter.global.insObj.get(arg);
-				if (obj != null)
-					return command.get(0) + " " + obj.getLabel(); 
-				else
-					return command.get(0) + " " + arg;
+				return command.get(0) + " " + parent.getInsVar(command.get(0));
 			}			
 		};
 		
@@ -126,12 +172,12 @@ public class SNetwork extends WirelessNetwork implements TclObject
 				if (command.size() == 0)	throw new ParseException(ParseException.MissArgument);
 				if (command.size() > 1)		throw new ParseException(ParseException.InvalidArgument);
 				
-				return setInsVar("trace-all", Converter.parseIdentify(command.get(0)));
+				return setInsVar("trace-all", Converter.parseIdentify(command.get(0)), command.get(0)).Value;
 			}
 
 			@Override
 			public String print(List<String> command) {
-				return getInsVar("trace-all");
+				return getInsVar("trace-all").Label;
 			}			
 		};
 	
@@ -141,14 +187,19 @@ public class SNetwork extends WirelessNetwork implements TclObject
 				if (command.size() % 2 == 1) throw new ParseException(ParseException.MissArgument);
 				for (int i = 0; i < command.size(); i+=2)
 				{
-					setInsVar(Converter.parseIdentify(command.get(i)), Converter.parseIdentify(command.get(i + 1)));
+					nodeConfig.setInsVar(Converter.parseIdentify(command.get(i)), Converter.parseIdentify(command.get(i + 1)));
 				}
 				return "";
 			}
 
 			@Override
 			public String print(List<String> command) {
-				return printInsprocNodeconfig();
+				String result = "";
+				for (String key : nodeConfig.getInsVar().keySet())
+				{
+					result += key + " " + nodeConfig.getInsVar(key);
+				}
+				return result;
 			}			
 		};
 		
@@ -166,85 +217,114 @@ public class SNetwork extends WirelessNetwork implements TclObject
 	
 		new InsProc(this, "at") {
 			@Override
-			public String run(List<String> command) throws Exception {
-				return insprocAt(command);
-			}
+			public String run(List<String> command) throws Exception 
+			{
+				if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);
+				
+				double time = Double.parseDouble(Converter.parseIdentify(command.get(0)));
+				String arg  = Converter.parseIdentify(command.get(1));									
+								
+				List<String> sc = (new Scanner(arg)).scanCommand();
+				
+				if (sc.size() > 1)
+				{
+					TclObject obj = Converter.global.getObject(sc.remove(0));
+					if (obj != null)
+					{							
+						arg = "";				
+						for (String s : sc)	arg += s;				
+						
+						obj.addEvent(time, arg);
+						return arg;
+					}
+				}									
+				
+				addEvent(time, arg);
+				return arg;
+			}		
+		};
 
+		new InsProc(this, "attach-agent") {
+			// first arg is base agent, second once is attack agent
 			@Override
-			public String print(List<String> command) {
-				return printInsprocAt(command);
+			protected String run(List<String> command) throws Exception {
+				if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);
+				SNode 		  		node  = (SNode) 		  	 Converter.global.getObject(Converter.parseIdentify(command.get(0)));
+				STransportProtocol	agent = (STransportProtocol) Converter.global.getObject(Converter.parseIdentify(command.get(1)));				
+				agent.setNode(node);
+				if (agent.getLabel() != "Null") node.addTransportProtocol(agent);
+				return "";
 			}			
 		};
 		
 		new InsProc(this, "connect"){
 			@Override
 			public String run(List<String> command) throws Exception {
-				return insprocConnect(command);
-			}
-
-			@Override
-			public String print(List<String> command) {
-				// TODO Auto-generated method stub
-				return null;
-			}			
+				if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);
+				STransportProtocol	base  = (STransportProtocol) Converter.global.getObject(Converter.parseIdentify(command.get(0)));
+				STransportProtocol	agent = (STransportProtocol) Converter.global.getObject(Converter.parseIdentify(command.get(1)));
+				base.setConnected(agent);
+				return "";
+			}	
 		};
 	}
-
-	protected String printInsprocAt(List<String> command) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	protected String printInsprocNodeconfig() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
+		
 	private String insprocNode(List<String> command) throws Exception {
-//		if (command.size() != 0) throw new ParseException(ParseException.InvalidArgument);
-//		SCommonObject newNode = new SCommonObject("node");
-//		Node.add(newNode);
-//		String id = Converter.newIndentify();
-//		Converter.global.insObj.put(id, newNode);		
-//		return id;
-		return null;
+		if (command.size() != 0) throw new ParseException(ParseException.InvalidArgument);
+		SNode newNode = new SNode(this);
+		nodeList.add(newNode);		
+		return Converter.global.addObject(newNode);								
 	}
 	
-	private String insprocAt(List<String> command) throws Exception {
-//		if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);
-//		
-//		String arg = Converter.parseIdentify(command.get(1));		
-//		Double time = Double.parseDouble(Converter.parseIdentify(command.get(0)));
-//				
-//		Scanner scanner = new Scanner(arg);
-//		List<String> sc = scanner.scanCommand();
-//		
-//		if (sc.size() > 1)
-//		{
-//			TclObject obj = Converter.global.insObj.get(sc.remove(0));
-//			if (obj != null)
-//			{
-//				arg = "";
-//				for (String s : sc) 
-//				{
-//					arg += s;
-//				}
-//				
-//				obj.At.put(arg, time);
-//				return arg;
-//			}
-//		}									
-//		
-//		At.put(arg, time);
-//		return arg;
-		return null;
-	}
+	// endregion InsProc
 	
-	private String insprocConnect(List<String> command) throws Exception {
-		if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);
-//		
-//		Converter.global.insObj.get(Converter.parseIdentify(command.get(0))).connectAgent = Converter.global.insObj.get(Converter.parseIdentify(command.get(1)));
-//		
-		return "";
+	// endregion TCL properties
+	
+	// region ------------------- Wireless Network properties ------------------- //
+	
+	@Override
+	protected void removenode(Node n) 
+	{	
+		SNode s = (SNode) n;
+		
+		// remove from global objList
+		Converter.global.removeObject(s);
+		
+		// remove register entry
+		for (Entry e : s.getEntry())
+		{
+			Converter.generateEntry.remove(e);				
+		}
 	}
+
+	@Override
+	protected WirelessNode addnode(int x, int y, int rage) {
+		SNode newNode = new SNode(this, x, y, rage);
+		Converter.global.addObject(newNode);
+		
+		// region ------------------- auto generate tcl code ------------------- //
+
+		List<Entry> e = ((SNode)nodeList.get(nodeList.size() - 1)).getEntry();		
+		int index = Converter.generateEntry.lastIndexOf(e.get(e.size() - 1));
+		
+		// space
+		Converter.generateEntry.add(index + 1, new Entry("\n"));
+		
+		// create node 		set mnode_($i) [$ns_ node]
+		Converter.generateEntry.add(index + 2, new Entry("set mnode_(" + newNode.getId() + ") [$" + this.label + " node]\n"));
+		
+		// set position		$mnode_(0) set X_ 30	; $mnode_(0) set Y_ 860	; $mnode_(0) set Z_ 0
+		Converter.generateEntry.add(index + 3, new Entry("$mnode_(" + newNode.getId() + ") set X_ " + x + 
+												  " ; $mnode_(" + newNode.getId() + ") set Y_ " + y +
+												  " ; $mnode_(" + newNode.getId() + ") set Z_ 0\n"));
+		
+		// 	$ns_ initial_node_pos $mnode_($i) 5
+		Converter.generateEntry.add(index + 4, new Entry("$" + label + "initial_node_pos $mnode_(" + newNode.getId() + ") 5\n"));
+						
+		// endregion generate auto tcl code
+		
+		return newNode;
+	}
+
+	// endregion Wireless Network properties	
 }

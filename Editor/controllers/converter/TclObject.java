@@ -1,8 +1,11 @@
 package controllers.converter;
 
+import java.util.HashMap;
 import java.util.List;
 
+import models.converter.Entry;
 import models.converter.InsProc;
+import models.converter.InsVar;
 
 /**
  * TclObject.java
@@ -11,24 +14,28 @@ import models.converter.InsProc;
  * @Version 2.0
  */
 public interface TclObject 
-{
+{	
 	/**
 	 * Parse by call InstProc
 	 * @param command Token list, first token is identify of insProc that will used
 	 * @return TclObject, result of InsProc
 	 * @throws Exception
 	 */
-	public abstract String parse(List<String> command) throws Exception;
+	String parse(List<String> command) throws Exception;
 	
-	String getLabel();
+	String	getLabel();	
+	void	setLabel(String label);
 	
-	void setLabel(String label);
-	
-	void addInsProc(InsProc p);
-	
+	void 	addInsProc(InsProc p);
 	InsProc getInsProc(String key);	
+		
+	InsVar 	setInsVar(String key, String value);
+	InsVar	setInsVar(String key, String value, String label);
+	InsVar 	getInsVar(String key);	
+	HashMap<String, InsVar> getInsVar();
 	
-	String getInsVar(String key);
+	void 		setEntry(Entry e);
+	List<Entry> getEntry();
 	
-	String setInsVar(String key, String value);	
+	void addEvent(Double time, String arg);
 }
