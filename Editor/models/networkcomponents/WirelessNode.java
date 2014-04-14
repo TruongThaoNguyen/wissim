@@ -5,9 +5,7 @@ import java.util.List;
 
 import models.networkcomponents.events.NodeEvent;
 
-public class WirelessNode extends Node {
-	// position of node
-	private int x,y;
+public abstract class WirelessNode extends Node {	
 	
 	// radio range
 	private int range;
@@ -44,7 +42,7 @@ public class WirelessNode extends Node {
 		
 		neighborList = new ArrayList<WirelessNode>();
 		eventList = new ArrayList<NodeEvent>();
-		/*to overcome time lost*/
+		
 		setRange(range);
 		setPosition(x, y);
 	}
@@ -89,10 +87,24 @@ public class WirelessNode extends Node {
 		if (eventList.contains(event))
 			eventList.remove(event);
 	}
-	
-	public int getX() { return x;}
-	public int getY() { return y; }
+
 	public int getRange() { return range; }
+	
+	public void setRange(int range) {
+		if (range > 0) {
+			this.range = range;
+			((WirelessNetwork) network).onUpdateNeighbors(this);
+			
+			setChanged();
+			notifyObservers(range);
+		}
+	}
+	
+	public 	  abstract int  getX();
+	protected abstract void setX(int x);
+	
+	public    abstract int  getY();
+	protected abstract void setY(int y);
 	
 	/**
 	 * Set position for node. If new position is set successfully, the neighbor list is also updated
@@ -108,10 +120,10 @@ public class WirelessNode extends Node {
 		
 		// anonymous node
 		if (wn.getWidth() > x && wn.getLength() > y) {
-			this.x = x;
-			this.y = y;
+			setX(x);
+			setY(y);
 			
-//			wn.onUpdateNeighbors(this);
+			wn.onUpdateNeighbors(this);
 			
 			setChanged();
 			notifyObservers("Position");
@@ -121,17 +133,7 @@ public class WirelessNode extends Node {
 		
 		return false;
 	}
-	
-	public void setRange(int range) {
-		if (range > 0) {
-			this.range = range;
-			((WirelessNetwork) network).onUpdateNeighbors(this);
-			
-			setChanged();
-			notifyObservers(range);
-		}
-	}
-	
+		
 	public List<NodeEvent> getEventList() { return eventList; }
 	public List<WirelessNode> getNeighborList() { return neighborList; }
 }

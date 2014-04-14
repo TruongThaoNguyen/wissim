@@ -8,32 +8,37 @@ import models.converter.Entry;
 import models.converter.InsProc;
 import models.converter.InsVar;
 import models.converter.ParseException;
+import models.networkcomponents.protocols.TransportProtocol;
 
-/**
- * UndefineObject.java
- * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and Technology
- * @Author Duc-Trong Nguyen
- * @Version 2.0
- */
-
-public class SCommonObject implements TclObject 
-{	
+public class STransportProtocol extends TransportProtocol implements TclObject {
+	
 	private String label;
 	private List<Entry> entryList = new ArrayList<Entry>();
-	private HashMap<String, InsProc> insProc  = new HashMap<String, InsProc>();
-	private HashMap<String, InsVar>  insVar  = new HashMap<String, InsVar>();
+	private HashMap<String, InsProc> insProc = new HashMap<String, InsProc>();
+	private HashMap<String, InsVar>  insVar = new HashMap<String, InsVar>();
 	private HashMap<String, Double> event = new HashMap<String, Double>();
 	
-	/**
-	 * Create new Shadow Common Object.
-	 * @param value Value and label
-	 */
-	public SCommonObject(String value)
-	{
-		this.label = value;		
+	private TransportProtocol connectedAgent = null;
+	
+	protected STransportProtocol(String label) {				
+		this.label = label;
+		
+		if (label.equals("UDP")) setType(TransportProtocol.UDP);
+		if (label.equals("TCP")) setType(TransportProtocol.TCP);
+		
 		addInsProc();
-	}
+	}	
 
+	public void setConnected(STransportProtocol agent) {
+		connectedAgent = agent;
+	}
+	
+	public TransportProtocol getConnected() {
+		return connectedAgent;
+	}
+	
+	// region ------------------- TCL properties ------------------- //
+	
 	@Override
 	public String parse(List<String> command) throws Exception {
 		if (command.isEmpty()) throw new ParseException(ParseException.MissArgument);
@@ -45,9 +50,9 @@ public class SCommonObject implements TclObject
 			return proc.Run(command);
 		}
 		else 		
-			return insProc.get("").Run(command);
+			return insProc.get(null).Run(command);
 	}
-
+	
 	@Override
 	public void addEvent(Double time, String arg) {
 		event.put(arg, time);		
@@ -55,26 +60,26 @@ public class SCommonObject implements TclObject
 	
 	@Override
 	public String getLabel() {
-		return label;
-	}	
+		return label;				
+	}
 
 	@Override
 	public void setLabel(String label) {
-		this.label = label;
+		this.label = label;		
 	}
-	
+
 	@Override
 	public void setEntry(Entry e) {
-		entryList.add(e);	
+		this.entryList.add(e);		
 	}
-	
+
 	@Override
 	public List<Entry> getEntry() {
 		return entryList;
 	}
 
 	// region ------------------- InsVar ------------------- //
-
+	
 	@Override
 	public HashMap<String, InsVar> getInsVar() {
 		return insVar;
@@ -86,7 +91,7 @@ public class SCommonObject implements TclObject
 	}
 
 	@Override
-	public InsVar setInsVar(String key, String value) {		
+	public InsVar setInsVar(String key, String value) {
 		InsVar i = insVar.get(key);
 		if (i != null)
 		{
@@ -106,22 +111,29 @@ public class SCommonObject implements TclObject
 		insVar.put(key, i);
 		return i;
 	}
-
+	
 	// endregion InsVar
-
+	
 	// region ------------------- InsProc ------------------- //
+
+	@Override
+	public void addInsProc(InsProc p) {
+		insProc.put(p.insprocName, p);	
+	}
 
 	@Override
 	public InsProc getInsProc(String key) {
 		return insProc.get(key);
 	}
-	
-	@Override
-	public void addInsProc(InsProc p) {
-		insProc.put(p.insprocName, p);
-	}
-	
-	protected void addInsProc() {				
+
+	protected void addInsProc()	{		
+		new InsProc(this, null) {
+			@Override
+			protected String run(List<String> command) throws Exception {				
+				return null;
+			}
+		};
+		
 		new InsProc(this, "set") {
 			@Override
 			protected String run(List<String> command) throws Exception {				
@@ -131,7 +143,7 @@ public class SCommonObject implements TclObject
 					case 1 : return getInsVar(Converter.parseIdentify(command.get(0))).Value;
 					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).Value;
 					default: throw new ParseException(ParseException.InvalidArgument);
-				}		
+				}
 			}
 
 			@Override
@@ -140,6 +152,9 @@ public class SCommonObject implements TclObject
 			}			
 		};
 	}
-
+	
 	// endregion InsProc
+	
+	// endregion TCL properties
+	
 }

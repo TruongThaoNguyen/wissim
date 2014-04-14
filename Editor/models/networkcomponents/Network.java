@@ -5,79 +5,66 @@ import java.util.List;
 import java.util.Observable;
 
 /**
- * A general network has a name, total simulation time and maintains a list of nodes deployed in
- * @author leecom
- *
+ * Network.java
+ * 
+ * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and
+ *            Technology
+ * @Author Duc-Trong Nguyen
+ * @Version 2.0
  */
-public abstract class Network extends Observable {
-	// network name
+
+public abstract class Network extends Observable 
+{
+	/**
+	 * Network name.
+	 */
 	private String name;
 	
-	// simulation time
+	/**
+	 * Simulation time.
+	 */
 	private int time;
-	
-	// list of nodes in network
-	private List<Node> nodeList;
-	
-	// manage the node id in this network
-	private int cIndex;
+
+	/**
+	 * List of Node.
+	 */
+	protected List<Node> nodeList;
 	
 	/**
 	 * Create network with name and total simulation time
 	 * @param name
 	 * @param time
 	 */
-	public Network(String name, int time) {
-		this.initialize();
-		
+	public Network(String name, int time) 
+	{
 		this.name = name;
 		this.time = time;
+		nodeList = new ArrayList<Node>();
 	}
 	
 	/**
 	 * Create network with name
 	 * @param name
 	 */
-	public Network(String name) {
-		this.initialize();
-		
+	public Network(String name) 
+	{	
 		this.name = name;
-	}
-	
-	/**
-	 * Add node to network
-	 * @param node
-	 */
-	protected boolean addNode(Node node) {
-		if (!nodeList.contains(node)) {
-			nodeList.add(node);
-			this.cIndex = this.cIndex >= node.getId() + 1 ? this.cIndex : node.getId() + 1;
-			return true;
-		} else
-			return false;
-	}
-	
-	/**
-	 * Remove node from network
-	 * @param node
-	 */
-	public boolean removeNode(Node node) {
-		return nodeList.remove(node);
-	}
-	
-	int generateId() {
-		cIndex++;
-		
-		return cIndex - 1;
-	}
-	
-	private void initialize() {	
-		nodeList = new ArrayList<Node>();
-		cIndex = 0;
-		this.name = "";
 		this.time = 0;
+		nodeList = new ArrayList<Node>();
 	}
-
+		
+	/**
+	 * Add node to this network.
+	 * @param node node will be added.
+	 */
+	public abstract Node addNode(int x, int y, int rage);
+	
+	/**
+	 * Remove node from network.
+	 * @param node
+	 */
+	public abstract boolean removeNode(Node node);
+	
 	public String getName() {
 		return name;
 	}
@@ -99,23 +86,45 @@ public abstract class Network extends Observable {
 		}
 	}
 	
-	public List<Node> getNodeList() {
+	public List<Node> getNodeList()
+	{
 		return nodeList;
 	}
 	
-	public Node getNodeById(int id) {
-		for (Node n : nodeList) {
-			if (n.getId() == id)
-				return n;
-		}
-		
+	public Node getNodeById(int id) 
+	{
+		for (Node n : getNodeList()) 
+		{
+			if (n.getId() == id) return n;
+		}		
 		return null;
 	}
 
-	public void setName(String name) {
+	public void setName(String name) 
+	{
 		this.name = name;
 		
 		setChanged();
 		notifyObservers("Name");
+	}
+	
+	public int generateId()
+	{
+		int id = 0;
+		boolean cont = true;
+		while (cont)
+		{			
+			cont = false;
+			for (Node n : getNodeList())
+			{
+				if (n.getId() == id)
+				{
+					id++;
+					cont = true;
+				}
+			}
+		}
+		
+		return id;
 	}
 }

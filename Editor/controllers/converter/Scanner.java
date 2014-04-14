@@ -44,8 +44,9 @@ public class Scanner {
 	{	
 		List<String> command = new ArrayList<String>();		
 		
+		// parse throw separator and space after last command.
 		while (index < code.length())
-		{
+		{	
 			CharType type = CharType.TypeOf(code.charAt(index));
 			if (type == CharType.Separator)
 			{
@@ -56,15 +57,15 @@ public class Scanner {
 			else if (type == CharType.Space) index++;
 			else break;
 		}		
+		// parse throw space before this command
 		while (index < code.length())
 		{
 			if (CharType.TypeOf(code.charAt(index)) == CharType.Space) index++;
 			else break;
 		}
-		
-
-		int i = index;
-		
+				
+		// scan this command
+		int i = index;	
 		while (index < code.length())
 		{
 			switch (CharType.TypeOf(code.charAt(index)))
@@ -136,7 +137,7 @@ public class Scanner {
 		if (index > i)
 		{
 			command.add(code.substring(i, index));
-			command.add("\n");
+			//command.add("\n");
 		}
 		return command;
 	}
@@ -209,6 +210,110 @@ public class Scanner {
 		
 		return tokenList;
 	}	
+	
+	/**
+	 * Split command to term and operator.
+	 * @return List of String.
+	 * @throws Exception Parser exception
+	 */
+	public List<String> scanOperator() throws Exception
+	{
+		List<String> command = new ArrayList<String>();		
+				
+		// scan this command
+		int i = index;	
+		while (index < code.length())
+		{
+			switch (CharType.TypeOf(code.charAt(index)))
+			{
+				case Space:
+					if (index > i) command.add(code.substring(i, index));					
+					while (index < code.length() && CharType.TypeOf(code.charAt(index)) == CharType.Space) index++;
+					i = index;
+					break;				
+
+				case BackSlash:
+					index++;
+					if (index >= code.length() || CharType.TypeOf(code.charAt(index)) != CharType.Separator) 
+						throw new ParseException(ParseException.InvalidSymbol);
+					index++;
+					line++;
+					i = index;
+					break;
+
+				case BraceOpen:
+					scanBrace();
+					break;
+					
+				case BracketOpen:
+					scanBracket();
+					break;
+					
+				case ParenthesisOpen:
+					scanParenthesis();
+					break;
+					
+				case Quote:
+					scanQuote();
+					break;
+
+				case Referent:
+					index++;
+					break;
+					
+				case Letter:
+					switch (code.charAt(index)) 
+					{
+						case '*' : case '/' : case '%' :
+						case '+' : case '-' :
+							if (index > i) command.add(Converter.parseIdentify(code.substring(i, index)));													
+							command.add(code.charAt(index) + "");							
+							index++;
+							i = index;
+							break;
+							
+						case '<' : case '>' : case '!' :  case '=' :
+							if (index > i) command.add(Converter.parseIdentify(code.substring(i, index)));
+							if (index + 1 < code.length() && code.charAt(index + 1) == '=')					
+								command.add(code.substring(index, ++index));
+							else
+								command.add(code.charAt(index) + "");							
+							index++;
+							i = index;
+							break;
+							
+						case '&' : case '|':
+							if (index > i) command.add(Converter.parseIdentify(code.substring(i, index)));
+							if (index + 1 < code.length() && code.charAt(index) == code.charAt(index + 1))
+								command.add(code.substring(index, ++index));
+							else
+								command.add(code.charAt(index) + "");
+							index++;
+							i = index;							
+							break;
+						
+						default : index++;
+					}		
+					break;
+					
+				case Separator:				
+					throw new ParseException(ParseException.MissArgument);
+					
+				case BraceClose:
+				case BracketClose:
+				case ParenthesisClose:
+					throw new ParseException(ParseException.BracketNotMatch);
+					
+				case Semicolon:												
+				case Comment:
+				case Unknow: throw new ParseException(ParseException.InvalidSymbol);
+			}
+		}
+		
+		if (index > i) command.add(Converter.parseIdentify(code.substring(i, index)));
+		
+		return command;
+	}
 	
 	/**
 	 * Scan Identify.

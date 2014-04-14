@@ -30,24 +30,16 @@ public class STopographyObject extends SCommonObject {
 		new InsProc(this, "load_flatgrid") {			
 			@Override
 			public String run(List<String> command) throws Exception {
-				record(this, command);
-				return insprocLoadFlatgrid(command);
+				if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);
+				width = Integer.parseInt(Converter.parseIdentify(command.get(0)));
+				height = Integer.parseInt(Converter.parseIdentify(command.get(1)));		
+				return "";		
 			}
 
 			@Override
 			public String print(List<String> command) {
-				// TODO Auto-generated method stub
-				return null;
+				return width + " " + height;
 			}
 		};
-	}
-
-	protected String insprocLoadFlatgrid(List<String> command) throws Exception {
-		if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);
-		
-		width = Integer.parseInt(Converter.parseIdentify(command.get(0)));
-		height = Integer.parseInt(Converter.parseIdentify(command.get(1)));
-		
-		return "";		
 	}
 }
