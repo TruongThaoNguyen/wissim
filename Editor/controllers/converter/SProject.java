@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Stack;
 
 import models.Project;
+import models.converter.CharType;
 import models.converter.Entry;
 import models.converter.InsProc;
 import models.converter.InsVar;
@@ -79,6 +80,8 @@ public class SProject  extends Project implements TclObject
 		if (command.size() < 2)	return getInsProc(null).Run(command);					
 		
 		String arg = Converter.parseIdentify(command.get(0));
+		
+		if (arg == null) return getInsProc(null).Run(command);  
 		
 		InsProc p = getInsProc(arg);
 		if (p != null)
@@ -203,13 +206,14 @@ public class SProject  extends Project implements TclObject
 		InsVar i = insVar.get(key);
 		if (i != null)
 		{
-			i.Value = value;
+			i.setValue(value);
 		}
 		else
 		{
-			i = new InsVar(value);
+			i = new InsVar(value);			
 			insVar.put(key, i);
 		}
+		if (insObj.containsKey(value)) getObject(value).setLabel("$" + key);
 		return i;
 	}
 	
@@ -217,6 +221,7 @@ public class SProject  extends Project implements TclObject
 	public InsVar setInsVar(String key, String value, String label) {
 		InsVar i = new InsVar(value, label);		
 		insVar.put(key, i);
+		if (insObj.containsKey(value)) getObject(value).setLabel("$" + key);
 		return i;
 	}
 
@@ -249,82 +254,86 @@ public class SProject  extends Project implements TclObject
 				switch (command.size()) 
 				{
 					case 0 : throw new ParseException(ParseException.MissArgument);
-					case 1 : return getInsVar(Converter.parseIdentify(command.get(0))).Value;
-					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).Value;
+					case 1 : return getInsVar(Converter.parseIdentify(command.get(0))).getValue();
+					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).getValue();
 					default: throw new ParseException(ParseException.InvalidArgument);
 				}
 			}
 
 			@Override
-			public String print(List<String> command) 
+			public String print(List<String> command)
 			{
-				InsVar arg = parent.getInsVar(command.get(0));
-				TclObject obj = Converter.global.insObj.get(arg.Value);
-				if (obj != null)
-					return command.get(0) + " " + command.get(1);
-				else
-					return command.get(0) + " " + arg;
+				String id;
+				try
+				{
+					id = Converter.parseIdentify(command.get(0));
+				}
+				catch (Exception e)
+				{
+					id = command.get(0);
+				}
+				
+				InsVar arg = parent.getInsVar(id);
+				return command.get(0) + " " + arg;
 			}			
 		};
 			
 		new InsProc(this, "new") {
 			@Override
 			protected String run(List<String> command) throws Exception {
-				return insprocNew(command);
-			}
-
-			@Override
-			public String print(List<String> command) {
-				StringBuilder sb = new StringBuilder();
-				for (String string : command) {
-					sb.append(string);
-				}
-				return sb.toString();
-			}			
+				if (command.size() == 0)	throw new ParseException(ParseException.MissArgument);
+				if (command.size() >  1)	throw new ParseException(ParseException.InvalidArgument);
+				
+				String arg = Converter.parseIdentify(command.get(0));
+				
+				if (arg.equals("Simulator")) 				return "_o0";
+				if (arg.equals("Topography"))				return addObject(new STopographyObject("[new " + arg + "]"));		
+				if (arg.equals("Application/Traffic/CBR"))	return addObject(new SApplicationProtocol()); 
+				if (arg.startsWith("Agent/"))				return addObject(new STransportProtocol(arg.replace("Agent/",  "")));
+				
+				return addObject(new SCommonObject("[new " + arg + "]"));
+			}		
 		};
 	
 		new InsProc(this, "open") {
 			@Override
 			protected String run(List<String> command) throws Exception {
-				return insprocOpen(command);
-			}
-
-			@Override
-			public String print(List<String> command) {
-				StringBuilder sb = new StringBuilder();
-				for (String string : command) {
-					sb.append(string);
-				}
-				return sb.toString();
-			}			
+				if (command.size() == 0)	throw new ParseException(ParseException.MissArgument);
+				if (command.size() > 2) 	throw new ParseException(ParseException.InvalidArgument);
+				
+				String arg = Converter.parseIdentify(command.get(1));
+				if (!arg.equals("w") && !arg.equals("r")) throw new ParseException(ParseException.InvalidArgument);
+				
+				return "[open " + Converter.parseIdentify(command.get(0)) + " " + command.get(1) + "]";
+			}	
 		};
 	
 		new InsProc(this, "for") {
 			@Override
-			protected String run(List<String> command) throws Exception {
-				return insprocFor(command);
+			public String Run(List<String> command) throws Exception {
+				// do not store this command to register
+				
+				// remove sperator
+				String l = command.get(command.size() - 1);
+				CharType type = CharType.TypeOf(l.charAt(0));
+				if (type == CharType.Semicolon || type == CharType.Separator) command.remove(l);
+				
+				return run(command);
 			}
 
 			@Override
-			public String print(List<String> command) {
-				return "";
+			protected String run(List<String> command) throws Exception {
+				return insprocFor(command);
 			}			
 		};
 
 		new InsProc(this, "incr") {
 			@Override
 			protected String run(List<String> command) throws Exception {				
-				return insprocIncr(command);
-			}
-
-			@Override
-			public String print(List<String> command) {
-				StringBuilder sb = new StringBuilder();
-				for (String string : command) {
-					sb.append(string);
-				}
-				return sb.toString();
-			}			
+				if (command.size() != 1) throw new ParseException(ParseException.InvalidArgument);				
+				InsVar i = insVar.get(Converter.parseIdentify(command.get(0)));						
+				return i.setValue(Integer.parseInt(i.getValue()) + 1);
+			}	
 		};
 		
 		new InsProc(this, "expr") {
@@ -412,14 +421,6 @@ public class SProject  extends Project implements TclObject
 		return stack.pop();
 	}
 
-	private String insprocIncr(List<String> command) throws Exception {
-		if (command.size() != 1) throw new ParseException(ParseException.InvalidArgument);
-		
-		InsVar i = insVar.get(Converter.parseIdentify(command.get(0)));		
-		
-		return i.Value = Integer.parseInt(i.Value) + 1 + "";
-	}
-
 	private String insprocFor(List<String> command) throws Exception {
 		if (command.size() != 4) throw new ParseException(ParseException.InvalidArgument);
 		
@@ -448,30 +449,6 @@ public class SProject  extends Project implements TclObject
 		}
 		
 		return "";
-	}
-
-	private String insprocNew(List<String> command) throws Exception {
-		if (command.size() == 0)	throw new ParseException(ParseException.MissArgument);
-		if (command.size() >  1)	throw new ParseException(ParseException.InvalidArgument);
-		
-		String arg = Converter.parseIdentify(command.get(0));
-		
-		if (arg.equals("Simulator")) 				return "_o0";
-		if (arg.equals("Topography"))				return addObject(new STopographyObject("[new " + arg + "]"));		
-		if (arg.equals("Application/Traffic/CBR"))	return addObject(new SApplicationProtocol()); 
-		if (arg.startsWith("Agent/"))				return addObject(new STransportProtocol(arg.replace("Agent/",  "")));
-		
-		return addObject(new SCommonObject("[new " + arg + "]"));
-	}
-
-	private String insprocOpen(List<String> command) throws Exception {
-		if (command.size() == 0)	throw new ParseException(ParseException.MissArgument);
-		if (command.size() > 2) 	throw new ParseException(ParseException.InvalidArgument);
-		
-		String arg = Converter.parseIdentify(command.get(1));
-		if (!arg.equals("w") && !arg.equals("r")) throw new ParseException(ParseException.InvalidArgument);
-		
-		return "[open " + Converter.parseIdentify(command.get(0)) + " " + command.get(1) + "]";		
 	}
 
 	// endregion

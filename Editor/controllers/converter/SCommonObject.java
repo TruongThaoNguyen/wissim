@@ -2,6 +2,7 @@ package controllers.converter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import models.converter.Entry;
@@ -20,8 +21,8 @@ public class SCommonObject implements TclObject
 {	
 	private String label;
 	private List<Entry> entryList = new ArrayList<Entry>();
-	private HashMap<String, InsProc> insProc  = new HashMap<String, InsProc>();
-	private HashMap<String, InsVar>  insVar  = new HashMap<String, InsVar>();
+	private HashMap<String, InsProc> insProc  = new HashMap<String, InsProc>();	
+	private HashMap<String, InsVar>  insVar  = new LinkedHashMap<String, InsVar>();
 	private HashMap<String, Double> event = new HashMap<String, Double>();
 	
 	/**
@@ -90,7 +91,7 @@ public class SCommonObject implements TclObject
 		InsVar i = insVar.get(key);
 		if (i != null)
 		{
-			i.Value = value;
+			i.setValue(value);
 		}
 		else
 		{
@@ -128,8 +129,8 @@ public class SCommonObject implements TclObject
 				switch (command.size()) 
 				{
 					case 0 : throw new ParseException(ParseException.MissArgument);
-					case 1 : return getInsVar(Converter.parseIdentify(command.get(0))).Value;
-					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).Value;
+					case 1 : return getInsVar(Converter.parseIdentify(command.get(0))).getValue();
+					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).getValue();
 					default: throw new ParseException(ParseException.InvalidArgument);
 				}		
 			}

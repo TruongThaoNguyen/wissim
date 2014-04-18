@@ -83,7 +83,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 		InsVar i = insVar.get(key);
 		if (i != null)
 		{
-			i.Value = value;
+			i.setValue(value);
 		}
 		else
 		{
@@ -120,15 +120,6 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 			protected String run(List<String> command) throws Exception {				
 				return null;
 			}
-
-			@Override
-			public String print(List<String> command) {
-				StringBuilder sb = new StringBuilder();
-				for (String s : command) {
-					sb.append(s);
-				}
-				return sb.toString();
-			}			
 		};
 
 		new InsProc(this, "set") {
@@ -137,8 +128,8 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 				switch (command.size()) 
 				{
 					case 0 : throw new ParseException(ParseException.MissArgument);
-					case 1 : return getInsVar(Converter.parseIdentify(command.get(0))).Value;
-					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).Value;
+					case 1 : return getInsVar(Converter.parseIdentify(command.get(0))).getValue();
+					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).getValue();
 					default: throw new ParseException(ParseException.InvalidArgument);
 				}
 			}

@@ -87,7 +87,7 @@ public class Converter
 					break;
 
 				case Referent:
-					result.append(global.getInsVar(parseIdentify(token.Value)).Value);
+					result.append(global.getInsVar(parseIdentify(token.Value)).getValue());
 					break;
 					
 				case Bracket:
@@ -137,7 +137,7 @@ public class Converter
 			for (Token token : tokenList) 
 			{
 				if (token.Type == TokenType.Referent)				
-					result.append(global.getInsVar(parseIdentify(token.Value)));
+					result.append(global.getInsVar(parseIdentify(token.Value)).getValue());
 				else				
 					result.append(token.print());				
 			}
