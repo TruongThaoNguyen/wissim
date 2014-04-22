@@ -24,7 +24,7 @@ public class Scanner {
 	
 	public Scanner(String text)	
 	{
-		this.code = text;
+		this.code = text.replace("\r\n", "\n");
 		line = 0;
 		index = 0;			
 	}

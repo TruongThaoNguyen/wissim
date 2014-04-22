@@ -148,11 +148,12 @@ public class Converter
 	}
 
 
-	
+	static String OS = System.getProperty("os.name").toLowerCase();
 	
 	
 	public static void main(String[] args)  throws Exception {		
-		BufferedReader br = new BufferedReader(new FileReader("/home/trongnguyen/scripts/30/ehds/simulate.tcl"));
+		String fileName = OS.startsWith("windows") ? "D:\\Work\\scripts\\30\\ehds\\simulate.tcl" : "/home/trongnguyen/scripts/30/ehds/simulate.tcl"; 
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
 		StringBuilder sb = null;
 		try {
 		    sb = new StringBuilder();
