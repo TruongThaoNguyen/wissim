@@ -29,12 +29,28 @@ public class SCommonObject implements TclObject
 	 * Create new Shadow Common Object.
 	 * @param value Value and label
 	 */
-	public SCommonObject(String value)
+	public SCommonObject(String label)
 	{
-		this.label = value;		
+		this.label = label;		
 		addInsProc();
 	}
 
+	/**
+	 * create new CommonObject.
+	 * @param value
+	 * @param insVar
+	 */
+	public SCommonObject(String label, HashMap<String, String> var)
+	{
+		this.label = label;
+		
+		for (String key	: var.keySet())
+		{
+			this.insVar.put(key, new InsVar(var.get(key)));	
+		}	
+	}
+	
+	
 	@Override
 	public String parse(List<String> command) throws Exception {
 		if (command.isEmpty()) throw new ParseException(ParseException.MissArgument);
@@ -65,8 +81,13 @@ public class SCommonObject implements TclObject
 	}
 	
 	@Override
-	public void setEntry(Entry e) {
+	public void addEntry(Entry e) {
 		entryList.add(e);	
+	}
+	
+	@Override
+	public void addEntry(int index, Entry e) {
+		entryList.add(index, e);
 	}
 	
 	@Override

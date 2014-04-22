@@ -66,8 +66,13 @@ public class SNode extends WirelessNode implements TclObject
 	}
 
 	@Override
-	public void setEntry(Entry e) {
+	public void addEntry(Entry e) {
 		this.entryList.add(e);		
+	}
+	
+	@Override
+	public void addEntry(int index, Entry e) {
+		this.entryList.add(index, e);
 	}
 
 	@Override

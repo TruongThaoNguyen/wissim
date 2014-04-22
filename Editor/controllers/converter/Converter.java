@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import controllers.WorkSpace;
 import models.Project;
 import models.converter.Entry;
 import models.converter.ParseException;
@@ -148,11 +149,12 @@ public class Converter
 	}
 
 
-	static String OS = System.getProperty("os.name").toLowerCase();
 	
 	
-	public static void main(String[] args)  throws Exception {		
-		String fileName = OS.startsWith("windows") ? "D:\\Work\\scripts\\30\\ehds\\simulate.tcl" : "/home/trongnguyen/scripts/30/ehds/simulate.tcl"; 
+	
+	public static void main(String[] args)  throws Exception {	
+		boolean isWin =  WorkSpace.isWindow();
+		String fileName = isWin? "D:\\Work\\scripts\\30\\ehds\\simulate.tcl" : "/home/trongnguyen/scripts/30/ehds/simulate.tcl"; 
 		BufferedReader br = new BufferedReader(new FileReader(fileName));
 		StringBuilder sb = null;
 		try {

@@ -69,10 +69,15 @@ public class STransportProtocol extends TransportProtocol implements TclObject {
 	}
 
 	@Override
-	public void setEntry(Entry e) {
+	public void addEntry(Entry e) {
 		this.entryList.add(e);		
 	}
 
+	@Override
+	public void addEntry(int index, Entry e) {
+		this.entryList.add(index, e);	
+	}
+	
 	@Override
 	public List<Entry> getEntry() {
 		return entryList;

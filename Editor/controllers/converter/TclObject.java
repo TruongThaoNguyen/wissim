@@ -34,7 +34,8 @@ public interface TclObject
 	InsVar 	getInsVar(String key);	
 	HashMap<String, InsVar> getInsVar();
 	
-	void 		setEntry(Entry e);
+	void 		addEntry(Entry e);
+	void		addEntry(int index, Entry e);
 	List<Entry> getEntry();
 	
 	void addEvent(Double time, String arg);

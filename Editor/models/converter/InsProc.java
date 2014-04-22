@@ -61,7 +61,7 @@ public abstract class InsProc
 				command.remove(l);
 				Entry e = new Entry(proc, command, l);
 				Converter.generateEntry.add(e);
-				parent.setEntry(e);
+				parent.addEntry(e);
 			}
 			else
 			{

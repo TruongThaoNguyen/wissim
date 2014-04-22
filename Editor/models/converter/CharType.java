@@ -95,7 +95,7 @@ public enum CharType {
 			case 'z' : case 'x' : case 'c' : case 'v' : case 'b' : case 'n' : case 'm' :
 			case '@' : case '_' : case '.' : case ',' : case '`' : case '\'' :
 			case '~' : case '!' : case '%' : case '^' : case '&' : case '*' : case '+' : case '=' : case '|' : case '/' : 
-			case ':' : case '?' : case '<' : case '>' :	case '-' :			
+			case ':' : case '?' : case '<' : case '>' :	case '-' :
 						return Letter;			
 			default:	return Unknow;
 		}

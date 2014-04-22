@@ -5,7 +5,8 @@ public final class WorkSpace {
 	static String directory;
 	
 	public static boolean isWindow() {
-		return (OS.indexOf("win") > 0);
+		//return (OS.indexOf("win") >= 0);
+		return OS.startsWith("windows");
 	}
 	
 	public static boolean isLinux() {
