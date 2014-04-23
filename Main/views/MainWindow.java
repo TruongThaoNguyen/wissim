@@ -28,22 +28,22 @@ public class MainWindow extends ApplicationWindow {
 	/**
 	 * button to switch to Editor.
 	 */
-	private Button btnEditor;
-	
-	/**
-	 * 
-	 */
-	private Button btnAnalyzer;
+//	private Button btnEditor;
+//	
+//	/**
+//	 * 
+//	 */
+//	private Button btnAnalyzer;
 	private Editor editor;
 	private Analyzer analyzer;
-	private Composite mainComposite;
+//	private Composite mainComposite;
 	private MenuManager menuManager;
 	private StatusLineManager statusLineManager;
 
 	/**
 	 * Create the application window.
 	 */
-	public MainWindow() {
+	public MainWindow(Shell shell) {
 		super(null);
 		createActions();
 		addMenuBar();
@@ -63,14 +63,15 @@ public class MainWindow extends ApplicationWindow {
 		featureComposite.setLayout(new GridLayout(1, false));
 		featureComposite.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
 				
-		mainComposite = new Composite(container, SWT.NONE);
+		final Composite mainComposite = new Composite(container, SWT.NONE);
 		mainComposite.setLayout(new StackLayout());
 		mainComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 	
+		
 		editor   = new Editor(mainComposite, menuManager, statusLineManager);		
 		analyzer = new Analyzer(mainComposite, menuManager, statusLineManager);
 		
-		btnEditor = new Button(featureComposite, SWT.PUSH);
+		Button btnEditor = new Button(featureComposite, SWT.PUSH);
 		btnEditor.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnEditor.setText("Editor");
 		btnEditor.addListener(SWT.Selection, new Listener() 
@@ -84,7 +85,7 @@ public class MainWindow extends ApplicationWindow {
 			}
 		});
 		
-		btnAnalyzer = new Button(featureComposite, SWT.PUSH);
+		Button btnAnalyzer = new Button(featureComposite, SWT.PUSH);
 		btnAnalyzer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnAnalyzer.setText("Analyzer");
 		btnAnalyzer.addListener(SWT.Selection, new Listener() 
@@ -132,10 +133,15 @@ public class MainWindow extends ApplicationWindow {
 	 */
 	public static void main(String args[]) {
 		try {
-			MainWindow window = new MainWindow();
+			Display display = new Display();
+			Shell shell = new Shell(display);
+			MainWindow window = new MainWindow(shell);
+			
 			window.setBlockOnOpen(true);
 			window.open();
-			Display.getCurrent().dispose();
+			
+
+//			Display.getCurrent().dispose();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -150,12 +156,20 @@ public class MainWindow extends ApplicationWindow {
 		super.configureShell(newShell);
 		newShell.setText("Wissim");
 	}
-
+	
 	/**
 	 * Return the initial size of the window.
 	 */
 	@Override
 	protected Point getInitialSize() {
 		return new Point(720, 490);
+	}
+	
+	public Editor getEditor() {
+		return editor;
+	}
+	
+	public Analyzer getAnalyzer() {
+		return analyzer;
 	}
 }

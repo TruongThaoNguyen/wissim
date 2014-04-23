@@ -44,6 +44,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.wb.swt.ResourceManager;
@@ -243,12 +244,15 @@ public class Editor extends MainContent implements Observer {
 				propertiesComposite.setLayoutData(gd_propertiesComposite);
 				gd_propertiesComposite.heightHint = 50;
 				
-				Label lblNewLabel_1 = new Label(propertiesComposite, SWT.NONE);
-				lblNewLabel_1.setBounds(0, 0, 59, 95);
+				lblNewLabel_1 = new Label(propertiesComposite, SWT.NONE);
+//				GridData lblNewLabel_1_Data =  new GridData(SWT.FILL, SWT.FILL,false,true);
+//				lblNewLabel_1_Data.heightHint = 95;
+//				lblNewLabel_1.setLayoutData(lblNewLabel_1_Data);
+				lblNewLabel_1.setBounds(0, 0, 100, 95);
 				lblNewLabel_1.setText("Network");
 				
-				Label lblNewLabel_2 = new Label(propertiesComposite, SWT.NONE);
-				lblNewLabel_2.setBounds(0, 116, 59, 14);
+				lblNewLabel_2 = new Label(propertiesComposite, SWT.NONE);
+				lblNewLabel_2.setBounds(0, 116, 100, 127);
 				lblNewLabel_2.setText("Node");
 				
 				Label lblSss = new Label(propertiesComposite, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.CENTER);
@@ -322,7 +326,16 @@ public class Editor extends MainContent implements Observer {
 
 		actOpen = new Action("Open") {
 			public void run() {
-				actionOpen();
+				if(project != null) {
+					Shell shell = new Shell(getDisplay());
+					MainWindow window1 = new MainWindow(shell);
+					
+					window1.setBlockOnOpen(true);
+					window1.open();
+					window1.getEditor().actionOpen(window1.getEditor());
+				}
+				else
+					actionOpen(Editor.this);
 			}
 		};
 		actOpen.setToolTipText("Open existing project (CTRL + O)");
@@ -1027,15 +1040,16 @@ public class Editor extends MainContent implements Observer {
 		}
 	}
 	
-	public void actionOpen(){
-
-		Project project = ApplicationManager.openProject(Editor.this);
+	public void actionOpen(Editor editor){
+		
+		Project project = ApplicationManager.openProject(editor);
 		if(project == null) return;
 //		if (project != null)
 			showProject(project);
-		
+		this.project = project;
 		getWorkspace().getSelectableObject().get(getWorkspace().getSelectableObject().size() - 1).moveAbove(null);
 		updateNetworkInfoLabel();
+		updateNodeInfoLabel();
 		updateDesign();
 	}
 	
@@ -1093,7 +1107,7 @@ public class Editor extends MainContent implements Observer {
 			}
 			else str += "";
 		}
-//		eventLabel.setText(str);
+		lblNewLabel_2.setText(str);
 	}
 	
 	public void updateNetworkInfoLabel() {
@@ -1102,7 +1116,7 @@ public class Editor extends MainContent implements Observer {
 		String str = "Networks" + "\n" + "Size : " + network.getWidth() 
 					+ "x" + network.getLength() + "\nNodes : " + network.getNodeList().size()
 					+ "\n" + "Times : " + network.getTime();
-//		networkLabel.setText(str);
+		lblNewLabel_1.setText(str);
 		
 	}
 	
@@ -1130,9 +1144,19 @@ public class Editor extends MainContent implements Observer {
 //	}
 	
 	public void actionNew() {
+		if(this.project != null) {
+//			Shell shell = new Shell(getDisplay());
+//			MainWindow window1 = new MainWindow(shell);
+//	
+//			window1.setBlockOnOpen(true);
+//			window1.open();
+//			window1.getEditor().actionNew();
+//			
+			
+		}
 		Project project = ApplicationManager.newProject(Editor.this); 
 		if (project == null) return;
-		
+		this.project = project;
 			showProject(project);
 		updateNetworkInfoLabel();
 		updateDesign();
@@ -1562,8 +1586,8 @@ public class Editor extends MainContent implements Observer {
 		final RulerScrolledComposite scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 //		scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		tabFolder.getItem(1).setControl(scrolledComposite);
-		scrolledComposite.setExpandHorizontal(false);
-		scrolledComposite.setExpandVertical(false);
+//		scrolledComposite.setExpandHorizontal(false);
+//		scrolledComposite.setExpandVertical(false);
 		final Workspace workspaceInner = new Workspace(scrolledComposite, SWT.NONE, project);
 		workspaceInner.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_DARK_SHADOW));
 		workspaceInner.setSize(scrolledComposite.getClientArea().width, scrolledComposite.getClientArea().height);
@@ -1912,6 +1936,9 @@ public class Editor extends MainContent implements Observer {
 	private String nsFilePath;
 	private String fileProject;
 	
+	private Label lblNewLabel_1;
+	private Label lblNewLabel_2;
+	
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		// TODO Auto-generated method stub
@@ -1957,8 +1984,9 @@ public class Editor extends MainContent implements Observer {
 			else 
 				actRedo.setEnabled(true);
 		}
+		updateNodeInfoLabel();
+		updateNetworkInfoLabel();
 //		ec.updateDesign(this, styledText);
-		actionGetTab();
 //		ec.updateEditToDesign(this,styledText);
 			
 	}

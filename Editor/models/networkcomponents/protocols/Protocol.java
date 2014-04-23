@@ -8,18 +8,22 @@ import java.util.HashMap;
  *
  */
 public abstract class Protocol {
-//	/**
-//	 * Name of the protocol.
-//	 */
-//	protected String name;
+	// name of the protocol
+	String name;
 	
 	HashMap<String, String> params = new HashMap<String, String>();
 	
-	public abstract String getLabel();
+	/**
+	 * Initializes a protocol with name
+	 * @param name
+	 */
+	public Protocol(String name) {
+		this.name = name;
+	}
+	
+	public String getName() { return name; }
 	
 	public HashMap<String, String> getParameters() { return params; }
-	
-	public void setParameters(HashMap<String, String> params) { this.params = params; }
 	
 	public void addParameter(String param, String value) {
 		params.put(param, value);

@@ -112,6 +112,8 @@ public class Workspace extends Composite {
 					mouseLeftTempPoint = new Point(arg0.x, arg0.y);
 					
 					sc.updateRulers();
+					
+					
 				}
 			}
 		});

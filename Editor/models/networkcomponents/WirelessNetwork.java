@@ -3,28 +3,16 @@ package models.networkcomponents;
 import java.util.List;
 
 /**
- * WirelessNetwork.java
- * 
- * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and Technology
- * @Author Duc-Trong Nguyen
- * @Version 2.0
+ * Represents a wireless network
+ * @author leecom
+ *
  */
-
-public abstract class WirelessNetwork extends Network {
-	/**
-	 * Size of network
-	 */
+public class WirelessNetwork extends Network {
+	// size of network
 	private int xSize, ySize;
 	
-	/**
-	 * Options for network size changing
-	 */
+	// options for network size changing
 	public static final int LEFT = 0, CENTER = 1, RIGHT = 2, TOP = 0, BOTTOM = 2;
-	
-	public WirelessNetwork(String name)
-	{
-		super(name);
-	}
 	
 	public WirelessNetwork(String name, int xSize, int ySize) {
 		super(name);
@@ -39,31 +27,6 @@ public abstract class WirelessNetwork extends Network {
 		this.xSize = xSize;
 		this.ySize = ySize;
 	}
-
-	/**
-	 * Remove node out of network, including update neighbor list
-	 */
-	@Override
-	public final boolean removeNode(Node n)	{
-		removeNeighbor((WirelessNode) n);
-		removenode(n);
-		return nodeList.remove(n);
-	}
-	
-	/**
-	 * Remove node out of network, including update neighbor list
-	 */
-	protected abstract void removenode(Node n);	
-	
-	@Override
-	public final Node addNode(int x, int y, int rage) {
-		WirelessNode newNode = addnode(x, y, rage);
-		nodeList.add(newNode);
-		updateNeighbors(newNode);
-		return newNode;
-	}
-	
-	protected abstract WirelessNode addnode(int x, int y, int rage);
 	
 	/**
 	 * Update neighbors of all nodes in the networks.
@@ -89,10 +52,8 @@ public abstract class WirelessNetwork extends Network {
 		}
 	}
 	
-	/**
-	 * Update neighbors when a node n is added to the network.
-	 * @param n added node
-	 */
+	
+	// Update neighbors when a node n is added to the network
 	private void updateNeighbors(WirelessNode n) {
 		for (int i = 0; i < getNodeList().size(); i++) {
 			WirelessNode node = (WirelessNode)getNodeList().get(i);
@@ -108,15 +69,22 @@ public abstract class WirelessNetwork extends Network {
 		}
 	}
 	
-	/**
-	 * Remove neighbor relationship when a node n is removed from the network
-	 * @param n removed node
-	 */
+	
+	// Remove neighbor relationship when a node n is removed from the network
 	private void removeNeighbor(WirelessNode n) {
 		for (int i = 0; i < getNodeList().size(); i++) {
 			WirelessNode x = (WirelessNode) getNodeList().get(i);
 			x.removeNeighbor(n);
 		}
+	}
+	
+	/**
+	 * Remove node out of network, including update neighbor list
+	 */
+	@Override
+	public boolean removeNode(Node n) {
+		removeNeighbor((WirelessNode) n);
+		return getNodeList().remove(n);		
 	}
 	
 	/**
@@ -144,15 +112,8 @@ public abstract class WirelessNetwork extends Network {
 		updateNeighbors(mNode);
 	}
 
-	public int getWidth() { return xSize; }	
-	
-	public int getLength() { return ySize; }	
-	
-	public void setSize(int width, int height)
-	{
-		xSize = width;
-		ySize = height;
-	}
+	public int getWidth() { return xSize; }
+	public int getLength() { return ySize; }
 	
 	/**
 	 * Set size for wireless network. Size changes also lead to changes in nodes

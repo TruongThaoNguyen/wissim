@@ -5,27 +5,23 @@ import java.util.List;
 
 import models.networkcomponents.Node;
 
-public abstract class TransportProtocol extends Protocol {
+public class TransportProtocol extends Protocol {
 	public static final int TCP = 0, UDP = 1;
 	
-	private Node node;
-
-	private int type;
+	Node node;
+	int type;
 
 	List<ApplicationProtocol> appList;
 	
-	protected TransportProtocol() {						
-		appList = new ArrayList<ApplicationProtocol>();		
-	}
-
-	public Node getNode() {
-		return node;
-	}
-
-	public void setNode(Node node) {
+	public TransportProtocol(int type, String name, Node node) {
+		super(name);
+		
 		this.node = node;
+		node.addTransportProtocol(this);
+		appList = new ArrayList<ApplicationProtocol>();
+		this.type = type;
 	}
-	
+
 	public List<ApplicationProtocol> getAppList() { return appList; }
 	
 	public void addApp(ApplicationProtocol app) {
@@ -38,8 +34,5 @@ public abstract class TransportProtocol extends Protocol {
 	}
 	
 	public int getType() { return type; }
-
-	protected void setType(int type) {
-		this.type = type;
-	}
 }
+

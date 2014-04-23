@@ -1,12 +1,3 @@
-/**
- * Node.java
- * 
- * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and
- *            Technology
- * @Author Duc-Trong Nguyen
- * @Version 2.0
- */
-
 package models.networkcomponents;
 
 import java.util.ArrayList;
@@ -15,22 +6,16 @@ import java.util.Observable;
 
 import models.networkcomponents.protocols.TransportProtocol;
 
-public abstract class Node extends Observable {		
-	/**
-	 * id of node (assign one time, never change)
-	 */
+public abstract class Node extends Observable {
+	// id of node (assign one time, never change)
 	private int id;
 	
 	private String name;
 	
-	/**
-	 * The network this node is included in (assign one time, never change)
-	 */
-	protected Network network;	
+	// the network this node is included in (assign one time, never change)
+	protected Network network;
 	
-	/**
-	 * List of applications directly attached to this node
-	 */
+	// list of applications directly attached to this node
 	private List<TransportProtocol> transportProtocolList;	
 	
 	/**
@@ -38,8 +23,7 @@ public abstract class Node extends Observable {
 	 * The network will have the responsibility to generate the id for this node.
 	 * @param network Must be not null
 	 */
-	public Node(Network network) 
-	{
+	public Node(Network network) {
 		if (network == null) throw new NullPointerException("Network must be not null");
 		
 		this.network = network;
@@ -50,7 +34,10 @@ public abstract class Node extends Observable {
 		// node name is set as id as default
 		this.name = id + "";
 		
-		setTransportProtocolList(new ArrayList<TransportProtocol>());
+		// call the network to add me
+		this.network.addNode(this);
+		
+		transportProtocolList = new ArrayList<TransportProtocol>();
 	}
 	
 	/**
@@ -75,8 +62,10 @@ public abstract class Node extends Observable {
 		this.network = network;		
 		this.id = id;		
 		this.name = name;
+
+		this.network.addNode(this);
 		
-		setTransportProtocolList(new ArrayList<TransportProtocol>());			
+		transportProtocolList = new ArrayList<TransportProtocol>();			
 	}
 	
 	public int getId() { return id;	}
@@ -87,17 +76,14 @@ public abstract class Node extends Observable {
 	
 	public void setName(String name) { this.name = name; }
 	
-	public List<TransportProtocol> getTransportPrototolList() { return getTransportProtocolList(); }	
+	public List<TransportProtocol> getTransportPrototolList() { return transportProtocolList; }	
 	
-	public abstract void addTransportProtocol(int type, String name);
-	
-	public abstract boolean removeTransportProtocol(TransportProtocol transproc);
-
-	public List<TransportProtocol> getTransportProtocolList() {
-		return transportProtocolList;
+	public void addTransportProtocol(TransportProtocol transproc) {
+		if (!transportProtocolList.contains(transproc))
+			transportProtocolList.add(transproc);
 	}
-
-	public void setTransportProtocolList(List<TransportProtocol> transportProtocolList) {
-		this.transportProtocolList = transportProtocolList;
+	
+	public boolean removeTransportProtocol(TransportProtocol transproc) {
+		return transportProtocolList.remove(transproc);
 	}
 }

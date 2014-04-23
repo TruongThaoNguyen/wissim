@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -27,10 +28,16 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+
+
 import controllers.managers.ApplicationManager;
 import controllers.managers.ApplicationSettings;
 import controllers.managers.ProjectManager;
 import controllers.managers.WorkspacePropertyManager;
+import controllers.plugins.DefaultPluginManager;
+import controllers.plugins.PluginManager;
+import controllers.plugins.PluginWrapper;
+import controllers.plugins.demo.api.Greeting;
 import views.Workspace;
 import views.dialogs.CreateLabelDialog;
 import views.dialogs.CreateNodeSetDialog;
@@ -896,6 +903,49 @@ public class GNetwork extends Canvas {
 				ApplicationManager.deleteAllNodes((Workspace) getParent());
 			}
 		});
+		
+		new MenuItem(menu,SWT.SEPARATOR);
+		MenuItem mntPlugins = new MenuItem(menu,SWT.CASCADE);
+		mntPlugins.setText("Plugins");
+		
+		Menu pluginSubmn = new Menu(mntPlugins);
+		mntPlugins.setMenu(pluginSubmn);
+		
+		final PluginManager pluginManager = new DefaultPluginManager();
+
+        // load the plugins
+        pluginManager.loadPlugins();
+
+        // enable a disabled plugin
+//        pluginManager.enablePlugin("welcome-plugin");
+
+        // start (active/resolved) the plugins
+        pluginManager.startPlugins();
+
+        // retrieves the extensions for Greeting extension point
+        List<Greeting> greetings = pluginManager.getExtensions(Greeting.class);
+        System.out.println(String.format("Found %d extensions for extension point '%s'", greetings.size(), Greeting.class.getName()));
+        int pluginNumber = 1;
+        for (Greeting greeting : greetings) {
+        	MenuItem pluginItem1 = new MenuItem(pluginSubmn, SWT.CHECK);
+    		pluginItem1.setText(greeting.getGreeting());
+//            System.out.println(">>> " + greeting.getGreeting());
+        }
+
+        // print extensions for each started plugin
+        List<PluginWrapper> startedPlugins = pluginManager.getStartedPlugins();
+        for (PluginWrapper plugin : startedPlugins) {
+            String pluginId = plugin.getDescriptor().getPluginId();
+            System.out.println(String.format("Extensions added by plugin '%s':", pluginId));
+            Set<String> extensionClassNames = pluginManager.getExtensionClassNames(pluginId);
+            for (String extension : extensionClassNames) {
+                System.out.println("   " + extension);
+            }
+        }
+
+        // stop the plugins
+        pluginManager.stopPlugins();
+
 		
 		if (network.getNodeList().size() == 0)
 			mntmDeleteAllNodes.setEnabled(false);
