@@ -1,0 +1,14 @@
+*.jar
+*.war
+*.ear
+*.class
+bin/**
+tmp/**
+*.tmp
+*.bak
+*.wsp
+.project
+.metadata
+.classpath
+.settings/
+.checkstyle

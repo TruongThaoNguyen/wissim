@@ -69,10 +69,15 @@ public class STransportProtocol extends TransportProtocol implements TclObject {
 	}
 
 	@Override
-	public void setEntry(Entry e) {
+	public void addEntry(Entry e) {
 		this.entryList.add(e);		
 	}
 
+	@Override
+	public void addEntry(int index, Entry e) {
+		this.entryList.add(index, e);	
+	}
+	
 	@Override
 	public List<Entry> getEntry() {
 		return entryList;
@@ -95,7 +100,7 @@ public class STransportProtocol extends TransportProtocol implements TclObject {
 		InsVar i = insVar.get(key);
 		if (i != null)
 		{
-			i.Value = value;
+			i.setValue(value);
 		}
 		else
 		{
@@ -140,8 +145,8 @@ public class STransportProtocol extends TransportProtocol implements TclObject {
 				switch (command.size()) 
 				{
 					case 0 : throw new ParseException(ParseException.MissArgument);
-					case 1 : return getInsVar(Converter.parseIdentify(command.get(0))).Value;
-					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).Value;
+					case 1 : return getInsVar(Converter.parseIdentify(command.get(0))).getValue();
+					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).getValue();
 					default: throw new ParseException(ParseException.InvalidArgument);
 				}
 			}

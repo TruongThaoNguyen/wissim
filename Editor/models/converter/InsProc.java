@@ -43,15 +43,16 @@ public abstract class InsProc
 	protected String print(List<String> command)
 	{
 		StringBuilder sb = new StringBuilder();
-		for (String string : command) {
-			sb.append(string + " ");
+		for (String string : command)
+		{
+			sb.append(string + " ");		
 		}
 		return sb.toString();
 	}
 
 	public void record(InsProc proc, List<String> command)
 	{				
-		if (command.size() > 1)
+		if (command.size() > 0)
 		{
 			String l = command.get(command.size() - 1);
 			CharType type = CharType.TypeOf(l.charAt(0));
@@ -60,7 +61,7 @@ public abstract class InsProc
 				command.remove(l);
 				Entry e = new Entry(proc, command, l);
 				Converter.generateEntry.add(e);
-				parent.setEntry(e);
+				parent.addEntry(e);
 			}
 			else
 			{

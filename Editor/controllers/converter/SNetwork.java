@@ -63,8 +63,13 @@ public class SNetwork extends WirelessNetwork implements TclObject
 	}
 	
 	@Override
-	public void setEntry(Entry e) {
+	public void addEntry(Entry e) {
 		entryList.add(e);	
+	}
+	
+	@Override
+	public void addEntry(int index, Entry e) {
+		entryList.add(index, e);	
 	}
 	
 	@Override
@@ -100,7 +105,7 @@ public class SNetwork extends WirelessNetwork implements TclObject
 		InsVar i = insVar.get(key);
 		if (i != null)
 		{
-			i.Value = value;
+			i.setValue(value);
 		}
 		else
 		{
@@ -137,15 +142,6 @@ public class SNetwork extends WirelessNetwork implements TclObject
 			protected String run(List<String> command) throws Exception {				
 				return null;
 			}
-
-			@Override
-			public String print(List<String> command) {
-				StringBuilder sb = new StringBuilder();
-				for (String s : command) {
-					sb.append(s);
-				}
-				return sb.toString();
-			}			
 		};
 
 		new InsProc(this, "set") {
@@ -154,8 +150,8 @@ public class SNetwork extends WirelessNetwork implements TclObject
 				switch (command.size()) 
 				{
 					case 0 : throw new ParseException(ParseException.MissArgument);
-					case 1 : return getInsVar(Converter.parseIdentify(command.get(0))).Value;
-					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).Value;
+					case 1 : return getInsVar(Converter.parseIdentify(command.get(0))).getValue();
+					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).getValue();
 					default: throw new ParseException(ParseException.InvalidArgument);
 				}
 			}
@@ -172,12 +168,12 @@ public class SNetwork extends WirelessNetwork implements TclObject
 				if (command.size() == 0)	throw new ParseException(ParseException.MissArgument);
 				if (command.size() > 1)		throw new ParseException(ParseException.InvalidArgument);
 				
-				return setInsVar("trace-all", Converter.parseIdentify(command.get(0)), command.get(0)).Value;
+				return setInsVar("trace-all", Converter.parseIdentify(command.get(0)), command.get(0)).getValue();
 			}
 
 			@Override
 			public String print(List<String> command) {
-				return getInsVar("trace-all").Label;
+				return getInsVar("trace-all").getLabel();
 			}			
 		};
 	
@@ -187,7 +183,7 @@ public class SNetwork extends WirelessNetwork implements TclObject
 				if (command.size() % 2 == 1) throw new ParseException(ParseException.MissArgument);
 				for (int i = 0; i < command.size(); i+=2)
 				{
-					nodeConfig.setInsVar(Converter.parseIdentify(command.get(i)), Converter.parseIdentify(command.get(i + 1)));
+					nodeConfig.setInsVar(Converter.parseIdentify(command.get(i)), Converter.parseIdentify(command.get(i + 1)), command.get(i + 1));
 				}
 				return "";
 			}
@@ -197,7 +193,7 @@ public class SNetwork extends WirelessNetwork implements TclObject
 				String result = "";
 				for (String key : nodeConfig.getInsVar().keySet())
 				{
-					result += key + " " + nodeConfig.getInsVar(key);
+					result += " \\\n\t" + key + " " + nodeConfig.getInsVar(key);
 				}
 				return result;
 			}			
@@ -207,12 +203,7 @@ public class SNetwork extends WirelessNetwork implements TclObject
 			@Override
 			public String run(List<String> command) throws Exception {
 				return insprocNode(command);
-			}
-
-			@Override
-			public String print(List<String> command) {
-				return "";
-			}			
+			}	
 		};
 	
 		new InsProc(this, "at") {

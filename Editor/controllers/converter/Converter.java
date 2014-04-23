@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import controllers.WorkSpace;
 import models.Project;
 import models.converter.Entry;
 import models.converter.ParseException;
@@ -87,7 +88,7 @@ public class Converter
 					break;
 
 				case Referent:
-					result.append(global.getInsVar(parseIdentify(token.Value)).Value);
+					result.append(global.getInsVar(parseIdentify(token.Value)).getValue());
 					break;
 					
 				case Bracket:
@@ -137,7 +138,7 @@ public class Converter
 			for (Token token : tokenList) 
 			{
 				if (token.Type == TokenType.Referent)				
-					result.append(global.getInsVar(parseIdentify(token.Value)));
+					result.append(global.getInsVar(parseIdentify(token.Value)).getValue());
 				else				
 					result.append(token.print());				
 			}
@@ -151,8 +152,10 @@ public class Converter
 	
 	
 	
-	public static void main(String[] args)  throws Exception {		
-		BufferedReader br = new BufferedReader(new FileReader("/home/trongnguyen/scripts/30/ehds/simulate.tcl"));
+	public static void main(String[] args)  throws Exception {	
+		boolean isWin =  WorkSpace.isWindow();
+		String fileName = isWin? "D:\\Work\\scripts\\30\\ehds\\simulate.tcl" : "/home/trongnguyen/scripts/30/ehds/simulate.tcl"; 
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
 		StringBuilder sb = null;
 		try {
 		    sb = new StringBuilder();

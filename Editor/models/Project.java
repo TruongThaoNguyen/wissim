@@ -1,337 +1,156 @@
 package models;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import models.networkcomponents.*;
-import models.networkcomponents.features.*;
+
+import models.networkcomponents.WirelessNetwork;
+import models.networkcomponents.features.Area;
+import models.networkcomponents.features.Label;
 
 /**
- * Represents a project. A Project will contain the main network and everything related to the project itself (obstacles, labels,...)
- * @author leecom
- *
- */
-public class Project {
-	// path of the project
-	private String path;
-	
-	// created date
-	private Date createdDate;
-	
-	// last saved date
-	private Date lastSavedDate;
-	
-	// the wireless network this project works with
-	private WirelessNetwork network;
-	
-	// list of labels
-	private List<Label> labelList;
-	
-	// list of obstacles
-	private List<Area> obstacleList;
-	private int obstacleIndex;
-	
-	// general settings apply to all nodes
-	private int nodeRange;
-	private int queueLength;
-	private HashMap<String, HashMap<String, String>> routingProtocols = new HashMap<String, HashMap<String, String>>();
-	private HashMap<String, HashMap<String, String>> transportProtocols = new HashMap<String, HashMap<String, String>>();
-	private HashMap<String, HashMap<String, String>> applicationProtocols = new HashMap<String, HashMap<String, String>>();
-	private HashMap<String, HashMap<String, String>> linkLayers = new HashMap<String, HashMap<String, String>>();
-	private HashMap<String, HashMap<String, String>> macs = new HashMap<String, HashMap<String, String>>();
-	private HashMap<String, HashMap<String, String>> channels = new HashMap<String, HashMap<String, String>>();
-	private HashMap<String, HashMap<String, String>> propagationModels = new HashMap<String, HashMap<String, String>>();
-	private HashMap<String, HashMap<String, String>> networkInterfaces = new HashMap<String, HashMap<String, String>>();
-	private HashMap<String, HashMap<String, String>> antennas = new HashMap<String, HashMap<String, String>>();
-	private HashMap<String, HashMap<String, String>> interfaceQueues = new HashMap<String, HashMap<String, String>>();
-	
-	private String selectedRoutingProtocol;
-	private String selectedTransportProtocol;
-	private String selectedApplicationProtocol;
-	private String selectedLinkLayer;
-	private String selectedMac;
-	private String selectedChannel;
-	private String selectedPropagationModel;
-	private String selectedNetworkInterface;
-	private String selectedAntenna;
-	private String selectedInterfaceQueue;
-	
-	private double iddleEnergy;
-	private double receptionEnergy;
-	private double transmissionEnergy;
-	private double sleepEnergy;	
-	
-	/**
-	 * Create new project from path
-	 * @param path Path of project
-	 */
-	public Project(String path, WirelessNetwork network) {
-		this.path = path;
-		this.network = network;
-		
-		labelList = new ArrayList<Label>();
-		obstacleList = new ArrayList<Area>();
-		obstacleIndex = 0;
-		
-		// set current time as created date
-		createdDate = new Date();
-		lastSavedDate = new Date();
-	}
-	
-	public void setRoutingProtocols(HashMap<String, HashMap<String, String>> ps) {
-		this.routingProtocols.putAll(ps);
-	}
-	
-	public void setTransportProtocols(HashMap<String, HashMap<String, String>> ps) {
-		this.transportProtocols.putAll(ps);
-	}
-	
-	public void setLinkLayers(HashMap<String, HashMap<String, String>> ps) {
-		this.linkLayers.putAll(ps);
-	}
+* Represents a project. A Project will contain the main network and everything related to the project itself (obstacles, labels,...)
+* @author leecom
+*
+*/
+public abstract class Project {
 
-	public int getNodeRange() {
-		return nodeRange;
-	}
+// region ------------------- Manager properties ------------------- //
 
-	public void setNodeRange(int nodeRange) {
-		this.nodeRange = nodeRange;
-	}
+/**
+* path of the project
+*/
+private static String path;
 
-	public int getQueueLength() {
-		return queueLength;
-	}
+/**
+* created date
+*/
+private static Date createdDate;
 
-	public void setQueueLength(int queueLength) {
-		this.queueLength = queueLength;
-	}
+/**
+* last saved date
+*/
+private static Date lastSavedDate;
 
-	public HashMap<String, HashMap<String, String>> getApplicationProtocols() {
-		return applicationProtocols;
-	}
+/**
+* list of labels
+*/
+private static List<Label> labelList;
 
-	public void setApplicationProtocols(
-			HashMap<String, HashMap<String, String>> applicationProtocols) {
-		this.applicationProtocols.putAll(applicationProtocols);
-	}
+/**
+* list of obstacles
+*/
+private static List<Area> obstacleList;
+private static int obstacleIndex;
 
-	public HashMap<String, HashMap<String, String>> getMacs() {
-		return macs;
-	}
+/**
+* Communicate range
+*/
+private static int nodeRange;
 
-	public void setMacs(HashMap<String, HashMap<String, String>> macs) {
-		this.macs.putAll(macs);
-	}
+/**
+* Transport protocol
+*/
+private static String transportProtocol;
+private static String applicationProtocol;
 
-	public HashMap<String, HashMap<String, String>> getChannels() {
-		return channels;
-	}
+public static void setSelectedApplicationProtocol(String value)	{ applicationProtocol = value; }
+public static void setSelectedTransportProtocol(String value)	{ transportProtocol	= value; }
+public static void setNodeRange(int value)	{ nodeRange = value; }
+public static void setPath(String value) { path = value; }
+public static void setCreatedDate(Date value)	{ createdDate = value; }
+public static void setLastSavedDate(Date value) { lastSavedDate = value; }
+public static void setLabelList(List<Label> value) { labelList = value; }
+public static void setObstacleList(List<Area> value)	{ obstacleList = value; }
 
-	public void setChannels(HashMap<String, HashMap<String, String>> channels) {
-		this.channels.putAll(channels);
-	}
+public static String getSelectedApplicationProtocol(){ return applicationProtocol; }
+public static String getSelectedTransportProtocol()	{ return transportProtocol; }
+public static int	getNodeRange()	{ return nodeRange; }
+public static String	getPath() { return path; }
+public static Date getCreatedDate() { return createdDate; }
+public static Date getLastSavedDate() { return lastSavedDate; }
+public static List<Label>	getLabelList() { return labelList; }
+public static List<Area> getObstacleList()	{ return obstacleList; }
 
-	public HashMap<String, HashMap<String, String>> getPropagationModels() {
-		return propagationModels;
-	}
+public static void addObstacle(Area area) {
+area.setId(obstacleIndex++);
+obstacleList.add(area);
+}
 
-	public void setPropagationModels(
-			HashMap<String, HashMap<String, String>> propagationModels) {
-		this.propagationModels.putAll(propagationModels);
-	}
+// endregion Manager properties
 
-	public HashMap<String, HashMap<String, String>> getNetworkInterfaces() {
-		return networkInterfaces;
-	}
+// region ------------------- Configure properties ------------------- //
 
-	public void setNetworkInterfaces(
-			HashMap<String, HashMap<String, String>> networkInterfaces) {
-		this.networkInterfaces.putAll(networkInterfaces);
-	}
+private static HashMap<String, HashMap<String, String>> routingProtocols = new HashMap<String, HashMap<String, String>>();
+private static HashMap<String, HashMap<String, String>> transportProtocols = new HashMap<String, HashMap<String, String>>();
+private static HashMap<String, HashMap<String, String>> applicationProtocols = new HashMap<String, HashMap<String, String>>();
+private static HashMap<String, HashMap<String, String>> linkLayers = new HashMap<String, HashMap<String, String>>();
+private static HashMap<String, HashMap<String, String>> macs = new HashMap<String, HashMap<String, String>>();
+private static HashMap<String, HashMap<String, String>> channels = new HashMap<String, HashMap<String, String>>();
+private static HashMap<String, HashMap<String, String>> propagationModels = new HashMap<String, HashMap<String, String>>();
+private static HashMap<String, HashMap<String, String>> networkInterfaces = new HashMap<String, HashMap<String, String>>();
+private static HashMap<String, HashMap<String, String>> antennas = new HashMap<String, HashMap<String, String>>();
+private static HashMap<String, HashMap<String, String>> interfaceQueues = new HashMap<String, HashMap<String, String>>();
 
-	public HashMap<String, HashMap<String, String>> getAntennas() {
-		return antennas;
-	}
+public static void setRoutingProtocols	(HashMap<String, HashMap<String, String>> ps) { routingProtocols.putAll(ps); }	
+public static void setTransportProtocols	(HashMap<String, HashMap<String, String>> ps) { transportProtocols.putAll(ps); }
+public static void setLinkLayers	(HashMap<String, HashMap<String, String>> ps) { linkLayers.putAll(ps); }
+public static void setApplicationProtocols	(HashMap<String, HashMap<String, String>> applicationProtocols) { applicationProtocols.putAll(applicationProtocols); }
+public static void setMacs	(HashMap<String, HashMap<String, String>> macs) { macs.putAll(macs);	}
+public static void setChannels	(HashMap<String, HashMap<String, String>> channels) { channels.putAll(channels);	}
+public static void setPropagationModels	(HashMap<String, HashMap<String, String>> propagationModels)	{ propagationModels.putAll(propagationModels);	}
+public static void setNetworkInterfaces	(HashMap<String, HashMap<String, String>> networkInterfaces)	{ networkInterfaces.putAll(networkInterfaces);	}
+public static void setAntennas	(HashMap<String, HashMap<String, String>> antennas) { antennas.putAll(antennas);	}
+public static void setInterfaceQueues	(HashMap<String, HashMap<String, String>> interfaceQueues) { interfaceQueues.putAll(interfaceQueues);	}
 
-	public void setAntennas(HashMap<String, HashMap<String, String>> antennas) {
-		this.antennas.putAll(antennas);
-	}
+public static HashMap<String, HashMap<String, String>> getApplicationProtocols() { return applicationProtocols;	}
+public static HashMap<String, HashMap<String, String>> getMacs() { return macs;	}
+public static HashMap<String, HashMap<String, String>> getChannels()	{ return channels;	}
+public static HashMap<String, HashMap<String, String>> getPropagationModels() { return propagationModels;	}
+public static HashMap<String, HashMap<String, String>> getNetworkInterfaces() { return networkInterfaces;	}
+public static HashMap<String, HashMap<String, String>> getAntennas() { return antennas;	}
+public static HashMap<String, HashMap<String, String>> getInterfaceQueues() { return interfaceQueues;	}
+public static HashMap<String, HashMap<String, String>> getRoutingProtocols() { return routingProtocols;	}
+public static HashMap<String, HashMap<String, String>> getTransportProtocols()	{ return transportProtocols;	}
+public static HashMap<String, HashMap<String, String>> getLinkLayers() { return linkLayers;	}
 
-	public HashMap<String, HashMap<String, String>> getInterfaceQueues() {
-		return interfaceQueues;
-	}
+// endregion Configure properties
 
-	public void setInterfaceQueues(
-			HashMap<String, HashMap<String, String>> interfaceQueues) {
-		this.interfaceQueues.putAll(interfaceQueues);
-	}
+// region ------------------- Network properties ------------------- //
 
-	public double getIddleEnergy() {
-		return iddleEnergy;
-	}
+public abstract WirelessNetwork getNetwork();
 
-	public void setIddleEnergy(double iddleEnergy) {
-		this.iddleEnergy = iddleEnergy;
-	}
+public abstract void setQueueLength	(int queueLength);	
+public abstract void setIddleEnergy	(double iddleEnergy);
+public abstract void setReceptionEnergy	(double receptionEnergy);
+public abstract void setSleepEnergy	(double sleepEnergy);	
+public abstract void setTransmissionEnergy	(double transmissionEnergy);
+public abstract void setInitialEnergy	(double initialEnergy);
 
-	public double getReceptionEnergy() {
-		return receptionEnergy;
-	}
+public abstract int	getQueueLength(); // throws ParseException;
+public abstract double getSleepEnergy(); // throws ParseException;
+public abstract double getTransmissionEnergy(); // throws ParseException;
+public abstract double	getIddleEnergy(); // throws ParseException;
+public abstract double getReceptionEnergy(); // throws ParseException;
+public abstract double	getInitialEnergy(); // throws ParseException;
 
-	public void setReceptionEnergy(double receptionEnergy) {
-		this.receptionEnergy = receptionEnergy;
-	}
+public abstract void setSelectedRoutingProtocol(	String selected);
+public abstract void setSelectedLinkLayer(	String selected);
+public abstract void setSelectedMac(	String selected);
+public abstract void setSelectedAntenna(	String selected);
+public abstract void setSelectedChannel(	String selected);
+public abstract void setSelectedPropagationModel(	String selected);
+public abstract void setSelectedInterfaceQueue(	String selected);
+public abstract void setSelectedNetworkInterface(	String selected);
 
-	public double getTransmissionEnergy() {
-		return transmissionEnergy;
-	}
+public abstract String getSelectedRoutingProtocol();
+public abstract String getSelectedLinkLayer();
+public abstract String getSelectedMac();
+public abstract String getSelectedChannel();
+public abstract String getSelectedPropagationModel();
+public abstract String getSelectedAntenna();
+public abstract String getSelectedInterfaceQueue();
+public abstract String getSelectedNetworkInterface();
 
-	public void setTransmissionEnergy(double transmissionEnergy) {
-		this.transmissionEnergy = transmissionEnergy;
-	}
-
-	public double getSleepEnergy() {
-		return sleepEnergy;
-	}
-
-	public void setSleepEnergy(double sleepEnergy) {
-		this.sleepEnergy = sleepEnergy;
-	}
-
-	public HashMap<String, HashMap<String, String>> getRoutingProtocols() {
-		return routingProtocols;
-	}
-
-	public HashMap<String, HashMap<String, String>> getTransportProtocols() {
-		return transportProtocols;
-	}
-
-	public HashMap<String, HashMap<String, String>> getLinkLayers() {
-		return linkLayers;
-	}
-
-	public WirelessNetwork getNetwork() { return network; }
-	
-	public String getPath() { return path; }
-	
-	public void setPath(String path) { this.path = path; }
-	
-	public void setCreatedDate(Date date) {		
-		createdDate = date;
-	}
-	
-	public Date getCreatedDate() { return createdDate; }
-	
-	public void setLastSavedDate(Date date) { 
-		lastSavedDate = date;
-	}
-	
-	public Date getLastSavedDate() { return lastSavedDate; }
-
-	public List<Label> getLabelList() {
-		return labelList;
-	}
-
-	public void setLabelList(List<Label> labelList) {
-		this.labelList = labelList;
-	}
-
-	public List<Area> getObstacleList() {
-		return obstacleList;
-	}
-
-	public void setObstacleList(List<Area> obstacleList) {
-		this.obstacleList = obstacleList;
-	}
-
-	public void setNetwork(WirelessNetwork network) {
-		this.network = network;
-	}
-
-	public String getSelectedRoutingProtocol() {
-		return selectedRoutingProtocol;
-	}
-
-	public void setSelectedRoutingProtocol(String selectedRoutingProtocol) {
-		this.selectedRoutingProtocol = selectedRoutingProtocol;
-	}
-
-	public String getSelectedTransportProtocol() {
-		return selectedTransportProtocol;
-	}
-
-	public void setSelectedTransportProtocol(String selectedTransportProtocol) {
-		this.selectedTransportProtocol = selectedTransportProtocol;
-	}
-
-	public String getSelectedApplicationProtocol() {
-		return selectedApplicationProtocol;
-	}
-
-	public void setSelectedApplicationProtocol(String selectedApplicationProtocol) {
-		this.selectedApplicationProtocol = selectedApplicationProtocol;
-	}
-
-	public String getSelectedLinkLayer() {
-		return selectedLinkLayer;
-	}
-
-	public void setSelectedLinkLayer(String selectedLinkLayer) {
-		this.selectedLinkLayer = selectedLinkLayer;
-	}
-
-	public String getSelectedMac() {
-		return selectedMac;
-	}
-
-	public void setSelectedMac(String selectedMac) {
-		this.selectedMac = selectedMac;
-	}
-
-	public String getSelectedChannel() {
-		return selectedChannel;
-	}
-
-	public void setSelectedChannel(String selectedChannel) {
-		this.selectedChannel = selectedChannel;
-	}
-
-	public String getSelectedPropagationModel() {
-		return selectedPropagationModel;
-	}
-
-	public void setSelectedPropagationModel(String selectedPropagationModel) {
-		this.selectedPropagationModel = selectedPropagationModel;
-	}
-
-	public String getSelectedAntenna() {
-		return selectedAntenna;
-	}
-
-	public void setSelectedAntenna(String selectedAntenna) {
-		this.selectedAntenna = selectedAntenna;
-	}
-
-	public String getSelectedInterfaceQueue() {
-		return selectedInterfaceQueue;
-	}
-
-	public void setSelectedInterfaceQueue(String selectedInterfaceQueue) {
-		this.selectedInterfaceQueue = selectedInterfaceQueue;
-	}
-	
-	
-	public String getSelectedNetworkInterface() {
-		return selectedNetworkInterface;
-	}
-
-	public void setSelectedNetworkInterface(String selectedNetworkInterface) {
-		this.selectedNetworkInterface = selectedNetworkInterface;
-	}
-
-	public void addObstacle(Area area) {
-		area.setId(obstacleIndex++);		
-		obstacleList.add(area);
-	}
+// endregion Network properties
 }

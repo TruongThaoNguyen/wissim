@@ -2,6 +2,7 @@ package controllers.converter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import models.converter.Entry;
@@ -20,20 +21,36 @@ public class SCommonObject implements TclObject
 {	
 	private String label;
 	private List<Entry> entryList = new ArrayList<Entry>();
-	private HashMap<String, InsProc> insProc  = new HashMap<String, InsProc>();
-	private HashMap<String, InsVar>  insVar  = new HashMap<String, InsVar>();
+	private HashMap<String, InsProc> insProc  = new HashMap<String, InsProc>();	
+	private HashMap<String, InsVar>  insVar  = new LinkedHashMap<String, InsVar>();
 	private HashMap<String, Double> event = new HashMap<String, Double>();
 	
 	/**
 	 * Create new Shadow Common Object.
 	 * @param value Value and label
 	 */
-	public SCommonObject(String value)
+	public SCommonObject(String label)
 	{
-		this.label = value;		
+		this.label = label;		
 		addInsProc();
 	}
 
+	/**
+	 * create new CommonObject.
+	 * @param value
+	 * @param insVar
+	 */
+	public SCommonObject(String label, HashMap<String, String> var)
+	{
+		this.label = label;
+		
+		for (String key	: var.keySet())
+		{
+			this.insVar.put(key, new InsVar(var.get(key)));	
+		}	
+	}
+	
+	
 	@Override
 	public String parse(List<String> command) throws Exception {
 		if (command.isEmpty()) throw new ParseException(ParseException.MissArgument);
@@ -64,8 +81,13 @@ public class SCommonObject implements TclObject
 	}
 	
 	@Override
-	public void setEntry(Entry e) {
+	public void addEntry(Entry e) {
 		entryList.add(e);	
+	}
+	
+	@Override
+	public void addEntry(int index, Entry e) {
+		entryList.add(index, e);
 	}
 	
 	@Override
@@ -90,7 +112,7 @@ public class SCommonObject implements TclObject
 		InsVar i = insVar.get(key);
 		if (i != null)
 		{
-			i.Value = value;
+			i.setValue(value);
 		}
 		else
 		{
@@ -128,8 +150,8 @@ public class SCommonObject implements TclObject
 				switch (command.size()) 
 				{
 					case 0 : throw new ParseException(ParseException.MissArgument);
-					case 1 : return getInsVar(Converter.parseIdentify(command.get(0))).Value;
-					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).Value;
+					case 1 : return getInsVar(Converter.parseIdentify(command.get(0))).getValue();
+					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).getValue();
 					default: throw new ParseException(ParseException.InvalidArgument);
 				}		
 			}
