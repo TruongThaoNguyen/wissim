@@ -1,9 +1,3 @@
-package models.networkcomponents;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-
 /**
  * Network.java
  * 
@@ -13,86 +7,45 @@ import java.util.Observable;
  * @Version 2.0
  */
 
-public abstract class Network extends Observable 
-{
-	/**
-	 * Network name.
-	 */
-	private String name;
-	
-	/**
-	 * Simulation time.
-	 */
-	private int time;
+package models.networkcomponents;
 
-	/**
-	 * List of Node.
-	 */
-	protected List<Node> nodeList;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+
+public abstract class Network extends Observable {
+	
+	protected List<Node> nodeList = new ArrayList<Node>();
 	
 	/**
-	 * Create network with name and total simulation time
-	 * @param name
-	 * @param time
+	 * Crease new Node.
+	 * @param x x - dimension of new node
+	 * @param y y - dimension of new node
+	 * @param range communication range
+	 * @return new Node
 	 */
-	public Network(String name, int time) 
-	{
-		this.name = name;
-		this.time = time;
-		nodeList = new ArrayList<Node>();
-	}
+	public abstract Node addNode(int x, int y, int range);	
 	
 	/**
-	 * Create network with name
-	 * @param name
-	 */
-	public Network(String name) 
-	{	
-		this.name = name;
-		this.time = 0;
-		nodeList = new ArrayList<Node>();
-	}
-		
-	/**
-	 * Add node to this network.
-	 * @param node node will be added.
-	 */
-	public abstract Node addNode(int x, int y, int rage);
-	
-	/**
-	 * Remove node from network.
+	 * Remove node from network
 	 * @param node
 	 */
 	public abstract boolean removeNode(Node node);
 	
-	public String getName() {
-		return name;
-	}
-	
-	public int getTime() {
-		return time;
-	}
-	
 	/**
-	 * Set time for network. Only accept positive time
-	 * @param time
+	 * get Node List.
+	 * @return list of node
 	 */
-	public void setTime(int time) {
-		if (time > 0) {
-			this.time = time;
-			
-			setChanged();
-			notifyObservers("Time");
-		}
-	}
-	
-	public List<Node> getNodeList()
-	{
+	public List<Node> getNodeList() {
 		return nodeList;
 	}
 	
-	public Node getNodeById(int id) 
-	{
+	/**
+	 * get node by Id.
+	 * @param id
+	 * @return node
+	 */
+	public Node getNodeById(int id) {
 		for (Node n : getNodeList()) 
 		{
 			if (n.getId() == id) return n;
@@ -100,31 +53,60 @@ public abstract class Network extends Observable
 		return null;
 	}
 
-	public void setName(String name) 
-	{
+	public int generateId() {
+		int id = 0;
+		boolean ok = true;
+		while (ok)
+		{		
+			ok = false;
+			for (Node node : getNodeList()) 
+			{
+				if (node.getId() == id)
+				{
+					ok = true;
+					id++;
+				}
+			}			
+		}	
+		return id;
+	}
+	
+	// region ------------------- Name ------------------- //
+
+	// network name
+	private String name;
+		
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
 		this.name = name;
 		
 		setChanged();
 		notifyObservers("Name");
+	}	
+
+	// endregion Name
+	
+	// region ------------------- Time ------------------- //
+
+	public abstract int getTime();
+	
+	/**
+	 * Set time for network. Only accept positive time
+	 * @param time
+	 */
+	public final void setTime(int time) {
+		if (time > 0) 
+		{
+			settime(time);			
+			setChanged();
+			notifyObservers("Time");
+		}
 	}
 	
-	public int generateId()
-	{
-		int id = 0;
-		boolean cont = true;
-		while (cont)
-		{			
-			cont = false;
-			for (Node n : getNodeList())
-			{
-				if (n.getId() == id)
-				{
-					id++;
-					cont = true;
-				}
-			}
-		}
-		
-		return id;
-	}
+	protected abstract void settime(int time);
+
+	// endregion Time
 }

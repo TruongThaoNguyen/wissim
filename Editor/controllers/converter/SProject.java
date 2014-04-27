@@ -164,7 +164,7 @@ public class SProject  extends Project implements TclObject
 		return insObj.remove(key);
 	}
 	
-	public TclObject removeObject(TclObject obj)
+	public TclObject removeObject(Object obj)
 	{
 		for (String s : insObj.keySet())
 			if (insObj.get(s) == obj)
@@ -518,7 +518,6 @@ public class SProject  extends Project implements TclObject
 		if (v.startsWith("[new")) return v.substring(5, v.length() - 7);
 		return v;
 	}
-	
 	
 	@Override public int 	getQueueLength() 		{ return Integer.parseInt  (network.getInsVar("-ifqLen"			).getValue()); }
 	@Override public double getSleepEnergy() 		{ return Double.parseDouble(network.getInsVar("-sleepPower"		).getValue()); }

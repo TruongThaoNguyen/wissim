@@ -20,7 +20,18 @@ import models.networkcomponents.WirelessNode;
  */
 
 public class SNetwork extends WirelessNetwork implements TclObject
-{		
+{			
+	/**
+	 * Create new Shadow Network Object.
+	 * @param value
+	 */
+	public SNetwork(String label)
+	{		
+		this.label = label;	
+		nodeConfig = new SCommonObject("node-config");
+		addInsProc();
+	}
+	
 	// region ------------------- TCL properties ------------------- //
 
 	private String label;
@@ -31,18 +42,6 @@ public class SNetwork extends WirelessNetwork implements TclObject
 	
 	private SCommonObject nodeConfig; 
 	
-	/**
-	 * Create new Shadow Network Object.
-	 * @param value
-	 */
-	public SNetwork(String label)
-	{
-		super(label);
-		this.label = label;	
-		nodeConfig = new SCommonObject("node-config");
-		addInsProc();
-	}
-
 	@Override
 	public String parse(List<String> command) throws Exception {
 		if (command.isEmpty()) throw new ParseException(ParseException.MissArgument);
@@ -274,18 +273,23 @@ public class SNetwork extends WirelessNetwork implements TclObject
 	// region ------------------- Wireless Network properties ------------------- //
 	
 	@Override
-	protected void removenode(Node n) 
+	protected boolean removenode(Node n) 
 	{	
-		SNode s = (SNode) n;
+		if (!nodeList.contains(n)) return false;					
 		
 		// remove from global objList
-		Converter.global.removeObject(s);
+		Converter.global.removeObject(n);
+		
+		// remove form nodeList
+		nodeList.remove(n);
 		
 		// remove register entry
-		for (Entry e : s.getEntry())
+		for (Entry e : ((SNode)n).getEntry())
 		{
 			Converter.generateEntry.remove(e);				
-		}
+		}	
+		
+		return true;
 	}
 
 	@Override
@@ -302,19 +306,42 @@ public class SNetwork extends WirelessNetwork implements TclObject
 		Converter.generateEntry.add(index + 1, new Entry("\n"));
 		
 		// create node 		set mnode_($i) [$ns_ node]
-		Converter.generateEntry.add(index + 2, new Entry("set mnode_(" + newNode.getId() + ") [$" + this.label + " node]\n"));
+		Entry en = new Entry("set mnode_(" + newNode.getId() + ") [$" + this.label + " node]\n");
+		Converter.generateEntry.add(index + 2, en);
+		newNode.addEntry(en);
 		
 		// set position		$mnode_(0) set X_ 30	; $mnode_(0) set Y_ 860	; $mnode_(0) set Z_ 0
-		Converter.generateEntry.add(index + 3, new Entry("$mnode_(" + newNode.getId() + ") set X_ " + x + 
-												  " ; $mnode_(" + newNode.getId() + ") set Y_ " + y +
-												  " ; $mnode_(" + newNode.getId() + ") set Z_ 0\n"));
+		en = new Entry("$mnode_(" + newNode.getId() + ") set X_ " + x + " ; " + 
+						"$mnode_(" + newNode.getId() + ") set Y_ " + y + " ; " +
+						"$mnode_(" + newNode.getId() + ") set Z_ 0\n");
+		Converter.generateEntry.add(index + 3, en);
+		newNode.addEntry(en);
 		
 		// 	$ns_ initial_node_pos $mnode_($i) 5
-		Converter.generateEntry.add(index + 4, new Entry("$" + label + "initial_node_pos $mnode_(" + newNode.getId() + ") 5\n"));
-						
+		en = new Entry("$" + label + "initial_node_pos $mnode_(" + newNode.getId() + ") 5\n");
+		Converter.generateEntry.add(index + 4, en);
+		newNode.addEntry(en);
+		
 		// endregion generate auto tcl code
 		
 		return newNode;
+	}
+
+	@Override
+	public List<Node> getNodeList() {
+		return nodeList;
+	}
+
+	@Override
+	public int getTime() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	protected void settime(int time) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	// endregion Wireless Network properties	

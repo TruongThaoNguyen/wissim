@@ -9,6 +9,7 @@ import models.converter.InsProc;
 import models.converter.InsVar;
 import models.converter.ParseException;
 import models.networkcomponents.Node;
+import models.networkcomponents.events.AppEvent;
 import models.networkcomponents.protocols.ApplicationProtocol;
 
 public class SApplicationProtocol extends ApplicationProtocol implements TclObject {
@@ -21,6 +22,13 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	private HashMap<String, Double> event = new HashMap<String, Double>();
 
 	public SApplicationProtocol() {
+		super(-1, "", null, null);
+		addInsProc();
+	}
+	
+	public SApplicationProtocol(int type, String name, STransportProtocol tp, Node destNode) {
+		super(type, name, tp, destNode);
+		
 		addInsProc();
 	}
 	
@@ -69,7 +77,6 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	public void setLabel(String label) {
 		this.label = label;	
 	}
-
 	
 	// region ------------------- InsVar ------------------- //
 	
@@ -169,15 +176,56 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	// region ------------------- Application properties ------------------- //
 	
 	@Override
-	public Node getDestNode() {				
-		try
-		{
-			return ((STransportProtocol)getTransportProtocol()).getConnected().getNode(); 
+	public String getName() {
+		return label;
+	}
+
+	@Override
+	public HashMap<String, String> getParameters() {
+		HashMap<String, String> re = new HashMap<>();
+		for (String key : insVar.keySet()) {
+			re.put(key, insVar.get(key).getValue());
 		}
-		catch (Exception e)
-		{
-			return null;
+		return re;
+	}
+
+	@Override
+	public void setParameters(HashMap<String, String> params) {
+		insVar.clear();
+		for (String key : params.keySet()) {
+			addParameter(key, params.get(key));
 		}
+	}
+
+	@Override
+	public void addParameter(String param, String value) {
+		insVar.put(param, new InsVar(param, value));
+	}
+
+	@Override
+	public String getValue(String param) {
+		return getInsVar(param).toString();
+	}
+
+	@Override
+	public boolean addEvent(AppEvent e) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean removeEvent(AppEvent e) {
+		if (!eventList.contains(e))	return false;
+		
+		// TODO: remove Event
+		
+		return true;
+	}
+
+	@Override
+	protected void setName(String name) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	// endregion Application properties

@@ -12,13 +12,7 @@ import models.networkcomponents.WirelessNode;
 import models.networkcomponents.protocols.TransportProtocol;
 
 public class SNode extends WirelessNode implements TclObject 
-{	
-	private String label;
-	private List<Entry> entryList = new ArrayList<Entry>();
-	private HashMap<String, InsProc> insProc = new HashMap<String, InsProc>();
-	private HashMap<String, InsVar>  insVar = new HashMap<String, InsVar>();
-	private HashMap<String, Double> event = new HashMap<String, Double>();
-	
+{		
 	public SNode(SNetwork network) {
 		super(network);
 		setX(0);
@@ -28,13 +22,20 @@ public class SNode extends WirelessNode implements TclObject
 	
 	public SNode(SNetwork network, int x, int y, int range)
 	{
-		super(network, x, y, range);
+		super(network);
 		setX(x);
 		setY(y);
+		this.range = range;
 		addInsProc();
 	}
 
 	// region ------------------- TCL properties ------------------- //
+	
+	private String label;
+	private List<Entry> entryList = new ArrayList<Entry>();
+	private HashMap<String, InsProc> insProc = new HashMap<String, InsProc>();
+	private HashMap<String, InsVar>  insVar = new HashMap<String, InsVar>();
+	private HashMap<String, Double> event = new HashMap<String, Double>();
 	
 	@Override
 	public String parse(List<String> command) throws Exception {
@@ -180,26 +181,64 @@ public class SNode extends WirelessNode implements TclObject
 	public void setY(int y) {
 		setInsVar("Y_", y + "");
 	}
-
-	// endregion Wireless Node properties
 	
-	// region ------------------- Wireless Node properties ------------------- //
-
-	void addTransportProtocol(TransportProtocol tp)
-	{
-		getTransportProtocolList().add(tp);
+	public void addTransportProtocol(STransportProtocol agent) {
+		transportProtocolList.add(agent);
 	}
 	
 	@Override
-	public void addTransportProtocol(int type, String name) {
-		// TODO Auto-generated method stub
+	public TransportProtocol addTransportProtocol(int type, String name) {
 		
+		STransportProtocol tp = new STransportProtocol(type, name, this);
+		String id = Converter.global.getNetwork().getNodeList().indexOf(this) + "";
+		id += getTransportPrototolList().indexOf(tp);		
+		tp.setLabel("trans_(" + id + ")");
+		
+		addTransportProtocol(tp);
+		
+		// generate Tcl code		
+		int index = Converter.generateEntry.lastIndexOf(getEntry().get(getEntry().size() - 1));
+		
+		// space
+		Converter.generateEntry.add(index + 1, new Entry("\n"));
+		
+		// set udp_($i) [new Agent/UDP]
+		Entry e = new Entry("set " + tp.getLabel() + " [new Agent/" + name + "]\n");
+		Converter.generateEntry.add(index + 2, e);
+		tp.addEntry(e);
+		
+		// $ns_ attach-agent $mnode_($s($i)) $udp_($i)
+		e = new Entry("$" + ((SNetwork)Converter.global.getNetwork()).getLabel() + " attach-agent $" + getLabel() + " $" + tp.getLabel() + "\n");
+		Converter.generateEntry.add(index + 3, e);
+		addEntry(e);
+		tp.addEntry(e);
+		
+		// $udp_($i) set fid_ 2
+		List<String> cmd = new ArrayList<>();
+		cmd.add("set");
+		cmd.add("fid_");
+		cmd.add("2");
+		try {
+			tp.parse(cmd);
+		} catch (Exception e1) {			
+			e1.printStackTrace();
+		}
+						
+		// endregion generate auto tcl code
+		
+		return tp;
 	}
 
 	@Override
 	public boolean removeTransportProtocol(TransportProtocol transproc) {
-		// TODO Auto-generated method stub
-		return false;
+		if (!transportProtocolList.contains(transproc)) return false;
+		transportProtocolList.remove(transproc);
+		
+		for (Entry e : ((STransportProtocol)transproc).getEntry()) {
+			Converter.generateEntry.remove(e);			
+		}
+		
+		return true;
 	}
 
 	// endregion Wireless Node properties	

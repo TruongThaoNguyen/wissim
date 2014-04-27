@@ -8,6 +8,8 @@ import models.converter.Entry;
 import models.converter.InsProc;
 import models.converter.InsVar;
 import models.converter.ParseException;
+import models.networkcomponents.Node;
+import models.networkcomponents.protocols.ApplicationProtocol;
 import models.networkcomponents.protocols.TransportProtocol;
 
 public class STransportProtocol extends TransportProtocol implements TclObject {
@@ -21,6 +23,7 @@ public class STransportProtocol extends TransportProtocol implements TclObject {
 	private TransportProtocol connectedAgent = null;
 	
 	protected STransportProtocol(String label) {				
+		super(-1, label, null);
 		this.label = label;
 		
 		if (label.equals("UDP")) setType(TransportProtocol.UDP);
@@ -28,6 +31,13 @@ public class STransportProtocol extends TransportProtocol implements TclObject {
 		
 		addInsProc();
 	}	
+
+	public STransportProtocol(int type, String label, SNode node) {
+		super(type, label, node);
+		this.label = label;
+		
+		addInsProc();
+	}
 
 	public void setConnected(STransportProtocol agent) {
 		connectedAgent = agent;
@@ -159,7 +169,76 @@ public class STransportProtocol extends TransportProtocol implements TclObject {
 	}
 	
 	// endregion InsProc
-	
 	// endregion TCL properties
 	
+	// region ------------------- Transport properties ------------------- //
+	
+	public void setNode(SNode node) {
+		this.node = node;
+	}
+
+	@Override
+	protected void setName(String name) {
+		this.label = name;
+	}
+	
+	@Override
+	public String getName() {
+		return label;
+	}
+
+	@Override
+	public HashMap<String, String> getParameters() {
+		HashMap<String, String> re = new HashMap<>();
+		for (String key : insVar.keySet()) {
+			re.put(key, insVar.get(key).getValue());
+		}
+		return re;
+	}
+
+	@Override
+	public void setParameters(HashMap<String, String> params) {
+		insVar.clear();
+		for (String key : params.keySet()) {
+			addParameter(key, params.get(key));
+		}
+	}
+
+	@Override
+	public void addParameter(String param, String value) {
+		insVar.put(param, new InsVar(param, value));
+	}
+
+	@Override
+	public String getValue(String param) {
+		return getInsVar(param).toString();
+	}
+
+	public void addApp(SApplicationProtocol sApplicationProtocol) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void addApp(int type, String name, Node destNode) {
+		SApplicationProtocol newApp = new SApplicationProtocol(type, name, this, destNode);
+		this.appList.add(newApp);
+			
+		// TODO Auto-generated Tcl code
+		
+	}
+
+	@Override
+	public boolean removeApp(ApplicationProtocol app) {
+		if (!getAppList().contains(app)) return false;
+		
+		getAppList().remove(app);
+		for (Entry e : ((SApplicationProtocol)app).getEntry()) {
+			Converter.generateEntry.remove(e);
+		}
+		
+		return true;
+	}
+
+	// endregion Transport properties	
 }

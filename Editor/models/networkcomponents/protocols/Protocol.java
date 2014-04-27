@@ -1,31 +1,25 @@
+/**
+ * Protocol.java
+ * 
+ * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and
+ *            Technology
+ * @Author Duc-Trong Nguyen
+ * @Version 2.0
+ */
+
 package models.networkcomponents.protocols;
 
 import java.util.HashMap;
 
-/**
- * Represents a protocol
- * @author leecom
- *
- */
-public abstract class Protocol {
-//	/**
-//	 * Name of the protocol.
-//	 */
-//	protected String name;
+public interface Protocol {
+
+	public String getName();	
 	
-	HashMap<String, String> params = new HashMap<String, String>();
+	public HashMap<String, String> getParameters();
 	
-	public abstract String getLabel();
+	public void setParameters(HashMap<String, String> params);
 	
-	public HashMap<String, String> getParameters() { return params; }
+	public void addParameter(String param, String value);
 	
-	public void setParameters(HashMap<String, String> params) { this.params = params; }
-	
-	public void addParameter(String param, String value) {
-		params.put(param, value);
-	}
-	
-	public String getValue(String param) {
-		return params.get(param);
-	}
+	public String getValue(String param);
 }
