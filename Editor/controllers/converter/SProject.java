@@ -1,10 +1,13 @@
 package controllers.converter;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
+import controllers.WorkSpace;
 import models.Project;
 import models.converter.CharType;
 import models.converter.Entry;
@@ -60,16 +63,17 @@ public class SProject  extends Project implements TclObject
 			try 
 			{
 				parse(command);
-			} 
-			catch (ParseException e)
-			{
-				e.setLine(e.getLine() + scanner.getLine());
-				throw e;
-			} 
-			catch (Exception e) 
-			{
-				throw new ParseException(scanner.getLine(), e.getMessage());
 			}
+			catch (ParseException e)
+			{				
+				e.setLine(e.getLine() + scanner.getLine());				
+				System.out.println("Line " + e.getLine() + " " + e.getMessage());
+				throw e;
+			}
+			catch (Exception e) 
+			{					
+				throw new ParseException(scanner.getLine(), e.getMessage());
+			}			 			
 		}
 	}
 	
@@ -345,6 +349,28 @@ public class SProject  extends Project implements TclObject
 			@Override
 			protected String run(List<String> command) throws Exception {
 				return insprocExpr(command);
+			}
+		};
+
+		new InsProc(this, "source") {
+			private BufferedReader br;
+
+			@Override
+			protected String run(List<String> command) throws Exception {
+				if (command.size() != 1) throw new ParseException(ParseException.InvalidArgument);				
+							
+				String fileName =  WorkSpace.getDirectory() + Converter.parseIdentify(command.get(0));				
+				br = new BufferedReader(new FileReader(fileName));
+				StringBuilder sb = new StringBuilder();
+			    String line = br.readLine();
+			    while (line != null) {
+			        sb.append(line);
+			        sb.append(System.lineSeparator());
+			        line = br.readLine();
+			    }		    
+				
+			    parse(sb.toString());
+				return null;
 			}
 		};
 	}

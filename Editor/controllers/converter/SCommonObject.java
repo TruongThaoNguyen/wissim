@@ -48,6 +48,8 @@ public class SCommonObject implements TclObject
 		{
 			this.insVar.put(key, new InsVar(var.get(key)));	
 		}	
+		
+		addInsProc();
 	}
 	
 	
@@ -62,7 +64,7 @@ public class SCommonObject implements TclObject
 			return proc.Run(command);
 		}
 		else 		
-			return insProc.get("").Run(command);
+			return insProc.get(null).Run(command);
 	}
 
 	@Override
@@ -144,6 +146,13 @@ public class SCommonObject implements TclObject
 	}
 	
 	protected void addInsProc() {				
+		new InsProc(this, null) {
+			@Override
+			protected String run(List<String> command) throws Exception {				
+				return null;
+			}
+		};
+		
 		new InsProc(this, "set") {
 			@Override
 			protected String run(List<String> command) throws Exception {				

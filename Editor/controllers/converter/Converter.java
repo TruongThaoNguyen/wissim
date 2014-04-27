@@ -154,7 +154,8 @@ public class Converter
 	
 	public static void main(String[] args)  throws Exception {	
 		boolean isWin =  WorkSpace.isWindow();
-		String fileName = isWin? "D:\\Work\\scripts\\30\\ehds\\simulate.tcl" : "/home/trongnguyen/scripts/30/ehds/simulate.tcl"; 
+		WorkSpace.setDirectory(isWin? "D:\\Work\\scripts\\30\\gpsr\\" : "/home/trongnguyen/scripts/30/ehds/");
+		String fileName =  WorkSpace.getDirectory() + "simulate.tcl";
 		BufferedReader br = new BufferedReader(new FileReader(fileName));
 		StringBuilder sb = null;
 		try {
