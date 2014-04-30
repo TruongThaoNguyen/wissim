@@ -16,7 +16,7 @@ public class SNode extends WirelessNode implements TclObject
 	public SNode(SNetwork network) {
 		super(network);
 		setX(0);
-		setY(0);
+		setY(0);		
 		addInsProc();
 	}
 	
@@ -38,17 +38,17 @@ public class SNode extends WirelessNode implements TclObject
 	private HashMap<String, Double> event = new HashMap<String, Double>();
 	
 	@Override
-	public String parse(List<String> command) throws Exception {
+	public String parse(List<String> command, boolean isRecord) throws Exception {
 		if (command.isEmpty()) throw new ParseException(ParseException.MissArgument);
 		
 		InsProc proc = insProc.get(Converter.parseIdentify(command.get(0)));
 		if (proc != null)
 		{
 			command.remove(0);
-			return proc.Run(command);
+			return proc.Run(command, isRecord);
 		}
 		else 		
-			return insProc.get(null).Run(command);
+			return insProc.get(null).Run(command, isRecord);
 	}
 	
 	@Override
@@ -219,7 +219,7 @@ public class SNode extends WirelessNode implements TclObject
 		cmd.add("fid_");
 		cmd.add("2");
 		try {
-			tp.parse(cmd);
+			tp.parse(cmd, false);
 		} catch (Exception e1) {			
 			e1.printStackTrace();
 		}

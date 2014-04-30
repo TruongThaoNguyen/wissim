@@ -32,8 +32,6 @@ public class SNetwork extends WirelessNetwork implements TclObject
 		addInsProc();
 	}
 	
-	// region ------------------- TCL properties ------------------- //
-
 	private String label;
 	private List<Entry> entryList = new ArrayList<Entry>();
 	private HashMap<String, InsProc> insProc = new HashMap<String, InsProc>();
@@ -41,26 +39,38 @@ public class SNetwork extends WirelessNetwork implements TclObject
 	private HashMap<String, Double> event = new HashMap<String, Double>();
 	
 	private SCommonObject nodeConfig; 
+
+	// region ------------------- TCL properties ------------------- //
+	
+	// region ------------------- Parse Tcl code ------------------- //
 	
 	@Override
-	public String parse(List<String> command) throws Exception {
+	public String parse(List<String> command, boolean isRecord) throws Exception {
 		if (command.isEmpty()) throw new ParseException(ParseException.MissArgument);
 		
 		InsProc proc = insProc.get(Converter.parseIdentify(command.get(0)));
 		if (proc != null)
 		{
 			command.remove(0);
-			return proc.Run(command);
+			return proc.Run(command, isRecord);
 		}
 		else 		
-			return insProc.get(null).Run(command);
+			return insProc.get(null).Run(command, isRecord);
 	}
 
+	// endregion Parse Tcl code
+	
+	// region ------------------- Event ------------------- //
+	
 	@Override
 	public void addEvent(Double time, String arg) {
 		event.put(arg, time);		
 	}
+
+	// endregion Event
 	
+	// region ------------------- Register Entry ------------------- //
+
 	@Override
 	public void addEntry(Entry e) {
 		entryList.add(e);	
@@ -75,6 +85,10 @@ public class SNetwork extends WirelessNetwork implements TclObject
 	public List<Entry> getEntry() {
 		return entryList;
 	}
+
+	// endregion Register Entry	
+
+	// region ------------------- Label ------------------- //
 	
 	@Override
 	public String getLabel() {
@@ -85,7 +99,8 @@ public class SNetwork extends WirelessNetwork implements TclObject
 	public void setLabel(String label) {
 		this.label = label;	
 	}
-
+	
+	// endregion Label
 	
 	// region ------------------- InsVar ------------------- //
 	
@@ -261,7 +276,7 @@ public class SNetwork extends WirelessNetwork implements TclObject
 		
 	private String insprocNode(List<String> command) throws Exception {
 		if (command.size() != 0) throw new ParseException(ParseException.InvalidArgument);
-		SNode newNode = new SNode(this);
+		SNode newNode = new SNode(this);		
 		nodeList.add(newNode);		
 		return Converter.global.addObject(newNode);								
 	}
@@ -273,8 +288,7 @@ public class SNetwork extends WirelessNetwork implements TclObject
 	// region ------------------- Wireless Network properties ------------------- //
 	
 	@Override
-	protected boolean removenode(Node n) 
-	{	
+	protected boolean removenode(Node n) {	
 		if (!nodeList.contains(n)) return false;					
 		
 		// remove from global objList

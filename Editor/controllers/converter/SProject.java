@@ -9,7 +9,6 @@ import java.util.Stack;
 
 import controllers.WorkSpace;
 import models.Project;
-import models.converter.CharType;
 import models.converter.Entry;
 import models.converter.InsProc;
 import models.converter.InsVar;
@@ -49,8 +48,22 @@ public class SProject  extends Project implements TclObject
 	
 	// region ------------------- Parse ------------------- //
 
-	public void parse(String code) throws ParseException
-	{
+	/**
+	 * parse Tcl codes. Recored code to register.
+	 * @param code Tcl code
+	 * @throws ParseException
+	 */
+	public void parse(String code) throws ParseException {
+		parse(code, true);
+	}
+	
+	/**
+	 * parse Tcl code.
+	 * @param code Tcl code.
+	 * @param isRecord Record to Register or not.
+	 * @throws ParseException
+	 */
+	public void parse(String code, boolean isRecord) throws ParseException {
 		Scanner scanner = new Scanner(code);
 
 		while (scanner.haveNext())
@@ -62,7 +75,7 @@ public class SProject  extends Project implements TclObject
 			
 			try 
 			{
-				parse(command);
+				parse(command, isRecord);
 			}
 			catch (ParseException e)
 			{				
@@ -76,29 +89,29 @@ public class SProject  extends Project implements TclObject
 			}			 			
 		}
 	}
-	
+
 	@Override
-	public String parse(List<String> command) throws Exception
-	{		
+	public String parse(List<String> command, boolean isRecord) throws Exception {
+		
 		if (command.isEmpty()) 	return null;		
-		if (command.size() < 2)	return getInsProc(null).Run(command);					
+		if (command.size() < 2)	return getInsProc(null).Run(command, isRecord);					
 		
 		String arg = Converter.parseIdentify(command.get(0));
 		
-		if (arg == null) return getInsProc(null).Run(command);  
+		if (arg == null) return getInsProc(null).Run(command, isRecord);  
 		
 		InsProc p = getInsProc(arg);
 		if (p != null)
 		{
 			command.remove(0);
-			return p.Run(command);
+			return p.Run(command, isRecord);
 		}
 	
 		TclObject obj = insObj.get(arg);
 		if (obj != null)	
 		{
 			command.remove(0);
-			return obj.parse(command);
+			return obj.parse(command, isRecord);
 		}
 		
 		obj = new SCommonObject(arg);
@@ -108,13 +121,13 @@ public class SProject  extends Project implements TclObject
 			insObj.put(arg, obj);
 			command.remove(0);
 			command.remove(0);
-			return p.Run(command);
+			return p.Run(command,isRecord);
 		}
 		
 		// Undefined insProc 
-		return getInsProc(null).Run(command);
-	}	
-
+		return getInsProc(null).Run(command, isRecord);
+	}
+	
 	// endregion Parse
 
 	@Override
@@ -236,11 +249,10 @@ public class SProject  extends Project implements TclObject
 
 	// endregion InsVar	
 	
-	// region ------------- InsProc ------------- //	
+	// region ------------------- InsProc ----------------- //	
 		
 	@Override
-	public InsProc getInsProc(String key) 
-	{
+	public InsProc getInsProc(String key) {
 		return insProc.get(key);
 	}
 	
@@ -297,7 +309,7 @@ public class SProject  extends Project implements TclObject
 				
 				if (arg.equals("Simulator")) 				return "_o0";
 				if (arg.equals("Topography"))				return addObject(new STopographyObject("[new " + arg + "]"));		
-				if (arg.equals("Application/Traffic/CBR"))	return addObject(new SApplicationProtocol()); 
+				if (arg.startsWith("Application/Traffic/"))	return addObject(new SApplicationProtocol(arg.replace("Application/Tracffic/", ""))); 
 				if (arg.startsWith("Agent/"))				return addObject(new STransportProtocol(arg.replace("Agent/",  "")));
 				
 				return addObject(new SCommonObject("[new " + arg + "]"));
@@ -319,29 +331,27 @@ public class SProject  extends Project implements TclObject
 	
 		new InsProc(this, "for") {
 			@Override
-			public String Run(List<String> command) throws Exception {
-				// do not store this command to register
-				
-				// remove sperator
-				String l = command.get(command.size() - 1);
-				CharType type = CharType.TypeOf(l.charAt(0));
-				if (type == CharType.Semicolon || type == CharType.Separator) command.remove(l);
-				
-				return run(command);
-			}
-
-			@Override
 			protected String run(List<String> command) throws Exception {
 				return insprocFor(command);
-			}			
+			}
+			
+			@Override
+			public String Print(List<String> command) {
+				StringBuilder sb = new StringBuilder();
+				sb.append("# for {" + command.get(0) + "} {" + 
+									  command.get(1) + "} {" + 
+									  command.get(2) + "} {" + 
+									  command.get(3).replace("\n", "\n# ") + "}");
+				return sb.toString();
+			}
 		};
 
 		new InsProc(this, "incr") {
 			@Override
 			protected String run(List<String> command) throws Exception {				
 				if (command.size() != 1) throw new ParseException(ParseException.InvalidArgument);				
-				InsVar i = insVar.get(Converter.parseIdentify(command.get(0)));						
-				return i.setValue(Integer.parseInt(i.getValue()) + 1);
+				InsVar i = insVar.get(Converter.parseIdentify(command.get(0)));				
+				return i.setValue(Integer.parseInt(i.getValue()) + 1, false);				
 			}	
 		};
 		
@@ -354,7 +364,6 @@ public class SProject  extends Project implements TclObject
 
 		new InsProc(this, "source") {
 			private BufferedReader br;
-
 			@Override
 			protected String run(List<String> command) throws Exception {
 				if (command.size() != 1) throw new ParseException(ParseException.InvalidArgument);				
@@ -371,6 +380,11 @@ public class SProject  extends Project implements TclObject
 				
 			    parse(sb.toString());
 				return null;
+			}
+			
+			@Override
+			public String Print(List<String> command) {
+				return "# source " + command.get(0);
 			}
 		};
 	}
@@ -471,14 +485,16 @@ public class SProject  extends Project implements TclObject
 		if (scanner.haveNext()) throw new ParseException(ParseException.InvalidArgument);
 		
 		int limit = 10000;
-		parse(arg[0]);
+		parse(arg[0], true);
 		while (Boolean.parseBoolean(insprocExpr(new ArrayList<String>(arg1))) && limit > 0)			
-		{
-			parse(arg[3]);			
-			parse(arg[2]);
+		{			
+			parse(arg[3], true);			
+			parse(arg[2], true);
 			limit--;
 		}
 		
+		
+		Converter.generateEntry.add(new Entry("\n"));
 		return "";
 	}
 

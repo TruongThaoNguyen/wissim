@@ -36,14 +36,22 @@ public class InsVar {
 	
 	public String setValue(Object value)
 	{
+		return setValue(value, true);
+	}
+
+	public String setValue(Object value, boolean isChangLable)
+	{
 		if (value != this.Value)
 		{
 			this.Value = value.toString();
-			this.Label = value.toString();
+			if (isChangLable) 
+			{
+				this.Label = value.toString();
+			}
 		}
 		return this.Value;
-	}
-
+	}	
+	
 	public String getLabel()
 	{
 		return Label;

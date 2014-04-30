@@ -25,9 +25,8 @@ public abstract class InsProc
 		parent.addInsProc(this);
 	}
 	
-	public String Run(List<String> command) throws Exception
-	{
-		record(this, command);
+	public String Run(List<String> command, boolean isRecord) throws Exception {
+		if (isRecord) record(this, command);
 		return run(command);
 	}
 	
@@ -73,27 +72,5 @@ public abstract class InsProc
 			Converter.generateEntry.add(new Entry(proc, "\n"));
 		}
 	}
-//	
-//	// region ------------------- Entry ------------------- //
-//	
-//	protected void addEntry(Entry e)
-//	{
-//		if (generateEntry.isEmpty())
-//		{
-//			if (!Converter.generateEntry.isEmpty()) Converter.generateEntry.add(new Entry());
-//			Converter.generateEntry.add(e);
-//		}
-//		else
-//		{
-//			Converter.generateEntry.add(Converter.generateEntry.indexOf(generateEntry.get(generateEntry.size() - 1)), e);
-//		}
-//		generateEntry.add(e);
-//	}	
-//
-//	protected void addEntry(InsProc p, List<String> arg)
-//	{
-//		addEntry(new Entry(p, arg));
-//	}
-//	
-//	// endregion Entry
+
 }

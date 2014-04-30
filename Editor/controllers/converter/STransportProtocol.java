@@ -50,17 +50,17 @@ public class STransportProtocol extends TransportProtocol implements TclObject {
 	// region ------------------- TCL properties ------------------- //
 	
 	@Override
-	public String parse(List<String> command) throws Exception {
+	public String parse(List<String> command, boolean isRecord) throws Exception {
 		if (command.isEmpty()) throw new ParseException(ParseException.MissArgument);
 		
 		InsProc proc = insProc.get(Converter.parseIdentify(command.get(0)));
 		if (proc != null)
 		{
 			command.remove(0);
-			return proc.Run(command);
+			return proc.Run(command, isRecord);
 		}
 		else 		
-			return insProc.get(null).Run(command);
+			return insProc.get(null).Run(command, isRecord);
 	}
 	
 	@Override

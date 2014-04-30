@@ -21,7 +21,9 @@ public interface TclObject
 	 * @return TclObject, result of InsProc
 	 * @throws Exception
 	 */
-	String parse(List<String> command) throws Exception;
+	//String parse(List<String> command) throws Exception;
+	
+	String parse(List<String> command, boolean isRecord) throws Exception;
 	
 	String	getLabel();	
 	void	setLabel(String label);

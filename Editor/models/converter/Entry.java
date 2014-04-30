@@ -3,6 +3,8 @@ package models.converter;
 import java.util.ArrayList;
 import java.util.List;
 
+import controllers.converter.Converter;
+
 public class Entry {				
 	private InsProc insProc;
 	private List<String> arg;
@@ -13,9 +15,26 @@ public class Entry {
 	public Entry(InsProc insProc, List<String> arg, String sperator)
 	{		
 		this.insProc = insProc;
-		this.arg = arg;
-		this.sperator = sperator;
+		if (insProc.insprocName == null)
+		{		
+			this.arg = arg;
+		}
+		else
+		{
+			this.arg = new ArrayList<>();
+			for (String string : arg) {
+				String s;
+				try {
+					s = Converter.parseIdentify(string);				
+				} catch (Exception e) {
+					s = null;
+				}
+				if (s == null) s = string;
+				this.arg.add(s);
+			}
+		}
 		
+		this.sperator = sperator;
 		isAuto = false;
 	}
 
