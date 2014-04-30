@@ -43,8 +43,10 @@ public abstract class InsProc
 	{
 		StringBuilder sb = new StringBuilder();
 		for (String string : command)
-		{
-			sb.append(string + " ");		
+		{	
+			TclObject o = Converter.global.getObject(string);
+			if (o != null)	sb.append(o.getLabel() + " ");		
+			else			sb.append(string + " ");		
 		}
 		return sb.toString();
 	}

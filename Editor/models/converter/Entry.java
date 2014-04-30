@@ -12,6 +12,13 @@ public class Entry {
 	
 	private boolean isAuto;
 	
+	/**
+	 * Create new Register Entry.
+	 * Parse identify with each argument. 
+	 * @param insProc
+	 * @param arg
+	 * @param sperator
+	 */
 	public Entry(InsProc insProc, List<String> arg, String sperator)
 	{		
 		this.insProc = insProc;
@@ -38,6 +45,11 @@ public class Entry {
 		isAuto = false;
 	}
 
+	/**
+	 * Create new Register Entry for InsProc Null.
+	 * @param insProc
+	 * @param sperator
+	 */
 	public Entry(InsProc insProc, String sperator)
 	{
 		this.insProc = insProc;
@@ -45,6 +57,27 @@ public class Entry {
 		this.sperator = sperator;
 		
 		isAuto = false;
+	}
+	
+	/**
+	 * Create new Register Entry without parse identify argument.
+	 * @param insProc
+	 * @param arg
+	 */
+	public Entry(InsProc insProc, List<String> arg)
+	{		
+		String l = arg.get(arg.size() - 1);
+		CharType type = CharType.TypeOf(l.charAt(0));
+		if (type == CharType.Semicolon || type == CharType.Separator) 
+		{
+			arg.remove(l);
+			this.sperator = l;
+		}
+		else this.sperator = "\n";
+		
+		this.insProc = insProc;	
+		this.arg 	 = arg;
+		this.isAuto  = false;
 	}
 	
 	public Entry(String command)

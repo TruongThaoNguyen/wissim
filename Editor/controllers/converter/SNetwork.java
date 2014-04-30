@@ -246,20 +246,29 @@ public class SNetwork extends WirelessNetwork implements TclObject
 				
 				addEvent(time, arg);
 				return arg;
-			}		
+			}
+			
+			@Override
+			public void record(InsProc proc, List<String> command) {
+				Converter.generateEntry.add(new Entry(this, command));
+			}
 		};
 
 		new InsProc(this, "attach-agent") {
-			// first arg is base agent, second once is attack agent
+			// first argument is base agent, second once is attack agent
 			@Override
 			protected String run(List<String> command) throws Exception {
 				if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);
+				
 				SNode 		  		node  = (SNode) 		  	 Converter.global.getObject(Converter.parseIdentify(command.get(0)));
 				STransportProtocol	agent = (STransportProtocol) Converter.global.getObject(Converter.parseIdentify(command.get(1)));				
+				
 				agent.setNode(node);
 				if (agent.getLabel() != "Null") node.addTransportProtocol(agent);
 				return "";
-			}			
+			}	
+			
+			
 		};
 		
 		new InsProc(this, "connect"){

@@ -23,7 +23,7 @@ import models.converter.TokenType;
  */
 public class Converter 
 {		
-	static SProject global;	
+	public static SProject global;	
 	public static List<Entry> generateEntry = new ArrayList<Entry>();
 	
 	/**
