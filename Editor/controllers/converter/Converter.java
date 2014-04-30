@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import controllers.WorkSpace;
+import controllers.converter.shadow.SProject;
 import models.Project;
 import models.converter.Entry;
 import models.converter.ParseException;

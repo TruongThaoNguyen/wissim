@@ -1,4 +1,4 @@
-package controllers.converter;
+package controllers.converter.shadow;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Stack;
 
 import controllers.WorkSpace;
+import controllers.converter.Converter;
+import controllers.converter.Scanner;
+import controllers.converter.TclObject;
 import models.Project;
 import models.converter.Entry;
 import models.converter.InsProc;
@@ -29,7 +32,6 @@ public class SProject  extends Project implements TclObject
 	private List<Entry> entryList = new ArrayList<Entry>();
 	private HashMap<String, InsProc> insProc = new HashMap<String, InsProc>();
 	private HashMap<String, InsVar>  insVar = new HashMap<String, InsVar>();
-	private HashMap<String, Double> event = new HashMap<String, Double>(); 
 	
 	private SNetwork network;
 	
@@ -130,11 +132,6 @@ public class SProject  extends Project implements TclObject
 	
 	// endregion Parse
 
-	@Override
-	public void addEvent(Double time, String arg) {
-		event.put(arg, time);		
-	}
-	
 	// region ------------------- Label ------------------- //
 
 	@Override

@@ -13,36 +13,62 @@ import controllers.converter.TclObject;
  */
 
 public abstract class InsProc 
-{			
+{				
+	public String insprocName;
 	protected TclObject parent;
-	public String insprocName;	
+	protected Entry entry;
 	
-	public InsProc(TclObject parent, String insprocName)
-	{
+	/**
+	 * Create new InsProc and add this InsProc to parent's InsProc list.
+	 * @param parent
+	 * @param insprocName
+	 */
+	public InsProc(TclObject parent, String insprocName) {
 		this.parent = parent;
 		this.insprocName = insprocName;
 		
 		parent.addInsProc(this);
 	}
 	
-	public String Run(List<String> command, boolean isRecord) throws Exception {
-		if (isRecord) record(this, command);
-		return run(command);
+	/**
+	 * Run this InsProc.
+	 * @param arg arguments.
+	 * @param isRecord record this runtime to register.
+	 * @return Result of runtime
+	 * @throws Exception
+	 */
+	public String Run(List<String> arg, boolean isRecord) throws Exception {
+		if (isRecord) record(arg);
+		return run(arg);
 	}
+
+	/**
+	 * Real runtime method. Implement in each individual InsProc.
+	 * @param arg arguments
+	 * @return runtime result
+	 * @throws Exception
+	 */
+	protected abstract String run(List<String> arg) throws Exception;
 	
-	protected abstract String run(List<String> command) throws Exception;
-	
-	public String Print(List<String> command)
-	{
+	/**
+	 * Print TCL command corresponding.
+	 * @param arg arguments
+	 * @return
+	 */
+	public String Print(List<String> arg) {
 		return 	(parent.getLabel() == null ? "" : parent.getLabel() + " " ) + 
 				(insprocName == null ? "" : insprocName + " " ) + 
-				print(command);
+				print(arg);
 	}
 	
-	protected String print(List<String> command)
-	{
+	/**
+	 * Default print method.
+	 * @param arg arguments.
+	 * @return
+	 */
+	protected String print(List<String> arg) {
 		StringBuilder sb = new StringBuilder();
-		for (String string : command)
+		for (String string : arg)
 		{	
 			TclObject o = Converter.global.getObject(string);
 			if (o != null)	sb.append(o.getLabel() + " ");		
@@ -51,8 +77,12 @@ public abstract class InsProc
 		return sb.toString();
 	}
 
-	public void record(InsProc proc, List<String> command)
-	{				
+	/**
+	 * Record the InsProc to Register.
+	 * @param proc
+	 * @param command
+	 */
+	protected void record(List<String> command)	{				
 		if (command.size() > 0)
 		{
 			String l = command.get(command.size() - 1);
@@ -60,19 +90,20 @@ public abstract class InsProc
 			if (type == CharType.Semicolon || type == CharType.Separator) 
 			{
 				command.remove(l);
-				Entry e = new Entry(proc, command, l);
-				Converter.generateEntry.add(e);
-				parent.addEntry(e);
+				entry = new Entry(this, command, l);				
+				parent.addEntry(entry);				
 			}
 			else
 			{
-				Converter.generateEntry.add(new Entry(proc, command, "\n"));
+				entry = new Entry(this, command, "\n");
 			}
 		}
 		else 
 		{
-			Converter.generateEntry.add(new Entry(proc, "\n"));
+			entry = new Entry(this, "\n");
 		}
+		
+		Converter.generateEntry.add(entry);
 	}
 
 }

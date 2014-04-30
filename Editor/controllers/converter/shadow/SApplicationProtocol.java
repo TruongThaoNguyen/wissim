@@ -1,9 +1,12 @@
-package controllers.converter;
+package controllers.converter.shadow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import controllers.converter.Converter;
+import controllers.converter.Scheduler;
+import controllers.converter.TclObject;
 import models.converter.Entry;
 import models.converter.InsProc;
 import models.converter.InsVar;
@@ -12,7 +15,7 @@ import models.networkcomponents.Node;
 import models.networkcomponents.events.AppEvent;
 import models.networkcomponents.protocols.ApplicationProtocol;
 
-public class SApplicationProtocol extends ApplicationProtocol implements TclObject {
+public class SApplicationProtocol extends ApplicationProtocol implements TclObject, Scheduler {
 	
 	private String label;
 	private List<Entry> entryList = new ArrayList<Entry>();
@@ -51,6 +54,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	@Override
 	public void addEvent(Double time, String arg) {
 		event.put(arg, time);		
+		// TODO:
 	}
 	
 	@Override

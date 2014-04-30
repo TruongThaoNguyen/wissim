@@ -1,9 +1,13 @@
-package controllers.converter;
+package controllers.converter.shadow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import controllers.converter.Converter;
+import controllers.converter.Scanner;
+import controllers.converter.Scheduler;
+import controllers.converter.TclObject;
 import models.converter.Entry;
 import models.converter.InsProc;
 import models.converter.InsVar;
@@ -19,7 +23,7 @@ import models.networkcomponents.WirelessNode;
  * @Version 2.0
  */
 
-public class SNetwork extends WirelessNetwork implements TclObject
+public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 {			
 	/**
 	 * Create new Shadow Network Object.
@@ -239,7 +243,8 @@ public class SNetwork extends WirelessNetwork implements TclObject
 						arg = "";				
 						for (String s : sc)	arg += s;				
 						
-						obj.addEvent(time, arg);
+						((Scheduler)obj).addEvent(time, arg);
+						obj.addEntry(entry);
 						return arg;
 					}
 				}									
@@ -249,7 +254,7 @@ public class SNetwork extends WirelessNetwork implements TclObject
 			}
 			
 			@Override
-			public void record(InsProc proc, List<String> command) {
+			protected void record(List<String> command) {
 				Converter.generateEntry.add(new Entry(this, command));
 			}
 		};

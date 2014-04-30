@@ -39,6 +39,4 @@ public interface TclObject
 	void 		addEntry(Entry e);
 	void		addEntry(int index, Entry e);
 	List<Entry> getEntry();
-	
-	void addEvent(Double time, String arg);
 }

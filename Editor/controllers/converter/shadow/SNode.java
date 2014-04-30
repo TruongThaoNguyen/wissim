@@ -1,9 +1,12 @@
-package controllers.converter;
+package controllers.converter.shadow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import controllers.converter.Converter;
+import controllers.converter.Scheduler;
+import controllers.converter.TclObject;
 import models.converter.Entry;
 import models.converter.InsProc;
 import models.converter.InsVar;
@@ -11,7 +14,7 @@ import models.converter.ParseException;
 import models.networkcomponents.WirelessNode;
 import models.networkcomponents.protocols.TransportProtocol;
 
-public class SNode extends WirelessNode implements TclObject 
+public class SNode extends WirelessNode implements TclObject, Scheduler 
 {		
 	public SNode(SNetwork network) {
 		super(network);
@@ -54,6 +57,7 @@ public class SNode extends WirelessNode implements TclObject
 	@Override
 	public void addEvent(Double time, String arg) {
 		event.put(arg, time);		
+		// TODO:
 	}
 	
 	@Override

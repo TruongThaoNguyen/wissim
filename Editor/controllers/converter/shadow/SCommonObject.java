@@ -1,10 +1,13 @@
-package controllers.converter;
+package controllers.converter.shadow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import controllers.converter.Converter;
+import controllers.converter.Scheduler;
+import controllers.converter.TclObject;
 import models.converter.Entry;
 import models.converter.InsProc;
 import models.converter.InsVar;
@@ -17,13 +20,13 @@ import models.converter.ParseException;
  * @Version 2.0
  */
 
-public class SCommonObject implements TclObject 
+public class SCommonObject implements TclObject
 {	
 	private String label;
 	private List<Entry> entryList = new ArrayList<Entry>();
 	private HashMap<String, InsProc> insProc  = new HashMap<String, InsProc>();	
 	private HashMap<String, InsVar>  insVar  = new LinkedHashMap<String, InsVar>();
-	private HashMap<String, Double> event = new HashMap<String, Double>();
+//	private HashMap<String, Double> event = new HashMap<String, Double>();
 	
 	/**
 	 * Create new Shadow Common Object.
@@ -67,11 +70,11 @@ public class SCommonObject implements TclObject
 			return insProc.get(null).Run(command, isRecord);
 	}
 
-	@Override
-	public void addEvent(Double time, String arg) {
-		event.put(arg, time);		
-	}
-	
+//	@Override
+//	public void addEvent(Double time, String arg) {
+//		event.put(arg, time);		
+//	}
+//	
 	@Override
 	public String getLabel() {
 		return label;
