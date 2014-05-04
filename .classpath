@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="Main"/>
 	<classpathentry kind="src" path="Editor"/>
 	<classpathentry kind="src" path="Analyzer"/>
+	<classpathentry kind="src" path="Visualizer"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/analyzer/jxl.jar"/>
 	<classpathentry kind="lib" path="lib/analyzer/org.swtchart_0.8.0.v20120301.jar"/>
