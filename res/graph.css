@@ -1,0 +1,205 @@
+graph
+{
+	
+/*
+	fill-mode:
+	fill-color
+	fill-image
+	stroke-mode
+	stroke-color
+	stroke-width
+	padding
+*/
+}
+graph.C1
+{
+}
+graph.C2
+{
+}
+
+node
+{
+	size: 6px;
+	text-alignment: under;
+	stroke-mode: none;
+	fill-color : blue;
+	/*
+	shape: circle;
+	stroke-mode: plain;
+	stroke-color: black;
+	stroke-width: 1px;
+	*/
+/*
+	z-index
+	shadow-mode
+	shadow-color
+	shadow-width
+	shadow-offset
+	text-mode
+	text-background-mode
+	text-visibility-mode
+	text-visibility
+	text-color
+	text-background-color
+	text-style
+	text-alignment
+	size
+	shape
+*/
+}
+node.send{
+	/*stroke-mode: none;
+	size : 10px;
+	fill-color: #FF0000;
+	shadow-mode: gradient-radial;
+	shadow-color: #FF0000, #FFFFFF ;
+	shadow-offset: 0px;
+	shadow-width: 6px;*/
+	fill-color: red;
+}
+node.init
+ { 
+ fill-mode: image-scaled; 
+ fill-color:#00ffff;
+ 
+ }
+node.forward{
+	/*stroke-mode: none;
+	fill-color: #FF9933;
+	shadow-mode: gradient-radial;
+	shadow-color: #FF9933, #FFFF99 ;
+	shadow-offset: 0px;
+	shadow-width: 6px;*/
+	fill-color: orange;
+}
+node.broadcast
+{
+	stroke-mode: none;
+	fill-mode: image-scaled;
+	size: 15px;
+}
+node.default
+{
+	size:8px;
+	fill-mode: image-scaled;
+	stroke-mode:none;
+	fill-color : blue;
+}
+node.wake
+{
+	stroke-mode: plain;
+	fill-color: #00ffff;
+}
+node.sleep
+{
+	stroke-mode: plain;
+	fill-color: black;
+}
+node.receive{
+	/*stroke-mode: none;
+	fill-color: #FFFF00;
+	shadow-mode: gradient-radial;
+	shadow-color: #FFFF00, #FFFFCC;
+	shadow-offset: 0px;
+	shadow-width: 6px;*/
+	size : 5px;
+	fill-color: yellow;
+}
+edge
+{
+	fill-mode: plain;
+	fill-color: #CCC;
+/*
+	z-index
+	shadow-mode
+	shadow-color
+	shadow-width
+	shadow-offset
+	text-mode
+	text-background-mode
+	text-visibility-mode
+	text-visibility
+	text-color
+	text-background-color
+	text-style
+	text-alignment
+	size
+	shape
+	//
+	arrow-shape
+	arrow-image
+	arrow-size
+*/
+}
+edge.visible{
+	fill-color: #CCC;
+}
+edge.invisible{
+	fill-mode:none;
+}
+edge.light
+{
+	fill-color: black; size: 2px;
+}
+edge.dark
+{
+	//fill-color: #CCC;
+	size: 2px;
+	shape: line;
+    fill-color: #222;
+    arrow-size: 3px, 2px;
+}
+sprite
+{
+	shape: box;
+	size: 10px, 6px;
+	fill-mode:none;
+/*
+	z-index
+	shadow-mode
+	shadow-color
+	shadow-width
+	shadow-offset
+	text-mode
+	text-background-mode
+	text-visibility-mode
+	text-visibility
+	text-color
+	text-background-color
+	text-style
+	text-alignment
+	size
+	shape
+*/
+}
+sprite.send
+{	size : 10px;
+	fill-mode: plain;
+	fill-mode: image-scaled;
+	fill-image: url('res/Icon/packet.png');
+}
+sprite.blue{
+	stroke-mode: none;
+	fill-mode: image-scaled;
+	fill-image: url('res/Icon/blue-packet.png');
+}
+sprite.red{
+	stroke-mode: none;
+	fill-mode: image-scaled;
+	fill-image: url('res/Icon/red-packet.png');
+}
+sprite.black{
+	stroke-mode: none;
+	fill-mode: image-scaled;
+	fill-image: url('res/Icon/black-packet.png');
+}
+sprite.grey{
+	stroke-mode: none;
+	fill-mode: image-scaled;
+	fill-image: url('res/Icon/grey-packet.png');
+}
+sprite.broadcast{
+	fill-mode: plain;
+	fill-color: red;
+}
