@@ -16,8 +16,8 @@ import models.networkcomponents.WirelessNode;
 import models.networkcomponents.protocols.TransportProtocol;
 import models.networkcomponents.protocols.TransportProtocol;
 
-public class SNode extends WirelessNode implements TclObject, Scheduler 
-{		
+public class SNode extends WirelessNode implements TclObject, Scheduler {
+	
 	public SNode(SNetwork network) {
 		super(network);
 		setX(0);
@@ -25,8 +25,7 @@ public class SNode extends WirelessNode implements TclObject, Scheduler
 		addInsProc();
 	}
 	
-	public SNode(SNetwork network, int x, int y, int range)
-	{
+	public SNode(SNetwork network, int x, int y, int range) {
 		super(network);
 		setX(x);
 		setY(y);
@@ -34,13 +33,24 @@ public class SNode extends WirelessNode implements TclObject, Scheduler
 		addInsProc();
 	}
 
+	// region ------------------- Scheduler ------------------- //
+	
+	private HashMap<String, Double> event = new HashMap<String, Double>();
+	
+	@Override
+	public void addEvent(Double time, String arg) {
+		event.put(arg, time);		
+		// TODO:
+	}
+
+	// endregion Scheduler
+	
 	// region ------------------- TCL properties ------------------- //
 	
 	private String label;
 	private List<Entry> entryList = new ArrayList<Entry>();
 	private HashMap<String, InsProc> insProc = new HashMap<String, InsProc>();
-	private HashMap<String, InsVar>  insVar = new HashMap<String, InsVar>();
-	private HashMap<String, Double> event = new HashMap<String, Double>();
+	private HashMap<String, InsVar>  insVar = new HashMap<String, InsVar>();	
 	
 	@Override
 	public String parse(List<String> command, boolean isRecord) throws Exception {
@@ -54,12 +64,6 @@ public class SNode extends WirelessNode implements TclObject, Scheduler
 		}
 		else 		
 			return insProc.get(null).Run(command, isRecord);
-	}
-	
-	@Override
-	public void addEvent(Double time, String arg) {
-		event.put(arg, time);		
-		// TODO:
 	}
 	
 	@Override
@@ -229,8 +233,6 @@ public class SNode extends WirelessNode implements TclObject, Scheduler
 		} catch (Exception e1) {			
 			e1.printStackTrace();
 		}
-						
-		// endregion generate auto tcl code
 		
 		return tp;
 	}
