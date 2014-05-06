@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Observable;
 
 import models.networkcomponents.protocols.TransportProtocol;
+import models.networkcomponents.protocols.TransportProtocol;
 
 public abstract class Node extends Observable {
 	// id of node (assign one time, never change)

@@ -12,6 +12,8 @@ import models.converter.InsProc;
 import models.converter.InsVar;
 import models.converter.ParseException;
 import models.networkcomponents.WirelessNode;
+import models.networkcomponents.WirelessNode;
+import models.networkcomponents.protocols.TransportProtocol;
 import models.networkcomponents.protocols.TransportProtocol;
 
 public class SNode extends WirelessNode implements TclObject, Scheduler 

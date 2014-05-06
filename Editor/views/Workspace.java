@@ -66,7 +66,7 @@ public class Workspace extends Composite {
 		new GNetwork(this, SWT.NONE, project.getNetwork());
 		
 		careTaker = new CareTaker();
-		careTaker.save(project, "Initialize project");
+//		careTaker.save(project, "Initialize project");
 		savedStateIndex = 0;
 		
 		shownLabels = new LinkedList<Label>();
@@ -215,7 +215,7 @@ public class Workspace extends Composite {
 				System.out.println(this.getChildren().length);
 			}
 		}	
-		
+		if(project.getObstacleList() != null) 
 		for (Area area : project.getObstacleList()) {
 			isExisted = false;
 			// check whether area in project are instantiated yet

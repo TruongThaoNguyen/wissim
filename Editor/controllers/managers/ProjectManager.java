@@ -14,6 +14,9 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import controllers.converter.Converter;
+import controllers.converter.shadow.SNode;
+
 //import org.apache.pdfbox.pdmodel.PDDocument;
 //import org.apache.pdfbox.pdmodel.PDPage;
 //import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
@@ -85,6 +88,11 @@ public class ProjectManager {
 		// checks input validity
 		if (width <= 0 || length <= 0 || time <= 0)
 			return null;
+		
+		String defaulscript = Converter.defaultScript();
+		
+		Project project = Converter.CTD(defaulscript);
+		
 		
 		// create intial wireless network
 		WirelessNetwork network = new WirelessNetwork(name, time, width, length);
@@ -198,7 +206,9 @@ public class ProjectManager {
 		}			
 		
 		// create new node and add to network
-		return new WirelessNode(network, x, y, range);
+//		return new SNode((SNetwork)network, x, y, range);
+		//return new WirelessNode(network, x, y, range);
+//		return network.addNode(x, y, range);
 	}
 	
 	public static WirelessNode createARandomNode(Project project) {

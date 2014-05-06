@@ -15,6 +15,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import models.Project;
+import models.converter.ParseException;
 import models.managers.CareTaker;
 import models.managers.ScriptGenerator;
 import models.networkcomponents.WirelessNetwork;
@@ -50,6 +51,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import controllers.WorkSpace;
 import controllers.actions.EditorActionController;
 import controllers.converter.Converter;
 import controllers.graphicscomponents.GSelectableObject;
@@ -1042,7 +1044,50 @@ public class Editor extends MainContent implements Observer {
 	
 	public void actionOpen(Editor editor){
 		
-		Project project = ApplicationManager.openProject(editor);
+		boolean isWin =  WorkSpace.isWindow();
+		WorkSpace.setDirectory(isWin? "D:\\Work\\scripts\\30\\gpsr\\" : "test_store/");
+		String fileName =  WorkSpace.getDirectory() + "simulate.tcl";
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(fileName));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		StringBuilder sb = null;
+		try {
+		    sb = new StringBuilder();
+		    String line = br.readLine();
+		
+		    while (line != null) {
+		        sb.append(line);
+		        sb.append(System.lineSeparator());
+		        line = br.readLine();
+		    }	
+		    br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+		    
+		}
+		
+		String code = sb.toString();
+		
+		
+		// ------------ using converter
+		
+		Project project = null;
+		try {
+			project = Converter.CTD(code);
+			project.setPath("/home/khaclinh/GR/workspace/wissim/test_store/simulate.tcl");
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+//		Project project = ApplicationManager.openProject(editor);
 		if(project == null) return;
 //		if (project != null)
 			showProject(project);
@@ -1050,7 +1095,7 @@ public class Editor extends MainContent implements Observer {
 		getWorkspace().getSelectableObject().get(getWorkspace().getSelectableObject().size() - 1).moveAbove(null);
 		updateNetworkInfoLabel();
 		updateNodeInfoLabel();
-		updateDesign();
+//		updateDesign();
 	}
 	
 	public GWirelessNode actionCopy() {
