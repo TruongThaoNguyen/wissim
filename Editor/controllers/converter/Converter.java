@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +35,7 @@ public class Converter
 	 * @return project
 	 * @throws ParseException 
 	 */
-	public static Project CTD(String text) throws ParseException
-	{
+	public static Project CTD(String text) throws ParseException {
 		generateEntry.clear();
 		global = new SProject();
 		global.parse(text);
@@ -47,8 +47,7 @@ public class Converter
 	 * Generate TCL code from Project model.
 	 * @return List of String, each element of List is a line of TCL scripts
 	 */
-	public static List<String> DTC()
-	{
+	public static List<String> DTC() {
 		int line = 1;
 		
 		List<String> sb = new ArrayList<String>();		
@@ -67,8 +66,7 @@ public class Converter
 	 * @return a String is a Identify
 	 * @throws Exception
 	 */
-	public static String parseIdentify(String word) throws Exception 
-	{	
+	public static String parseIdentify(String word) throws Exception {	
 		StringBuilder result = new StringBuilder();
 		Scanner scanner = new Scanner(word);
 		List<Token> tokenList = scanner.scanWord();
@@ -124,8 +122,7 @@ public class Converter
 	 * @return string with replaced referent token
 	 * @throws Exception 
 	 */
-	private static String parseQuote(String word) throws Exception 
-	{
+	private static String parseQuote(String word) throws Exception {
 		StringBuilder result = new StringBuilder();
 		Scanner scanner = new Scanner(word);
 		List<String> command = scanner.scanCommand();
@@ -147,12 +144,34 @@ public class Converter
 		
 		return result.substring(0, result.length() - 1);
 	}
-
-
 	
+	public static List<String> DefaultScript() {
+		List<String> script = new ArrayList<String>();
+		BufferedReader br;
+		try {
+			String fileName = URLDecoder.decode(Converter.class.getResource("defaultscript.tcl").getPath(), "UTF-8");
+			br = new BufferedReader(new FileReader(fileName));
+		} catch (Exception e1) {
+			return script;
+		}
+				
+		try {		    
+		    String line = br.readLine();
+		
+		    while (line != null) {
+		        script.add(line);
+		        script.add(System.lineSeparator());
+		        line = br.readLine();
+		    }		    
+		    br.close();
+		} catch (IOException e) {
+			return script;
+		}
+		
+		return script;	
+	}
 	
-	
-	public static void main(String[] args)  throws Exception {	
+	public static void main(String[] args)  throws Exception {			
 		boolean isWin =  WorkSpace.isWindow();
 		WorkSpace.setDirectory(isWin? "D:\\Work\\scripts\\30\\gpsr\\" : "/home/trongnguyen/scripts/30/gpsr/");
 		String fileName =  WorkSpace.getDirectory() + "simulate.tcl";
