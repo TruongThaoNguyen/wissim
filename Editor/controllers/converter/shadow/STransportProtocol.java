@@ -15,15 +15,7 @@ import models.networkcomponents.Node;
 import models.networkcomponents.protocols.ApplicationProtocol;
 import models.networkcomponents.protocols.TransportProtocol;
 
-public class STransportProtocol extends TransportProtocol implements TclObject, Scheduler {
-	
-	private String label;
-	private List<Entry> entryList = new ArrayList<Entry>();
-	private HashMap<String, InsProc> insProc = new HashMap<String, InsProc>();
-	private HashMap<String, InsVar>  insVar = new HashMap<String, InsVar>();
-	private HashMap<String, Double> event = new HashMap<String, Double>();
-	
-	private TransportProtocol connectedAgent = null;
+public class STransportProtocol extends TransportProtocol implements TclObject, Scheduler {	
 	
 	protected STransportProtocol(String label) {				
 		super(-1, label, null);
@@ -42,8 +34,35 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 		addInsProc();
 	}
 
+	
+	private TransportProtocol connectedAgent = null;
+	
+	public void setConnected(STransportProtocol agent) {
+		connectedAgent = agent;
+	}
+	
+	public TransportProtocol getConnected() {
+		return connectedAgent;
+	}
+	
+	// region ------------------- Scheduler ------------------- //
+	
+	private HashMap<String, Double> event = new HashMap<String, Double>();
+	
+	@Override
+	public void addEvent(Double time, String arg) {
+		event.put(arg, time);		
+		// TODO:
+	}
 
+	// endregion Scheduler
+	
 	// region ------------------- TCL properties ------------------- //
+
+	private String label;
+	private List<Entry> entryList = new ArrayList<Entry>();
+	private HashMap<String, InsProc> insProc = new HashMap<String, InsProc>();
+	private HashMap<String, InsVar>  insVar = new HashMap<String, InsVar>();
 	
 	@Override
 	public String parse(List<String> command, boolean isRecord) throws Exception {
@@ -57,12 +76,6 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 		}
 		else 		
 			return insProc.get(null).Run(command, isRecord);
-	}
-	
-	@Override
-	public void addEvent(Double time, String arg) {
-		event.put(arg, time);	
-		// TODO:
 	}
 	
 	@Override
@@ -167,14 +180,6 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 	
 	// endregion InsProc
 	// endregion TCL properties
-	
-	public void setConnected(STransportProtocol agent) {
-		connectedAgent = agent;
-	}
-	
-	public TransportProtocol getConnected() {
-		return connectedAgent;
-	}
 	
 	// region ------------------- Transport properties ------------------- //
 	

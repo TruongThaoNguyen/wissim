@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import controllers.converter.Converter;
-import controllers.converter.Scheduler;
 import controllers.converter.TclObject;
 import models.converter.Entry;
 import models.converter.InsProc;

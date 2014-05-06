@@ -17,12 +17,6 @@ import models.networkcomponents.protocols.ApplicationProtocol;
 
 public class SApplicationProtocol extends ApplicationProtocol implements TclObject, Scheduler {
 	
-	private String label;
-	private List<Entry> entryList = new ArrayList<Entry>();
-	private HashMap<String, InsProc> insProc = new HashMap<String, InsProc>();
-	private HashMap<String, InsVar>  insVar = new HashMap<String, InsVar>();
-	private HashMap<String, Double> event = new HashMap<String, Double>();
-
 	public SApplicationProtocol(String label) {
 		super(-1, label, null, null);
 		this.label = label;
@@ -35,7 +29,24 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 		addInsProc();
 	}
 	
+	// region ------------------- Scheduler ------------------- //
+	
+	private HashMap<String, Double> event = new HashMap<String, Double>();
+	
+	@Override
+	public void addEvent(Double time, String arg) {
+		event.put(arg, time);		
+		// TODO:
+	}
+
+	// endregion Scheduler
+	
 	// region ------------------- TCL properties ------------------- //	
+	
+	private String label;
+	private List<Entry> entryList = new ArrayList<Entry>();
+	private HashMap<String, InsProc> insProc = new HashMap<String, InsProc>();
+	private HashMap<String, InsVar>  insVar = new HashMap<String, InsVar>();
 	
 	@Override
 	public String parse(List<String> command, boolean isRecord) throws Exception {
@@ -51,12 +62,6 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 			return insProc.get(null).Run(command, isRecord);
 	}
 
-	@Override
-	public void addEvent(Double time, String arg) {
-		event.put(arg, time);		
-		// TODO:
-	}
-	
 	@Override
 	public void addEntry(Entry e) {
 		entryList.add(e);	
