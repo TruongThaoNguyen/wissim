@@ -47,15 +47,12 @@ public class Converter
 	 * Generate TCL code from Project model.
 	 * @return List of String, each element of List is a line of TCL scripts
 	 */
-	public static List<String> DTC() {
-		int line = 1;
-		
+	public static List<String> DTC() {				
 		List<String> sb = new ArrayList<String>();		
 		for (Entry e : generateEntry) {
 			String t = e.print(); 
 			sb.add(t);			
-			System.out.print(line + "\t" + t);
-			if (t.endsWith("\n")) line++;
+			System.out.print(t);			
 		}			
 		return sb;	
 	}
@@ -197,11 +194,11 @@ public class Converter
 		
 		// ------------ using converter
 		
-		Converter.CTD(code);
-								
-		System.out.println("\n------------------------------\n");		
+		Project project = Converter.CTD(code);
 		
 		// Do something with project object
+		
+		System.out.println("\n------------------------------\n");		
 		
 		//Converter.DTC();
 		

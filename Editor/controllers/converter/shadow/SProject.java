@@ -12,7 +12,6 @@ import controllers.converter.Converter;
 import controllers.converter.Scanner;
 import controllers.converter.TclObject;
 import models.Project;
-import models.Project;
 import models.converter.Entry;
 import models.converter.InsProc;
 import models.converter.InsVar;
@@ -20,10 +19,9 @@ import models.converter.ParseException;
 import models.converter.Token;
 import models.converter.TokenType;
 import models.networkcomponents.WirelessNetwork;
-import models.networkcomponents.WirelessNetwork;
 
 /**
- * GlobalObject.java
+ * Shadow of Project.
  * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and Technology
  * @Author Duc-Trong Nguyen
  * @Version 2.0
