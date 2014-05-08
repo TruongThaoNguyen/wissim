@@ -20,7 +20,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-import parser.TraceFile;
+import parser.AbstractParser;
+import parser.EventParser;
+import parser.FullParser;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -33,11 +35,23 @@ public class Analyzer extends MainContent {
 	 * @param parent
 	 * @param style
 	 */
+	public static AbstractParser mParser;
 	public TabFolder tabFolder;
 	public Analyzer(Composite parent, MenuManager menuManager, StatusLineManager statusLineManager) {
 		super(parent, menuManager, statusLineManager);
-		try {
-			TraceFile.ConvertTraceFile();
+		/*Gọi hàm khởi tạo các đối tượng Node và Packet*/
+	    try {
+	    	
+			String returnvalue = AbstractParser.getHeaderFileParser("Trace.tr");
+			if(returnvalue.equals("Y")){
+				mParser = new FullParser();
+			}
+			else{
+				mParser = new EventParser();
+				
+			}
+			mParser.ConvertTraceFile("Neighbors.txt", "Trace.tr");
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

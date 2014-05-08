@@ -55,8 +55,8 @@ public class EfficiencyTab extends Tab implements Observer{
   /**
    * Creates the Tab within a given instance of LayoutExample.
    */
-  public EfficiencyTab(Analyzer analyzer) {
-    super(analyzer);
+  public EfficiencyTab(Analyzer instance) {
+    super(instance);
     listNodeAreas = new ArrayList<ArrayList<NodeTrace>>();
     listEfficiencyOfAreas = new ArrayList<Double>();
   }
@@ -118,6 +118,7 @@ public class EfficiencyTab extends Tab implements Observer{
 	    			DecimalFormat df = new DecimalFormat("0.00");
 					String str= df.format(ratioDroppedPacket());
 					eText.setText(str+" %");
+					SurfaceChartEfficiency.drawChart3D();
 	    		}
 	    		if(filterByCombo.getSelectionIndex()==1){
 	    			if(listNodeAreas.size() == 0){
@@ -132,27 +133,30 @@ public class EfficiencyTab extends Tab implements Observer{
 	    				  double numberDroppedPacket,numberPacketOfArea;
 	    				  int No=1;
 	    				  boolean checkBelongTo;
-	    				 
+	    				  ArrayList<NodeTrace> listNodeOfSourceArea = listNodeAreas.get(0);
 	    				  for(int i=0; i<listNodeAreas.size(); i++){
 		    				  ArrayList<NodeTrace> listNodeOfOneArea = listNodeAreas.get(i);
 		    				  numberDroppedPacket = 0;
 		    				  numberPacketOfArea = 0;
-		    				  for (int j=0;j<TraceFile.getListPacket().size();j++){ 
-		    					  Packet packet=TraceFile.getListPacket().get(j);
+		    				  for (int j=0;j<Analyzer.mParser.getListPacket().size();j++){ 
+		    					  Packet packet=Analyzer.mParser.getListPacket().get(j);
 		    					  checkBelongTo = false;
 		    					  for(int k = 0;k < listNodeOfOneArea.size(); k++){
-		    						  NodeTrace node = listNodeOfOneArea.get(k);
-		    						  if(node.id == Integer.parseInt(packet.sourceID)){
-		    							  checkBelongTo = true;
-		    							  numberPacketOfArea++;
-		    							  break;
+		    						  for(int t = 0;t < listNodeOfSourceArea.size(); t++){
+			    						  NodeTrace nodeDest = listNodeOfOneArea.get(k);
+			    						  NodeTrace nodeSource = listNodeOfSourceArea.get(t);
+			    						  if((nodeDest.id == Integer.parseInt(packet.destID)) && (nodeSource.id == Integer.parseInt(packet.sourceID))){
+			    							  checkBelongTo = true;
+			    							  numberPacketOfArea++;
+			    							  break;
+			    						  }
 		    						  }
 		    					  } 
-		    					  if(checkBelongTo){
+		    					  if(checkBelongTo  && packet.getType().equals("cbr")){
 			    					  TableItem tableItem= new TableItem(table, SWT.NONE);
 			    						 tableItem.setText(0,Integer.toString(No++));
 			    						 tableItem.setText(1,packet.id);
-			    						 tableItem.setText(2,packet.sourceID);
+			    						 tableItem.setText(2,packet.sourceID+"---"+packet.destID);
 			    						 tableItem.setText(3,packet.size);
 			    						 tableItem.setText(4,Boolean.toString(packet.isSuccess));
 			    						 tableItem.setText(5, Integer.toString(i+1));
@@ -161,7 +165,7 @@ public class EfficiencyTab extends Tab implements Observer{
 		    					  }
 		    				  }
 		    				  if(numberPacketOfArea != 0){
-		    					  listEfficiencyOfAreas.add((numberDroppedPacket/numberPacketOfArea)*100);
+		    					  listEfficiencyOfAreas.add(100-((numberDroppedPacket/numberPacketOfArea)*100));
 		    				  	  new TableItem(table, SWT.NONE);
 		    				  }
 		    				  else{
@@ -170,6 +174,7 @@ public class EfficiencyTab extends Tab implements Observer{
 	    				  }
 	    				  Shell shell = new Shell();	  
 		    			  new BarChart(shell,listEfficiencyOfAreas,"Efficiency (%)");
+		    			  eText.setText("");
 	    			}
 	    		}
 	    		
@@ -184,18 +189,20 @@ public class EfficiencyTab extends Tab implements Observer{
 	  double numberDroppedPacket=0;
 	  int No=1;
 	  table.removeAll();
-	  for (int i=0;i<TraceFile.getListPacket().size();i++){ 
-		  Packet packet=TraceFile.getListPacket().get(i);
-		  TableItem tableItem= new TableItem(table, SWT.NONE);
-			 tableItem.setText(0,Integer.toString(No++));
-			 tableItem.setText(1,packet.id);
-			 tableItem.setText(2,packet.sourceID);
-			 tableItem.setText(3,packet.size);
-			 tableItem.setText(4,Boolean.toString(packet.isSuccess));
-		  if(!packet.isSuccess)
+	  for (int i=0;i<Analyzer.mParser.getListPacket().size();i++){ 
+		  Packet packet=Analyzer.mParser.getListPacket().get(i);
+		  if( packet.getType().equals("cbr")){
+			  TableItem tableItem= new TableItem(table, SWT.NONE);
+				 tableItem.setText(0,Integer.toString(No++));
+				 tableItem.setText(1,packet.id);
+				 tableItem.setText(2,packet.sourceID+"---"+packet.destID);
+				 tableItem.setText(3,packet.size);
+				 tableItem.setText(4,Boolean.toString(packet.isSuccess));
+		  }
+		  if(!packet.isSuccess && packet.getType().equals("cbr"))
 			  numberDroppedPacket++;
 	  }
-	  return (numberDroppedPacket/TraceFile.getListPacket().size())*100;
+	  return (numberDroppedPacket/Analyzer.mParser.getListPacket().size())*100;
   }
   void initDataFilterByComboChange(){
 	  if(filterByCombo.getSelectionIndex()==0){
@@ -204,10 +211,10 @@ public class EfficiencyTab extends Tab implements Observer{
 	  if(filterByCombo.getSelectionIndex()==1){
 		 super.refreshLayoutComposite();
 		 //listNodeAreas.clear();
-		 ySeries = new double[TraceFile.getListNodes().size()];
-	     xSeries = new double[TraceFile.getListNodes().size()];    
-			for(int j=0;j<TraceFile.getListNodes().size();j++) {
-				NodeTrace node = TraceFile.getListNodes().get(j);
+		 ySeries = new double[Analyzer.mParser.getListNodes().size()];
+	     xSeries = new double[Analyzer.mParser.getListNodes().size()];    
+			for(int j=0;j<Analyzer.mParser.getListNodes().size();j++) {
+				NodeTrace node = Analyzer.mParser.getListNodes().get(j);
 				xSeries[j]=node.x;
 				ySeries[j]=node.y;
 			}
@@ -245,15 +252,15 @@ public class EfficiencyTab extends Tab implements Observer{
 	    });
     resetButton.setVisible(false);
     super.createLayout();
-    Button drawChart3D = new Button(layoutGroup, SWT.PUSH);
-    drawChart3D.setText(Analyzer.getResourceString("Draw 3Dchart"));
-    drawChart3D.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
-    /*Add listener to button drawChart*/
-    drawChart3D.addSelectionListener(new SelectionAdapter() {
-	      public void widgetSelected(SelectionEvent e) {
-	    	SurfaceChartEfficiency.drawChart3D();
-	      }
-	    }); 
+//    Button drawChart3D = new Button(layoutGroup, SWT.PUSH);
+//    drawChart3D.setText(Analyze.getResourceString("Draw 3Dchart"));
+//    drawChart3D.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
+//    /*Add listener to button drawChart*/
+//    drawChart3D.addSelectionListener(new SelectionAdapter() {
+//	      public void widgetSelected(SelectionEvent e) {
+//	    	SurfaceChartEfficiency.drawChart3D();
+//	      }
+//	    }); 
   }
 
   /**
@@ -267,7 +274,7 @@ public class EfficiencyTab extends Tab implements Observer{
    * Returns the layout data field names.
    */
   String[] getLayoutDataFieldNames() {
-    return new String[] { "No", "Packet","SourceID","Size","isDropped","Group"};
+    return new String[] { "No", "Packet","Source--Dest","Size","isDropped","Group"};
   }
 
   /**

@@ -99,7 +99,7 @@ public abstract class Tab {
   /**
    * Creates the Tab within a given instance of LayoutExample.
    */
-  Tab(Analyzer instance) {
+  public Tab(Analyzer instance) {
     this.instance = instance;
   }
 
@@ -158,7 +158,7 @@ public abstract class Tab {
 	    	  else{
 	    		  MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
 	    			dialog.setText("");
-	    			dialog.setMessage("Không có dữ liệu!");
+	    			dialog.setMessage("No data!");
 	    		    dialog.open();
 	    	  }
 	      }
@@ -297,7 +297,7 @@ public abstract class Tab {
 	    	  else{
 	    		  MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
 	    			dialog.setText("");
-	    			dialog.setMessage("Không có input!");
+	    			dialog.setMessage("No input!");
 	    		    dialog.open();
 	    	  }
 	    }
@@ -318,7 +318,7 @@ public abstract class Tab {
 	    	  else{
 	    		  MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
 	    			dialog.setText("");
-	    			dialog.setMessage("Không có input!");
+	    			dialog.setMessage("No input!");
 	    		    dialog.open();
 	    	  }
 	    }

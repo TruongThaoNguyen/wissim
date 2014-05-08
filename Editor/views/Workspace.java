@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.osgi.resource.Wire;
 
 import controllers.graphicscomponents.GNetwork;
 import controllers.graphicscomponents.GObstacle;
@@ -200,19 +201,31 @@ public class Workspace extends Composite {
 		}		
 		
 		// keep a list of nodes that did not have a graphic network (O(n^2))
+		System.out.println("{so node: }"+project.getNetwork().getNodeList().size());
+		System.out.println("{network size:x::"+project.getNetwork().getWidth()+";y::"+project.getNetwork().getLength()+"}");
 		for (Node n : project.getNetwork().getNodeList()) {
+			WirelessNode wn = (WirelessNode)n;
+			System.out.println("{ID:"+wn.getId()+";X:"+wn.getX()+";Y:"+wn.getY()+";range:"+wn.getRange() + "}");
 			isExisted = false;
 			// check whether nodes in project are instantiated yet
-			for (GWirelessNode gn : getGraphicNodes())
+			for (GWirelessNode gn : getGraphicNodes()){
+				
+				
+				
 				if (gn.getWirelessNode().getId() == n.getId()) {
 					isExisted = true;
 					break;
 				}
+			}
 			
 			if (!isExisted) {
+//				WirelessNode w = (WirelessNode)n;
+				if(wn.getX() !=0 && wn.getY() !=0) {
+					
 				GWirelessNode gnode = new GWirelessNode(this, SWT.NONE, (WirelessNode) n);		
 				gnode.moveAbove(null);	
 				System.out.println(this.getChildren().length);
+				}
 			}
 		}	
 		if(project.getObstacleList() != null) 

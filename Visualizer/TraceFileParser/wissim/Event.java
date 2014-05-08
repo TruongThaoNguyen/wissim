@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Event {
+	
 	/**
 	 * For Event
 	 */
@@ -34,7 +35,6 @@ public class Event {
 	public String destY = "";
 	public String destZ = "";
 	public String speed = "";
-
 	public Event() {
 		super();
 	}
@@ -57,6 +57,105 @@ public class Event {
 		this.nodeId = nodeId;
 		this.reason = reason;
 	}
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getTime() {
+		return time;
+	}
+
+	public void setTime(String time) {
+		this.time = time;
+	}
+
+	public String getTimeReceive() {
+		return timeReceive;
+	}
+
+	public void setTimeReceive(String timeReceive) {
+		this.timeReceive = timeReceive;
+	}
+
+	public String getSourcePort() {
+		return sourcePort;
+	}
+
+	public void setSourcePort(String sourcePort) {
+		this.sourcePort = sourcePort;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
+
+	public String getRemainEnergy() {
+		return remainEnergy;
+	}
+
+	public void setRemainEnergy(String remainEnergy) {
+		this.remainEnergy = remainEnergy;
+	}
+
+	public String getPacketId() {
+		return packetId;
+	}
+
+	public void setPacketId(String packetId) {
+		this.packetId = packetId;
+	}
+
+	public String getPacketType() {
+		return packetType;
+	}
+
+	public void setPacketType(String packetType) {
+		this.packetType = packetType;
+	}
+
+	public String getMessage() {
+		return Message;
+	}
+
+	public void setMessage(String message) {
+		Message = message;
+	}
+
+	public String getNodeId() {
+		return nodeId;
+	}
+
+	public void setNodeId(String nodeId) {
+		this.nodeId = nodeId;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+	public String getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(String speed) {
+		this.speed = speed;
+	}
+
+	public String getDestId() {
+		return destId;
+	}
 
 	@Override
 	public String toString() {
@@ -66,6 +165,12 @@ public class Event {
 				+ packetId + ", destPort=" + destPort + ", destId=" + destId
 				+ ", bufferLength=" + bufferLength + ", nodeId=" + nodeId
 				+ ", reason=" + reason + "]";
+	}
+	public String infor(){
+		return "<html>Event Type: "+getType()  + "<br>Time: "+ getTime() + "<br>Source ID:"+getSourceId()+"<br>Destination ID:"+getDestId() + "<br>Remaining Energy:"+getRemainEnergy()+"<br>";
+	}
+	public String summaryInfor(){
+		return "Event Type "+ getType() + " Packet ID " + getPacketId() + "\n";
 	}
 
 }

@@ -10,24 +10,26 @@ import java.io.PrintWriter;
 
 import parser.NodeTrace;
 import parser.Packet;
-import parser.TraceFile;
+import views.Analyzer;
 
 public class SurfaceChartThroughput {
 	
 	public static void createData() throws IOException{
 		//TraceFile.ConvertTraceFile();
-		double totalSize[]=new double[TraceFile.getListNodes().size()];
-        double totalTime[]=new double[TraceFile.getListNodes().size()];
-        for(int i=0;i<TraceFile.getListPacket().size();i++){
-        	Packet packet = TraceFile.getListPacket().get(i);
-        	totalSize[Integer.parseInt(packet.sourceID)]+=Double.parseDouble(packet.size);
-        	totalTime[Integer.parseInt(packet.sourceID)]+=(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
-        }
+		double totalSize[]=new double[Analyzer.mParser.getListNodes().size()];
+        double totalTime[]=new double[Analyzer.mParser.getListNodes().size()];
+        for(int i=0;i<Analyzer.mParser.getListPacket().size();i++){
+        	Packet packet = Analyzer.mParser.getListPacket().get(i);
+        	if(packet.isSuccess){
+	        	totalSize[Integer.parseInt(packet.sourceID)]+=Double.parseDouble(packet.size);
+	        	totalTime[Integer.parseInt(packet.sourceID)]+=(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
+        	}
+    	}
         
 		FileOutputStream fos= new FileOutputStream("DataThroughput",false);
         PrintWriter pw= new PrintWriter(fos);
         for(int i=0;i<totalSize.length;i++){
-        	NodeTrace node = TraceFile.getListNodes().get(i);
+        	NodeTrace node = Analyzer.mParser.getListNodes().get(i);
         	if (totalTime[i] !=0)
         		pw.println(node.x+" "+node.y+" "+totalSize[i]/totalTime[i]);
         }
@@ -37,7 +39,14 @@ public class SurfaceChartThroughput {
 		try {
 			createData();
 	        Runtime rt = Runtime.getRuntime();
-	        Process proc = rt.exec("exe/pgnuplot.exe");
+	        String[] s = new String[]{
+//  	    		  "/bin/sh", "-c", "l"
+//  	    		  "/bin/bash","-c","/home/khaclinh/datasection/EE/workspace/ex2/aa.sh"
+  	    		  
+//  	    		  "/home/khaclinh/ns-allinone-2.34/ns-2.34/ns","simu.tcl"
+  	    		  "gnuplot"
+  	    		  };
+	        Process proc = rt.exec(s);
 	        while(true){
 		        java.io.OutputStream opStream = proc.getOutputStream();
 		        PrintWriter gp = new PrintWriter(new BufferedWriter(new OutputStreamWriter(opStream)));

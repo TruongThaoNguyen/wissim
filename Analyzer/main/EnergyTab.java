@@ -64,8 +64,8 @@ public class EnergyTab extends Tab implements Observer{
   /**
    * Creates the Tab within a given instance of LayoutExample.
    */
-  public EnergyTab(Analyzer analyzer) {
-    super(analyzer);
+  public EnergyTab(Analyzer instance) {
+    super(instance);
     listNodeAreas = new ArrayList<ArrayList<NodeTrace>>();
     listEnergyOfAreas = new ArrayList<Double>(); 
     listAvgEnergyOfAreas = new ArrayList<Double>(); 
@@ -119,11 +119,12 @@ public class EnergyTab extends Tab implements Observer{
 	    /* Add listener to add an element to the table */
 	    analyze.addSelectionListener(new SelectionAdapter() {
 	      public void widgetSelected(SelectionEvent e) {
+	    	if(Analyzer.mParser instanceof FullParser){
 	    	  if(filterByCombo.getSelectionIndex()==0){
 		    		if(equalCombo.getSelectionIndex()==-1 ){
 						MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
 								dialog.setText("Error");
-								dialog.setMessage("Bạn phải chọn node muốn phân tích năng lượng!");
+								dialog.setMessage("Let choose node!");
 							    dialog.open(); 
 					}
 					else{	
@@ -152,7 +153,7 @@ public class EnergyTab extends Tab implements Observer{
 								}
 							*/	 
 							
-								listNodeEnergy =TraceFile.listEnergy.get(Integer.parseInt(equalCombo.getItem(equalCombo.getSelectionIndex())));
+								listNodeEnergy =Analyzer.mParser.getListEnergy().get(Integer.parseInt(equalCombo.getItem(equalCombo.getSelectionIndex())));
 								for(int i=0;i<listNodeEnergy.size();i++){ 
 									NodeEnergy node=listNodeEnergy.get(i);
 									 TableItem tableItem= new TableItem(table, SWT.NONE);
@@ -171,8 +172,8 @@ public class EnergyTab extends Tab implements Observer{
 							try {
 								fos = new FileOutputStream("DataEnergy",false);
 								PrintWriter pw= new PrintWriter(fos);
-								for(int i=0;i<TraceFile.listEnergy.size();i++){ 
-									listNodeEnergy =TraceFile.listEnergy.get(i);
+								for(int i=0;i<Analyzer.mParser.getListEnergy().size();i++){ 
+									listNodeEnergy =Analyzer.mParser.getListEnergy().get(i);
 									 TableItem tableItem= new TableItem(table, SWT.NONE);
 									 tableItem.setText(0,Integer.toString(No++));
 									 tableItem.setText(1,Integer.toString(i));
@@ -183,7 +184,7 @@ public class EnergyTab extends Tab implements Observer{
 									 
 									 /*init dataEnergy*/
 									 
-							      pw.println(TraceFile.getListNodes().get(i).x+" "+TraceFile.getListNodes().get(i).y+" "+Double.toString(Double.parseDouble(listNodeEnergy.get(0).getEnergy())-Double.parseDouble(listNodeEnergy.get(listNodeEnergy.size()-1).getEnergy())));	        						    							
+							      pw.println(Analyzer.mParser.getListNodes().get(i).x+" "+Analyzer.mParser.getListNodes().get(i).y+" "+Double.toString(Double.parseDouble(listNodeEnergy.get(0).getEnergy())-Double.parseDouble(listNodeEnergy.get(listNodeEnergy.size()-1).getEnergy())));	        						    							
 								}
 							    pw.close();
 							    SurfaceChartEnergy.drawChart3D();
@@ -200,7 +201,7 @@ public class EnergyTab extends Tab implements Observer{
 	    		  if(listNodeAreas.size() == 0){
 	    			  MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
 						dialog.setText("Error");
-						dialog.setMessage("Chưa chọn vùng!");
+						dialog.setMessage("Let choose areas!");
 					    dialog.open(); 
 	    		  }
 	    		  else{
@@ -214,7 +215,7 @@ public class EnergyTab extends Tab implements Observer{
 		    				  ArrayList<NodeTrace> listNodeOfOneArea = listNodeAreas.get(i);
 		    				  areaEnergy = 0;
 		    				  for(int j=0; j<listNodeOfOneArea.size(); j++){
-		    					  listNodeEnergy = TraceFile.listEnergy.get(listNodeOfOneArea.get(j).id);
+		    					  listNodeEnergy = Analyzer.mParser.getListEnergy().get(listNodeOfOneArea.get(j).id);
 		    					  TableItem tableItem= new TableItem(table, SWT.NONE);
 									 tableItem.setText(0,Integer.toString(No++));
 									 tableItem.setText(1,Integer.toString(listNodeOfOneArea.get(j).id));
@@ -232,11 +233,12 @@ public class EnergyTab extends Tab implements Observer{
 		    			  }
 		    		  Shell shell = new Shell();	  
 	    			  new BarChart(shell,listEnergyOfAreas,"Total Energy");
-	    			  new BarChart(shell,listAvgEnergyOfAreas,"Average Energy");
+	    			  new BarChart(new Shell(),listAvgEnergyOfAreas,"Average Energy");
 	    			  
 	    		  }
 	    	  }
-	      }
+	    	}
+	    }
 	    });    
 	   
 	    /* Add common controls */
@@ -248,12 +250,12 @@ public class EnergyTab extends Tab implements Observer{
   void setItemEqualCombo(){
 	  int i;
 	  if(filterByCombo.getSelectionIndex()==0){
-		  String[] itemList=new String[TraceFile.getListNodes().size()+1] ; 
-			if(TraceFile.getListNodes().size()>0)
+		  String[] itemList=new String[Analyzer.mParser.getListNodes().size()+1] ; 
+			if(Analyzer.mParser.getListNodes().size()>0)
 			{
 				itemList[0]="All nodes";
-				for (i=0;i<TraceFile.getListNodes().size();i++){ 
-					 NodeTrace node=TraceFile.getListNodes().get(i);
+				for (i=0;i<Analyzer.mParser.getListNodes().size();i++){ 
+					 NodeTrace node=Analyzer.mParser.getListNodes().get(i);
 					 itemList[i+1]=Integer.toString(node.id);
 				}
 				equalCombo.setItems(itemList);
@@ -264,10 +266,10 @@ public class EnergyTab extends Tab implements Observer{
 		 equalCombo.setItems(new String[] {});
 		 super.refreshLayoutComposite();
 		 
-		 ySeries = new double[TraceFile.getListNodes().size()];
-	     xSeries = new double[TraceFile.getListNodes().size()];    
-			for(int j=0;j<TraceFile.getListNodes().size();j++) {
-				NodeTrace node = TraceFile.getListNodes().get(j);
+		 ySeries = new double[Analyzer.mParser.getListNodes().size()];
+	     xSeries = new double[Analyzer.mParser.getListNodes().size()];    
+			for(int j=0;j<Analyzer.mParser.getListNodes().size();j++) {
+				NodeTrace node = Analyzer.mParser.getListNodes().get(j);
 				xSeries[j]=node.x;
 				ySeries[j]=node.y;
 			}
@@ -354,6 +356,7 @@ public class EnergyTab extends Tab implements Observer{
     refreshLayoutComposite();
     layoutComposite.layout(true);
     layoutGroup.layout(true);
+   
   }
   void refreshLayoutComposite() {
 	    super.refreshLayoutComposite();

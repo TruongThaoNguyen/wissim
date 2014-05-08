@@ -1079,6 +1079,7 @@ public class Editor extends MainContent implements Observer {
 		Project project = null;
 		try {
 			project = Converter.CTD(code);
+			project.getNetwork().setSize(1000, 1000, WirelessNetwork.CENTER, WirelessNetwork.CENTER);
 			project.setPath("/home/khaclinh/GR/workspace/wissim/test_store/simulate.tcl");
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -1095,7 +1096,7 @@ public class Editor extends MainContent implements Observer {
 		getWorkspace().getSelectableObject().get(getWorkspace().getSelectableObject().size() - 1).moveAbove(null);
 		updateNetworkInfoLabel();
 		updateNodeInfoLabel();
-//		updateDesign();
+		updateDesign();
 	}
 	
 	public GWirelessNode actionCopy() {
@@ -1122,15 +1123,15 @@ public class Editor extends MainContent implements Observer {
 		}
 	}
 	
-	public void updateDesign() {
+	public void updateDesign(){
 		Workspace workspace = getWorkspace();
-		try {
-			StringBuilder sb = ScriptGenerator.generateTclText(workspace.getProject(), false, false);
-			styledText.setText(sb.toString());
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//			StringBuilder sb = ScriptGenerator.generateTclText(workspace.getProject(), false, false);
+					List<String> sb = Converter.DTC();
+					String finalStr = "";
+					for(String str : sb) {
+						finalStr += str;
+					}
+					styledText.setText(finalStr);
 	}
 	
 	public void updateNodeInfoLabel() {

@@ -57,8 +57,8 @@ public class DelayTab extends Tab implements Observer{
   /**
    * Creates the Tab within a given instance of LayoutExample.
    */
-  public DelayTab(Analyzer analyzer) {
-    super(analyzer);
+  public DelayTab(Analyzer instance) {
+    super(instance);
     listNodeAreaSource = new ArrayList<NodeTrace>();
     listNodeAreaDest = new ArrayList<NodeTrace>();
   }
@@ -174,8 +174,8 @@ public class DelayTab extends Tab implements Observer{
 					double totalDelay=0;
 					LinkedHashMap<Packet,Double> listDelayPacket = new LinkedHashMap<Packet,Double>();
 					ArrayList<Packet> listPacket = new ArrayList<Packet>();
-					for (int i=0;i<TraceFile.getListPacket().size();i++){ 
-						 Packet packet=TraceFile.getListPacket().get(i);
+					for (int i=0;i<Analyzer.mParser.getListPacket().size();i++){ 
+						 Packet packet=Analyzer.mParser.getListPacket().get(i);
 						 
 						 if(!fromCombo.getItem(fromCombo.getSelectionIndex()).equals("All nodes") 
 								 && !toCombo.getItem(toCombo.getSelectionIndex()).equals("All nodes")){
@@ -260,12 +260,12 @@ public class DelayTab extends Tab implements Observer{
   /* Set up item for fromCombo and toCombo */
   void setItemFromComboToCombo(){
 	  if(filterByCombo.getSelectionIndex()==0){
-		  String[] itemList=new String[TraceFile.getListNodes().size()+1] ; 
-			if(TraceFile.getListNodes().size()>0)
+		  String[] itemList=new String[Analyzer.mParser.getListNodes().size()+1] ; 
+			if(Analyzer.mParser.getListNodes().size()>0)
 			{
 				itemList[0]="All nodes";
-				for (int i=0;i<TraceFile.getListNodes().size();i++){ 
-					 NodeTrace node=TraceFile.getListNodes().get(i);
+				for (int i=0;i<Analyzer.mParser.getListNodes().size();i++){ 
+					 NodeTrace node=Analyzer.mParser.getListNodes().get(i);
 					 itemList[i+1]=Integer.toString(node.id);
 				}
 				fromCombo.setItems(itemList);
@@ -277,10 +277,10 @@ public class DelayTab extends Tab implements Observer{
 			 fromCombo.setItems(new String[] {});
 			 toCombo.setItems(new String[] {});
 			 
-			 ySeries = new double[TraceFile.getListNodes().size()];
-		     xSeries = new double[TraceFile.getListNodes().size()];    
-				for(int i=0;i<TraceFile.getListNodes().size();i++) {
-					NodeTrace node = TraceFile.getListNodes().get(i);
+			 ySeries = new double[Analyzer.mParser.getListNodes().size()];
+		     xSeries = new double[Analyzer.mParser.getListNodes().size()];    
+				for(int i=0;i<Analyzer.mParser.getListNodes().size();i++) {
+					NodeTrace node = Analyzer.mParser.getListNodes().get(i);
 					xSeries[i]=node.x;
 					ySeries[i]=node.y;
 				}
@@ -320,8 +320,8 @@ public class DelayTab extends Tab implements Observer{
 			double minDelay=1000000000;
 			double totalDelay=0;
 			LinkedHashMap<Packet,Double> listDelayPacket = new LinkedHashMap<Packet,Double>();
-			for (int i=0;i<TraceFile.getListPacket().size();i++){ 
-				 Packet packet=TraceFile.getListPacket().get(i);
+			for (int i=0;i<Analyzer.mParser.getListPacket().size();i++){ 
+				 Packet packet=Analyzer.mParser.getListPacket().get(i);
 				 	for(int j=0;j<this.listNodeAreaSource.size();j++)
 					 	for(int k=0;k<this.listNodeAreaDest.size();k++){
 					 	   if(this.listNodeAreaSource.get(j).id == Integer.parseInt(packet.sourceID) 

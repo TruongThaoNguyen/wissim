@@ -232,7 +232,7 @@ public class CreateTrafficFlowDialog extends Dialog {
 					break;
 				}
 				
-				TransportProtocol transProtocol = new TransportProtocol(transType, transName, s);
+				TransportProtocol transProtocol = s.addTransportProtocol(transType, transName);
 				HashMap<String, String> transProtocolParams = ApplicationSettings.transportProtocols.get(keyTransName);
 				Set<Entry<String, String>> set = transProtocolParams.entrySet();
 				Iterator<Entry<String, String>> i = set.iterator();

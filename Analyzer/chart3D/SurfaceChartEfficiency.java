@@ -10,22 +10,22 @@ import java.io.PrintWriter;
 
 import parser.NodeTrace;
 import parser.Packet;
-import parser.TraceFile;
+import views.Analyzer;
 
 public class SurfaceChartEfficiency {
 	public static void createData() throws IOException{
 		//TraceFile.ConvertTraceFile();
-		double totalDrop[]=new double[TraceFile.getListNodes().size()];
-        for(int i=0;i<TraceFile.getListPacket().size();i++){
-        	Packet packet = TraceFile.getListPacket().get(i);
-        	if(!packet.isSuccess)
+		double totalDrop[]=new double[Analyzer.mParser.getListNodes().size()];
+        for(int i=0;i<Analyzer.mParser.getListPacket().size();i++){
+        	Packet packet = Analyzer.mParser.getListPacket().get(i);
+        	if(!packet.isSuccess && packet.getType().equals("cbr"))
         		totalDrop[Integer.parseInt(packet.sourceID)]++;
         }
         
 		FileOutputStream fos= new FileOutputStream("DataEfficiency",false);
         PrintWriter pw= new PrintWriter(fos);
         for(int i=0;i<totalDrop.length;i++){
-        	NodeTrace node = TraceFile.getListNodes().get(i);
+        	NodeTrace node = Analyzer.mParser.getListNodes().get(i);
         	if (totalDrop[i] !=0)
         		pw.println(node.x+" "+node.y+" "+totalDrop[i]);
         }
@@ -43,7 +43,7 @@ public class SurfaceChartEfficiency {
 		        BufferedReader br = new BufferedReader(new FileReader("GnuplotEfficiency"));
 		        String line = null;
 		        while ((line = br.readLine()) != null)
-		        	gp.println(line+"");
+		        	gp.println(line);
 		        gp.println("pause mouse close;\n");
 		        br.close();
 		        gp.close();

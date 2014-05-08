@@ -63,24 +63,24 @@ public class SleepPeriodTab extends Tab implements Observer{
   ArrayList<ArrayList<NodeTrace>> listNodeAreas;
   ChartAllNodeMultiArea chartAllNodeSleepTime;
   ArrayList<Double> listSleepTimeOfAreas,listAvgSleepTimeOfAreas;
-  /*Const of network*/
+  /*constant of network*/
   public final static double STOP_TIME = 500;
   public final static double TRANSITION_TIME = 0.0129;
   double sleepTime[];
   /**
    * Creates the Tab within a given instance of LayoutExample.
    */
-  public SleepPeriodTab(Analyzer analyzer) {
-    super(analyzer);
+  public SleepPeriodTab(Analyzer instance) {
+    super(instance);
     listNodeAreas = new ArrayList<ArrayList<NodeTrace>>();
     listSleepTimeOfAreas = new ArrayList<Double>(); 
     listAvgSleepTimeOfAreas = new ArrayList<Double>();
     
-    sleepTime = new double[TraceFile.getListNodes().size()];
+    sleepTime = new double[Analyzer.mParser.getListNodes().size()];
 	for(int i = 0; i< sleepTime.length; i++)
 		sleepTime[i] = STOP_TIME;
-	for(int i = 0; i < TraceFile.getListPacket().size(); i++){
-		Packet packet = TraceFile.getListPacket().get(i);
+	for(int i = 0; i < Analyzer.mParser.getListPacket().size(); i++){
+		Packet packet = Analyzer.mParser.getListPacket().get(i);
 		// node nguồn của packet 
 		sleepTime[Integer.parseInt(packet.sourceID)] -= TRANSITION_TIME;								
 		// các node tiếp theo trên đường truyền packet						 								
@@ -166,6 +166,7 @@ public class SleepPeriodTab extends Tab implements Observer{
 	    /* Add listener to add an element to the table */
 	    analyze.addSelectionListener(new SelectionAdapter() {
 	      public void widgetSelected(SelectionEvent e) {
+	    	if(Analyzer.mParser instanceof FullParser){
 	    	  if(filterByCombo.getSelectionIndex()==0){
 		    		if(equalCombo.getSelectionIndex()==-1 ){
 						MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
@@ -247,13 +248,14 @@ public class SleepPeriodTab extends Tab implements Observer{
 		    			  }
 		    		  Shell shell = new Shell();	  
 	    			  new BarChart(shell,listSleepTimeOfAreas,"Total Sleep Time");
-	    			  new BarChart(shell,listAvgSleepTimeOfAreas,"Average Sleep Time");
+	    			  new BarChart(new Shell(),listAvgSleepTimeOfAreas,"Average Sleep Time");
 	    			  avgText.setText("");
 	    			  maxText.setText("");
 	    			  minText.setText("");	
 	    		  }
 	    	  }
 	      }
+	    	}
 	    });    
 	   
 	    /* Add common controls */
@@ -265,12 +267,12 @@ public class SleepPeriodTab extends Tab implements Observer{
   void setItemEqualCombo(){
 	  int i;
 	  if(filterByCombo.getSelectionIndex()==0){
-		  String[] itemList=new String[TraceFile.getListNodes().size()+1] ; 
-			if(TraceFile.getListNodes().size()>0)
+		  String[] itemList=new String[Analyzer.mParser.getListNodes().size()+1] ; 
+			if(Analyzer.mParser.getListNodes().size()>0)
 			{
 				itemList[0]="All nodes";
-				for (i=0;i<TraceFile.getListNodes().size();i++){ 
-					 NodeTrace node=TraceFile.getListNodes().get(i);
+				for (i=0;i<Analyzer.mParser.getListNodes().size();i++){ 
+					 NodeTrace node=Analyzer.mParser.getListNodes().get(i);
 					 itemList[i+1]=Integer.toString(node.id);
 				}
 				equalCombo.setItems(itemList);
@@ -281,10 +283,10 @@ public class SleepPeriodTab extends Tab implements Observer{
 		 equalCombo.setItems(new String[] {});
 		 super.refreshLayoutComposite();
 		 
-		 ySeries = new double[TraceFile.getListNodes().size()];
-	     xSeries = new double[TraceFile.getListNodes().size()];    
-			for(int j=0;j<TraceFile.getListNodes().size();j++) {
-				NodeTrace node = TraceFile.getListNodes().get(j);
+		 ySeries = new double[Analyzer.mParser.getListNodes().size()];
+	     xSeries = new double[Analyzer.mParser.getListNodes().size()];    
+			for(int j=0;j<Analyzer.mParser.getListNodes().size();j++) {
+				NodeTrace node = Analyzer.mParser.getListNodes().get(j);
 				xSeries[j]=node.x;
 				ySeries[j]=node.y;
 			}
@@ -345,7 +347,7 @@ public class SleepPeriodTab extends Tab implements Observer{
   /**
    * Gets the text for the tab folder item.
    */
- public  String getTabText() {
+ public String getTabText() {
     return "Sleep Period";
   }
 

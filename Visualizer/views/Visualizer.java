@@ -27,9 +27,9 @@ public class Visualizer extends MainContent {
 
 	@Override
 	protected void updateMenu() {
-		
+
 	}
-	
+
 	public void createContents() {
 		setLayout(new GridLayout(1, false));
 		final Composite compos = new Composite(this, SWT.EMBEDDED);
@@ -38,9 +38,9 @@ public class Visualizer extends MainContent {
 		panel = new MainViewPanel();
 		frame.add(panel);
 		frame.setSize(panel.getWidth(), panel.getHeight());
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+		// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 		frame.setVisible(true);
-		
+
 	}
 }

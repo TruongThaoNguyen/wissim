@@ -4,6 +4,9 @@ package chart2D;
 import java.util.ArrayList;
 import java.util.Observable;
 
+import parser.NodeTrace;
+import views.Analyzer;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -30,8 +33,7 @@ import org.swtchart.ISeries;
 import org.swtchart.ISeries.SeriesType;
 import org.swtchart.LineStyle;
 
-import parser.NodeTrace;
-import parser.TraceFile;
+
 
 
 public class ChartAllNodeMultiArea extends Observable{
@@ -122,7 +124,7 @@ public class ChartAllNodeMultiArea extends Observable{
 	    
         MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
 		dialog.setText("");
-		dialog.setMessage("Mời bạn chọn 1 vùng các node");
+		dialog.setMessage("Let choose areas");
 	    dialog.open(); 
 	    
         /* Get the plot area and add the mouse listeners */
@@ -168,11 +170,11 @@ public class ChartAllNodeMultiArea extends Observable{
 	                
 	                boolean answer = MessageDialog.openQuestion(new Shell(),
 	                          "Question",
-	                          "Bạn muốn chọn vùng này?");
+	                          "Do you want to choose this area?");
 	                if(answer){
 	                	listNodeOfOneArea = new ArrayList<NodeTrace>();
-		                	for(int i=0;i<TraceFile.getListNodes().size();i++) {
-		            			NodeTrace node = TraceFile.getListNodes().get(i);
+		                	for(int i=0;i<Analyzer.mParser.getListNodes().size();i++) {
+		            			NodeTrace node = Analyzer.mParser.getListNodes().get(i);
 		            			if(startX <= node.x+2 && endX >= node.x-2 && startY >= node.y-2 && endY <= node.y+2 )
 		            				listNodeOfOneArea.add(node);	
 		                	}
@@ -356,7 +358,7 @@ public class ChartAllNodeMultiArea extends Observable{
             	String group = "";
             	String group1 = "";
             	for (int j = 0; j < listNodeArea.size(); j++) {
-                	if(listNodeArea.get(j).contains(TraceFile.getListNodes().get(id))){
+                	if(listNodeArea.get(j).contains(Analyzer.mParser.getListNodes().get(id))){
                 		  	group += Integer.toString(j+1)+", ";
                 		}
             	}
@@ -378,7 +380,7 @@ public class ChartAllNodeMultiArea extends Observable{
                 	
                 Menu menuAdd = new Menu(popupMenu);
                 for (int j = 0; j < listNodeArea.size(); j++) {
-                	if(!listNodeArea.get(j).contains(TraceFile.getListNodes().get(nodeID))){
+                	if(!listNodeArea.get(j).contains(Analyzer.mParser.getListNodes().get(nodeID))){
 		                  MenuItem item = new MenuItem(menuAdd, SWT.RADIO);
 		                  item.setText("Group " + (j+1));		                  
 		                  item.addSelectionListener(new SelectionAdapter() {
@@ -386,7 +388,7 @@ public class ChartAllNodeMultiArea extends Observable{
 		                      MenuItem item = (MenuItem) e.widget;
 		                      if (item.getSelection()) {
 		                        //System.out.println(item.getText().substring(6) + " selected");
-		                    	  listNodeArea.get(Integer.parseInt(item.getText().substring(6))-1).add(TraceFile.getListNodes().get(nodeID));
+		                    	  listNodeArea.get(Integer.parseInt(item.getText().substring(6))-1).add(Analyzer.mParser.getListNodes().get(nodeID));
 		                    	  plotArea.redraw();
 		                    	  
 		                    	  setChanged();
@@ -400,7 +402,7 @@ public class ChartAllNodeMultiArea extends Observable{
                 
                 Menu menuRemove = new Menu(popupMenu);
                 for (int j = 0; j < listNodeArea.size(); j++) {
-                	if(listNodeArea.get(j).contains(TraceFile.getListNodes().get(nodeID))){
+                	if(listNodeArea.get(j).contains(Analyzer.mParser.getListNodes().get(nodeID))){
 		                  MenuItem item = new MenuItem(menuRemove, SWT.RADIO);
 		                  item.setText("Group " + (j+1));	                  
 		                  item.addSelectionListener(new SelectionAdapter() {
@@ -408,7 +410,7 @@ public class ChartAllNodeMultiArea extends Observable{
 		                      MenuItem item = (MenuItem) e.widget;
 		                      if (item.getSelection()) {
 		                        //System.out.println(item.getText().substring(6) + " selected");
-		                    	  listNodeArea.get(Integer.parseInt(item.getText().substring(6))-1).remove(TraceFile.getListNodes().get(nodeID));	                    	  
+		                    	  listNodeArea.get(Integer.parseInt(item.getText().substring(6))-1).remove(Analyzer.mParser.getListNodes().get(nodeID));	                    	  
 		                    	  plotArea.redraw();
 		                    	  
 		                    	  setChanged();

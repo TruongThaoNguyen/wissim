@@ -4,6 +4,7 @@
  */
 package wissim.ui;
 
+import java.awt.Component;
 import java.awt.Point;
 
 import java.awt.event.MouseEvent;
@@ -16,11 +17,14 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingUtilities;
 
+import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiNode;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.StyleGroup;
+import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.swingViewer.LayerRenderer;
 import org.graphstream.ui.swingViewer.View;
 import org.graphstream.ui.swingViewer.Viewer;
@@ -35,7 +39,7 @@ import wissim.object.WiGraph;
  * 
  * @author DangKhanh
  */
-public class ViewMouseManager implements MouseWheelListener {
+public class ViewMouseManager implements MouseWheelListener, ViewContainer {
 
 	protected Viewer viewer;
 	protected View view;
@@ -60,26 +64,36 @@ public class ViewMouseManager implements MouseWheelListener {
 	boolean isRelease = false;
 	boolean isChoosingArea = false;
 	boolean isShiftDown = false;
+	protected ViewContainer mViewContainer;
+
+	public static enum AreaState {
+		NONE, ONEAREACHOOSED, TWOAREASCHOOSED
+	}
+
+	public AreaState mCurrentAreastate;
 	/**
 	 * Array list nodes contain node in chosen area
 	 */
-	ArrayList<String> Nodes = new ArrayList<>();
+	ArrayList<String> NodesinArea = new ArrayList<>();
 	ArrayList<String> NodeDetectonRightClick = new ArrayList<>();
 
 	public ViewMouseManager(Graph graph, Viewer viewer, View view) {
 		this.viewer = viewer;
 		this.view = view;
 		this.graph = graph;
-	//	this.graph.reset();
+		// this.graph.reset();
 		current_center_x = view.getCamera().getViewCenter().x;
 		current_center_y = view.getCamera().getViewCenter().y;
 		System.out.println("Current Center " + current_center_x + " "
 				+ current_center_y);
-		// view.getCamera().setViewCenter(current_center_x, current_center_y,
-		// 0);
 
 		setMouseListener();
-		// this.view = this.viewer.addDefaultView(false);
+		mCurrentAreastate = AreaState.NONE;
+
+	}
+
+	public void setViewContainter(ViewContainer mViewContainer) {
+		this.mViewContainer = mViewContainer;
 	}
 
 	public void setMouseListener() {
@@ -101,44 +115,52 @@ public class ViewMouseManager implements MouseWheelListener {
 
 			@Override
 			public void mouseClicked(MouseEvent me) {
-				if (SwingUtilities.isRightMouseButton(me) && isChoosingArea) {
-					if (!inArea(me)) {
-						System.out.println("Right click out of are");
-						Point p = me.getPoint();
+				Point clickedPoint = me.getPoint();
+				if (SwingUtilities.isLeftMouseButton(me)) {
+					GraphicElement ge = view.findNodeOrSpriteAt(
+							(double) clickedPoint.x, (double) clickedPoint.y);
+					if (ge != null) {
+						if (graph.getNode(ge.getId()) != null) {
 
-						GraphicElement e = view.findNodeOrSpriteAt(p.getX(),
-								p.getY());
-
-						if (e != null) {
+							mViewContainer.onLeftClickedonNode(
+									graph.getNode(Integer.parseInt(ge.getId())),
+									clickedPoint);
 						} else {
+							System.out.println("Edge ID clicked " + ge.getId());
+							mViewContainer.onLeftClickedonEdge(ge.getId(),
+									clickedPoint);
 						}
 					}
-				} else if (SwingUtilities.isRightMouseButton(me)
-						&& !isChoosingArea) {
-					System.out.println("Not choosing area");
-					Point p = me.getPoint();
 
-					GraphicElement e = view.findNodeOrSpriteAt(p.getX(),
-							p.getY());
+				}
 
-					System.out.println("Toa do: " + p.getX() + "  " + p.getY());
-					System.out.println("NULL?=" + (e == null));
-					if (e != null) {
-					} else {
+				else if (SwingUtilities.isRightMouseButton(me)) {
+
+					GraphicElement ge = view.findNodeOrSpriteAt(
+							(double) clickedPoint.x, (double) clickedPoint.y);
+					if (ge != null) {
+						if (graph.getNode(ge.getId()) != null) {
+
+							mViewContainer.onRighClickedonNode(
+									graph.getNode(Integer.parseInt(ge.getId())),
+									clickedPoint);
+						} else {
+							mViewContainer.onRighClickedonEdge(ge.getId(),
+									clickedPoint);
+						}
 					}
-				} else if (SwingUtilities.isLeftMouseButton(me)
-						&& !isChoosingArea) {
-					Point p = me.getPoint();
-					GraphicElement e = view.findNodeOrSpriteAt(p.getX(),
-							p.getY());
-					if (e != null) {
+					else
+					{
+						mViewContainer.onSwitchDisplayMode(me.getPoint());
 					}
+
 				}
 
 			}
 
 			@Override
 			public void mousePressed(MouseEvent me) {
+
 				// throw new
 				// UnsupportedOperationException("Not supported yet.");
 
@@ -158,8 +180,6 @@ public class ViewMouseManager implements MouseWheelListener {
 					press_y = Double.parseDouble(Integer.toString(me.getY()));
 					previous_drag_x = press_x;
 					previous_drag_y = press_y;
-					// System.out.println("onPressed" + press_x + " " +
-					// press_y);
 					isRelease = false;
 
 					view.endSelectionAt(me.getX(), me.getY());
@@ -172,7 +192,7 @@ public class ViewMouseManager implements MouseWheelListener {
 					view.beginSelectionAt(me.getX(), me.getY());
 
 					System.out.println("onPress with shift key");
-					Nodes.clear();
+					NodesinArea.clear();
 				} else if (SwingUtilities.isRightMouseButton(me) && inArea(me)
 						&& isChoosingArea == true) {
 
@@ -181,23 +201,21 @@ public class ViewMouseManager implements MouseWheelListener {
 					// onShowMenu(mpoint, true);
 					// System.out.println("onRightClick,Node=" +
 					// Nodes.toString());
-					
+					// container.onRightClick(Nodes);
 				} else if (SwingUtilities.isRightMouseButton(me) && !inArea(me)
 						&& isChoosingArea == true) {
 					Point mpoint = new Point(me.getX(), me.getY());
 					// onShowMenu(mpoint, false);
 					view.beginSelectionAt(me.getX(), me.getY());
 					view.endSelectionAt(me.getX(), me.getY());
-
+					
 				}
 
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent me) {
-				// throw new
-				// UnsupportedOperationException("Not supported yet.");
-				// System.out.println("onRelease");
+				
 
 				if (SwingUtilities.isLeftMouseButton(me) && !me.isShiftDown()
 						&& isChoosingArea == false) {
@@ -216,17 +234,16 @@ public class ViewMouseManager implements MouseWheelListener {
 					drag_end_choose_node_area_x = me.getX();
 					drag_end_choose_node_area_y = me.getY();
 					isChoosingArea = true;
-
-					// System.out.println("onRelease with shift key");
 					curr_mouse_x = me.getX();
 					curr_mouse_y = me.getY();
 
 					findNodeDragging(drag_start_choose_node_area_x,
 							drag_start_choose_node_area_y,
 							drag_end_choose_node_area_x,
-							drag_end_choose_node_area_y);
-					// System.out.println("Data in nodes " + Nodes.toString());
-
+							drag_end_choose_node_area_y,me.getPoint());
+					System.out.println("Data in nodes "
+							+ NodesinArea.toString());
+					//view.endSelectionAt(drag_end_choose_node_area_x, drag_end_choose_node_area_y);
 				}
 
 			}
@@ -270,6 +287,7 @@ public class ViewMouseManager implements MouseWheelListener {
 
 			private void MoveGraph(Point curr_point) {
 				// System.out.println("onMove");
+				if(view!= null){
 				Point3 currP = view.getCamera().transformPxToGu(curr_point.x,
 						curr_point.y);
 				Point3 lastP = view.getCamera().transformPxToGu(curr_point_x,
@@ -286,25 +304,45 @@ public class ViewMouseManager implements MouseWheelListener {
 				current_center_y = view.getCamera().getViewCenter().y;
 				curr_point_x = curr_point.getX();
 				curr_point_y = curr_point.getY();
+				}
 			}
 
 			private void findNodeDragging(double start_x, double start_y,
-					double end_x, double end_y) {
+					double end_x, double end_y,Point position) {
 
 				ArrayList<GraphicElement> listNode = new ArrayList<>();
 				listNode = view.allNodesOrSpritesIn(start_x < end_x ? start_x
 						: end_x, start_y < end_y ? start_y : end_y,
 						start_x > end_x ? start_x : end_x,
 						start_y > end_y ? start_y : end_y);
-
+				NodesinArea.clear();
 				for (GraphicElement el : listNode) {
 					if (graph.getNode(el.getId()) != null) {
-						Nodes.add(el.getId());
+						NodesinArea.add(el.getId());
 					}
+				}
+				if (mCurrentAreastate == AreaState.NONE) {
+					System.out.println("onchosefirstarea="+NodesinArea);
+					mViewContainer.onChooseFirstArea(NodesinArea,position);
+
+				} else if (mCurrentAreastate == AreaState.ONEAREACHOOSED) {
+					System.out.println("onchosesecondarea="+NodesinArea);
+					mViewContainer.onChooseSecondArea(NodesinArea,position);
+
+				} else if (mCurrentAreastate == AreaState.TWOAREASCHOOSED) {
+					mViewContainer.onSimulateNetworkbyGroupID();
 				}
 
 			}
 		});
+	}
+
+	public AreaState getmCurrentAreastate() {
+		return mCurrentAreastate;
+	}
+
+	public void setmCurrentAreastate(AreaState mCurrentAreastate) {
+		this.mCurrentAreastate = mCurrentAreastate;
 	}
 
 	@Override
@@ -313,7 +351,7 @@ public class ViewMouseManager implements MouseWheelListener {
 		Camera c = view.getCamera();
 		double p = c.getViewPercent();
 		if (rot > 0) {
-			if (p < 2.5) {
+			if (p < 6) {
 				c.setViewPercent(p + 0.1);
 
 			}
@@ -342,5 +380,58 @@ public class ViewMouseManager implements MouseWheelListener {
 			return false;
 		}
 	}
+
+	@Override
+	public void onLeftClickedonNode(Node node, Point position) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onRighClickedonNode(Node node, Point position) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onLeftClickedonEdge(String spriteID, Point position) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onRighClickedonEdge(String spriteID, Point position) {
+		// TODO Auto-generated method stub
+
+	}
+
+	
+
+	@Override
+	public void onSimulateNetworkbyGroupID() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onChooseFirstArea(ArrayList<String> listNodeinfirstArea,
+			Point position) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onChooseSecondArea(ArrayList<String> listNodeinsecondArea,
+			Point position) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSwitchDisplayMode(Point position) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 
 }
