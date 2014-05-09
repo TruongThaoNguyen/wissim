@@ -352,6 +352,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		
 		// endregion generate auto tcl code
 		
+		getNodeList().add(newNode);		
 		return newNode;
 	}
 
