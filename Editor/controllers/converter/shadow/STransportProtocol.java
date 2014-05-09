@@ -12,10 +12,7 @@ import models.converter.InsProc;
 import models.converter.InsVar;
 import models.converter.ParseException;
 import models.networkcomponents.Node;
-import models.networkcomponents.Node;
 import models.networkcomponents.protocols.ApplicationProtocol;
-import models.networkcomponents.protocols.ApplicationProtocol;
-import models.networkcomponents.protocols.TransportProtocol;
 import models.networkcomponents.protocols.TransportProtocol;
 
 public class STransportProtocol extends TransportProtocol implements TclObject, Scheduler {	

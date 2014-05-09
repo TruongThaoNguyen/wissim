@@ -47,12 +47,15 @@ public class Converter
 	 * Generate TCL code from Project model.
 	 * @return List of String, each element of List is a line of TCL scripts
 	 */
-	public static List<String> DTC() {				
+	public static List<String> DTC() {
+		int line = 1;
+		
 		List<String> sb = new ArrayList<String>();		
 		for (Entry e : generateEntry) {
 			String t = e.print(); 
 			sb.add(t);			
-			System.out.print(t);			
+			System.out.print(line + "\t" + t);
+			if (t.endsWith("\n")) line++;
 		}			
 		return sb;	
 	}
@@ -170,7 +173,7 @@ public class Converter
 	
 	public static void main(String[] args)  throws Exception {			
 		boolean isWin =  WorkSpace.isWindow();
-		WorkSpace.setDirectory(isWin? "D:\\Work\\scripts\\30\\gpsr\\" : "test_store/");
+		WorkSpace.setDirectory(isWin? "D:\\Work\\scripts\\30\\gpsr\\" : "/home/trongnguyen/scripts/30/gpsr/");
 		String fileName =  WorkSpace.getDirectory() + "simulate.tcl";
 		BufferedReader br = new BufferedReader(new FileReader(fileName));
 		StringBuilder sb = null;
@@ -194,11 +197,11 @@ public class Converter
 		
 		// ------------ using converter
 		
-		Project project = Converter.CTD(code);
+		Converter.CTD(code);
+								
+		System.out.println("\n------------------------------\n");		
 		
 		// Do something with project object
-		
-		System.out.println("\n------------------------------\n");		
 		
 		//Converter.DTC();
 		

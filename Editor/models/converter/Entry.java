@@ -19,29 +19,26 @@ public class Entry {
 	 * @param arg
 	 * @param sperator
 	 */
-	public Entry(InsProc insProc, List<String> arguement, String sperator)
+	public Entry(InsProc insProc, List<String> arg, String sperator)
 	{		
 		this.insProc = insProc;
 		if (insProc.insprocName == null)
 		{		
-			this.arg = arguement;
+			this.arg = arg;
 		}
 		else
 		{
 			this.arg = new ArrayList<>();
-			int l = arguement.size() - 1;
-			for (int i = 0; i < l; i++)				
-			{
-				String s = arguement.get(i);
+			for (String string : arg) {
+				String s;
 				try {
-					s = Converter.parseIdentify(s);				
+					s = Converter.parseIdentify(string);				
 				} catch (Exception e) {
 					s = null;
 				}
-				if (s == null)	this.arg.add(s);
-				else			this.arg.add(arguement.get(i));
+				if (s == null) s = string;
+				this.arg.add(s);
 			}
-			this.arg.add(arguement.get(l));
 		}
 		
 		this.sperator = sperator;

@@ -12,9 +12,7 @@ import models.converter.InsProc;
 import models.converter.InsVar;
 import models.converter.ParseException;
 import models.networkcomponents.Node;
-import models.networkcomponents.Node;
 import models.networkcomponents.events.AppEvent;
-import models.networkcomponents.protocols.ApplicationProtocol;
 import models.networkcomponents.protocols.ApplicationProtocol;
 
 public class SApplicationProtocol extends ApplicationProtocol implements TclObject, Scheduler {
