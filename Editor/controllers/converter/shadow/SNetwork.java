@@ -14,7 +14,6 @@ import models.converter.InsVar;
 import models.converter.ParseException;
 import models.networkcomponents.Node;
 import models.networkcomponents.WirelessNetwork;
-import models.networkcomponents.WirelessNode;
 
 /**
  * SimulatorObject.java
@@ -321,7 +320,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	}
 
 	@Override
-	protected WirelessNode addnode(int x, int y, int rage) {
+	protected SNode addnode(int x, int y, int rage) {
 		SNode newNode = new SNode(this, x, y, rage);
 		Converter.global.addObject(newNode);
 		
@@ -373,5 +372,8 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		
 	}
 
+	void setWidth(int value) { xSize = value; }
+	void setLength(int value) { ySize = value; }
+	
 	// endregion Wireless Network properties	
 }

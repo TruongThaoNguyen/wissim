@@ -15,14 +15,8 @@ import models.converter.ParseException;
 
 public class STopographyObject extends SCommonObject {
 
-	public int width;
-	public int height;
-
 	public STopographyObject(String value) {
 		super(value);
-		
-		width = 0;
-		height = 0;
 	}
 	
 	protected void addInsProc() {
@@ -32,14 +26,14 @@ public class STopographyObject extends SCommonObject {
 			@Override
 			public String run(List<String> command) throws Exception {
 				if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);
-				width = Integer.parseInt(Converter.parseIdentify(command.get(0)));
-				height = Integer.parseInt(Converter.parseIdentify(command.get(1)));		
+				Converter.global.getNetwork().setWidth(Integer.parseInt(Converter.parseIdentify(command.get(0))));
+				Converter.global.getNetwork().setLength(Integer.parseInt(Converter.parseIdentify(command.get(1))));		
 				return "";		
 			}
 
 			@Override
 			public String print(List<String> command) {
-				return width + " " + height;
+				return Converter.global.getNetwork().getWidth() + " " + Converter.global.getNetwork().getLength();
 			}
 		};
 	}

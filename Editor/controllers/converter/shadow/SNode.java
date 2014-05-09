@@ -195,7 +195,7 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 	}
 	
 	@Override
-	public TransportProtocol addTransportProtocol(int type, String name) {
+	public STransportProtocol addTransportProtocol(int type, String name) {
 		
 		STransportProtocol tp = new STransportProtocol(type, name, this);
 		String id = Converter.global.getNetwork().getNodeList().indexOf(this) + "";

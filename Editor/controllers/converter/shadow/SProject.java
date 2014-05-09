@@ -18,7 +18,6 @@ import models.converter.InsVar;
 import models.converter.ParseException;
 import models.converter.Token;
 import models.converter.TokenType;
-import models.networkcomponents.WirelessNetwork;
 
 /**
  * GlobalObject.java
@@ -502,7 +501,7 @@ public class SProject  extends Project implements TclObject
 	// region ------------------- Project feature ------------------- //
 	
 	@Override
-	public WirelessNetwork getNetwork() {
+	public SNetwork getNetwork() {
 		return network;
 	}
 	
