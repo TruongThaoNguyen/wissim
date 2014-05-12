@@ -36,7 +36,6 @@ public class MainWindow extends ApplicationWindow {
 //	private Button btnAnalyzer;
 	private Editor editor;
 	private Analyzer analyzer;
-	private Visualizer visualizer;
 //	private Composite mainComposite;
 	private MenuManager menuManager;
 	private StatusLineManager statusLineManager;
@@ -70,8 +69,7 @@ public class MainWindow extends ApplicationWindow {
 	
 		
 		editor   = new Editor(mainComposite, menuManager, statusLineManager);		
-//		analyzer = new Analyzer(mainComposite, menuManager, statusLineManager);
-		visualizer = new Visualizer(mainComposite, menuManager, statusLineManager);
+		analyzer = new Analyzer(mainComposite, menuManager, statusLineManager);
 		
 		Button btnEditor = new Button(featureComposite, SWT.PUSH);
 		btnEditor.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
@@ -97,19 +95,6 @@ public class MainWindow extends ApplicationWindow {
 				((StackLayout)mainComposite.getLayout()).topControl = analyzer;
 				mainComposite.layout();
 				analyzer.UpdateMenu();
-			}
-		});
-		
-		Button btnVisualizer = new Button(featureComposite, SWT.PUSH);
-		btnVisualizer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnVisualizer.setText("Visualizer");
-		btnVisualizer.addListener(SWT.Selection, new Listener() 
-		{
-			public void handleEvent(Event e) 
-			{
-				((StackLayout)mainComposite.getLayout()).topControl = visualizer;
-				mainComposite.layout();
-				visualizer.UpdateMenu();
 			}
 		});
 	

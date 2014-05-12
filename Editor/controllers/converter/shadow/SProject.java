@@ -383,6 +383,28 @@ public class SProject  extends Project implements TclObject
 				return "# source " + command.get(0);
 			}
 		};
+	
+		new InsProc(this, "nametrace-all-wireless") {
+
+			@Override
+			protected String run(List<String> arg) throws Exception {
+				if (arg.size() != 3) throw new ParseException(ParseException.InvalidArgument);				
+				getNetwork().setWidth(Integer.parseInt(Converter.parseIdentify(arg.get(1))));
+				getNetwork().setLength(Integer.parseInt(Converter.parseIdentify(arg.get(2))));
+				return WorkSpace.setNamTraceFile(Converter.parseIdentify(arg.get(0)));
+			}
+			
+		};
+	
+		new InsProc(this, "trace-all") {
+
+			@Override
+			protected String run(List<String> arg) throws Exception {
+				if (arg.size() != 1 ) throw new ParseException(ParseException.InvalidArgument);
+				return WorkSpace.setTraceFile(Converter.parseIdentify(arg.get(0)));
+			}
+			
+		};
 	}
 
 	private int checkOperator(String s)	{
@@ -509,7 +531,11 @@ public class SProject  extends Project implements TclObject
 	
 	// region ------------------- Set ------------------- //
 
-	@Override public void setSelectedChannel(String selected) {	network.setInsVar("-channel", "[new " + selected + "]\n"); }
+	@Override public void setNodeRange(int value) {	
+		// TODO Auto-generated method stub }
+	}
+	
+	@Override public void setSelectedChannel(String selected) {	network.setInsVar("-channel", "[new " + selected + "]\n"); }	
 		
 	@Override public void setQueueLength		(int 	value) { network.setInsVar("-ifqLen", value + ""); }
 	@Override public void setIddleEnergy		(double value) { network.setInsVar("-energyModel", "EnergyModel"); network.setInsVar("-idlePower", 		value + ""); }
@@ -551,6 +577,12 @@ public class SProject  extends Project implements TclObject
 	
 	// region ------------------- get ------------------- //
 
+	@Override
+	public int getNodeRange() {
+		// TODO Auto-generated method stub
+		return 40;
+	}
+	
 	@Override public String getSelectedChannel() 	{
 		String v = network.getInsVar("-channel").getValue();
 		if (v.startsWith("[new")) return v.substring(5, v.length() - 7);

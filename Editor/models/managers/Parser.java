@@ -421,10 +421,8 @@ public class Parser {
 				name = node.getAttributeValue("name");
 				x = Integer.parseInt(node.getAttributeValue("x"));
 				y = Integer.parseInt(node.getAttributeValue("y"));
-				range = Integer.parseInt(node.getAttributeValue("range"));	
-				network.addNode(x, y, range);
-				
-//				WirelessNode wn = new WirelessNode(network, id, name, x, y, range);
+				range = Integer.parseInt(node.getAttributeValue("range"));				
+				WirelessNode wn = new WirelessNode(network, id, name, x, y, range);
 				
 				// load node events
 				Element events = node.getFirstChildElement("node-events");

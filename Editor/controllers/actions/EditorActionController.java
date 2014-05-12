@@ -123,8 +123,8 @@ public class EditorActionController {
 //		Converter cvrt;
 		try {
 //			cvrt = new Converter();
-//			Project pj = Converter.CTD(text.getText());
-//			System.out.println(pj.getSelectedAntenna());
+			Project pj = Converter.CTD(text.getText());
+			System.out.println(pj.getSelectedAntenna());
 //			editor.getWorkspace().setProject(cvrt.CTD(text.getText()));
 //			editor.setProject(cvrt.CTD(text.getText()));
 		} catch (Exception e) {

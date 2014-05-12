@@ -280,12 +280,12 @@ public class ApplicationManager {
 			WirelessNode wnode = ProjectManager.createSingleNode(workspace.getProject(), result.posX, result.posY, workspace.getProject().getNodeRange());
 			
 			if (wnode != null) {
-//				workspace.getCareTaker().save(workspace.getProject(), "Create a single node");
+				workspace.getCareTaker().save(workspace.getProject(), "Create a single node");
 				workspace.updateLayout();
 				
 				// handle select- deselect
 				workspace.deselectGraphicObjects();				
-//				workspace.getGraphicNodeByNode(wnode).setSelect(true);
+				workspace.getGraphicNodeByNode(wnode).setSelect(true);
 				workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);				
 				workspace.getGraphicNetwork().redraw();
 			} else {

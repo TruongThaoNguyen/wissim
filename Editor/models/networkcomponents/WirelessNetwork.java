@@ -13,7 +13,7 @@ import java.util.List;
 
 public abstract class WirelessNetwork extends Network {
 	// size of network
-	protected int xSize, ySize;
+	private int xSize, ySize;
 	
 	// options for network size changing
 	public static final int LEFT = 0, CENTER = 1, RIGHT = 2, TOP = 0, BOTTOM = 2;
