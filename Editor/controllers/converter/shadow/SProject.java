@@ -1,6 +1,7 @@
 package controllers.converter.shadow;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -365,7 +366,8 @@ public class SProject  extends Project implements TclObject
 				if (command.size() != 1) throw new ParseException(ParseException.InvalidArgument);				
 							
 				String fileName =  WorkSpace.getDirectory() + Converter.parseIdentify(command.get(0));				
-				br = new BufferedReader(new FileReader(fileName));
+				br = new BufferedReader(new FileReader(fileName));				
+				
 				StringBuilder sb = new StringBuilder();
 			    String line = br.readLine();
 			    while (line != null) {
@@ -374,6 +376,7 @@ public class SProject  extends Project implements TclObject
 			        line = br.readLine();
 			    }		    
 				
+			    br.close();
 			    parse(sb.toString());
 				return null;
 			}

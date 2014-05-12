@@ -171,32 +171,24 @@ public class Converter
 		return script;	
 	}
 	
-	public static void main(String[] args)  throws Exception {
-		String fileName;
+	public static void main(String[] args)  throws Exception {		
 		if (System.getProperty("os.name").toLowerCase().indexOf("win") > 0)
-			fileName = "D:\\Work\\scripts\\30\\gpsr\\";
+			WorkSpace.setDirectory("D:\\Work\\scripts\\30\\gpsr\\");
 		else
-			fileName = "/home/trongnguyen/scripts/30/gpsr/";
-		fileName = fileName + "simulate.tcl";
+			WorkSpace.setDirectory("/home/trongnguyen/scripts/30/gpsr/");
+		String fileName = WorkSpace.getDirectory() + "simulate.tcl";
 		BufferedReader br = new BufferedReader(new FileReader(fileName));
-		StringBuilder sb = null;
-		try {
-		    sb = new StringBuilder();
-		    String line = br.readLine();
-		
-		    while (line != null) {
-		        sb.append(line);
-		        sb.append(System.lineSeparator());
-		        line = br.readLine();
-		    }		    
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-		    br.close();
-		}
+		StringBuilder sb = new StringBuilder();
+	    
+		String line = br.readLine();		
+	    while (line != null) {
+	        sb.append(line);
+	        sb.append(System.lineSeparator());
+	        line = br.readLine();
+	    }		    		
+		br.close();
 		
 		String code = sb.toString();
-		
 		
 		// ------------ using converter
 		
