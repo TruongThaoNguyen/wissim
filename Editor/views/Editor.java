@@ -265,30 +265,34 @@ public class Editor extends MainContent implements Observer {
 	
 	public void actionGetTab() {
 		
-		
-		tabFolder.addSelectionListener(new SelectionAdapter() {
-			  public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
-				  if(tabFolder.getSelectionIndex() == 0){
-					  updateDesign();
-					  
-				  }
-				  else{
-					  if(styledText.getText() != "") {
-						  try {
+		tabFolder.addSelectionListener(new SelectionAdapter() 
+		{
+			public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) 
+			{
+				if(tabFolder.getSelectionIndex() == 0)		// Edit
+				{
+					updateDesign();					  
+				}
+				else										// Design
+				{
+					if(styledText.getText() != "") 
+					{
+						try 
+						{
 							project = Converter.CTD(styledText.getText());
-							if(project != null) {
+							if(project != null) 	
+							{
 								getWorkspace().setProject(project);
 							}
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
 						}
-						  
-					  }
-				  }
-//			    tabFolder.getSelection()[0]; // This should be your TabItem/CTabItem
-			  }
-			});
+						catch (ParseException e) 
+						{
+							e.printStackTrace();
+						}				  
+					}
+				}
+			}
+		});
 	}
 
 	@Override
