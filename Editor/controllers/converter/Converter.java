@@ -171,10 +171,13 @@ public class Converter
 		return script;	
 	}
 	
-	public static void main(String[] args)  throws Exception {			
-		boolean isWin =  WorkSpace.isWindow();
-		WorkSpace.setDirectory(isWin? "D:\\Work\\scripts\\30\\gpsr\\" : "/home/trongnguyen/scripts/30/gpsr/");
-		String fileName =  WorkSpace.getDirectory() + "simulate.tcl";
+	public static void main(String[] args)  throws Exception {
+		String fileName;
+		if (System.getProperty("os.name").toLowerCase().indexOf("win") > 0)
+			fileName = "D:\\Work\\scripts\\30\\gpsr\\";
+		else
+			fileName = "/home/trongnguyen/scripts/30/gpsr/";
+		fileName = fileName + "simulate.tcl";
 		BufferedReader br = new BufferedReader(new FileReader(fileName));
 		StringBuilder sb = null;
 		try {

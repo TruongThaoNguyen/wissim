@@ -12,6 +12,7 @@ import models.converter.InsProc;
 import models.converter.InsVar;
 import models.converter.ParseException;
 import models.networkcomponents.WirelessNode;
+import models.networkcomponents.events.NodeEvent;
 import models.networkcomponents.protocols.TransportProtocol;
 
 public class SNode extends WirelessNode implements TclObject, Scheduler {
@@ -245,6 +246,24 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 		}
 		
 		return true;
+	}
+
+	@Override
+	public List<NodeEvent> getEventList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addEvent(int type, int raiseTime) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeEvent(NodeEvent event) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	// endregion Wireless Node properties	

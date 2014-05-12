@@ -217,15 +217,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	}
 
 	@Override
-	public boolean addEvent(AppEvent e) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean removeEvent(AppEvent e) {
-		if (!eventList.contains(e))	return false;
-		
+	public boolean removeEvent(AppEvent e) {				
 		// TODO: remove Event
 		
 		return true;
@@ -235,6 +227,18 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	protected void setName(String name) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean addEvent(int type, int raisedTime) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public List<AppEvent> getEventList() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	// endregion Application properties

@@ -371,9 +371,6 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		// TODO Auto-generated method stub
 		
 	}
-
-	void setWidth(int value) { xSize = value; }
-	void setLength(int value) { ySize = value; }
 	
 	// endregion Wireless Network properties	
 }
