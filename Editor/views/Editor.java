@@ -17,7 +17,6 @@ import java.util.Observer;
 import models.Project;
 import models.converter.ParseException;
 import models.managers.CareTaker;
-import models.managers.ScriptGenerator;
 import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.WirelessNode;
 

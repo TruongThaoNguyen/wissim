@@ -2,7 +2,6 @@ package models.networkcomponents.events;
 
 import models.networkcomponents.WirelessNode;
 
-
 /**
  * Represents an event of a node.
  * There are 2 node-event type: node is turned off (OFF) and turn on (ON).

@@ -210,8 +210,7 @@ public class ProjectManager {
 		// check if the location is inside a hole
 		if(Project.getObstacleList() != null)
 		{
-			getProject();
-			for (Area obstacle : Project.getObstacleList()) {
+			for (Area obstacle : getProject().getObstacleList()) {
 				if (obstacle.contains(x, y)) return null;
 			}
 		}
@@ -384,8 +383,7 @@ public class ProjectManager {
 	// create Obstacle 
 	public static boolean addObstacle(Area area) { return false; }
 	
-	public static List<Area> getObstacles() { getProject();
-	return Project.getObstacleList(); }
+	public static List<Area> getObstacles() { return getProject().getObstacleList(); }
 	
 	public static List<WirelessNode> getNeighbors(WirelessNode node) { return node.getNeighborList(); }
 	
@@ -452,8 +450,7 @@ public class ProjectManager {
 	}
 
 	public static boolean addNewLabel(Label label) {
-		getProject();
-		List<Label> labelList = Project.getLabelList();
+		List<Label> labelList = getProject().getLabelList();
 		
 		// check for existing label
 		for (int i = 0; i < labelList.size(); i++) {
@@ -461,15 +458,13 @@ public class ProjectManager {
 				return false;
 		}
 		
-		getProject();
 		// add new label
-		Project.getLabelList().add(label);
+		getProject().getLabelList().add(label);
 		return true;
 	}
 	
 	public static boolean removeLabel(String labelName) {
-		getProject();
-		List<Label> labelList = Project.getLabelList();
+		List<Label> labelList = getProject().getLabelList();
 		Label lbl = null;
 		
 		// check for existing label
