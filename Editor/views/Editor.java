@@ -1204,23 +1204,13 @@ public class Editor extends MainContent implements Observer {
 //	    eventLabel.setLayoutData(dataEvent);
 //	}
 	
-	public void actionNew() {
-		if(this.project != null) {
-//			Shell shell = new Shell(getDisplay());
-//			MainWindow window1 = new MainWindow(shell);
-//	
-//			window1.setBlockOnOpen(true);
-//			window1.open();
-//			window1.getEditor().actionNew();
-//			
-			
-		}
-		Project project = ApplicationManager.newProject(Editor.this); 
-		if (project == null) return;
-		this.project = project;
-			showProject(project);
+	public void actionNew() {		
+		tabFolder.setSelection(0);
+		project = ApplicationManager.newProject(Editor.this); 
+		if (project == null) return;		
+		showProject(project);
 		updateNetworkInfoLabel();
-		updateDesign();
+		updateDesign();		
 	}
 	
 	public void actionSave() {

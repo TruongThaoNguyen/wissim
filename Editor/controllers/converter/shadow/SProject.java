@@ -544,6 +544,8 @@ public class SProject  extends Project implements TclObject
 	// region ------------------- Set ------------------- //
 
 	@Override public void setNodeRange(int value) {	
+		nodeRange = value;
+		
 		try {
 			TclObject propaga = getObjectbyLabel(Converter.parseIdentify(network.nodeConfig.getInsVar("-propType").getValue()));
 			TclObject antenna = getObjectbyLabel(Converter.parseIdentify(network.nodeConfig.getInsVar("-antType" ).getValue()));
@@ -618,11 +620,6 @@ public class SProject  extends Project implements TclObject
 	
 	// region ------------------- get ------------------- //
 
-	@Override
-	public int getNodeRange() {
-		return 40;
-	}
-	
 	@Override public String getSelectedChannel() 	{
 		String v = network.getInsVar("-channel").getValue();
 		if (v.startsWith("[new")) return v.substring(5, v.length() - 7);

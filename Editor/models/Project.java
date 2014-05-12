@@ -114,6 +114,9 @@ public abstract class Project {
 
 	public abstract WirelessNetwork getNetwork();
 
+	protected int nodeRange;
+	public int getNodeRange() { return nodeRange; } 
+	
 	public abstract void setNodeRange			(int value);	
 	public abstract void setQueueLength			(int queueLength);	
 	public abstract void setIddleEnergy			(double iddleEnergy);
@@ -121,8 +124,7 @@ public abstract class Project {
 	public abstract void setSleepEnergy			(double sleepEnergy);	
 	public abstract void setTransmissionEnergy	(double transmissionEnergy);
 	public abstract void setInitialEnergy		(double initialEnergy);
-
-	public abstract int		getNodeRange();	
+	
 	public abstract int		getQueueLength(); //		throws ParseException;
 	public abstract double 	getSleepEnergy(); //		throws ParseException;
 	public abstract double 	getTransmissionEnergy(); //	throws ParseException;		

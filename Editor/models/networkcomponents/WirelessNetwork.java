@@ -12,8 +12,10 @@ package models.networkcomponents;
 import java.util.List;
 
 public abstract class WirelessNetwork extends Network {
-	// size of network
-	private int xSize, ySize;
+	/**
+	 * size of network
+	 */
+	private static int xSize, ySize;
 	
 	// options for network size changing
 	public static final int LEFT = 0, CENTER = 1, RIGHT = 2, TOP = 0, BOTTOM = 2;
@@ -23,7 +25,7 @@ public abstract class WirelessNetwork extends Network {
 	public int getWidth() { return xSize; }
 	public int getLength() { return ySize; }
 	public int setWidth(int value) { return xSize = value; }
-	public int setLength(int value) { return xSize = value; }
+	public int setLength(int value) { return ySize = value; }
 	
 	/**
 	 * Set size for wireless network. Size changes also lead to changes in nodes
@@ -33,13 +35,13 @@ public abstract class WirelessNetwork extends Network {
 	 * @param lType
 	 */
 	public boolean setSize(int width, int length, int wType, int lType) {
-		int ew = width - this.xSize;
-		int el = length - this.ySize;
+		int ew = width - xSize;
+		int el = length - ySize;
 		
 		if (width <= 0 || length <= 0) return false;
 
-		this.xSize = width;
-		this.ySize = length;
+		xSize = width;
+		ySize = length;
 		
 		// default option is (right, bottom)
 		if ((wType != LEFT && wType != CENTER && wType != RIGHT) || (lType != TOP && lType != CENTER && lType != BOTTOM)) {
