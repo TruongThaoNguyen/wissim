@@ -20,6 +20,5 @@ public class AppEvent extends Event {
 		super(type, raisedTime);
 		
 		this.app = app;
-		this.app.addEvent(this);
 	}
 }
