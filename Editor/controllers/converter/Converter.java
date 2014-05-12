@@ -5,10 +5,14 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import scala.collection.immutable.Stream;
+import scala.util.parsing.input.StreamReader;
 import controllers.WorkSpace;
 import controllers.converter.shadow.SProject;
 import models.Project;

@@ -58,11 +58,35 @@ Antenna/OmniAntenna set Gr_ 1.0
 # it work like the 914MHz Lucent WaveLAN DSSS radio interface
 Phy/WirelessPhy set CPThresh_ 10.0
 Phy/WirelessPhy set CSThresh_ 1.559e-11
-Phy/WirelessPhy set RXThresh_ 3.652e-10
+Phy/WirelessPhy set RXThresh_ 1.20174e-07 ; # 40 m
 Phy/WirelessPhy set Rb_ 2*1e6
-Phy/WirelessPhy set freq_ 914e+6 
+Phy/WirelessPhy set freq_ 914e+08 
 Phy/WirelessPhy set L_ 1.0
-Phy/WirelessPhy set Pt_ 8.5872e-4    ;# 40m
+Phy/WirelessPhy set Pt_ 0.281838
+
+#	Pt_ = 8.5872e-4; // For 40m transmission range.
+#	Pt_ = 7.214e-3;  // For 100m transmission range.
+#	Pt_ = 0.2818; // For 250m transmission range.
+
+
+#	RxThresh 
+#	1m : 0.000192278     
+#	5m : 7.69113e-06
+#	9m : 2.37381e-06
+#	10m : 1.92278e-06
+#	25m : 3.07645e-07
+#	40m : 1.20174e-07
+#	50m : 7.69113e-08
+#	75m : 3.41828e-08
+#	100m : 1.42681e-08
+#	125m : 5.8442e-09
+#	150m : 2.81838e-09
+#	175m : 1.52129e-09
+#	200m : 8.91754e-10
+#	225m : 5.56717e-10
+#	250m : 3.65262e-10
+#	500m : 2.28289e-11
+#	1000m : 1.42681e-12
 
 Agent/ELLIPSE set energy_checkpoint_ $opt(checkpoint)
 Agent/ELLIPSE set alpha_ 0.4

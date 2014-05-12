@@ -1,8 +1,8 @@
 package controllers.converter.shadow;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -171,6 +171,15 @@ public class SProject  extends Project implements TclObject
 	public TclObject getObject(String key)
 	{
 		return insObj.get(key);
+	}
+	
+	public TclObject getObjectbyLabel(String label)
+	{
+		for (String s : insObj.keySet())
+		{			
+			if (insObj.get(s).getLabel().equals(label)) return insObj.get(s);
+		}
+		return null;
 	}
 	
 	public TclObject removeObject(String key)
@@ -535,7 +544,36 @@ public class SProject  extends Project implements TclObject
 	// region ------------------- Set ------------------- //
 
 	@Override public void setNodeRange(int value) {	
-		// TODO Auto-generated method stub }
+		try {
+			TclObject propaga = getObjectbyLabel(Converter.parseIdentify(network.nodeConfig.getInsVar("-propType").getValue()));
+			TclObject antenna = getObjectbyLabel(Converter.parseIdentify(network.nodeConfig.getInsVar("-antType" ).getValue()));
+			
+			Runtime r = Runtime.getRuntime();
+			Process p = r.exec(	"/home/trongnguyen/NS2/ns-2.35/indep-utils/propagation/threshold -m " +
+								propaga.getLabel().substring(12) + " " +
+								value);		
+			
+			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			
+			String line;
+			line = br.readLine();															// distance =		
+		    line = br.readLine();															// propagation model:
+		    line = br.readLine();															// 
+		    line = br.readLine();															// Selected parameters:
+		    line = br.readLine();	propaga.setInsVar("Pt_", 		line.substring(16));	// transmit power:		    	
+		    line = br.readLine();	propaga.setInsVar("freq_", 		line.substring(11));	// frequency:
+		    line = br.readLine();	antenna.setInsVar("Gt_",		line.substring(23));	// transmit antenna gain:
+		    line = br.readLine();	antenna.setInsVar("Gr_",		line.substring(22));	// receive antenna gain:
+		    line = br.readLine();	propaga.setInsVar("L_",			line.substring(13));	// system loss:
+		    line = br.readLine();	antenna.setInsVar("Z_",			line.substring(25));	// transmit antenna height:
+		    line = br.readLine();															// receive antenna height:
+		    line = br.readLine();															// 
+		    line = br.readLine();	antenna.setInsVar("RXThresh_",	line.substring(34));	// Receiving threshold RXThresh_ is:
+		    
+			br.close();			
+		} catch (Exception e) {
+			
+		}
 	}
 	
 	@Override public void setSelectedChannel(String selected) {	network.setInsVar("-channel", "[new " + selected + "]\n"); }	
@@ -582,7 +620,6 @@ public class SProject  extends Project implements TclObject
 
 	@Override
 	public int getNodeRange() {
-		// TODO Auto-generated method stub
 		return 40;
 	}
 	

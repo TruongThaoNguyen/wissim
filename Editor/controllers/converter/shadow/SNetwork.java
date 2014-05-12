@@ -41,7 +41,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	private HashMap<String, InsVar>  insVar = new HashMap<String, InsVar>();
 	private HashMap<String, Double> event = new HashMap<String, Double>();
 	
-	private SCommonObject nodeConfig; 
+	SCommonObject nodeConfig; 
 
 	// region ------------------- TCL properties ------------------- //
 	
