@@ -10,7 +10,7 @@ set opt(x)		1000		;# X dimension of the topography
 set opt(y)		1000		;# Y dimension of the topography
 
 set opt(ifqlen)		50		;# max packet in ifq
-set opt(nn)		1500		;# number of nodes
+set opt(nn)		0		;# number of nodes
 set opt(seed)		0.0
 set opt(stop)		500.0		;# simulation time
 set opt(tr)		Trace.tr	;# trace file
@@ -148,7 +148,7 @@ for {set i 0} {$i < $opt(nn)} {incr i} {
 }
 
 # set up node position
-source ./topo_data.tcl
+#source ./topo_data.tcl
 
 for {set i 0} {$i < $opt(nn)} { incr i } {
 	$ns_ initial_node_pos $mnode_($i) 5
@@ -159,7 +159,7 @@ for {set i 0} {$i < $opt(nn)} {incr i} {
 	$ns_ at $opt(stop).000000001 "$mnode_($i) reset"
 }
 
-source ./cbr.tcl
+#source ./cbr.tcl
 
 # ending nam and the simulation
 #$ns_ at $opt(stop) "$ns_ nam-end-wireless $opt(stop)" 

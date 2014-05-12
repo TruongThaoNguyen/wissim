@@ -46,10 +46,11 @@ public class SCommonObject implements TclObject
 	{
 		this.label = label;
 		
-		for (String key	: var.keySet())
-		{
-			this.insVar.put(key, new InsVar(var.get(key)));	
-		}	
+		if (var != null)
+			for (String key	: var.keySet())
+			{
+				this.insVar.put(key, new InsVar(var.get(key)));	
+			}	
 		
 		addInsProc();
 	}
