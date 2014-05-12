@@ -42,11 +42,6 @@ public abstract class Project {
 	 */
 	private static List<Area> obstacleList;
 	private static int obstacleIndex;
-
-	/**
-	 * Communicate range
-	 */
-	private static int nodeRange;
 	
 	/**
 	 * Transport protocol
@@ -56,7 +51,7 @@ public abstract class Project {
 	
 	public static void setSelectedApplicationProtocol(String value)	{ applicationProtocol 	= value; }
 	public static void setSelectedTransportProtocol(String value)	{ transportProtocol		= value; }
-	public static void setNodeRange(int value)						{ nodeRange 			= value; }
+	
 	public static void setPath(String value) 						{ path 					= value; }
 	public static void setCreatedDate(Date value)					{ createdDate 			= value; }
 	public static void setLastSavedDate(Date value) 				{ lastSavedDate 		= value; }
@@ -64,8 +59,7 @@ public abstract class Project {
 	public static void setObstacleList(List<Area> value)			{ obstacleList 			= value; }
 	
 	public static String 		getSelectedApplicationProtocol(){ return applicationProtocol; }
-	public static String 		getSelectedTransportProtocol()	{ return transportProtocol; }
-	public static int			getNodeRange()					{ return nodeRange; }
+	public static String 		getSelectedTransportProtocol()	{ return transportProtocol; }	
 	public static String		getPath() 						{ return path; }
 	public static Date 			getCreatedDate() 				{ return createdDate; }
 	public static Date 			getLastSavedDate() 				{ return lastSavedDate; }
@@ -119,7 +113,8 @@ public abstract class Project {
 	// region ------------------- Network properties ------------------- //
 
 	public abstract WirelessNetwork getNetwork();
-	
+
+	public abstract void setNodeRange			(int value);	
 	public abstract void setQueueLength			(int queueLength);	
 	public abstract void setIddleEnergy			(double iddleEnergy);
 	public abstract void setReceptionEnergy		(double receptionEnergy);
@@ -127,6 +122,7 @@ public abstract class Project {
 	public abstract void setTransmissionEnergy	(double transmissionEnergy);
 	public abstract void setInitialEnergy		(double initialEnergy);
 
+	public abstract int		getNodeRange();	
 	public abstract int		getQueueLength(); //		throws ParseException;
 	public abstract double 	getSleepEnergy(); //		throws ParseException;
 	public abstract double 	getTransmissionEnergy(); //	throws ParseException;		
