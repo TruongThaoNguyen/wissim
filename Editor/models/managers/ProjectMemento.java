@@ -24,18 +24,18 @@ public class ProjectMemento {
 	 * Save the states of project
 	 * @param p
 	 */
-	public void save(Project p) {
-		this.path = p.getPath();
-		doc = Parser.saveProjectToDocument(p);
-	}
+//	public void save(Project p) {
+//		this.path = p.getPath();
+//		doc = Parser.saveProjectToDocument(p);
+//	}
 	
 	/**
 	 * Restore project
 	 * @return
 	 */
-	public Project restore() {
-		return Parser.loadProjectFromDocument(doc, path);
-	}
+//	public Project restore() {
+//		return Parser.loadProjectFromDocument(doc, path);
+//	}
 	
 	/**
 	 * Gets description

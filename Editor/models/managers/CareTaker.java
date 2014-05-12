@@ -34,7 +34,7 @@ public class CareTaker extends Observable {
 		}
 		
 		ProjectMemento m = new ProjectMemento(desc);
-		m.save(project);
+//		m.save(project);
 		mementoList.add(m);
 		currentState++;
 		
@@ -49,15 +49,15 @@ public class CareTaker extends Observable {
 	 * @param index
 	 * @return
 	 */
-	public Project getState(int index) {
-		ProjectMemento pm = mementoList.get(index);
-		currentState = index;
-		
-		setChanged();
-		notifyObservers(currentState);
-		
-		return pm.restore();
-	}
+//	public Project getState(int index) {
+//		ProjectMemento pm = mementoList.get(index);
+//		currentState = index;
+//		
+//		setChanged();
+//		notifyObservers(currentState);
+//		
+//		return pm.restore();
+//	}
 	
 	/**
 	 * Get the current index
@@ -71,36 +71,36 @@ public class CareTaker extends Observable {
 	 * Get last state
 	 * @return
 	 */
-	public Project getLastState() {
-		if (currentState > 0) {
-			currentState--;
-			System.out.println("Get State: " + currentState);
-			
-			setChanged();
-			notifyObservers(currentState);
-			
-			return mementoList.get(currentState).restore();
-		} else
-			return null;
-	}
+//	public Project getLastState() {
+//		if (currentState > 0) {
+//			currentState--;
+//			System.out.println("Get State: " + currentState);
+//			
+//			setChanged();
+//			notifyObservers(currentState);
+//			
+//			return mementoList.get(currentState).restore();
+//		} else
+//			return null;
+//	}
 	
 	/**
 	 * Get next state
 	 * @return
 	 */
-	public Project getNextState() {
-		if (currentState < mementoList.size() - 1) {
-			currentState++;
-			System.out.println("Get state: " + currentState);
-			
-			setChanged();
-			notifyObservers(currentState);
-			
-			return mementoList.get(currentState).restore();
-		} else {
-			return null;
-		}
-	}
+//	public Project getNextState() {
+//		if (currentState < mementoList.size() - 1) {
+//			currentState++;
+//			System.out.println("Get state: " + currentState);
+//			
+//			setChanged();
+//			notifyObservers(currentState);
+//			
+//			return mementoList.get(currentState).restore();
+//		} else {
+//			return null;
+//		}
+//	}
 	
 	/**
 	 * Get size of states stored

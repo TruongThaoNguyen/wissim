@@ -108,7 +108,7 @@ public class LabelDialog extends Dialog {
 				int index = 0;
 				
 				for (int i = 0; i < items.length; i++) {
-					boolean isRemove = ProjectManager.removeLabel(workspace.getProject(), items[i].getText(1));
+					boolean isRemove = ProjectManager.removeLabel(items[i].getText(1));
 					
 					if (isRemove == true) {
 						for (int j = 0; j < table.getItemCount(); j++) {

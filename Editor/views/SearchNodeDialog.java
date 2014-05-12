@@ -90,7 +90,7 @@ public class SearchNodeDialog extends Dialog {
 				case "All":
 					try {
 						int id = Integer.parseInt(text.getText());
-						WirelessNode wnode = ProjectManager.getNodeWithId(workspace.getProject(), id);
+						WirelessNode wnode = ProjectManager.getNodeWithId(id);
 						if (wnode != null) {
 							workspace.deselectGraphicObjects();
 							

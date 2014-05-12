@@ -86,15 +86,11 @@ public class ApplicationManager {
 	
 			if (confirmed == true) {
 				Project project;
-				try {
-					project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "wis"), result.width, result.height, result.time);
-					ApplicationSettings.applyDefaultSettingsToProject(project);
-					newProjectCount++;
-					
-					return project;
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "wis"), result.width, result.height, result.time);
+				ApplicationSettings.applyDefaultSettingsToProject(project);
+				newProjectCount++;
+				
+				return project;
 			}		
 		mainWindow.setFileProject(result.path+"/"+result.name);
 		return null;
@@ -128,7 +124,7 @@ public class ApplicationManager {
 		
 		if (workspace == null) return;
 		try {					
-			ProjectManager.saveProject(workspace.getProject());
+			ProjectManager.saveProject();
 			
 			workspace.setSavedStateIndex(workspace.getCareTaker().getCurrentStateIndex());
 			
@@ -158,7 +154,7 @@ public class ApplicationManager {
 		try {
 			Project project = workspace.getProject();
 			project.setPath(path);
-			ProjectManager.saveProject(project);
+			ProjectManager.saveProject();
 		} catch (Exception e) {
 			MessageDialog.openError(workspace.getShell(), "Error", "Some errors happened. Can not save file. Please try again later");
 		}
@@ -232,7 +228,7 @@ public class ApplicationManager {
 		CTabFolder tabFolder = (CTabFolder) workspace.getParent().getParent();
 		
 		try {
-			ProjectManager.project = null;
+//			ProjectManager.project = null;
 			
 			// remove CtabItem object
 			int i = 0;
@@ -277,7 +273,7 @@ public class ApplicationManager {
 		
 		CreateSingleNodeResult result = (CreateSingleNodeResult)new CreateNodeDialog(workspace.getShell(), SWT.SHEET).open();
 		if (result != null) {
-			WirelessNode wnode = ProjectManager.createSingleNode(workspace.getProject(), result.posX, result.posY, workspace.getProject().getNodeRange());
+			WirelessNode wnode = ProjectManager.createSingleNode(result.posX, result.posY, workspace.getProject().getNodeRange());
 			
 			if (wnode != null) {
 //				workspace.getCareTaker().save(workspace.getProject(), "Create a single node");
@@ -304,7 +300,7 @@ public class ApplicationManager {
 		CreateNodeSetResult result = (CreateNodeSetResult) new CreateNodeSetDialog(workspace.getShell(), SWT.SHEET, null).open();
 		
 		if (result.creationType == CreateNodeSetResult.RANDOM && result.areaType == CreateNodeSetResult.WHOLE_NETWORK) {
-			ProjectManager.createRandomNodes(workspace.getProject(), result.numOfNodes, 0, null);
+			ProjectManager.createRandomNodes(result.numOfNodes, 0, null);
 			workspace.updateLayout();
 			workspace.getCareTaker().save(workspace.getProject(), "Create a set of nodes");
 			workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);
@@ -359,7 +355,7 @@ public class ApplicationManager {
 	}
 	
 	public static void pasteNode(Workspace workspace, int x, int y, int range) {
-		WirelessNode wnode = ProjectManager.createSingleNode(workspace.getProject(), x, y, range);
+		WirelessNode wnode = ProjectManager.createSingleNode(x, y, range);
 		
 		if (wnode != null) {
 			workspace.getCareTaker().save(workspace.getProject(), "Create a single node");
@@ -486,7 +482,7 @@ public class ApplicationManager {
 			}								
 		}
 		
-		List<WirelessNode> nodeList = ProjectManager.shortestPath(workspace.getProject(), gStartNode.getWirelessNode(), gEndNode.getWirelessNode());
+		List<WirelessNode> nodeList = ProjectManager.shortestPath(gStartNode.getWirelessNode(), gEndNode.getWirelessNode());
 
 		GraphicPath spath = new GraphicPath(GraphicPath.SHORTEST);
 		spath.setStartNode(gStartNode);
@@ -515,7 +511,7 @@ public class ApplicationManager {
 			}								
 		}
 		
-		List<WirelessNode> nodeList = ProjectManager.greedyPath(workspace.getProject(), gStartNode.getWirelessNode(), gEndNode.getWirelessNode());
+		List<WirelessNode> nodeList = ProjectManager.greedyPath(gStartNode.getWirelessNode(), gEndNode.getWirelessNode());
 
 		GraphicPath greedyPath = new GraphicPath(GraphicPath.GREEDY);
 		
@@ -571,7 +567,7 @@ public class ApplicationManager {
 	public static void createARandomNode(Workspace w) {
 		if (w != null) {
 			// create a random node
-			WirelessNode wnode = ProjectManager.createARandomNode(w.getProject());
+			WirelessNode wnode = ProjectManager.createARandomNode();
 			
 			if (wnode != null) {
 				// store the new state of project
@@ -609,7 +605,7 @@ public class ApplicationManager {
 	
 	public static void checkConnectivity(Workspace workspace) {
 		if (workspace != null) {
-			boolean isConnect = ProjectManager.checkConnectivity(workspace.getProject());
+			boolean isConnect = ProjectManager.checkConnectivity();
 			
 			if (isConnect)
 				MessageDialog.openInformation(workspace.getShell(), "Network Connectivity", 
@@ -652,7 +648,7 @@ public class ApplicationManager {
 			
 			if (result != null) {
 				for (Point p : result.pointList) {
-					ProjectManager.createSingleNode(workspace.getProject(), p.x, p.y, workspace.getProject().getNodeRange());
+					ProjectManager.createSingleNode( p.x, p.y, workspace.getProject().getNodeRange());
 				}
 				
 				workspace.updateLayout();
@@ -669,7 +665,7 @@ public class ApplicationManager {
 
 		if (result == null) return;			
 		
-		ProjectManager.changeNetworkSize(workspace.getProject(), result.width, result.height, result.wType, result.lType);
+		ProjectManager.changeNetworkSize(result.width, result.height, result.wType, result.lType);
 		workspace.updateLayout();
 		workspace.getGraphicNetwork().redraw();
 	}

@@ -51,7 +51,6 @@ import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import controllers.WorkSpace;
-import controllers.actions.EditorActionController;
 import controllers.converter.Converter;
 import controllers.graphicscomponents.GSelectableObject;
 import controllers.graphicscomponents.GWirelessNode;
@@ -270,10 +269,22 @@ public class Editor extends MainContent implements Observer {
 		tabFolder.addSelectionListener(new SelectionAdapter() {
 			  public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
 				  if(tabFolder.getSelectionIndex() == 0){
-					  ec.updateEditToDesign(Editor.this, styledText);
+					  updateDesign();
+					  
 				  }
 				  else{
-					  System.out.println("vao day ngay tab 1");
+					  if(styledText.getText() != "") {
+						  try {
+							project = Converter.CTD(styledText.getText());
+							if(project != null) {
+								getWorkspace().setProject(project);
+							}
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						  
+					  }
 				  }
 //			    tabFolder.getSelection()[0]; // This should be your TabItem/CTabItem
 			  }
@@ -1043,8 +1054,9 @@ public class Editor extends MainContent implements Observer {
 	
 	public void actionOpen(Editor editor){
 		
-		boolean isWin =  WorkSpace.isWindow();
-		WorkSpace.setDirectory(isWin? "D:\\Work\\scripts\\30\\gpsr\\" : "test_store/");
+//		boolean isWin =  WorkSpace.isWindow();
+//		WorkSpace.setDirectory(isWin? "D:\\Work\\scripts\\30\\gpsr\\" : "test_store/");
+		WorkSpace.setDirectory("test_store/");
 		String fileName =  WorkSpace.getDirectory() + "simulate.tcl";
 		BufferedReader br = null;
 		try {
@@ -1114,12 +1126,12 @@ public class Editor extends MainContent implements Observer {
 		Workspace workspace = getWorkspace();
 		fileProject = fileProject.replace(".wis", ".tcl");
 		System.out.println(fileProject);
-		try {
-			ScriptGenerator.generateTcl(workspace.getProject(), fileProject, false, false);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			ScriptGenerator.generateTcl(workspace.getProject(), fileProject, false, false);
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	public void updateDesign(){
@@ -1577,47 +1589,47 @@ public class Editor extends MainContent implements Observer {
 		    		
 		    		if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'F' || e.keyCode == 'f')){
 		    			
-		    			ec.actionSearchNode(getWorkspace());
+		    			actionSearchNode();
 		    		}
 			    	
 			    	if(((e.stateMask & SWT.SHIFT) == SWT.SHIFT) && (e.keyCode == '=')){
-			    		ec.actionZoomIn(getWorkspace());
+			    		actionZoomIn();
 			    	}
 			    	
 			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == '-')){
-			    		ec.actionZoomOut(getWorkspace());
+			    		actionZoomOut();
 			    	}
 			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'R' || e.keyCode == 'r')){
-			    		ec.actionCreateARandomNode(getWorkspace());
+			    		actionCreateARandomNode();
 			        }
 			    	
 			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'N' || e.keyCode == 'n')){
-			    		ec.actionNew(Editor.this);
+			    		actionNew();
 			    	}
 			    	
 			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'O' || e.keyCode == 'o')){
-			    		ec.actionOpen(Editor.this);
+			    		actionOpen(Editor.this);
 			    	}
 			    	
 			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'S' || e.keyCode == 's')){
-			    		ec.actionSave(Editor.this);
+			    		actionSave();
 			    	}
 			    	
 			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'Z' || e.keyCode == 'z')){
-			    		ec.actionUndo(getWorkspace());
+			    		actionUndo();
 			    	}
 			    	
 			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'Y' || e.keyCode == 'y')){
-			    		ec.actionRedo(getWorkspace());
+			    		actionRedo();
 			    	}
 			    	
 			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'I' || e.keyCode == 'i')){
-			    		ec.actionViewNodeInfo(getWorkspace());				
+			    		actionViewNodeInfo();				
 			    	}
 			    	
 //			    	if((e.stateMask & SWT.DEL) == SWT.DEL){
 			    	if(e.character == SWT.DEL){
-			    		ec.actionDeleteNodes(getWorkspace());
+			    		actionDeleteNodes();
 			    	}
 		    	}	
 		    }
@@ -1970,7 +1982,6 @@ public class Editor extends MainContent implements Observer {
 	private StyledText styledText;
 	private StyledText styledTextConsole;
 	
-	private EditorActionController ec;
 	
 	private Project project;
 	

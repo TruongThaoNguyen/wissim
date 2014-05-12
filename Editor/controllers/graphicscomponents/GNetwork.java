@@ -131,7 +131,7 @@ public class GNetwork extends Canvas {
 								y=(workspace.getGraphicNetwork().getNetwork().getLength()-4);
 							
 							//System.out.print(ApplicationSettings.nodeRange);
-							WirelessNode node = ProjectManager.createSingleNode(workspace.getProject(), x, y, ApplicationSettings.nodeRange);
+							WirelessNode node = ProjectManager.createSingleNode( x, y, ApplicationSettings.nodeRange);
 //							workspace.getCareTaker().save(workspace.getProject(), "generate node");
 							workspace.updateLayout();
 							workspace.deselectGraphicObjects();
@@ -585,7 +585,7 @@ public class GNetwork extends Canvas {
 					break;
 				case CreateNodeSetResult.RANDOM:
 					Workspace w = (Workspace) getParent();
-					ProjectManager.createRandomNodes(w.getProject(), result.numOfNodes, w.getProject().getNodeRange(), selectedArea);
+					ProjectManager.createRandomNodes(result.numOfNodes, w.getProject().getNodeRange(), selectedArea);
 					w.getCareTaker().save(w.getProject(), "Deploy nodes in selected area");
 					w.updateLayout();					
 					clearSelectedArea();

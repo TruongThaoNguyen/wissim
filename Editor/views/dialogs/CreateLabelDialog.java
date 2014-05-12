@@ -110,7 +110,7 @@ public class CreateLabelDialog extends Dialog {
 				java.awt.Color color = new java.awt.Color(canvas.getBackground().getRed(), canvas.getBackground().getGreen(), canvas.getBackground().getBlue());
 				GraphicLabel label = new GraphicLabel(txtLabel.getText(), color);
 				
-				if (!ProjectManager.addNewLabel(project, label)) {
+				if (!ProjectManager.addNewLabel(label)) {
 					MessageDialog.openError(getParent(), "Error", "A label with this name is existed. Try a different name");
 					return;
 				}

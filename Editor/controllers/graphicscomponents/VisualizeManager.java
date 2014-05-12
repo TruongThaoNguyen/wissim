@@ -76,7 +76,7 @@ public class VisualizeManager {
     }
     
 	public void calculateRNGGraph() {
-		if (ProjectManager.checkConnectivity(((Workspace) gnetwork.getParent()).getProject())) {
+		if (ProjectManager.checkConnectivity()) {
 	    	PlanarGraphAlgorithm algorithm = new PlanarGraphAlgorithm(gnetwork.getNetwork());
 	    	algorithm.setType(PlanarGraphAlgorithm.RNG);
 	    	rngGraph = (Graph) algorithm.doAlgorithm();
@@ -85,7 +85,7 @@ public class VisualizeManager {
     }
     
 	public void calculateGGGraph() {
-		if (ProjectManager.checkConnectivity(((Workspace) gnetwork.getParent()).getProject())) {		
+		if (ProjectManager.checkConnectivity()) {		
 	    	PlanarGraphAlgorithm algorithm = new PlanarGraphAlgorithm(gnetwork.getNetwork());
 	    	algorithm.setType(PlanarGraphAlgorithm.GG);
 	    	ggGraph = (Graph) algorithm.doAlgorithm();    	
