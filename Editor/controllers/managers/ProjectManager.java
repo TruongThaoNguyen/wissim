@@ -4,48 +4,18 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import javax.imageio.ImageIO;
-
+import controllers.WorkSpace;
 import controllers.converter.Converter;
-import controllers.converter.shadow.SNode;
-
-//import org.apache.pdfbox.pdmodel.PDDocument;
-//import org.apache.pdfbox.pdmodel.PDPage;
-//import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-//import org.apache.pdfbox.pdmodel.font.PDType1Font;
-//import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
-//import org.apache.pdfbox.pdmodel.graphics.xobject.PDJpeg;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import models.Project;
-import models.managers.Parser;
-import models.managers.ScriptGenerator;
+import models.converter.ParseException;
 import models.networkcomponents.Node;
 import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.WirelessNode;
@@ -56,8 +26,6 @@ import models.networkcomponents.events.AppEvent;
 import models.networkcomponents.events.NodeEvent;
 import models.networkcomponents.features.*;
 import models.networkcomponents.protocols.ApplicationProtocol;
-import nu.xom.ParsingException;
-import nu.xom.ValidityException;
 
 /**
  * Acts as a proxy between models and the program
@@ -65,62 +33,102 @@ import nu.xom.ValidityException;
  *
  */
 public class ProjectManager {
-	public static final int IMAGE_SMALL_SIZE = 600, IMAGE_MEDIUM_SIZE = 800, IMAGE_LARGE_SIZE = 1000;
-	public static final int TCL = 0, OMNET = 1;
+	public static final int IMAGE_SMALL_SIZE = 600, IMAGE_MEDIUM_SIZE = 800, IMAGE_LARGE_SIZE = 1000;	
 	
-	// list of projects available in the program
-	public static Project project = null;
+	/**
+	 *  available project in the program
+	 */	
 	public static Project getProject() {
+		return Converter.global;
+	}
+	
+	private static WirelessNetwork getNetwork() {
+		return Converter.global.getNetwork();
+	}
+	
+	/**
+	 * Create new project with default script.
+	 * @param path path to store Tcl script file
+	 * @param name name of project ??
+	 * @param width xSize of network
+	 * @param length ySize of network
+	 * @param time Simulation time
+	 * @return new project	
+	 */
+	public static Project createProject(String path, String name, int width, int length, int time) {
+		// checks input validity
+		if (width <= 0 || length <= 0 || time <= 0) return null;
+		
+		// create default script
+		List<String> defaulscript = Converter.DefaultScript();
+		StringBuilder script = new StringBuilder();
+		for (String s : defaulscript) {
+			script.append(s);
+		}
+		
+		Project project;		
+		try {
+			project = Converter.CTD(script.toString());
+		} catch (ParseException e) {
+			project = null;
+		}
+				
+		// Initialize wireless network
+		WirelessNetwork network = project.getNetwork();
+		network.setName(name);
+		network.setTime(time);
+		network.setWidth(width);
+		network.setLength(length);		
+		
+		WorkSpace.setDirectory(path);
+		
+		// save project
+		try {
+			saveProject();
+		} catch(IOException e) {}
+				
 		return project;
 	}
 
 	/**
-	 *  Create initial project with specified path and network
-	 * @param path Path of project
-	 * @param name Name of network
-	 * @param width Network width
-	 * @param length Network length
-	 * @param time Total network simualtion time
-	 * @return The created project
-	 * @throws IOException Path not found or not valid
+	 * Store Tcl script to file
+	 * @throws IOException
 	 */
-	public static Project createProject(String path, String name, int width, int length, int time) throws IOException {
-		// checks input validity
-		if (width <= 0 || length <= 0 || time <= 0)
-			return null;
+	public static void saveProject() throws IOException {				
+		String fileName = WorkSpace.getDirectory() + "simulate.tcl";
 		
-		String defaulscript = Converter.defaultScript();
-		
-		Project project = Converter.CTD(defaulscript);
-		
-		
-		// create intial wireless network
-		WirelessNetwork network = new WirelessNetwork(name, time, width, length);
-		
-		// create project
-		Project project = new Project(path, network);
-
-		
-		// save project
-		saveProject(project);		
-		
-		return project;
-	}
-
-	public static boolean saveProject(Project project) throws IOException {		
-		return Parser.saveProject(project);
+		BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));		
+		for (String string : Converter.DTC()) {
+			bw.write(string);
+		}
+		bw.close();				
 	}
 	
-	public static Project loadProject(String path) throws ValidityException, ParsingException, IOException {
-		Project project = Parser.loadProject(path);		
-		
-		return project;
+	/**
+	 * Open Tcl script file
+	 * @param path path to tcl script file
+	 * @return new project 
+	 * @throws ParsingException
+	 * @throws IOException
+	 */
+	public static Project loadProject(String path) throws IOException, ParseException {
+		WorkSpace.setDirectory(path);		
+		BufferedReader br = new BufferedReader(new FileReader(path));
+		StringBuilder sb = new StringBuilder();
+	    String line = br.readLine();		
+		while (line != null) {
+			sb.append(line);
+		    sb.append(System.lineSeparator());
+		    line = br.readLine();		    
+		}
+	    br.close();						
+		return Converter.CTD(sb.toString());
 	}
 	
-	public static boolean changeTime(Project project, int time) {
+	public static boolean changeTime(int time) {
 		if (time <= 0) return false;
 		
-		project.getNetwork().setTime(time);
+		getProject().getNetwork().setTime(time);
 		
 		return true;
 	}
@@ -185,17 +193,27 @@ public class ProjectManager {
         return bufferedImage;
 	}
 
-	public static WirelessNode createSingleNode(Project project, int x, int y, int range) {
-		WirelessNetwork network = project.getNetwork();
+	/**
+	 * Create new single node
+	 * @param x 
+	 * @param y
+	 * @param range
+	 * @return new node
+	 */
+	public static WirelessNode createSingleNode(int x, int y, int range) {
+		WirelessNetwork network = getNetwork();
 		
 		if (network == null) return null;		
-		if (x < 0 || x > network.getWidth() || y < 0 || y > network.getLength() || range < 0) return null;
+		if (x < 0 || x > network.getWidth() || y < 0 || y > network.getLength() || range <= 0) return null;
 		
+		getProject();
 		// check if the location is inside a hole
-		if(project.getObstacleList() != null)
-		for (Area obstacle : project.getObstacleList()) {
-			if (obstacle.contains(x, y))
-				return null;
+		if(Project.getObstacleList() != null)
+		{
+			getProject();
+			for (Area obstacle : Project.getObstacleList()) {
+				if (obstacle.contains(x, y)) return null;
+			}
 		}
 		
 		// check existing node at (x, y)
@@ -203,94 +221,143 @@ public class ProjectManager {
 		for (int i = 0; i < nodeList.size(); i++) {
 			WirelessNode w = (WirelessNode) nodeList.get(i);
 			
-			if (w.getX() == x && w.getY() == y)
-				return null;
+			if (w.getX() == x && w.getY() == y)	return null;
 		}			
 		
 		// create new node and add to network
-//		return new SNode((SNetwork)network, x, y, range);
-		//return new WirelessNode(network, x, y, range);
-		WirelessNode wn = (WirelessNode) network.addNode(x, y, range);
-		return wn;
+		return (WirelessNode) network.addNode(x, y, range);
 	}
-	
-	public static WirelessNode createARandomNode(Project project) {
-		WirelessNetwork network = project.getNetwork();		
+
+	/**
+	 * Create a node with random position
+	 * @param project
+	 * @return
+	 */
+	public static WirelessNode createARandomNode() {
+		WirelessNetwork network = getNetwork();		
 		if (network == null) return null;
 		
-		Random rand = new Random();		
-		return ProjectManager.createSingleNode(project, rand.nextInt(network.getWidth()), rand.nextInt(network.getLength()), project.getNodeRange());
+		Random rand = new Random();
+		WirelessNode node = null;
+		while (node == null) node = createSingleNode(rand.nextInt(network.getWidth()), rand.nextInt(network.getLength()), getProject().getNodeRange());							
+		return node;
 	}
 	
-	public static boolean createRandomNodes(Project project, int numOfNodes, int range, Area area) {
-		if (range == 0) range = 40;
+	/**
+	 * Create a set of nodes with random position
+	 * @param numOfNodes
+	 * @param range
+	 * @param area
+	 * @return
+	 */
+	public static boolean createRandomNodes(int numOfNodes, int range, Area area) {
+		if (range == 0) range = getProject().getNodeRange();
 
-		WirelessNetwork nw = project.getNetwork();
-		
+		WirelessNetwork nw = getNetwork();		
 		if (nw == null) return false;
 		
-		Random rand = new Random();
-		
+		Random rand = new Random();		
+
 		int i = 0;
-		while (i < numOfNodes) {
-			WirelessNode wnode = null;
-			
-			if (area == null)
-				wnode = ProjectManager.createSingleNode(project, rand.nextInt(nw.getWidth()), rand.nextInt(nw.getLength()), range);
-			else {
-				int x = rand.nextInt(area.getBounds().width) + area.getBounds().x;
-				int y = rand.nextInt(area.getBounds().height) + area.getBounds().y;
-				
-				if (area.contains(x, y))
-					wnode = ProjectManager.createSingleNode(project, x, y, range);
+		
+		if (area == null)
+		{
+			while (i < numOfNodes)
+			{
+				WirelessNode wnode = ProjectManager.createSingleNode(rand.nextInt(nw.getWidth()), rand.nextInt(nw.getLength()), range);
+				if (wnode != null) i++;
 			}
+		}
+		else
+		{
+			while (i < numOfNodes)
+			{
+				WirelessNode wnode = null;				
+				int x, y;
+				do {
+					x = rand.nextInt(area.getBounds().width) + area.getBounds().x;
+					y = rand.nextInt(area.getBounds().height) + area.getBounds().y;
+				} while (area.contains(x, y)); 
 			
-			if (wnode != null)
-				i++;
+				wnode = ProjectManager.createSingleNode(x, y, range);
+				
+				if (wnode != null) i++;
+			}
 		}
 		
 		return true;
 	}
 	
-	public static boolean createGridNodes(Project project, Area area, int gSizeX, int gSizeY, int range) {
-		//TODO handle area
-		
-		WirelessNetwork nw = project.getNetwork();
-		
-		if (nw == null) return false;
+	/**
+	 * Create a set of nodes with position is in grid
+	 * @param area
+	 * @param gSizeX
+	 * @param gSizeY
+	 * @param range
+	 * @return
+	 */
+	public static boolean createGridNodes(Area area, int gSizeX, int gSizeY, int range) {							
+		WirelessNetwork nw = getNetwork();
 		
 		int x = gSizeX, y = gSizeY;
 		
-		while (y < nw.getLength()) {
-			while (x < nw.getWidth()) {
-				ProjectManager.createSingleNode(project, x, y, range);				
-				x+= gSizeX;
+		if (area != null)
+		{
+			while (y < nw.getLength()) {
+				while (x < nw.getWidth()) {
+					if (area.contains(x, y)) ProjectManager.createSingleNode(x, y, range);				
+					x+= gSizeX;
+				}
+				y += gSizeY;
 			}
-			y += gSizeY;
+		}
+		else
+		{
+			while (y < nw.getLength()) {
+				while (x < nw.getWidth()) {
+					ProjectManager.createSingleNode(x, y, range);				
+					x+= gSizeX;
+				}
+				y += gSizeY;
+			}
 		}
 		
 		return true;
 	}
-	
+
+	/**
+	 * Create new event
+	 * @param node
+	 * @param eventType
+	 * @param raisedTime
+	 * @return
+	 */
 	public static boolean createEvent(WirelessNode node, int eventType, int raisedTime) { 
 		switch (eventType) {
-		case NodeEvent.ON:
-		case NodeEvent.OFF:			
-			new NodeEvent(eventType, raisedTime, node);
-			return true;
-		default:
-			return false;
+			case NodeEvent.ON:
+			case NodeEvent.OFF:
+				node.addEvent(eventType, raisedTime);				
+				return true;
+			default:
+				return false;
 		}
 	}
-	
+
+	/**
+	 * Create new event
+	 * @param app
+	 * @param eventType
+	 * @param raisedTime
+	 * @return
+	 */
 	public static boolean createEvent(ApplicationProtocol app, int eventType, int raisedTime) { 
 		switch(eventType) {
-		case AppEvent.START:
-		case AppEvent.STOP:
-			new AppEvent(eventType, raisedTime, app);
-			return true;
-		default:
-			return false;
+			case AppEvent.START:
+			case AppEvent.STOP:
+				app.addEvent(eventType, raisedTime);				
+				return true;
+			default:
+				return false;
 		}
 	}
 	
@@ -299,8 +366,10 @@ public class ProjectManager {
 		return nw.removeNode(node);
 	}
 	
-	public static boolean deleteAllNodes(Project project) {
-		WirelessNetwork network = project.getNetwork();
+	public static boolean deleteAllNodes() {
+		// TODO: create new method to remove all nodes to improve performance
+		
+		WirelessNetwork network = getNetwork();
 		
 		for (int i = 0; i < network.getNodeList().size(); i++) {
 			network.removeNode(network.getNodeList().get(i));
@@ -313,14 +382,15 @@ public class ProjectManager {
 	//public static Area createObstacle(Pattern pattern, double scale) { return null; }
 	
 	// create Obstacle 
-	public static boolean addObstacle(Project project, Area area) { return false; }
+	public static boolean addObstacle(Area area) { return false; }
 	
-	public static List<Area> getObstacles(Project project) { return null; }
+	public static List<Area> getObstacles() { getProject();
+	return Project.getObstacleList(); }
 	
-	public static List<WirelessNode> getNeighbors(WirelessNode node) { return null; }
+	public static List<WirelessNode> getNeighbors(WirelessNode node) { return node.getNeighborList(); }
 	
-	public static WirelessNode getNodeWithId(Project project, int id) { 
-		WirelessNetwork nw = project.getNetwork();
+	public static WirelessNode getNodeWithId(int id) { 
+		WirelessNetwork nw = getNetwork();
 		List<Node> nodeList = nw.getNodeList();
 		
 		for (int i = 0; i < nodeList.size(); i++) {
@@ -333,12 +403,12 @@ public class ProjectManager {
 	
 	public static boolean setLabel(Project project, WirelessNode node, String labelName) {
 		if (labelName == "") return false;
-		
+		node.setName(labelName);
 		return true;
 	}
 	
-	public static WirelessNode getNodeWithName(Project project, String name) { 
-		WirelessNetwork nw = project.getNetwork();
+	public static WirelessNode getNodeWithName(String name) { 
+		WirelessNetwork nw = getNetwork();
 		List<Node> nodeList = nw.getNodeList();
 		
 		for (int i = 0; i < nodeList.size(); i++) {
@@ -360,43 +430,30 @@ public class ProjectManager {
 	 * @param lType Options for length changing: extend(trin) to top, center or bottom
 	 * @return
 	 */
-	public static boolean changeNetworkSize(Project project, int width, int length, int wType, int lType) {
-		WirelessNetwork network = project.getNetwork();
+	public static boolean changeNetworkSize(int width, int length, int wType, int lType) {
+		WirelessNetwork network = getNetwork();
 		
 		// changing network size
 		return network.setSize(width, length, wType, lType);
 	}
 	
-	public static boolean generateNodeLocationData(Project project, String path, int mode) throws IOException { 
-		return Parser.generateNodeLocationData(project, path, mode);
-	}
-	
-	public static boolean checkConnectivity(Project project) { 
-		if (project == null) return false;
+	public static boolean checkConnectivity() { 
+		if (getProject() == null) return false;
 		
-		WirelessNetwork wn = project.getNetwork();
+		WirelessNetwork wn = getNetwork();
 		if (wn == null || wn.getNodeList() == null || wn.getNodeList().size() == 0) return false;
 		
 		BFSAlgorithm algorithm = new BFSAlgorithm(wn);
 		return algorithm.checkConnectivity();
 	}
 	
-	public static boolean generateScript(Project project, String path, int type) throws FileNotFoundException {
-		switch (type) {
-		case TCL:
-			return ScriptGenerator.generateTcl(project, path, false, false);
-		case OMNET:
-		default:
-			return false;
-		}
-	}
-	
 	public static boolean moveNode(WirelessNode node, int newX, int newY) {
 		return node.setPosition(newX, newY);
 	}
 
-	public static boolean addNewLabel(Project project, Label label) {
-		List<Label> labelList = project.getLabelList();
+	public static boolean addNewLabel(Label label) {
+		getProject();
+		List<Label> labelList = Project.getLabelList();
 		
 		// check for existing label
 		for (int i = 0; i < labelList.size(); i++) {
@@ -404,13 +461,15 @@ public class ProjectManager {
 				return false;
 		}
 		
+		getProject();
 		// add new label
-		project.getLabelList().add(label);
+		Project.getLabelList().add(label);
 		return true;
 	}
 	
-	public static boolean removeLabel(Project project, String labelName) {
-		List<Label> labelList = project.getLabelList();
+	public static boolean removeLabel(String labelName) {
+		getProject();
+		List<Label> labelList = Project.getLabelList();
 		Label lbl = null;
 		
 		// check for existing label
@@ -438,34 +497,10 @@ public class ProjectManager {
 		
 		return label.getNodeList().add(node);
 	}
-	
-	public static void main(String[] args) {
-		WirelessNetwork network = new WirelessNetwork("leecom", 200, 500, 500);
-		new WirelessNode(network, 100, 100, 40);
-		new WirelessNode(network, 125, 200, 40);
-		new WirelessNode(network, 157, 320, 40);
-		new WirelessNode(network, 11, 400, 40);
-		new WirelessNode(network, 205, 376, 40);
-		new WirelessNode(network, 125, 80, 40);
-		
-		Project project = new Project("", network);
-		
-		//BufferedImage image = exportNetworkToImage(project, IMAGE_SMALL_SIZE);
-		
-//		exportNetworkToPdf(project, "");
-		
-		//File file = new File("D:\\myimage.png");
-//		try {
-//			ImageIO.write(image, "png", file);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-	}
-	
+
 	@SuppressWarnings("unchecked")
-	public static List<WirelessNode> greedyPath(Project project, WirelessNode startNode, WirelessNode endNode) {
-		GreedyAlgorithm algorithm = new GreedyAlgorithm(project.getNetwork());
+	public static List<WirelessNode> greedyPath(WirelessNode startNode, WirelessNode endNode) {
+		GreedyAlgorithm algorithm = new GreedyAlgorithm(getNetwork());
 		algorithm.setSourceNode(startNode);
 		algorithm.setDestNode(endNode);
 		
@@ -473,8 +508,8 @@ public class ProjectManager {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<WirelessNode> shortestPath(Project project, WirelessNode startNode, WirelessNode endNode) {
-		DijikstraAlgorithm algorithm = new DijikstraAlgorithm(project.getNetwork());
+	public static List<WirelessNode> shortestPath(WirelessNode startNode, WirelessNode endNode) {
+		DijikstraAlgorithm algorithm = new DijikstraAlgorithm(getNetwork());
 		algorithm.setSourceNode(startNode);
 		
 		return (List<WirelessNode>) algorithm.doAlgorithm(endNode);

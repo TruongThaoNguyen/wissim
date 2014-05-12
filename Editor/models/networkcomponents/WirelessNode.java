@@ -15,15 +15,15 @@ import java.util.List;
 import models.networkcomponents.events.NodeEvent;
 
 public abstract class WirelessNode extends Node {
-
-	// radio range
+	/**
+	 * radio range
+	 */
 	protected int range;
 	
-	// list of neighbors
+	/**
+	 * list of neighbors
+	 */
 	private List<WirelessNode> neighborList = new ArrayList<WirelessNode>();
-	
-	// list of events
-	private List<NodeEvent> eventList = new ArrayList<NodeEvent>();
 	
 	protected WirelessNode(WirelessNetwork network)
 	{
@@ -34,15 +34,11 @@ public abstract class WirelessNode extends Node {
 	public void addNeighbor		(WirelessNode node) { if (!neighborList.contains(node)) neighborList.add(node); }	
 	public void removeNeighbor	(WirelessNode node) { if (neighborList.contains(node))	neighborList.remove(node); }
 	
-	public List<NodeEvent> getEventList() { return eventList; }	
-	public void addEvent(NodeEvent event) 	{	if (!eventList.contains(event))	eventList.add(event); }	
-	public void removeEvent(NodeEvent event){
-		if (eventList.contains(event))
-			eventList.remove(event);
-	}
+	public abstract List<NodeEvent> getEventList();	
+	public abstract void addEvent(int type, int raiseTime);	
+	public abstract void removeEvent(NodeEvent event);
 	
 	public int getRange() { return range; }
-	
 	public void setRange(int range) {
 		if (range > 0) {
 			this.range = range;
@@ -52,7 +48,6 @@ public abstract class WirelessNode extends Node {
 			notifyObservers(range);
 		}
 	}
-
 	
 	public abstract int getX();
 	public abstract int getY();

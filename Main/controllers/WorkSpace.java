@@ -1,7 +1,8 @@
 package controllers;
 
-public final class WorkSpace {
-	public static String OS = System.getProperty("os.name").toLowerCase();
+
+public final class WorkSpace 
+;
 	static String directory;
 	static String traceFile;
 	static String namTraceFile;
@@ -35,15 +36,6 @@ public final class WorkSpace {
 	public static String setNamTraceFile(String namTraceFile) {
 		return WorkSpace.namTraceFile = namTraceFile;
 	}
-
-	public static boolean isWindow() {
-		//return (OS.indexOf("win") >= 0);
-		return OS.startsWith("windows");
-	}
-	
-	public static boolean isLinux() {
-		return (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") > 0 );
-	}
 	
 	/**
 	 * get current workspace directory
@@ -59,8 +51,8 @@ public final class WorkSpace {
 	 * @return directory
 	 */
 	public static String setDirectory(String dir) {
+		// check if dir is special tcl file
+		if (dir.endsWith(".tcl")) return directory = dir.substring(0, directory.lastIndexOf("/") + 1); 
 		return directory = dir;
 	}
-	
-	
 }
