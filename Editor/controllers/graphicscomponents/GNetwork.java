@@ -132,10 +132,10 @@ public class GNetwork extends Canvas {
 							
 							//System.out.print(ApplicationSettings.nodeRange);
 							WirelessNode node = ProjectManager.createSingleNode(workspace.getProject(), x, y, ApplicationSettings.nodeRange);
-							workspace.getCareTaker().save(workspace.getProject(), "generate node");
+//							workspace.getCareTaker().save(workspace.getProject(), "generate node");
 							workspace.updateLayout();
 							workspace.deselectGraphicObjects();
-							workspace.getGraphicNodeByNode(node).setSelect(true);
+//							workspace.getGraphicNodeByNode(node).setSelect(true);
 														
 						}
 					break;

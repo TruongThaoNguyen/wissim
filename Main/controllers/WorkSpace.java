@@ -3,7 +3,39 @@ package controllers;
 public final class WorkSpace {
 	public static String OS = System.getProperty("os.name").toLowerCase();
 	static String directory;
+	static String traceFile;
+	static String namTraceFile;
 	
+	/**
+	 * @return the traceFile name
+	 */
+	public static String getTraceFile() {
+		return traceFile;
+	}
+
+	/**
+	 * set traceFile name
+	 * @param traceFile new file name
+	 */
+	public static String setTraceFile(String traceFile) {
+		return WorkSpace.traceFile = traceFile;
+	}
+
+	/**
+	 * name trace file's name
+	 * @return the namTraceFile
+	 */
+	public static String getNamTraceFile() {
+		return namTraceFile;
+	}
+
+	/**
+	 * @param namTraceFile the namTraceFile to set
+	 */
+	public static String setNamTraceFile(String namTraceFile) {
+		return WorkSpace.namTraceFile = namTraceFile;
+	}
+
 	public static boolean isWindow() {
 		//return (OS.indexOf("win") >= 0);
 		return OS.startsWith("windows");
@@ -29,4 +61,6 @@ public final class WorkSpace {
 	public static String setDirectory(String dir) {
 		return directory = dir;
 	}
+	
+	
 }

@@ -14,6 +14,9 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import controllers.converter.Converter;
+import controllers.converter.shadow.SNode;
+
 //import org.apache.pdfbox.pdmodel.PDDocument;
 //import org.apache.pdfbox.pdmodel.PDPage;
 //import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
@@ -86,11 +89,17 @@ public class ProjectManager {
 		if (width <= 0 || length <= 0 || time <= 0)
 			return null;
 		
+		String defaulscript = Converter.defaultScript();
+		
+		Project project = Converter.CTD(defaulscript);
+		
+		
 		// create intial wireless network
 		WirelessNetwork network = new WirelessNetwork(name, time, width, length);
 		
 		// create project
 		Project project = new Project(path, network);
+
 		
 		// save project
 		saveProject(project);		
@@ -183,6 +192,7 @@ public class ProjectManager {
 		if (x < 0 || x > network.getWidth() || y < 0 || y > network.getLength() || range < 0) return null;
 		
 		// check if the location is inside a hole
+		if(project.getObstacleList() != null)
 		for (Area obstacle : project.getObstacleList()) {
 			if (obstacle.contains(x, y))
 				return null;
@@ -198,7 +208,10 @@ public class ProjectManager {
 		}			
 		
 		// create new node and add to network
-		return new WirelessNode(network, x, y, range);
+//		return new SNode((SNetwork)network, x, y, range);
+		//return new WirelessNode(network, x, y, range);
+		WirelessNode wn = (WirelessNode) network.addNode(x, y, range);
+		return wn;
 	}
 	
 	public static WirelessNode createARandomNode(Project project) {
