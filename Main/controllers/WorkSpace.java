@@ -1,8 +1,7 @@
 package controllers;
 
 
-public final class WorkSpace 
-;
+public final class WorkSpace {
 	static String directory;
 	static String traceFile;
 	static String namTraceFile;
