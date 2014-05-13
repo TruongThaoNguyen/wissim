@@ -175,25 +175,11 @@ public class Workspace extends Composite {
 		GNetwork gnetwork = getGraphicNetwork();
 		if (gnetwork == null) return;
 		
-		// check whether the graphic node is sill represented of a node
-		WirelessNode node;
+		// check whether the graphic node is sill represented of a node		
 		for (GWirelessNode gn : getGraphicNodes()) 
-		{			
-			node = null;
-			for (Node n : getProject().getNetwork().getNodeList())
-			{
-				if (gn.getWirelessNode().getId() == n.getId()) 
-				{
-					node = (WirelessNode) n;
-					break;
-				}
-			}
-			
-			if (node != null)	gn.dispose();		// dispose if isn't represented any node						
-			else 
-			{
-				gn.updateBounds();
-			}
+		{						
+			if (gn.getWirelessNode() == null)	gn.dispose();		// dispose if isn't represented any node						
+			else 								gn.updateBounds();	// update position 			
 		}		
 		
 		
