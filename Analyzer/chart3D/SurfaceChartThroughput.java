@@ -39,15 +39,9 @@ public class SurfaceChartThroughput {
 		try {
 			createData();
 	        Runtime rt = Runtime.getRuntime();
-	        String[] s = new String[]{
-//  	    		  "/bin/sh", "-c", "l"
-//  	    		  "/bin/bash","-c","/home/khaclinh/datasection/EE/workspace/ex2/aa.sh"
-  	    		  
-//  	    		  "/home/khaclinh/ns-allinone-2.34/ns-2.34/ns","simu.tcl"
-  	    		  "gnuplot"
-  	    		  };
+	        String[] s = new String[]{"gnuplot"};
 	        Process proc = rt.exec(s);
-	        while(true){
+//	        while(true){
 		        java.io.OutputStream opStream = proc.getOutputStream();
 		        PrintWriter gp = new PrintWriter(new BufferedWriter(new OutputStreamWriter(opStream)));
 		  
@@ -58,14 +52,14 @@ public class SurfaceChartThroughput {
 		        gp.println("pause mouse close;\n");
 		        br.close();
 		        gp.close();
-		        int exitVal = proc.waitFor();
-		        System.out.println("Exited with error code "+exitVal);
-		        if(exitVal == 0)
-		        	break;
-		        else 
-		        	proc.destroy();
-		        proc = rt.exec("exe/pgnuplot.exe");
-	        }
+//		        int exitVal = proc.waitFor();
+//		        System.out.println("Exited with error code "+exitVal);
+//		        	if(exitVal == 0)
+//		        		break;
+//		        	else 
+//		        	proc.destroy();
+//		        proc = rt.exec("exe/pgnuplot.exe");
+//	        }
 	    } catch(Exception e) {
 	        System.out.println(e.toString());
 	        e.printStackTrace();

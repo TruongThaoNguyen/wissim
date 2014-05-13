@@ -10,6 +10,8 @@ import java.util.Observer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -19,12 +21,14 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
@@ -35,6 +39,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.swtchart.Chart;
 import org.swtchart.ILineSeries;
+import org.swtchart.ISeries;
 import org.swtchart.LineStyle;
 import org.swtchart.ISeries.SeriesType;
 
@@ -115,7 +120,7 @@ public class ThroughputTab extends Tab implements Observer{
 	    filterByLabel.setText(Analyzer.getResourceString("Filter by"));
 	    filterByLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 	    
-	    filterByCombo = new Combo(controlGroup, SWT.READ_ONLY);
+	    filterByCombo = new Combo(controlGroup, SWT.READ_ONLY );
 	    filterByCombo.setItems(new String[] {"Node ID", "Label ID"});
 	    filterByCombo.select(0);
 	    /* Add listener */
@@ -133,13 +138,13 @@ public class ThroughputTab extends Tab implements Observer{
 	    fromLabel.setText(Analyzer.getResourceString("From"));
 	    fromLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 	    
-	    fromCombo = new Combo(controlGroup, SWT.READ_ONLY);
+	    fromCombo = new Combo(controlGroup, SWT.READ_ONLY );
 	    
 	    Label toLabel=new Label(controlGroup, SWT.None);
 	    toLabel.setText(Analyzer.getResourceString("To"));
 	    toLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 	    
-	    toCombo = new Combo(controlGroup, SWT.READ_ONLY);
+	    toCombo = new Combo(controlGroup, SWT.READ_ONLY );
 	    setItemFromComboToCombo();
 	    
 	    analyze = new Button(controlGroup, SWT.PUSH);
@@ -354,7 +359,7 @@ public class ThroughputTab extends Tab implements Observer{
 			if(No==1){
 				MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
 				dialog.setText("Error");
-				dialog.setMessage("Không có packet nào đi từ group1 -> group2");
+				dialog.setMessage("No packet from group1 -> group2");
 			    dialog.open(); 
 			    avgText.setText("0");
 				variantText.setText("0");
@@ -475,6 +480,31 @@ public class ThroughputTab extends Tab implements Observer{
         // adjust the axis range
         chart.getAxisSet().adjustRange();
         
+        final Composite plotArea = chart.getPlotArea();
+        plotArea.addMouseMoveListener(new MouseMoveListener() {
+            public void mouseMove(MouseEvent e) {
+                for (ISeries series : chart.getSeriesSet().getSeries()) {
+                    for (int i = 0; i < series.getYSeries().length; i++) {
+                        Point p = series.getPixelCoordinates(i);
+                        double distance = Math.sqrt(Math.pow(e.x - p.x, 2)
+                                + Math.pow(e.y - p.y, 2));
+
+                        if (distance < ((ILineSeries) series).getSymbolSize()) {
+                            setToolTipText(series,i,i,i);                          
+                            return;
+                        }
+                    }
+                }
+                chart.getPlotArea().setToolTipText(null);              
+            }
+
+            private void setToolTipText(ISeries series, int xIndex,int yIndex,int id) {
+                chart.getPlotArea().setToolTipText(
+                		"No: " + ++id + "\nTime start send: " + series.getXSeries()[xIndex] + "\nThroughput: "
+                                + series.getYSeries()[yIndex]);
+         
+            }
+        });
 	  }
   /**
    * Sets the state of the layout.

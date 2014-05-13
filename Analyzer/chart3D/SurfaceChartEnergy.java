@@ -11,8 +11,10 @@ public class SurfaceChartEnergy {
 	public static void drawChart3D(){
 		try {
 	        Runtime rt = Runtime.getRuntime();
-	        Process proc = rt.exec("exe/pgnuplot.exe");
-	        while(true){
+//	        Process proc = rt.exec("exe/pgnuplot.exe");
+	        String[] s = new String[]{"gnuplot"};
+	        Process proc = rt.exec(s);
+//	        while(true){
 		        java.io.OutputStream opStream = proc.getOutputStream();
 		        PrintWriter gp = new PrintWriter(new BufferedWriter(new OutputStreamWriter(opStream)));
 		  
@@ -23,14 +25,14 @@ public class SurfaceChartEnergy {
 		        gp.println("pause mouse close;\n");
 		        br.close();
 		        gp.close();
-		        int exitVal = proc.waitFor();
-		        System.out.println("Exited with error code "+exitVal);
-		        if(exitVal == 0)
-		        	break;
-		        else 
-		        	proc.destroy();
-		        proc = rt.exec("exe/pgnuplot.exe");
-	        }
+//		        int exitVal = proc.waitFor();
+//		        System.out.println("Exited with error code "+exitVal);
+//		        if(exitVal == 0)
+//		        	break;
+//		        else 
+//	        		proc.destroy();
+//		        proc = rt.exec("exe/pgnuplot.exe");
+//	        }
 	    } catch(Exception e) {
 	        System.out.println(e.toString());
 	        e.printStackTrace();

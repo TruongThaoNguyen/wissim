@@ -66,7 +66,7 @@ public class SleepPeriodTab extends Tab implements Observer{
   /*constant of network*/
   public final static double STOP_TIME = 500;
   public final static double TRANSITION_TIME = 0.0129;
-  double sleepTime[];
+  static double sleepTime[];
   /**
    * Creates the Tab within a given instance of LayoutExample.
    */
@@ -75,27 +75,27 @@ public class SleepPeriodTab extends Tab implements Observer{
     listNodeAreas = new ArrayList<ArrayList<NodeTrace>>();
     listSleepTimeOfAreas = new ArrayList<Double>(); 
     listAvgSleepTimeOfAreas = new ArrayList<Double>();
-    
-    sleepTime = new double[Analyzer.mParser.getListNodes().size()];
-	for(int i = 0; i< sleepTime.length; i++)
-		sleepTime[i] = STOP_TIME;
-	for(int i = 0; i < Analyzer.mParser.getListPacket().size(); i++){
-		Packet packet = Analyzer.mParser.getListPacket().get(i);
-		// node nguồn của packet 
-		sleepTime[Integer.parseInt(packet.sourceID)] -= TRANSITION_TIME;								
-		// các node tiếp theo trên đường truyền packet						 								
-		for(int j = 0; j < packet.listNode.size(); j++){	
-			NodeTrace node = packet.listNode.get(j);								
-			if(packet.listNode.indexOf(node) == packet.listNode.size()-1)
-				sleepTime[node.id] -= TRANSITION_TIME;
-			else 
-				sleepTime[node.id] -= TRANSITION_TIME*2;
-			
-		}
-		
-	}
+    initSleepTime();
   }
-
+  static void initSleepTime(){
+	  /* init sleeptime */
+	    sleepTime = new double[Analyzer.mParser.getListNodes().size()];
+		for(int i = 0; i< sleepTime.length; i++)
+			sleepTime[i] = STOP_TIME;
+		for(int i = 0; i < Analyzer.mParser.getListPacket().size(); i++){
+			Packet packet = Analyzer.mParser.getListPacket().get(i);
+			// node nguồn của packet 
+			sleepTime[Integer.parseInt(packet.sourceID)] -= TRANSITION_TIME;								
+			// các node tiếp theo trên đường truyền packet						 								
+			for(int j = 0; j < packet.listNode.size(); j++){	
+				NodeTrace node = packet.listNode.get(j);								
+				if(packet.listNode.indexOf(node) == packet.listNode.size()-1)
+					sleepTime[node.id] -= TRANSITION_TIME;
+				else 
+					sleepTime[node.id] -= TRANSITION_TIME*2;	
+			}
+		}
+  }
   /**
    * Creates the widgets in the "child" group.
    */
@@ -162,7 +162,7 @@ public class SleepPeriodTab extends Tab implements Observer{
 	    analyze = new Button(controlGroup, SWT.PUSH);
 	    analyze.setText(Analyzer.getResourceString("Analyze"));
 	    analyze.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
-	    
+	   
 	    /* Add listener to add an element to the table */
 	    analyze.addSelectionListener(new SelectionAdapter() {
 	      public void widgetSelected(SelectionEvent e) {

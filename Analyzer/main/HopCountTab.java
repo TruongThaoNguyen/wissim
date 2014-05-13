@@ -10,6 +10,8 @@ import java.util.Observer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -19,12 +21,14 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
@@ -35,6 +39,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.swtchart.Chart;
 import org.swtchart.ILineSeries;
+import org.swtchart.ISeries;
 import org.swtchart.LineStyle;
 import org.swtchart.ISeries.SeriesType;
 
@@ -448,14 +453,39 @@ public class HopCountTab extends Tab implements Observer {
         chart.getAxisSet().getXAxis(0).getTitle().setText("Time(s)");
         chart.getAxisSet().getYAxis(0).getTitle().setText("Hop count");
         // create line series
-        ILineSeries lineSeries = (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE, "line series");
+        ILineSeries lineSeries = (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE, "line");
         lineSeries.setYSeries(ySeries);
         lineSeries.setXSeries(xSeries);
         lineSeries.setLineStyle(LineStyle.DOT);
         // adjust the axis range
         chart.getAxisSet().adjustRange();
-       
-	  }
+        
+        final Composite plotArea = chart.getPlotArea();
+        plotArea.addMouseMoveListener(new MouseMoveListener() {
+            public void mouseMove(MouseEvent e) {
+                for (ISeries series : chart.getSeriesSet().getSeries()) {
+                    for (int i = 0; i < series.getYSeries().length; i++) {
+                        Point p = series.getPixelCoordinates(i);
+                        double distance = Math.sqrt(Math.pow(e.x - p.x, 2)
+                                + Math.pow(e.y - p.y, 2));
+
+                        if (distance < ((ILineSeries) series).getSymbolSize()) {
+                            setToolTipText(series,i,i,i);                          
+                            return;
+                        }
+                    }
+                }
+                chart.getPlotArea().setToolTipText(null);              
+            }
+
+            private void setToolTipText(ISeries series, int xIndex,int yIndex,int id) {
+                chart.getPlotArea().setToolTipText(
+                		"No: " + ++id + "\nTime start send: " + series.getXSeries()[xIndex] + "\nHop count: "
+                                + series.getYSeries()[yIndex]);
+         
+            }
+        });
+  	}
   /**
    * Sets the state of the layout.
    */
