@@ -15,10 +15,6 @@ import java.util.List;
 import models.networkcomponents.events.NodeEvent;
 
 public abstract class WirelessNode extends Node {
-	/**
-	 * radio range
-	 */
-	protected int range;
 	
 	/**
 	 * list of neighbors
@@ -38,16 +34,7 @@ public abstract class WirelessNode extends Node {
 	public abstract void addEvent(int type, int raiseTime);	
 	public abstract void removeEvent(NodeEvent event);
 	
-	public int getRange() { return range; }
-	public void setRange(int range) {
-		if (range > 0) {
-			this.range = range;
-			((WirelessNetwork) network).updateNeighbors(this);
-			
-			setChanged();
-			notifyObservers(range);
-		}
-	}
+	public abstract int getRange();	
 	
 	public abstract int getX();
 	public abstract int getY();

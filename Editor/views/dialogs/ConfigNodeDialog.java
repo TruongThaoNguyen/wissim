@@ -281,9 +281,7 @@ public class ConfigNodeDialog extends Dialog {
 						project.setIddleEnergy(Double.parseDouble(txtIddle.getText()));
 						project.setReceptionEnergy(Double.parseDouble(txtReception.getText()));
 						project.setReceptionEnergy(Double.parseDouble(txtTransmission.getText()));
-						project.setSleepEnergy(Double.parseDouble(txtSleep.getText()));
-						
-						workspace.getCareTaker().save(project, "Project configuration changed");
+						project.setSleepEnergy(Double.parseDouble(txtSleep.getText()));						
 					} catch (Exception exc) {
 						exc.printStackTrace();
 					}

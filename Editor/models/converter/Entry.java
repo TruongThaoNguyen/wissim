@@ -29,16 +29,18 @@ public class Entry {
 		else
 		{
 			this.arg = new ArrayList<>();
-			for (String string : arg) {
+			int l = arg.size() - 1;
+			for (int i = 0; i < l; i++)
+			{
 				String s;
 				try {
-					s = Converter.parseIdentify(string);				
+					s = Converter.parseIdentify(arg.get(i));				
 				} catch (Exception e) {
-					s = null;
-				}
-				if (s == null) s = string;
+					s = arg.get(i);
+				}				
 				this.arg.add(s);
 			}
+			this.arg.add(arg.get(l));
 		}
 		
 		this.sperator = sperator;

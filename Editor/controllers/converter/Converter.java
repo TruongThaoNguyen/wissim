@@ -5,14 +5,10 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import scala.collection.immutable.Stream;
-import scala.util.parsing.input.StreamReader;
 import controllers.WorkSpace;
 import controllers.converter.shadow.SProject;
 import models.Project;
@@ -51,17 +47,12 @@ public class Converter
 	 * Generate TCL code from Project model.
 	 * @return List of String, each element of List is a line of TCL scripts
 	 */
-	public static List<String> DTC() {
-		int line = 1;
-		
-		List<String> sb = new ArrayList<String>();		
+	public static String DTC() {		
+		StringBuilder sb = new StringBuilder();		
 		for (Entry e : generateEntry) {
-			String t = e.print(); 
-			sb.add(t);			
-			System.out.print(line + "\t" + t);
-			if (t.endsWith("\n")) line++;
+			sb.append(e.print());
 		}			
-		return sb;	
+		return sb.toString();	
 	}
 	
 	/**
@@ -206,10 +197,7 @@ public class Converter
 		
 		fileName = WorkSpace.getDirectory() + "test.tcl";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
-		
-		for (String string : Converter.DTC()) {
-			bw.write(string);
-		}
+		bw.write(Converter.DTC());		
 		bw.close();
 	}
 

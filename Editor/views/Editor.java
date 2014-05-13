@@ -1,11 +1,9 @@
 package views;
 
-import java.awt.Container;
 import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,7 +14,6 @@ import java.util.Observer;
 
 import models.Project;
 import models.converter.ParseException;
-import models.managers.CareTaker;
 import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.WirelessNode;
 
@@ -36,7 +33,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
@@ -44,13 +40,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import controllers.WorkSpace;
 import controllers.converter.Converter;
 import controllers.graphicscomponents.GSelectableObject;
 import controllers.graphicscomponents.GWirelessNode;
@@ -62,8 +56,6 @@ import views.MainContent;
 import views.RulerScrolledComposite;
 import views.Workspace;
 import views.dialogs.ConfigNodeDialog;
-import views.dialogs.GenerateNodeLocationDataDialog;
-import views.dialogs.GenerateSimulationScriptsDialog;
 import views.dialogs.PreferencesDialog;
 
 import org.eclipse.swt.custom.StyledText;
@@ -72,6 +64,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /*
  * Author: Trong Nguyen
@@ -102,6 +95,7 @@ public class Editor extends MainContent implements Observer {
 		
 		actionGetTab();
 		actionEvent();
+		getCTabFolder().setSelection(0);
 		
 		Display.getCurrent().addFilter(SWT.KeyDown, new Listener() {			
 			@Override
@@ -208,63 +202,63 @@ public class Editor extends MainContent implements Observer {
 		contentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		contentComposite.setLayout(new FillLayout());
 		
-				tabFolder = new CTabFolder(contentComposite, SWT.BORDER | SWT.FLAT | SWT.BOTTOM);
-				tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
-				
-				CTabItem tbtmEdit = new CTabItem(tabFolder, SWT.PUSH);
-				tbtmEdit.setText("Edit");
-				
-				Composite composite = new Composite(tabFolder, SWT.BORDER);
-				tbtmEdit.setControl(composite);
-				composite.setLayout(new FillLayout(SWT.HORIZONTAL));
-				
-				styledText = new StyledText(composite, SWT.BORDER);
-				tbtmEdit.setControl(composite);
-				
-				CTabItem tbtmDesign = new CTabItem(tabFolder, SWT.PUSH);
-				tbtmDesign.setText("Design");
+		tabFolder = new CTabFolder(contentComposite, SWT.BORDER | SWT.FLAT | SWT.BOTTOM);
+		tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+		
+		CTabItem tbtmEdit = new CTabItem(tabFolder, SWT.PUSH);
+		tbtmEdit.setText("Edit");
+		
+		Composite composite = new Composite(tabFolder, SWT.BORDER);
+		tbtmEdit.setControl(composite);
+		composite.setLayout(new FillLayout(SWT.HORIZONTAL));
+		
+		text = new Text(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
+		text.setTextDirection(335544320);
+		text.setFont(SWTResourceManager.getFont("Ubuntu Mono", 11, SWT.NORMAL));
+		formToolkit.adapt(text, true, true);
+		
+		CTabItem tbtmDesign = new CTabItem(tabFolder, SWT.PUSH);
+		tbtmDesign.setText("Design");
 //				scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 ////				scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 //				tbtmDesign.setControl(scrolledComposite);
 //				scrolledComposite.setExpandHorizontal(true);
 //				scrolledComposite.setExpandVertical(true);
-				
-				Composite bottomComposite = new Composite(subSashForm, SWT.NONE);
-				bottomComposite.setLayout(new GridLayout(1, false));
+		
+		Composite bottomComposite = new Composite(subSashForm, SWT.NONE);
+		bottomComposite.setLayout(new GridLayout(1, false));
 
-								styledTextConsole = new StyledText(bottomComposite, SWT.BORDER);
-								GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true);
-								gd_styledText.heightHint = 91;
-								styledTextConsole.setLayoutData(gd_styledText);
-				
-				subSashForm.setWeights(new int[] {215, 83});
-				propertiesComposite = new Composite(sashForm,  SWT.BORDER | SWT.H_SCROLL);
-				GridData gd_propertiesComposite = new GridData(SWT.RIGHT, SWT.FILL, false, true);
-				
-				propertiesComposite.setLayoutData(gd_propertiesComposite);
-				gd_propertiesComposite.heightHint = 50;
-				
-				lblNewLabel_1 = new Label(propertiesComposite, SWT.NONE);
+						styledTextConsole = new StyledText(bottomComposite, SWT.BORDER);
+						GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true);
+						gd_styledText.heightHint = 91;
+						styledTextConsole.setLayoutData(gd_styledText);
+		
+		subSashForm.setWeights(new int[] {215, 83});
+		propertiesComposite = new Composite(sashForm,  SWT.BORDER | SWT.H_SCROLL);
+		GridData gd_propertiesComposite = new GridData(SWT.RIGHT, SWT.FILL, false, true);
+		
+		propertiesComposite.setLayoutData(gd_propertiesComposite);
+		gd_propertiesComposite.heightHint = 50;
+		
+		lblNewLabel_1 = new Label(propertiesComposite, SWT.NONE);
 //				GridData lblNewLabel_1_Data =  new GridData(SWT.FILL, SWT.FILL,false,true);
 //				lblNewLabel_1_Data.heightHint = 95;
 //				lblNewLabel_1.setLayoutData(lblNewLabel_1_Data);
-				lblNewLabel_1.setBounds(0, 0, 100, 95);
-				lblNewLabel_1.setText("Network");
-				
-				lblNewLabel_2 = new Label(propertiesComposite, SWT.NONE);
-				lblNewLabel_2.setBounds(0, 116, 100, 127);
-				lblNewLabel_2.setText("Node");
-				
-				Label lblSss = new Label(propertiesComposite, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.CENTER);
-				lblSss.setText("sss");
-				lblSss.setBounds(0, 101, 64, 14);
-				sashForm.setWeights(new int[] {418, 75});
-
+		lblNewLabel_1.setBounds(0, 0, 100, 95);
+		lblNewLabel_1.setText("Network");
+		
+		lblNewLabel_2 = new Label(propertiesComposite, SWT.NONE);
+		lblNewLabel_2.setBounds(0, 116, 100, 127);
+		lblNewLabel_2.setText("Node");
+		
+		Label lblSss = new Label(propertiesComposite, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.CENTER);
+		lblSss.setText("sss");
+		lblSss.setBounds(0, 101, 64, 14);
+		sashForm.setWeights(new int[] {418, 75});
 
 	}
 	
-	public void actionGetTab() {
-		
+	public void actionGetTab() {		
 		tabFolder.addSelectionListener(new SelectionAdapter() 
 		{
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) 
@@ -275,14 +269,14 @@ public class Editor extends MainContent implements Observer {
 				}
 				else										// Design
 				{
-					if(styledText.getText() != "") 
+					if(text.getText() != "") 
 					{
 						try 
-						{
-							project = Converter.CTD(styledText.getText());
-							if(project != null) 	
-							{
-								getWorkspace().setProject(project);
+						{							
+							if (Converter.CTD(text.getText()) != null) 	
+							{						
+								if(getWorkspace() != null)
+									getWorkspace().updateLayout();
 							}
 						}
 						catch (ParseException e) 
@@ -342,15 +336,15 @@ public class Editor extends MainContent implements Observer {
 
 		actOpen = new Action("Open") {
 			public void run() {
-				if(project != null) {
-					Shell shell = new Shell(getDisplay());
-					MainWindow window1 = new MainWindow(shell);
-					
-					window1.setBlockOnOpen(true);
-					window1.open();
-					window1.getEditor().actionOpen(window1.getEditor());
-				}
-				else
+//				if(project != null) {
+//					Shell shell = new Shell(getDisplay());
+//					MainWindow window1 = new MainWindow(shell);
+//					
+//					window1.setBlockOnOpen(true);
+//					window1.open();
+//					window1.getEditor().actionOpen(window1.getEditor());
+//				}
+//				else
 					actionOpen(Editor.this);
 			}
 		};
@@ -419,24 +413,6 @@ public class Editor extends MainContent implements Observer {
 			}
 		};	
 		actExit.setToolTipText("Exit (SHIFT + W)");
-
-		actUndo = new Action("Undo") {
-			public void run() {
-				actionUndo();
-			}
-		};
-		actUndo.setToolTipText("Undo (CTRL + Z)");
-		actUndo.setAccelerator(SWT.CTRL | 'Z');
-		actUndo.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/arrow_undo.png"));
-
-		actRedo = new Action("Redo") {
-			public void run() {
-				actionRedo();
-			}
-		};
-		actRedo.setToolTipText("Redo (CTRL+Y)");
-		actRedo.setAccelerator(SWT.CTRL | 'Y');
-		actRedo.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/arrow_redo.png"));
 
 		actConfigureNodes = new Action("Configure Node(s)") {
 			public void run() {
@@ -532,17 +508,7 @@ public class Editor extends MainContent implements Observer {
 				actionIdentifyBoundary();
 			}
 		};	
-		actIdentifyBoundary.setToolTipText("Boundary Idenfication (CTRL + B)");
-
-		actGenerateNodeLocationData = new Action("Node Location Data") {
-			public void run() {
-				actionGenerateNodeLocationData();
-			}
-		};	
-		actGenerateNodeLocationData.setAccelerator(SWT.ALT | SWT.CTRL | 'D');
-		actGenerateNodeLocationData.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/script_code.png"));
-		actGenerateNodeLocationData.setToolTipText("Generate location node data (CTRL + G)");
-		
+		actIdentifyBoundary.setToolTipText("Boundary Idenfication (CTRL + B)");	
 
 		actCheckConnectivity = new Action("Check Connectivity") {
 			public void run() {
@@ -563,15 +529,6 @@ public class Editor extends MainContent implements Observer {
 		actChangeNetworkSize.setToolTipText("Change network size (SHIFT + L)");
 		actChangeNetworkSize.setAccelerator(SWT.ALT | SWT.CTRL | SWT.SHIFT | 'D');
 		actChangeNetworkSize.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/arrow_inout.png"));
-
-		actGenerateSimulationScripts = new Action("Simulation Scripts") {
-			public void run() {
-				actionGenerateSimulationScript();
-			}
-		};
-		actGenerateSimulationScripts.setToolTipText("Generate simulation script (ALT + G)");
-		actGenerateSimulationScripts.setAccelerator(SWT.ALT | SWT.CTRL | 'G');
-		actGenerateSimulationScripts.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/script.png"));
 
 		actViewDelaunayTriangulation = new Action("Delaunay Triangulation") {
 			public void run() {
@@ -1056,62 +1013,13 @@ public class Editor extends MainContent implements Observer {
 		}
 	}
 	
-	public void actionOpen(Editor editor){
-		
-//		boolean isWin =  WorkSpace.isWindow();
-//		WorkSpace.setDirectory(isWin? "D:\\Work\\scripts\\30\\gpsr\\" : "test_store/");
-		WorkSpace.setDirectory("test_store/");
-		String fileName =  WorkSpace.getDirectory() + "simulate.tcl";
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new FileReader(fileName));
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		StringBuilder sb = null;
-		try {
-		    sb = new StringBuilder();
-		    String line = br.readLine();
-		
-		    while (line != null) {
-		        sb.append(line);
-		        sb.append(System.lineSeparator());
-		        line = br.readLine();
-		    }	
-		    br.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-		    
-		}
-		
-		String code = sb.toString();
-		
-		
-		// ------------ using converter
-		
-		Project project = null;
-		try {
-			project = Converter.CTD(code);
-			project.getNetwork().setSize(1000, 1000, WirelessNetwork.CENTER, WirelessNetwork.CENTER);
-			project.setPath("/home/khaclinh/GR/workspace/wissim/test_store/simulate.tcl");
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-		
-//		Project project = ApplicationManager.openProject(editor);
-		if(project == null) return;
-//		if (project != null)
-			showProject(project);
-		this.project = project;
+	public void actionOpen(Editor editor) {		
+		if (ApplicationManager.openProject(editor) == null) return;		
+		showProject();		
 		getWorkspace().getSelectableObject().get(getWorkspace().getSelectableObject().size() - 1).moveAbove(null);
 		updateNetworkInfoLabel();
 		updateNodeInfoLabel();
-		updateDesign();
+//		updateDesign();
 	}
 	
 	public GWirelessNode actionCopy() {
@@ -1123,10 +1031,12 @@ public class Editor extends MainContent implements Observer {
 	public void actionPaste(GWirelessNode gn){
 		Workspace workspace = getWorkspace();
 		WirelessNode wn = gn.getWirelessNode();
-		ApplicationManager.pasteNode(workspace,wn.getX()+1 , wn.getY()+1, wn.getRange());
+		ApplicationManager.pasteNode(workspace,wn.getX()+1 , wn.getY()+1);
 	}
 	
 	public void saveScript() {
+		//TODO
+		
 		Workspace workspace = getWorkspace();
 		fileProject = fileProject.replace(".wis", ".tcl");
 		System.out.println(fileProject);
@@ -1138,15 +1048,8 @@ public class Editor extends MainContent implements Observer {
 //		}
 	}
 	
-	public void updateDesign(){
-		Workspace workspace = getWorkspace();
-		//			StringBuilder sb = ScriptGenerator.generateTclText(workspace.getProject(), false, false);
-					List<String> sb = Converter.DTC();
-					String finalStr = "";
-					for(String str : sb) {
-						finalStr += str;
-					}
-					styledText.setText(finalStr);
+	public void updateDesign() {
+		text.setText(Converter.DTC());
 	}
 	
 	public void updateNodeInfoLabel() {
@@ -1205,10 +1108,9 @@ public class Editor extends MainContent implements Observer {
 //	}
 	
 	public void actionNew() {		
-		tabFolder.setSelection(0);
-		project = ApplicationManager.newProject(Editor.this); 
-		if (project == null) return;		
-		showProject(project);
+		tabFolder.setSelection(0);		
+		if (ApplicationManager.newProject(Editor.this) == null) return;		
+		showProject();
 		updateNetworkInfoLabel();
 		updateDesign();		
 	}
@@ -1229,16 +1131,6 @@ public class Editor extends MainContent implements Observer {
 	
 	public void actionExit() {
 		getShell().close();
-	}
-	
-	public void actionUndo() {
-		Workspace workspace = getWorkspace();
-		ApplicationManager.undoState(workspace);
-	}
-	
-	public void actionRedo() {
-		Workspace workspace = getWorkspace();
-		ApplicationManager.redoState(workspace);
 	}
 	
 	public void actionConfigureNode() {
@@ -1301,13 +1193,6 @@ public class Editor extends MainContent implements Observer {
 		MessageDialog.openInformation(getShell(), "Unavailable feature", "This feature is currently unavailable. Please wait for the next version");
 	}
 	
-	public void actionGenerateNodeLocationData() {
-		Workspace workspace = getWorkspace();
-
-		if (workspace != null)
-			new GenerateNodeLocationDataDialog(getShell(), SWT.SHEET, workspace.getProject()).open();
-	}
-	
 	public void actionCheckConnectivity() {
 		Workspace workspace = getWorkspace();
 		ApplicationManager.checkConnectivity(workspace);
@@ -1316,10 +1201,6 @@ public class Editor extends MainContent implements Observer {
 	public void actionChangeNetworkSize() {
 		Workspace workspace = getWorkspace();
 		ApplicationManager.changeNetworkSize(workspace);
-	}
-	
-	public void actionGenerateSimulationScript() {
-		new GenerateSimulationScriptsDialog(getShell(), SWT.SHEET, getWorkspace()).open();
 	}
 	
 	public void actionViewDelaunayTriangulation() {
@@ -1557,15 +1438,11 @@ public class Editor extends MainContent implements Observer {
 		
 		Separator separator1 = new Separator();
 		toolBarManager.add(separator1);
-		toolBarManager.add(actUndo);
-		toolBarManager.add(actRedo);
 		toolBarManager.add(actZoomIn);
 		toolBarManager.add(actZoomOut);
 		toolBarManager.add(actSearchNode);
 		Separator separator4 = new Separator();
 		toolBarManager.add(separator4);
-		toolBarManager.add(actGenerateNodeLocationData);
-		toolBarManager.add(actGenerateSimulationScripts);
 		toolBarManager.add(actScriptReferenceRemain);
 		
 		Separator separator5 = new Separator();
@@ -1609,14 +1486,6 @@ public class Editor extends MainContent implements Observer {
 			    		actionSave();
 			    	}
 			    	
-			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'Z' || e.keyCode == 'z')){
-			    		actionUndo();
-			    	}
-			    	
-			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'Y' || e.keyCode == 'y')){
-			    		actionRedo();
-			    	}
-			    	
 			    	if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'I' || e.keyCode == 'i')){
 			    		actionViewNodeInfo();				
 			    	}
@@ -1630,16 +1499,14 @@ public class Editor extends MainContent implements Observer {
 		});
 	}
 	
-	public void showProject(Project project)
-	{
-		
-		
+	public void showProject() 
+	{		
 		final RulerScrolledComposite scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 //		scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		tabFolder.getItem(1).setControl(scrolledComposite);
 //		scrolledComposite.setExpandHorizontal(false);
 //		scrolledComposite.setExpandVertical(false);
-		final Workspace workspaceInner = new Workspace(scrolledComposite, SWT.NONE, project);
+		final Workspace workspaceInner = new Workspace(scrolledComposite, SWT.NONE);
 		workspaceInner.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_DARK_SHADOW));
 		workspaceInner.setSize(scrolledComposite.getClientArea().width, scrolledComposite.getClientArea().height);
 		scrolledComposite.setContent(workspaceInner);
@@ -1651,8 +1518,6 @@ public class Editor extends MainContent implements Observer {
 		WorkspacePropertyManager propManager = workspaceInner.getPropertyManager();
 		propManager.addObserver(this);
 		
-		workspaceInner.getCareTaker().addObserver(this);
-		
 		statesHandler.activeProject();
 	}
 	
@@ -1663,11 +1528,7 @@ public class Editor extends MainContent implements Observer {
 		if(workspace != null)
 			return workspace;
 		return null;
-	}
-	
-	public StyledText getStyledText() {
-		return styledText;
-	}
+	}	
 	
 	public Action getActMouseHand() {
 		return actMouseHand;
@@ -1886,12 +1747,8 @@ public class Editor extends MainContent implements Observer {
 	}
 	
 	public Project getProject() {
-		return project;
-	}
-	
-	public void setProject(Project projectSet) {
-		this.project = projectSet;
-	}
+		return ProjectManager.getProject();
+	}	
 	
 	public CTabFolder getCTabFolder(){
 		return tabFolder;
@@ -1972,14 +1829,11 @@ public class Editor extends MainContent implements Observer {
 	
 	private Action actScriptReferenceRemain;
 	private Action actNetworkReferenceRemain;
+		
+	private Text text;
+	private StyledText styledTextConsole;	
 	
-	private StyledText styledText;
-	private StyledText styledTextConsole;
-	
-	
-	private Project project;
-	
-	private RulerScrolledComposite scrolledComposite;
+//	private RulerScrolledComposite scrolledComposite;
 	
 	private ToolBar toolBar;
 	
@@ -1988,6 +1842,8 @@ public class Editor extends MainContent implements Observer {
 	
 	private Label lblNewLabel_1;
 	private Label lblNewLabel_2;
+	private final FormToolkit formToolkit = new FormToolkit(Display.getDefault());
+	
 	
 	@Override
 	public void update(Observable arg0, Object arg1) {
@@ -2018,22 +1874,6 @@ public class Editor extends MainContent implements Observer {
 			}
 		}
 		
-		if (arg0 instanceof CareTaker) {
-			// get current state index
-			
-			int currState = (int) arg1;
-			
-			// check whether it can be undo or redo
-			if (currState == 0) 
-				actUndo.setEnabled(false); 
-			else 
-				actUndo.setEnabled(true);
-			
-			if (currState == workspace.getCareTaker().getSize() - 1) 
-				actRedo.setEnabled(false); 
-			else 
-				actRedo.setEnabled(true);
-		}
 		updateNodeInfoLabel();
 		updateNetworkInfoLabel();
 //		ec.updateDesign(this, styledText);

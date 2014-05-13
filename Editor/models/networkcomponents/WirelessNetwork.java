@@ -176,8 +176,8 @@ public abstract class WirelessNetwork extends Network {
 	// region ------------------- add/remove/get node ------------------- //
 		
 	@Override
-	public final Node addNode(int x, int y, int range) {
-		WirelessNode node = addnode(x, y, range);
+	public final Node addNode(int x, int y) {
+		WirelessNode node = addnode(x, y);
 		updateNeighbors(node);
 		return node;
 	}
@@ -187,11 +187,12 @@ public abstract class WirelessNetwork extends Network {
 	 */
 	@Override
 	public final boolean removeNode(Node n) {
+		if (n == null) return false;
 		removeNeighbor((WirelessNode) n);
 		return removenode(n);			
 	}
 
-	protected abstract WirelessNode addnode(int x, int y, int range);
+	protected abstract WirelessNode addnode(int x, int y);
 	protected abstract boolean removenode(Node n);
 
 	private WirelessNode getNodeByPosition(int x, int y) {
@@ -205,5 +206,9 @@ public abstract class WirelessNetwork extends Network {
 		return null;
 	}
 
+	public final boolean removeNode(int id) {		
+		return removeNode(getNodeList().get(id));
+	}
+	
 	// endregion add/remove node
 }

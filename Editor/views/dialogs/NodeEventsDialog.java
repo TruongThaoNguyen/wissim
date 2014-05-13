@@ -17,25 +17,31 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.widgets.Label;
 
+import controllers.managers.ProjectManager;
+
 public class NodeEventsDialog extends Dialog {
 
 	protected Object result;
 	protected Shell shlNodeEvents;
 	private Table table;
 	
-	private WirelessNode wirelessNode;
+	private int nodeID;
+	
+	private WirelessNode wirelessNode() {
+		return (WirelessNode) ProjectManager.getProject().getNetwork().getNodeById(nodeID);
+	}
 
 	/**
 	 * Create the dialog.
 	 * @param parent
 	 * @param style
-	 * @param wirelessNode 
+	 * @param wirelessNode() 
 	 */
 	public NodeEventsDialog(Shell parent, int style, WirelessNode wirelessNode) {
 		super(parent, style);
 		setText("SWT Dialog");
 		
-		this.wirelessNode = wirelessNode;
+		this.nodeID = wirelessNode.getId();
 	}
 
 	/**
@@ -83,7 +89,7 @@ public class NodeEventsDialog extends Dialog {
 		btnAdd.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				new CreateNodeEventDialog(shlNodeEvents, SWT.SHEET, wirelessNode).open();
+				new CreateNodeEventDialog(shlNodeEvents, SWT.SHEET, wirelessNode()).open();
 				updateTable();
 			}
 		});
@@ -94,10 +100,10 @@ public class NodeEventsDialog extends Dialog {
 		btnRemove.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				int size = wirelessNode.getEventList().size();
+				int size = wirelessNode().getEventList().size();
 				
 				if (size > 0) {
-					wirelessNode.getEventList().remove(size - 1);
+					wirelessNode().getEventList().remove(size - 1);
 					updateTable();
 				}
 			}
@@ -109,8 +115,8 @@ public class NodeEventsDialog extends Dialog {
 		btnRemoveAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				while (wirelessNode.getEventList().size() > 0)
-					wirelessNode.getEventList().remove(0);
+				while (wirelessNode().getEventList().size() > 0)
+					wirelessNode().getEventList().remove(0);
 				
 				updateTable();
 			}
@@ -138,7 +144,7 @@ public class NodeEventsDialog extends Dialog {
 		lblNode.setFont(SWTResourceManager.getFont("Segoe UI", 15, SWT.NORMAL));
 		lblNode.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		lblNode.setBounds(10, 10, 134, 40);
-		lblNode.setText("Node " + wirelessNode.getId());
+		lblNode.setText("Node " + wirelessNode().getId());
 	}
 	
 	private void updateTable() {
@@ -146,7 +152,7 @@ public class NodeEventsDialog extends Dialog {
 		table.removeAll();
 		
 		// re-add items
-		for (NodeEvent e : wirelessNode.getEventList()) {
+		for (NodeEvent e : wirelessNode().getEventList()) {
 			TableItem item = new TableItem(table, SWT.NONE);
 			String type;
 			

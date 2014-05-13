@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,12 +36,12 @@ public abstract class Project {
 	/**
 	 * list of labels
 	 */
-	private static List<Label> labelList;
+	private static List<Label> labelList = new ArrayList<Label>();
 	
 	/**
 	 * list of obstacles
 	 */
-	private static List<Area> obstacleList;
+	private static List<Area> obstacleList = new ArrayList<Area>();
 	private static int obstacleIndex;
 	
 	/**
@@ -114,7 +115,7 @@ public abstract class Project {
 
 	public abstract WirelessNetwork getNetwork();
 
-	protected int nodeRange;
+	protected int nodeRange = 40;
 	public int getNodeRange() { return nodeRange; } 
 	
 	public abstract void setNodeRange			(int value);	

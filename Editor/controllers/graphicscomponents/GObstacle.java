@@ -63,8 +63,7 @@ public class GObstacle extends GSelectableObject {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Workspace w = (Workspace) getParent();
-				w.getProject().getObstacleList().remove(getArea());
-				w.getCareTaker().save(w.getProject(), "Remove obstacle");
+				w.getProject().getObstacleList().remove(getArea());				
 				GObstacle.this.dispose();
 			}
 		});

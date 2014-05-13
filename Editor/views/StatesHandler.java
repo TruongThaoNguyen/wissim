@@ -20,8 +20,6 @@ public class StatesHandler {
 		window.getActDeleteNodes().setEnabled(false);
 		window.getActFindConnectivityParts().setEnabled(false);
 		window.getActFindPathByGreedy().setEnabled(false);
-		window.getActGenerateNodeLocationData().setEnabled(false);
-		window.getActGenerateSimulationScripts().setEnabled(false);
 		window.getActIdentifyBoundary().setEnabled(false);
 		window.getActImport().setEnabled(false);
 		window.getActManageLabels().setEnabled(false);
@@ -31,8 +29,7 @@ public class StatesHandler {
 		window.getActMouseCreateNode().setEnabled(false);
 		window.getActMouseCursor().setEnabled(false);
 		window.getActMouseHand().setEnabled(false);
-		window.getActPrint().setEnabled(false);
-		window.getActRedo().setEnabled(false);
+		window.getActPrint().setEnabled(false);		
 		window.getActSave().setEnabled(false);
 		window.getActSaveAs().setEnabled(false);
 		window.getActSearchNode().setEnabled(false);
@@ -42,8 +39,7 @@ public class StatesHandler {
 		window.getActShowRange().setEnabled(false);
 		window.getActShowRulers().setEnabled(false);
 		window.getActToImage().setEnabled(false);
-//		window.getActToPDF().setEnabled(false);
-		window.getActUndo().setEnabled(false);
+//		window.getActToPDF().setEnabled(false);		
 		window.getActViewDelaunayTriangulation().setEnabled(false);
 		window.getActViewGGGraph().setEnabled(false);
 		window.getActViewNetworkInfo().setEnabled(false);
@@ -72,8 +68,6 @@ public class StatesHandler {
 		window.getActDeleteNodes().setEnabled(true);
 		window.getActFindConnectivityParts().setEnabled(true);
 		window.getActFindPathByGreedy().setEnabled(true);
-		window.getActGenerateNodeLocationData().setEnabled(true);
-		window.getActGenerateSimulationScripts().setEnabled(true);
 		window.getActIdentifyBoundary().setEnabled(true);
 		window.getActImport().setEnabled(true);
 		window.getActManageLabels().setEnabled(true);
@@ -84,7 +78,6 @@ public class StatesHandler {
 		window.getActMouseCursor().setEnabled(true);
 		window.getActMouseHand().setEnabled(true);
 		window.getActPrint().setEnabled(true);
-		window.getActRedo().setEnabled(true);
 		window.getActSave().setEnabled(true);
 		window.getActSaveAs().setEnabled(true);
 		window.getActSearchNode().setEnabled(true);
@@ -94,8 +87,7 @@ public class StatesHandler {
 		window.getActShowRange().setEnabled(true);
 		window.getActShowRulers().setEnabled(true);
 		window.getActToImage().setEnabled(true);
-//		window.getActToPDF().setEnabled(true);
-		window.getActUndo().setEnabled(true);
+//		window.getActToPDF().setEnabled(true);		
 		window.getActViewDelaunayTriangulation().setEnabled(true);
 		window.getActViewGGGraph().setEnabled(true);
 		window.getActViewNetworkInfo().setEnabled(true);

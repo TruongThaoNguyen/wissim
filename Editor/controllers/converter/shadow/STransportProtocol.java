@@ -50,7 +50,7 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 	private HashMap<String, Double> event = new HashMap<String, Double>();
 	
 	@Override
-	public void addEvent(Double time, String arg) {
+	public void addEvent(double time, String arg) {
 		event.put(arg, time);		
 		// TODO:
 	}
@@ -230,12 +230,12 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 	}
 	
 	@Override
-	public void addApp(int type, String name, Node destNode) {
+	public SApplicationProtocol addApp(int type, String name, Node destNode) {
 		SApplicationProtocol newApp = new SApplicationProtocol(type, name, this, destNode);
 		this.appList.add(newApp);
 			
 		// TODO Auto-generated Tcl code
-		
+		return newApp;
 	}
 
 	@Override

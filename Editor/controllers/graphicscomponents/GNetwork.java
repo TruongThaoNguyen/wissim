@@ -58,8 +58,7 @@ import models.networkcomponents.features.Label;
 public class GNetwork extends Canvas {
 	public final static int MARGIN = 17;				// the minimum margin with the workspace
 	
-    private Random random = new Random();       		// source of random numbers
-	WirelessNetwork network;							// the network which is represented	
+    private Random random = new Random();       		// source of random numbers	
 	private int initX, initY, initWidth, initHeight;	// initial x, y, width, height before scaling
 	
 	private Point mouseLeftLastDown = null;			// handle mouse state
@@ -82,11 +81,9 @@ public class GNetwork extends Canvas {
 	 * @param parent
 	 * @param style
 	 */
-	public GNetwork(Composite parent, int style, WirelessNetwork network) {
+	public GNetwork(Composite parent, int style) {
 		super(parent, style);
 		
-		
-		this.network = network;
 		this.selectedArea = new Area();
 		
 		visualizeManager = new VisualizeManager(this);
@@ -118,25 +115,18 @@ public class GNetwork extends Canvas {
 	
 							// calculate actual location
 							int x = (int) ((double) arg0.x / getRatio()); 
-							// config location
-							if(x<4) 
-								x=4;
-							if(x>(workspace.getGraphicNetwork().getNetwork().getWidth() - 4))
-								x=(workspace.getGraphicNetwork().getNetwork().getWidth() - 4);
+							// configure location
+							if (x < 4) x = 4;
+							if (x > getNetwork().getWidth() - 4) x = getNetwork().getWidth() - 4;
 							
 							int y = (int) ((double) arg0.y / getRatio()); 
-							if(y<4) 
-								y=4;
-							if(y>(workspace.getGraphicNetwork().getNetwork().getLength()-4))
-								y=(workspace.getGraphicNetwork().getNetwork().getLength()-4);
-							
-							//System.out.print(ApplicationSettings.nodeRange);
-							WirelessNode node = ProjectManager.createSingleNode( x, y, ApplicationSettings.nodeRange);
-//							workspace.getCareTaker().save(workspace.getProject(), "generate node");
+							if (y < 4) y = 4;
+							if (y > getNetwork().getLength() - 4) y = getNetwork().getLength()- 4;
+														
+							WirelessNode node = ProjectManager.createSingleNode(x, y);
 							workspace.updateLayout();
 							workspace.deselectGraphicObjects();
-//							workspace.getGraphicNodeByNode(node).setSelect(true);
-														
+//							workspace.getGraphicNodeByNode(node).setSelect(true);														
 						}
 					break;
 				case WorkspacePropertyManager.AREA:
@@ -337,6 +327,8 @@ public class GNetwork extends Canvas {
 		
 	}
 	
+	static WirelessNetwork getNetwork() { return ProjectManager.getProject().getNetwork(); }
+	
 	protected void showShortestPaths() {
 		List<GraphicPath> paths = visualizeManager.getShortestPaths();
 		GraphicPath p = paths.get(paths.size()-1);
@@ -357,10 +349,6 @@ public class GNetwork extends Canvas {
 				gc.drawLine(x1, y1, x2, y2);
 			}										
 //		}
-	}
-	
-	public void setWirelessNetwork(WirelessNetwork network) {
-		this.network = network;
 	}
 
 	protected void showGreedyPaths() {
@@ -449,7 +437,7 @@ public class GNetwork extends Canvas {
 		Workspace w = (Workspace) getParent();
 		// calculate initial graphic size of the network
 		double gRatio = (double)w.getClientArea().height / w.getClientArea().width;
-		double ratio = (double)network.getLength() / network.getWidth();
+		double ratio = (double) getNetwork().getLength() / getNetwork().getWidth();
 		
 		int x, y, width, height;
 		if (gRatio >= ratio) {
@@ -465,10 +453,6 @@ public class GNetwork extends Canvas {
 		}
 		
 		this.setBounds(x, y, width, height);
-	}
-	
-	public WirelessNetwork getNetwork() {
-		return network;
 	}
 	
 	private void updateMenu() {
@@ -507,7 +491,7 @@ public class GNetwork extends Canvas {
     		@Override
     		public void widgetSelected(SelectionEvent arg0) {
 				Workspace workspace = (Workspace) getParent();
-				Project project = workspace.getProject();
+				Project project = Workspace.getProject();
 				
 				List<WirelessNode> nodeList = new LinkedList<WirelessNode>();
 				
@@ -543,7 +527,7 @@ public class GNetwork extends Canvas {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				Workspace workspace = (Workspace) getParent();
-				Project project = workspace.getProject();
+				Project project = Workspace.getProject();
 				
 				// check whether this area contains nodes
 				List<WirelessNode> nodeList = new LinkedList<WirelessNode>();
@@ -563,8 +547,7 @@ public class GNetwork extends Canvas {
 						return;
 					}				
 				
-				project.addObstacle(selectedArea);
-				workspace.getCareTaker().save(project, "Create obstacle");
+				Project.addObstacle(selectedArea);				
 				workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);
 				workspace.getPropertyManager().setShowObstacles(true);
 				workspace.updateLayout();
@@ -585,8 +568,7 @@ public class GNetwork extends Canvas {
 					break;
 				case CreateNodeSetResult.RANDOM:
 					Workspace w = (Workspace) getParent();
-					ProjectManager.createRandomNodes(result.numOfNodes, w.getProject().getNodeRange(), selectedArea);
-					w.getCareTaker().save(w.getProject(), "Deploy nodes in selected area");
+					ProjectManager.createRandomNodes(result.numOfNodes, Workspace.getProject().getNodeRange(), selectedArea);					
 					w.updateLayout();					
 					clearSelectedArea();
 					w.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);					
@@ -609,10 +591,10 @@ public class GNetwork extends Canvas {
 
 	private void updateMenuForMultipleNodesSelected() {
     	final Workspace workspace = (Workspace) getParent();
-    	Project project = workspace.getProject();
+    	Project project = Workspace.getProject();
     	final List<GSelectableObject> selectedObject = workspace.getSelectedObject();
     	
-    	if (project.getLabelList() != null) {		
+    	if (Project.getLabelList() != null) {		
 			MenuItem setLabelMenu = new MenuItem(menu, SWT.CASCADE);
 			setLabelMenu.setText("Set Label");
 
@@ -624,16 +606,14 @@ public class GNetwork extends Canvas {
 			createLabelMenu.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					Label l = (Label) new CreateLabelDialog(getShell(), SWT.SHEET, workspace.getProject()).open();
+					Label l = (Label) new CreateLabelDialog(getShell(), SWT.SHEET).open();
 					
 					if (l != null) {
 						workspace.getShownLabels().add(l);
 						for (GSelectableObject obj : selectedObject) {
 							l.add(((GWirelessNode) obj).getWirelessNode());
 							obj.redraw();
-						}
-						
-						workspace.getCareTaker().save(workspace.getProject(), "Create new label");
+						}						
 					}
 				}
 			});
@@ -645,7 +625,7 @@ public class GNetwork extends Canvas {
 			removeLabelMenu.setMenu(lblMenu);
 
 			MenuItem mntmLabel;
-			for (final Label l : project.getLabelList()) {
+			for (final Label l : Project.getLabelList()) {
 				boolean isLabelAllSelectedNodes = true;
 				for (GSelectableObject obj : selectedObject)
 					if (!l.getNodeList().contains(((GWirelessNode) obj).getWirelessNode())) {
@@ -947,7 +927,7 @@ public class GNetwork extends Canvas {
         pluginManager.stopPlugins();
 
 		
-		if (network.getNodeList().size() == 0)
+		if (getNetwork().getNodeList().size() == 0)
 			mntmDeleteAllNodes.setEnabled(false);
     }
 
@@ -1054,14 +1034,16 @@ public class GNetwork extends Canvas {
     }
     
     private void updateLabelsMenu(Menu menu, final Workspace workspace) {
-		if (workspace.getProject().getLabelList().size() > 0) {
+		Workspace.getProject();
+		if (Project.getLabelList() != null && Project.getLabelList().size() > 0) {
 			MenuItem mntmShowLabels = new MenuItem(menu, SWT.CASCADE);
 			mntmShowLabels.setText("Show Labels");
 			
 			Menu menuLabels = new Menu(mntmShowLabels);
 			mntmShowLabels.setMenu(menuLabels);
 			
-			for (final Label l : workspace.getProject().getLabelList()) {
+			Workspace.getProject();
+			for (final Label l : Project.getLabelList()) {
 				final MenuItem mntmNewItem = new MenuItem(menuLabels, SWT.CHECK);
 				if (workspace.getShownLabels().contains(l))
 					mntmNewItem.setSelection(true);
@@ -1232,7 +1214,7 @@ public class GNetwork extends Canvas {
     	if (graph == null) return;
     	
     	double ratio = getRatio();
-    	for (Node n : network.getNodeList()) {
+    	for (Node n : getNetwork().getNodeList()) {
     		List<WirelessNode> wnodeList = graph.getAdjacentNodes((WirelessNode) n);
     		for (WirelessNode wn : wnodeList) {
     			if (n.getId() < wn.getId()) {
@@ -1255,7 +1237,7 @@ public class GNetwork extends Canvas {
     	if (graph == null) return;
     	
     	double ratio = getRatio();
-    	for (Node n : network.getNodeList()) {
+    	for (Node n : getNetwork().getNodeList()) {
     		List<WirelessNode> wnodeList = graph.getAdjacentNodes((WirelessNode) n);
     		for (WirelessNode wn : wnodeList) {
     			if (n.getId() < wn.getId()) {
@@ -1280,7 +1262,7 @@ public class GNetwork extends Canvas {
     private void showConnection() {
     	Workspace workspace = (Workspace) getParent();
     	
-		List<Node> nodeList = workspace.getProject().getNetwork().getNodeList();
+		List<Node> nodeList = Workspace.getProject().getNetwork().getNodeList();
 		
 		for (Node n : nodeList) {
 			if (n instanceof WirelessNode) {

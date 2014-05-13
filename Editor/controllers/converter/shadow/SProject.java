@@ -72,8 +72,8 @@ public class SProject  extends Project implements TclObject
 		{			
 			List<String> command = scanner.scanCommand();
 			
-			System.out.print((scanner.getLine() + 1) + ":\t");
-			for (String word : command) System.out.print(" " + word);			
+		//	System.out.print((scanner.getLine() + 1) + ":\t");
+		//	for (String word : command) System.out.print(" " + word);			
 			
 			try 
 			{
@@ -172,7 +172,8 @@ public class SProject  extends Project implements TclObject
 	{
 		return insObj.get(key);
 	}
-	
+
+	@Deprecated
 	public TclObject getObjectbyLabel(String label)
 	{
 		for (String s : insObj.keySet())
@@ -547,12 +548,12 @@ public class SProject  extends Project implements TclObject
 		nodeRange = value;
 		
 		try {
-			TclObject propaga = getObjectbyLabel(Converter.parseIdentify(network.nodeConfig.getInsVar("-propType").getValue()));
-			TclObject antenna = getObjectbyLabel(Converter.parseIdentify(network.nodeConfig.getInsVar("-antType" ).getValue()));
+			TclObject propaga = getObject(network.nodeConfig.getInsVar("-phyType").getValue());
+			TclObject antenna = getObject(network.nodeConfig.getInsVar("-antType" ).getValue());
 			
 			Runtime r = Runtime.getRuntime();
-			Process p = r.exec(	"/home/trongnguyen/NS2/ns-2.35/indep-utils/propagation/threshold -m " +
-								propaga.getLabel().substring(12) + " " +
+			Process p = r.exec( WorkSpace.getNS2Path() + "indep-utils/propagation/threshold -m " +
+								network.nodeConfig.getInsVar("-propType").getValue().substring(12) + " " +
 								value);		
 			
 			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -574,7 +575,7 @@ public class SProject  extends Project implements TclObject
 		    
 			br.close();			
 		} catch (Exception e) {
-			
+			System.err.print("cannot run");
 		}
 	}
 	

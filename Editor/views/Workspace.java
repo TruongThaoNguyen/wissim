@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import models.Project;
-import models.managers.CareTaker;
 import models.networkcomponents.Node;
 import models.networkcomponents.WirelessNode;
 import models.networkcomponents.features.Area;
@@ -27,23 +26,21 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.osgi.resource.Wire;
 
 import controllers.graphicscomponents.GNetwork;
 import controllers.graphicscomponents.GObstacle;
 import controllers.graphicscomponents.GSelectableObject;
 import controllers.graphicscomponents.GWirelessNode;
+import controllers.managers.ProjectManager;
 import controllers.managers.WorkspacePropertyManager;
 import views.dialogs.ViewProjectInfoDialog;
 
 public class Workspace extends Composite {
 	public final static int OVERVIEW = 0, EXTEND = 1;
-	
-	private Project project;	// project that this workspace is working with
+		
 	private int mode;			// view mode of workspace
 	private double scale;		// handle the scale of the network
 	
-	private CareTaker careTaker;		// save and manage the history of workspace
 	private int savedStateIndex; 
 	
 	// temporary values
@@ -54,20 +51,16 @@ public class Workspace extends Composite {
 	
 	WorkspacePropertyManager propertyManager;
 
-	public Workspace(Composite parent, int style, Project project) {
+	public Workspace(Composite parent, int style) {
 		super(parent, style);
 		
-		isLeftMouseDown = false;
-		this.project = project;
+		isLeftMouseDown = false;		
 		this.scale = 1;
 		this.mode = OVERVIEW;
 		this.propertyManager = new WorkspacePropertyManager();
 		mouseLeftTempPoint = null;		
 		
-		new GNetwork(this, SWT.NONE, project.getNetwork());
-		
-		careTaker = new CareTaker();
-//		careTaker.save(project, "Initialize project");
+		new GNetwork(this, SWT.NONE);				
 		savedStateIndex = 0;
 		
 		shownLabels = new LinkedList<Label>();
@@ -146,11 +139,7 @@ public class Workspace extends Composite {
 		updateLayout();
 	}
 	
-	public void setProject(Project project) {
-		this.project = project;
-		getGraphicNetwork().setWirelessNetwork(project.getNetwork());
-		updateLayout();
-	}
+	public static Project getProject() { return ProjectManager.getProject(); }
 	
 	private void updateMenu() {
 		Menu menu = new Menu(this);
@@ -186,76 +175,95 @@ public class Workspace extends Composite {
 		GNetwork gnetwork = getGraphicNetwork();
 		if (gnetwork == null) return;
 		
-		boolean isExisted;
-		for (GWirelessNode gn : getGraphicNodes()) {
-			isExisted = false;
-			// check whether the graphic node is sill represented of a node
-			for (Node n : project.getNetwork().getNodeList())				
-				if (gn.getWirelessNode().getId() == n.getId()) {
-					isExisted = true;
+		// check whether the graphic node is sill represented of a node
+		WirelessNode node;
+		for (GWirelessNode gn : getGraphicNodes()) 
+		{			
+			node = null;
+			for (Node n : getProject().getNetwork().getNodeList())
+			{
+				if (gn.getWirelessNode().getId() == n.getId()) 
+				{
+					node = (WirelessNode) n;
 					break;
 				}
+			}
 			
-			if (!isExisted)
-				gn.dispose();
+			if (node != null)	gn.dispose();		// dispose if isn't represented any node						
+			else 
+			{
+				gn.updateBounds();
+			}
 		}		
 		
+		
+		System.out.println("{so node: }"+getProject().getNetwork().getNodeList().size());
+		System.out.println("{network size:x::"+getProject().getNetwork().getWidth()+";y::"+getProject().getNetwork().getLength()+"}");
+				
+		boolean isExisted;
 		// keep a list of nodes that did not have a graphic network (O(n^2))
-		System.out.println("{so node: }"+project.getNetwork().getNodeList().size());
-		System.out.println("{network size:x::"+project.getNetwork().getWidth()+";y::"+project.getNetwork().getLength()+"}");
-		for (Node n : project.getNetwork().getNodeList()) {
-			WirelessNode wn = (WirelessNode)n;
+		for (Node n : getProject().getNetwork().getNodeList()) 
+		{
+			WirelessNode wn = (WirelessNode) n;
+			
 			System.out.println("{ID:"+wn.getId()+";X:"+wn.getX()+";Y:"+wn.getY()+";range:"+wn.getRange() + "}");
+			
+			// check whether nodes in getProject() are instantiated yet
 			isExisted = false;
-			// check whether nodes in project are instantiated yet
-			for (GWirelessNode gn : getGraphicNodes()){
-				
-				
-				
-				if (gn.getWirelessNode().getId() == n.getId()) {
+			for (GWirelessNode gn : getGraphicNodes())
+			{
+				if (gn.getWirelessNode().getId() == n.getId()) 
+				{
 					isExisted = true;
 					break;
 				}
 			}
 			
-			if (!isExisted) {
-//				WirelessNode w = (WirelessNode)n;
-				if(wn.getX() !=0 && wn.getY() !=0) {
-					
+			if (!isExisted) 
+			{				
 				GWirelessNode gnode = new GWirelessNode(this, SWT.NONE, (WirelessNode) n);		
 				gnode.moveAbove(null);	
-				System.out.println(this.getChildren().length);
-				}
+				System.out.println(this.getChildren().length);				
 			}
 		}	
-		if(project.getObstacleList() != null) 
-		for (Area area : project.getObstacleList()) {
-			isExisted = false;
-			// check whether area in project are instantiated yet
-			for (GObstacle garea : getGraphicObstacles()) {
-				if (garea.getArea().getId() == area.getId()) {
-					isExisted = true;
-					break;
+		
+		if (getProject().getObstacleList() != null)
+		{
+			for (Area area : getProject().getObstacleList()) 
+			{
+				// check whether area in getProject() are instantiated yet			
+				isExisted = false;
+				for (GObstacle garea : getGraphicObstacles()) 
+				{
+					if (garea.getArea().getId() == area.getId()) 
+					{
+						isExisted = true;
+						break;
+					}
 				}
-			}
 			
-			if (!isExisted) {			
-				GObstacle gobstacle = new GObstacle(this, SWT.NONE, area);
-				gobstacle.moveAbove(gnetwork);
+				if (!isExisted) 
+				{			
+					GObstacle gobstacle = new GObstacle(this, SWT.NONE, area);
+					gobstacle.moveAbove(gnetwork);
+				}
 			}
 		}
 		
-		for (GObstacle garea : getGraphicObstacles()) {
-			isExisted = false;
+		for (GObstacle garea : getGraphicObstacles()) 
+		{
 			// check whether the graphic node is sill represented of a node
-			for (Area area : project.getObstacleList())				
-				if (garea.getArea().getId() == area.getId()) {
+			isExisted = false;
+			for (Area area : getProject().getObstacleList())
+			{
+				if (garea.getArea().getId() == area.getId()) 
+				{
 					isExisted = true;
 					break;
 				}
+			}
 			
-			if (!isExisted)
-				garea.dispose();			
+			if (!isExisted)	garea.dispose();			
 		}
 	}
 	
@@ -326,11 +334,7 @@ public class Workspace extends Composite {
 		
 		return null;
 	}
-	
-	public Project getProject() {
-		return project;
-	}
-	
+		
 	public List<GSelectableObject> getSelectedObject() {
 		List<GSelectableObject> selectedList = new ArrayList<GSelectableObject>();
 		for (Control c : getChildren())
@@ -348,7 +352,6 @@ public class Workspace extends Composite {
 			if (c instanceof GSelectableObject)
 				selectableList.add((GSelectableObject)c);
 		
-		if(selectableList == null) return null;
 		return selectableList;
 	}
 	
@@ -415,10 +418,6 @@ public class Workspace extends Composite {
 				obs.setVisible(false);
 	}
 	
-	public CareTaker getCareTaker() {
-		return careTaker;
-	}
-	
 	public void adaptChanges() {
 		ScrolledComposite sc = (ScrolledComposite)getParent();
 		
@@ -441,11 +440,7 @@ public class Workspace extends Composite {
 				return false;
 		
 		return true;
-	}
-	
-	public boolean isChanged() {
-		return (savedStateIndex != getCareTaker().getCurrentStateIndex());
-	}
+	}	
 	
 	public int getSavedStateIndex() {
 		return savedStateIndex;

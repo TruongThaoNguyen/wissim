@@ -15,6 +15,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import controllers.managers.ProjectManager;
+
 public class NodeLocationDialog extends Dialog {
 
 	protected Object result;
@@ -22,19 +24,23 @@ public class NodeLocationDialog extends Dialog {
 	private Text txtX;
 	private Text txtY;
 	
-	private WirelessNode wirelessNode;
+	private int nodeID;
+	
+	private WirelessNode wirelessNode() {
+		return (WirelessNode) ProjectManager.getProject().getNetwork().getNodeById(nodeID);
+	}
 
 	/**
 	 * Create the dialog.
 	 * @param parent
 	 * @param style
-	 * @param wirelessNode 
+	 * @param wirelessNode() 
 	 */
 	public NodeLocationDialog(Shell parent, int style, WirelessNode wirelessNode) {
 		super(parent, style);
 		setText("SWT Dialog");
 		
-		this.wirelessNode = wirelessNode;
+		this.nodeID = wirelessNode().getId();
 	}
 
 	/**
@@ -57,8 +63,8 @@ public class NodeLocationDialog extends Dialog {
 	}
 	
 	private void initialize() {
-		txtX.setText(wirelessNode.getX() + "");		
-		txtY.setText(wirelessNode.getY() + "");
+		txtX.setText(wirelessNode().getX() + "");		
+		txtY.setText(wirelessNode().getY() + "");
 	}
 
 	/**

@@ -45,7 +45,7 @@ public class MainWindow extends ApplicationWindow {
 	 * Create the application window.
 	 */
 	public MainWindow(Shell shell) {
-		super(null);
+		super(shell);
 		createActions();
 		addMenuBar();
 		addStatusLine();
@@ -71,7 +71,7 @@ public class MainWindow extends ApplicationWindow {
 		
 		editor   = new Editor(mainComposite, menuManager, statusLineManager);		
 //		analyzer = new Analyzer(mainComposite, menuManager, statusLineManager);
-		visualizer = new Visualizer(mainComposite, menuManager, statusLineManager);
+//		visualizer = new Visualizer(mainComposite, menuManager, statusLineManager);
 		
 		Button btnEditor = new Button(featureComposite, SWT.PUSH);
 		btnEditor.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
@@ -155,8 +155,7 @@ public class MainWindow extends ApplicationWindow {
 			window.setBlockOnOpen(true);
 			window.open();
 			
-
-//			Display.getCurrent().dispose();
+			Display.getCurrent().dispose();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

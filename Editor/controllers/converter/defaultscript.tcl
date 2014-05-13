@@ -15,7 +15,7 @@ set opt(seed)		0.0
 set opt(stop)		500.0		;# simulation time
 set opt(tr)		Trace.tr	;# trace file
 set opt(nam)            nam.out.tr
-set opt(rp)             ELLIPSE		;# routing protocol script (dsr or dsdv)
+set opt(rp)             GPSR		;# routing protocol script (dsr or dsdv)
 set opt(lm)             "off"		;# log movement
 
 set opt(energymodel)    EnergyModel     ;
@@ -33,7 +33,7 @@ set opt(transitionTime)  0.0129
 
 LL set mindelay_		50us
 LL set delay_			25us
-LL set bandwidth_		0	;# not used
+LL set bandwidth_		0
 
 Agent/Null set sport_		0
 Agent/Null set dport_		0
@@ -41,13 +41,10 @@ Agent/Null set dport_		0
 Agent/CBR set sport_		0
 Agent/CBR set dport_		0
 
-
-# leecom: ?
 Queue/DropTail/PriQueue set Prefer_Routing_Protocols    1
 
 # unity gain, omni-directional antennas
 # set up the antennas to be centered in the node and 1.5 meters above it
-#leecom: ?
 Antenna/OmniAntenna set X_ 0
 Antenna/OmniAntenna set Y_ 0
 Antenna/OmniAntenna set Z_ 1.5
@@ -88,9 +85,6 @@ Phy/WirelessPhy set Pt_ 0.281838
 #	500m : 2.28289e-11
 #	1000m : 1.42681e-12
 
-Agent/ELLIPSE set energy_checkpoint_ $opt(checkpoint)
-Agent/ELLIPSE set alpha_ 0.4
-
 # ======================================================================
 
 #
@@ -107,11 +101,11 @@ set prop	[new $opt(prop)]
 set topo	[new Topography]
 
 set tracefd	[open $opt(tr) w]
-#set namtrace	[open $opt(nam) w]
+set namtrace	[open $opt(nam) w]
 
 # run the simulator
 $ns_ trace-all $tracefd 
-#$ns_ namtrace-all-wireless $namtrace $opt(x) $opt(y) 
+$ns_ namtrace-all-wireless $namtrace $opt(x) $opt(y) 
 
 $topo load_flatgrid $opt(x) $opt(y) 
 $prop topography $topo
@@ -142,34 +136,19 @@ $ns_ node-config -adhocRouting $opt(rp) \
 		 -transitionTime $opt(transitionTime) \
 		 -initialEnergy $opt(initialenergy)
 
-# set up nodes
-for {set i 0} {$i < $opt(nn)} {incr i} {
-	set mnode_($i) [$ns_ node]
-}
+# <set up nodes here>
 
-# set up node position
-#source ./topo_data.tcl
-
-for {set i 0} {$i < $opt(nn)} { incr i } {
-	$ns_ initial_node_pos $mnode_($i) 5
-}
-
-# telling nodes when the simulator ends
-for {set i 0} {$i < $opt(nn)} {incr i} {
-	$ns_ at $opt(stop).000000001 "$mnode_($i) reset"
-}
-
-#source ./cbr.tcl
+# <set up connection here>
 
 # ending nam and the simulation
-#$ns_ at $opt(stop) "$ns_ nam-end-wireless $opt(stop)" 
+$ns_ at $opt(stop) "$ns_ nam-end-wireless $opt(stop)" 
 $ns_ at $opt(stop) "stop" 
 
 proc stop {} {
-	global ns_ tracefd startTime	;# namtrace
+	global ns_ tracefd startTime namtrace
 	$ns_ flush-trace
 	close $tracefd
-	#close $namtrace
+	close $namtrace
 	
 	puts "end simulation"
 

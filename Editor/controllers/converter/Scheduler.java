@@ -1,5 +1,5 @@
 package controllers.converter;
 
 public interface Scheduler {	
-	void addEvent(Double time, String arg);
+	void addEvent(double time, String arg);
 }

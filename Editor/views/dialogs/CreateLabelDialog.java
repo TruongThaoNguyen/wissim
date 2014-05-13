@@ -2,7 +2,6 @@ package views.dialogs;
 
 import java.util.Random;
 
-import models.Project;
 import models.networkcomponents.features.GraphicLabel;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -28,18 +27,15 @@ public class CreateLabelDialog extends Dialog {
 	protected Shell shlAddLabel;
 	private Text txtLabel;
 	
-	private Project project;
-
 	/**
 	 * Create the dialog.
 	 * @param parent
 	 * @param style
 	 * @param project 
 	 */
-	public CreateLabelDialog(Shell parent, int style, Project project) {
+	public CreateLabelDialog(Shell parent, int style) {
 		super(parent, style);
-		setText("SWT Dialog");
-		this.project = project;
+		setText("SWT Dialog");		
 	}
 
 	/**

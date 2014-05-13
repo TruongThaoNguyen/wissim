@@ -95,12 +95,11 @@ public class ProjectManager {
 	 * @throws IOException
 	 */
 	public static void saveProject() throws IOException {				
-		String fileName = WorkSpace.getDirectory() + "simulate.tcl";
+//		String fileName = WorkSpace.getDirectory() + WorkSpace.getTclFile() +".tcl";
+		String fileName = WorkSpace.getTclFile();
 		
-		BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));		
-		for (String string : Converter.DTC()) {
-			bw.write(string);
-		}
+		BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));				
+		bw.write(Converter.DTC());		
 		bw.close();				
 	}
 	
@@ -200,13 +199,12 @@ public class ProjectManager {
 	 * @param range
 	 * @return new node
 	 */
-	public static WirelessNode createSingleNode(int x, int y, int range) {
+	public static WirelessNode createSingleNode(int x, int y) {
 		WirelessNetwork network = getNetwork();
 		
-		if (network == null) return null;		
-		if (x < 0 || x > network.getWidth() || y < 0 || y > network.getLength() || range <= 0) return null;
+		if (network == null) return null;				
+		if (x < 0 || x > network.getWidth() || y < 0 || y > network.getLength()) return null;		
 		
-		getProject();
 		// check if the location is inside a hole
 		if(Project.getObstacleList() != null)
 		{
@@ -224,7 +222,7 @@ public class ProjectManager {
 		}			
 		
 		// create new node and add to network
-		return (WirelessNode) network.addNode(x, y, range);
+		return (WirelessNode) network.addNode(x, y);
 	}
 
 	/**
@@ -238,7 +236,7 @@ public class ProjectManager {
 		
 		Random rand = new Random();
 		WirelessNode node = null;
-		while (node == null) node = createSingleNode(rand.nextInt(network.getWidth()), rand.nextInt(network.getLength()), getProject().getNodeRange());							
+		while (node == null) node = createSingleNode(rand.nextInt(network.getWidth()), rand.nextInt(network.getLength()));							
 		return node;
 	}
 	
@@ -263,7 +261,7 @@ public class ProjectManager {
 		{
 			while (i < numOfNodes)
 			{
-				WirelessNode wnode = ProjectManager.createSingleNode(rand.nextInt(nw.getWidth()), rand.nextInt(nw.getLength()), range);
+				WirelessNode wnode = ProjectManager.createSingleNode(rand.nextInt(nw.getWidth()), rand.nextInt(nw.getLength()));
 				if (wnode != null) i++;
 			}
 		}
@@ -278,7 +276,7 @@ public class ProjectManager {
 					y = rand.nextInt(area.getBounds().height) + area.getBounds().y;
 				} while (area.contains(x, y)); 
 			
-				wnode = ProjectManager.createSingleNode(x, y, range);
+				wnode = ProjectManager.createSingleNode(x, y);
 				
 				if (wnode != null) i++;
 			}
@@ -295,7 +293,7 @@ public class ProjectManager {
 	 * @param range
 	 * @return
 	 */
-	public static boolean createGridNodes(Area area, int gSizeX, int gSizeY, int range) {							
+	public static boolean createGridNodes(Area area, int gSizeX, int gSizeY) {
 		WirelessNetwork nw = getNetwork();
 		
 		int x = gSizeX, y = gSizeY;
@@ -304,7 +302,7 @@ public class ProjectManager {
 		{
 			while (y < nw.getLength()) {
 				while (x < nw.getWidth()) {
-					if (area.contains(x, y)) ProjectManager.createSingleNode(x, y, range);				
+					if (area.contains(x, y)) ProjectManager.createSingleNode(x, y);				
 					x+= gSizeX;
 				}
 				y += gSizeY;
@@ -314,7 +312,7 @@ public class ProjectManager {
 		{
 			while (y < nw.getLength()) {
 				while (x < nw.getWidth()) {
-					ProjectManager.createSingleNode(x, y, range);				
+					ProjectManager.createSingleNode(x, y);				
 					x+= gSizeX;
 				}
 				y += gSizeY;
@@ -360,7 +358,8 @@ public class ProjectManager {
 		}
 	}
 	
-	public static boolean deleteNode(WirelessNode node) { 
+	public static boolean deleteNode(WirelessNode node) {
+		if (node == null) return false;
 		WirelessNetwork nw = (WirelessNetwork) node.getNetwork();
 		return nw.removeNode(node);
 	}

@@ -116,17 +116,13 @@ public class NetworkPropertiesDialog extends Dialog {
 										switch (item.getText(0)) {
 										case "Name":
 											network.setName(text.getText());
-											item.setText(column, text.getText());	
-											
-											workspace.getCareTaker().save(workspace.getProject(), "Edit network name");
+											item.setText(column, text.getText());												
 											break;
 										case "Simulation Time":
 											try {
 												int t = Integer.parseInt(text.getText());
 												network.setTime(t);
-												item.setText(column, text.getText());
-												
-												workspace.getCareTaker().save(workspace.getProject(), "Edit simulation time");
+												item.setText(column, text.getText());												
 											} catch (NumberFormatException exc) {
 												MessageDialog.openError(getParent(), "Invalid Input", "Please enter an integer value");
 											}
@@ -143,17 +139,13 @@ public class NetworkPropertiesDialog extends Dialog {
 											switch (item.getText(0)) {
 											case "Name":
 												network.setName(text.getText());
-												item.setText(column, text.getText());	
-												
-												workspace.getCareTaker().save(workspace.getProject(), "Edit network name");
+												item.setText(column, text.getText());													
 												break;
 											case "Simulation Time":
 												try {
 													int t = Integer.parseInt(text.getText());
 													network.setTime(t);
-													item.setText(column, text.getText());
-													
-													workspace.getCareTaker().save(workspace.getProject(), "Edit simulation time");
+													item.setText(column, text.getText());													
 												} catch (NumberFormatException exc) {
 													MessageDialog.openError(getParent(), "Invalid Input", "Please enter an integer value");
 												}

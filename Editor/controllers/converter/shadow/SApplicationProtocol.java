@@ -34,7 +34,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	private HashMap<String, Double> event = new HashMap<String, Double>();
 	
 	@Override
-	public void addEvent(Double time, String arg) {
+	public void addEvent(double time, String arg) {
 		event.put(arg, time);		
 		// TODO:
 	}

@@ -15,8 +15,7 @@ import views.Workspace;
  *
  */
 public abstract class GSelectableObject extends Canvas {
-	protected boolean isSelected = false;
-	
+	protected boolean isSelected = false;	
 	protected boolean isLeftMouseDown = false;
 	protected boolean isMouseDrag = false;
 	protected Point mouseStartPoint;		
@@ -49,7 +48,7 @@ public abstract class GSelectableObject extends Canvas {
 				
 				if (isMouseDrag == true) {
 					//((Workspace) getParent()).getCareTaker().save(((Workspace) getParent()).getProject(), "Move object");
-					workspace.getCareTaker().save(workspace.getProject(), "Move object");
+					//workspace.getCareTaker().save(workspace.getProject(), "Move object");
 					workspace.updateLayout();
 					workspace.deselectGraphicObjects();
 					isMouseDrag = false;

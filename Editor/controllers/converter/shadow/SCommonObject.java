@@ -2,7 +2,6 @@ package controllers.converter.shadow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import controllers.converter.Converter;
@@ -24,7 +23,7 @@ public class SCommonObject implements TclObject
 	private String label;
 	private List<Entry> entryList = new ArrayList<Entry>();
 	private HashMap<String, InsProc> insProc  = new HashMap<String, InsProc>();	
-	private HashMap<String, InsVar>  insVar  = new LinkedHashMap<String, InsVar>();
+	private HashMap<String, InsVar>  insVar  = new HashMap<String, InsVar>();
 //	private HashMap<String, Double> event = new HashMap<String, Double>();
 	
 	/**

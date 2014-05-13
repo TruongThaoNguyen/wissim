@@ -31,7 +31,7 @@ public abstract class TransportProtocol implements Protocol {
 
 	public List<ApplicationProtocol> getAppList() { return appList; }
 	
-	public abstract void addApp(int type, String name, Node destNode);
+	public abstract ApplicationProtocol addApp(int type, String name, Node destNode);
 	
 	public abstract boolean removeApp(ApplicationProtocol app);
 	

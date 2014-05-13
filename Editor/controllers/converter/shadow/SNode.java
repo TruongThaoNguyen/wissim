@@ -21,14 +21,13 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 		super(network);
 		setX(0);
 		setY(0);		
-		addInsProc();
+		addInsProc();		
 	}
 	
-	public SNode(SNetwork network, int x, int y, int range) {
+	public SNode(SNetwork network, int x, int y) {
 		super(network);
 		setX(x);
 		setY(y);
-		this.range = range;
 		addInsProc();
 	}
 
@@ -37,11 +36,29 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 	private HashMap<String, Double> event = new HashMap<String, Double>();
 	
 	@Override
-	public void addEvent(Double time, String arg) {
+	public void addEvent(double time, String arg) {
 		event.put(arg, time);		
 		// TODO:
 	}
+	
+	@Override
+	public List<NodeEvent> getEventList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
+	@Override
+	public void addEvent(int type, int raiseTime) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeEvent(NodeEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	// endregion Scheduler
 	
 	// region ------------------- TCL properties ------------------- //
@@ -249,21 +266,8 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 	}
 
 	@Override
-	public List<NodeEvent> getEventList() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void addEvent(int type, int raiseTime) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removeEvent(NodeEvent event) {
-		// TODO Auto-generated method stub
-		
+	public int getRange() {
+		return Converter.global.getNodeRange();
 	}
 
 	// endregion Wireless Node properties	

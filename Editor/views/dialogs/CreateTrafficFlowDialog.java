@@ -272,7 +272,7 @@ public class CreateTrafficFlowDialog extends Dialog {
 					keyAppName = "Telnet";
 					break;
 				}
-				ApplicationProtocol appProtocol = new ApplicationProtocol(appType, appName, transProtocol, d);
+				ApplicationProtocol appProtocol = transProtocol.addApp(appType, appName, d);
 				HashMap<String, String> appProtocolParams = ApplicationSettings.applicationProtocols.get(keyAppName);
 				set = appProtocolParams.entrySet();
 				i = set.iterator();
@@ -294,9 +294,7 @@ public class CreateTrafficFlowDialog extends Dialog {
 					
 					int time = Integer.parseInt(item.getText(1));
 					new AppEvent(type, time, appProtocol);
-				}
-				
-				workspace.getCareTaker().save(workspace.getProject(), "Create traffic flow");
+				}				
 				
 				shlCreateTrafficFlow.close();
 			}

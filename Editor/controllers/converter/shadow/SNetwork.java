@@ -43,6 +43,21 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	
 	SCommonObject nodeConfig; 
 
+	// region ------------------- Event ------------------- //
+	
+	@Override
+	public void addEvent(double time, String arg) {
+		event.put(arg, time);		
+		
+		// check if this event is stop event or not
+		if (arg.contains("end"))
+		{
+			setTime((int)time);
+		}
+	}
+
+	// endregion Event
+	
 	// region ------------------- TCL properties ------------------- //
 	
 	// region ------------------- Parse Tcl code ------------------- //
@@ -62,15 +77,6 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	}
 
 	// endregion Parse Tcl code
-	
-	// region ------------------- Event ------------------- //
-	
-	@Override
-	public void addEvent(Double time, String arg) {
-		event.put(arg, time);		
-	}
-
-	// endregion Event
 	
 	// region ------------------- Register Entry ------------------- //
 
@@ -160,7 +166,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 				return null;
 			}
 		};
-
+		
 		new InsProc(this, "set") {
 			@Override
 			protected String run(List<String> command) throws Exception {				
@@ -197,6 +203,8 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		new InsProc(this, "node-config") {
 			@Override
 			public String run(List<String> command) throws Exception {
+				nodeConfig.addEntry(entry);
+				
 				if (command.size() % 2 == 1) throw new ParseException(ParseException.MissArgument);
 				for (int i = 0; i < command.size(); i+=2)
 				{
@@ -223,6 +231,21 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 			}	
 		};
 	
+		new InsProc(this, "initial_node_pos") {
+			@Override
+			protected String run(List<String> arg) throws Exception {
+				if (arg.size() != 2) throw new ParseException(ParseException.InvalidArgument);
+				List<String> command = new ArrayList<>();
+				command.add("set");
+				command.add("initial_node_pos");
+				command.add(arg.get(1));
+				TclObject node = Converter.global.getObject(Converter.parseIdentify(arg.get(0)));
+				node.addEntry(entry);				
+				return node.parse(command, false);
+			}
+			
+		};
+		
 		new InsProc(this, "at") {
 			@Override
 			public String run(List<String> command) throws Exception 
@@ -239,8 +262,10 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 					TclObject obj = Converter.global.getObject(sc.remove(0));
 					if (obj != null)
 					{							
-						arg = "";				
-						for (String s : sc)	arg += s;				
+						arg = "";
+						for (int i = 0; i < sc.size() - 2; i++)
+							arg += sc.get(i) + " ";
+						arg += sc.get(sc.size() - 1);							
 						
 						((Scheduler)obj).addEvent(time, arg);
 						obj.addEntry(entry);
@@ -254,7 +279,8 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 			
 			@Override
 			protected void record(List<String> command) {
-				Converter.generateEntry.add(new Entry(this, command));
+				entry = new Entry(this, command);
+				Converter.generateEntry.add(entry);
 			}
 		};
 
@@ -289,7 +315,8 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		
 	private String insprocNode(List<String> command) throws Exception {
 		if (command.size() != 0) throw new ParseException(ParseException.InvalidArgument);
-		SNode newNode = new SNode(this);		
+		SNode newNode = new SNode(this);
+		newNode.addEntry(Converter.generateEntry.get(Converter.generateEntry.size() - 1));
 		nodeList.add(newNode);		
 		return Converter.global.addObject(newNode);								
 	}
@@ -302,7 +329,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	
 	@Override
 	protected boolean removenode(Node n) {	
-		if (!nodeList.contains(n)) return false;					
+		if (!nodeList.contains(n)) return false;							
 		
 		// remove from global objList
 		Converter.global.removeObject(n);
@@ -320,33 +347,46 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	}
 
 	@Override
-	protected SNode addnode(int x, int y, int rage) {
-		SNode newNode = new SNode(this, x, y, rage);
-		Converter.global.addObject(newNode);
+	protected SNode addnode(int x, int y) {
+		SNode newNode = new SNode(this, x, y);
+		InsVar insvar = setInsVar("mnode(" + newNode.getId() + ")", Converter.global.addObject(newNode), "$mnode_(" + newNode.getId() + ")");	
 		
 		// region ------------------- auto generate tcl code ------------------- //
 
-		List<Entry> e = ((SNode)nodeList.get(nodeList.size() - 1)).getEntry();		
-		int index = Converter.generateEntry.lastIndexOf(e.get(e.size() - 1));
+		// find last index of network's component in the global register
+		List<Entry> e;	
+		
+		e = nodeConfig.getEntry();
+		
+		// if (nodeList.isEmpty()) e = nodeConfig.getEntry();
+		// else 					e = ((SNode)nodeList.get(nodeList.size() - 1)).getEntry();		
+		int	index = Converter.generateEntry.lastIndexOf(e.get(e.size() - 1));		
 		
 		// space
-		Converter.generateEntry.add(index + 1, new Entry("\n"));
+		Entry en = new Entry("\n");
+		Converter.generateEntry.add(index + 1, en);
+		newNode.addEntry(en);
 		
 		// create node 		set mnode_($i) [$ns_ node]
-		Entry en = new Entry("set mnode_(" + newNode.getId() + ") [$" + this.label + " node]\n");
+		en = new Entry("set mnode_(" + newNode.getId() + ") [" + this.getLabel() + " node]\n");
 		Converter.generateEntry.add(index + 2, en);
 		newNode.addEntry(en);
 		
 		// set position		$mnode_(0) set X_ 30	; $mnode_(0) set Y_ 860	; $mnode_(0) set Z_ 0
-		en = new Entry("$mnode_(" + newNode.getId() + ") set X_ " + x + " ; " + 
-						"$mnode_(" + newNode.getId() + ") set Y_ " + y + " ; " +
-						"$mnode_(" + newNode.getId() + ") set Z_ 0\n");
+		en = new Entry(	insvar + " set X_ " + x + " ;\t" + 
+						insvar + " set Y_ " + y + " ;\t" +
+						insvar + " set Z_ 0\n");
 		Converter.generateEntry.add(index + 3, en);
 		newNode.addEntry(en);
 		
-		// 	$ns_ initial_node_pos $mnode_($i) 5
-		en = new Entry("$" + label + "initial_node_pos $mnode_(" + newNode.getId() + ") 5\n");
+		// $ns_ initial_node_pos $mnode_($i) 5
+		en = new Entry(this.label + " initial_node_pos " + insvar + " 5\n");
 		Converter.generateEntry.add(index + 4, en);
+		newNode.addEntry(en);
+		
+		// $ns_ at $opt(stop) "$mnode($i) reset" 
+		en = new Entry(this.getLabel() + " at " + getTime() + ".0001 \"" + insvar + " reset\"\n");
+		Converter.generateEntry.add(index + 5, en);
 		newNode.addEntry(en);
 		
 		// endregion generate auto tcl code
@@ -361,15 +401,12 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	}
 
 	@Override
-	public int getTime() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
 	protected void settime(int time) {
-		// TODO Auto-generated method stub
-		
+		// check if this event is stop event or not
+		for (String key : event.keySet()) {
+			if (key.contains(getLabel() + "halt") || key.contains("exit 0"))
+				event.put(key, (double) time);
+		}
 	}
 	
 	// endregion Wireless Network properties	

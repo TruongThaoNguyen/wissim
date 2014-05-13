@@ -15,26 +15,32 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
 
+import controllers.managers.ProjectManager;
+
 public class CreateNodeEventDialog extends Dialog {
 
 	protected Object result;
 	protected Shell shlNewNodeEvent;
 	
-	private WirelessNode wirelessNode;
+	private int nodeID;
 
 	/**
 	 * Create the dialog.
 	 * @param parent
 	 * @param style
-	 * @param wirelessNode 
+	 * @param wirelessNode() 
 	 */
 	public CreateNodeEventDialog(Shell parent, int style, WirelessNode wirelessNode) {
 		super(parent, style);
 		setText("SWT Dialog");
 		
-		this.wirelessNode = wirelessNode;
+		this.nodeID = wirelessNode.getId();
 	}
 
+	private WirelessNode wirelessNode() { 
+		return (WirelessNode) ProjectManager.getProject().getNetwork().getNodeById(nodeID); 
+	}
+	
 	/**
 	 * Open the dialog.
 	 * @return the result
@@ -58,7 +64,7 @@ public class CreateNodeEventDialog extends Dialog {
 	private void createContents() {
 		shlNewNodeEvent = new Shell(getParent(), getStyle());
 		shlNewNodeEvent.setSize(329, 196);
-		shlNewNodeEvent.setText("New Event for Node " + wirelessNode.getId());
+		shlNewNodeEvent.setText("New Event for Node " + wirelessNode().getId());
 		
 		Label lblRaisedTime = new Label(shlNewNodeEvent, SWT.NONE);
 		lblRaisedTime.setBounds(21, 47, 77, 15);
@@ -66,8 +72,8 @@ public class CreateNodeEventDialog extends Dialog {
 		
 		int minTime = 1;
 		int type = NodeEvent.ON;
-		if (wirelessNode.getEventList().size() > 0) { 
-			NodeEvent lastEvent = wirelessNode.getEventList().get(wirelessNode.getEventList().size() - 1);
+		if (wirelessNode().getEventList().size() > 0) { 
+			NodeEvent lastEvent = wirelessNode().getEventList().get(wirelessNode().getEventList().size() - 1);
 			minTime = lastEvent.getRaisedTime() + 1;
 			
 			switch (lastEvent.getType()) {
@@ -83,7 +89,7 @@ public class CreateNodeEventDialog extends Dialog {
 		final Scale scale = new Scale(shlNewNodeEvent, SWT.NONE);
 		scale.setBounds(104, 33, 189, 42);
 		scale.setMinimum(minTime);
-		scale.setMaximum(wirelessNode.getNetwork().getTime());
+		scale.setMaximum(wirelessNode().getNetwork().getTime());
 		scale.setPageIncrement((scale.getMaximum() - scale.getMinimum()) / 10);
 		scale.addSelectionListener(new SelectionListener() {
 			
@@ -136,7 +142,7 @@ public class CreateNodeEventDialog extends Dialog {
 					break;
 				}
 				
-				new NodeEvent(type, scale.getSelection(), wirelessNode);
+				new NodeEvent(type, scale.getSelection(), wirelessNode());
 				shlNewNodeEvent.dispose();
 			}
 		});		

@@ -14,6 +14,11 @@ import java.util.List;
 import java.util.Observable;
 
 public abstract class Network extends Observable {
+
+	/**
+	 * Simulation Time
+	 */
+	private int time;
 	
 	protected List<Node> nodeList = new ArrayList<Node>();
 	
@@ -24,7 +29,7 @@ public abstract class Network extends Observable {
 	 * @param range communication range
 	 * @return new Node
 	 */
-	public abstract Node addNode(int x, int y, int range);	
+	public abstract Node addNode(int x, int y);	
 	
 	/**
 	 * Remove node from network
@@ -91,22 +96,22 @@ public abstract class Network extends Observable {
 	
 	// region ------------------- Time ------------------- //
 
-	public abstract int getTime();
+	public int getTime() { return time; }
+	protected abstract void settime(int time);
 	
 	/**
 	 * Set time for network. Only accept positive time
 	 * @param time
 	 */
 	public final void setTime(int time) {
-		if (time > 0) 
+		if (time > 0 && time != this.time) 
 		{
+			this.time = time;
 			settime(time);			
 			setChanged();
 			notifyObservers("Time");
 		}
 	}
 	
-	protected abstract void settime(int time);
-
 	// endregion Time
 }

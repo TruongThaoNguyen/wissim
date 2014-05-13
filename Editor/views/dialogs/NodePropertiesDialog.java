@@ -140,17 +140,13 @@ public class NodePropertiesDialog extends Dialog {
 										switch (item.getText(0)) {
 										case "Name":
 											node.setName(text.getText());
-											item.setText(column, text.getText());
-											
-											workspace.getCareTaker().save(workspace.getProject(), "Edit node name");
+											item.setText(column, text.getText());											
 											break;
 										case "X":
 											try {
 												int x = Integer.parseInt(text.getText());
 												node.setPosition(x, node.getY());
-												item.setText(column, text.getText());
-												
-												workspace.getCareTaker().save(workspace.getProject(), "Edit node x-location");
+												item.setText(column, text.getText());												
 											} catch (NumberFormatException exc) {
 												MessageDialog.openError(getParent(), "Invalid Input", "Please enter an integer value");
 											}
@@ -159,9 +155,7 @@ public class NodePropertiesDialog extends Dialog {
 											try {
 												int y = Integer.parseInt(text.getText());
 												node.setPosition(node.getX(), y);
-												item.setText(column, text.getText());
-												
-												workspace.getCareTaker().save(workspace.getProject(), "Edit node y-location");
+												item.setText(column, text.getText());												
 											} catch (NumberFormatException exc) {
 												MessageDialog.openError(getParent(), "Invalid Input", "Please enter an integer value");
 											}											
@@ -178,17 +172,13 @@ public class NodePropertiesDialog extends Dialog {
 											switch (item.getText(0)) {
 											case "Name":
 												node.setName(text.getText());
-												item.setText(column, text.getText());	
-												
-												workspace.getCareTaker().save(workspace.getProject(), "Edit node name");
+												item.setText(column, text.getText());													
 												break;
 											case "X":
 												try {
 													int x = Integer.parseInt(text.getText());
 													node.setPosition(x, node.getY());
-													item.setText(column, text.getText());
-													
-													workspace.getCareTaker().save(workspace.getProject(), "Edit node x-location");
+													item.setText(column, text.getText());													
 												} catch (NumberFormatException exc) {
 													MessageDialog.openError(getParent(), "Invalid Input", "Please enter an integer value");
 												}
@@ -197,9 +187,7 @@ public class NodePropertiesDialog extends Dialog {
 												try {
 													int y = Integer.parseInt(text.getText());
 													node.setPosition(node.getX(), y);
-													item.setText(column, text.getText());
-													
-													workspace.getCareTaker().save(workspace.getProject(), "Edit node y-location");
+													item.setText(column, text.getText());													
 												} catch (NumberFormatException exc) {
 													MessageDialog.openError(getParent(), "Invalid Input", "Please enter an integer value");
 												}											

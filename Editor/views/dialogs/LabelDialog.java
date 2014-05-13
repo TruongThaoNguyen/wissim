@@ -88,11 +88,10 @@ public class LabelDialog extends Dialog {
 		btnAddNew.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Object result = new CreateLabelDialog(getParent(), SWT.SHEET, workspace.getProject()).open();
+				Object result = new CreateLabelDialog(getParent(), SWT.SHEET).open();
 				
 				if (result != null) {
 					updateTable();
-					workspace.getCareTaker().save(workspace.getProject(), "Create new label");
 				}
 			}
 		});
@@ -117,9 +116,7 @@ public class LabelDialog extends Dialog {
 								index++;
 								break;
 							}
-						}
-						
-						workspace.getCareTaker().save(workspace.getProject(), "Remove label(s)");
+						}						
 					}
 				}
 				
