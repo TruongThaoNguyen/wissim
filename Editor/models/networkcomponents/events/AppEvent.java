@@ -16,9 +16,8 @@ public class AppEvent extends Event {
 	// the app which this event belongs to
 	ApplicationProtocol app;
 	
-	public AppEvent(int type, int raisedTime, ApplicationProtocol app) {
-		super(type, raisedTime);
-		
+	AppEvent(int type, int raisedTime, ApplicationProtocol app) {
+		super(type, raisedTime);		
 		this.app = app;
 	}
 }

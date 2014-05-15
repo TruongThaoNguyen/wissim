@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Observable;
 
 import models.networkcomponents.protocols.TransportProtocol;
+import models.networkcomponents.protocols.TransportProtocol.TransportProtocolType;
 
 public abstract class Node extends Observable {
 	// id of node (assign one time, never change)
@@ -42,7 +43,7 @@ public abstract class Node extends Observable {
 	
 	public List<TransportProtocol>	getTransportPrototolList()	{ return transportProtocolList; }
 	
-	public abstract TransportProtocol addTransportProtocol(int type, String name);
+	public abstract TransportProtocol addTransportProtocol(TransportProtocolType type, String name);
 	
 	public abstract boolean removeTransportProtocol(TransportProtocol transproc);
 }

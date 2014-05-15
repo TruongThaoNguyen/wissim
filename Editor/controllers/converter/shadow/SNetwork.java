@@ -56,6 +56,18 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		}
 	}
 
+	@Override
+	public double getEvent(double arg) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public HashMap<String, Double> getEvent() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	// endregion Event
 	
 	// region ------------------- TCL properties ------------------- //
@@ -254,25 +266,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 				
 				double time = Double.parseDouble(Converter.parseIdentify(command.get(0)));
 				String arg  = Converter.parseIdentify(command.get(1));									
-								
-				List<String> sc = (new Scanner(arg)).scanCommand();
-				
-				if (sc.size() > 1)
-				{
-					TclObject obj = Converter.global.getObject(sc.remove(0));
-					if (obj != null)
-					{							
-						arg = "";
-						for (int i = 0; i < sc.size() - 2; i++)
-							arg += sc.get(i) + " ";
-						arg += sc.get(sc.size() - 1);							
-						
-						((Scheduler)obj).addEvent(time, arg);
-						obj.addEntry(entry);
-						return arg;
-					}
-				}									
-				
+										
 				addEvent(time, arg);
 				return arg;
 			}
@@ -349,7 +343,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	@Override
 	protected SNode addnode(int x, int y) {
 		SNode newNode = new SNode(this, x, y);
-		InsVar insvar = setInsVar("mnode(" + newNode.getId() + ")", Converter.global.addObject(newNode), "$mnode_(" + newNode.getId() + ")");	
+		newNode.setLabel("$mnode_(" + newNode.getId() + ")");		
 		
 		// region ------------------- auto generate tcl code ------------------- //
 
@@ -373,31 +367,32 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		newNode.addEntry(en);
 		
 		// set position		$mnode_(0) set X_ 30	; $mnode_(0) set Y_ 860	; $mnode_(0) set Z_ 0
-		en = new Entry(	insvar + " set X_ " + x + " ;\t" + 
-						insvar + " set Y_ " + y + " ;\t" +
-						insvar + " set Z_ 0\n");
+		en = new Entry(newNode.getLabel() + " set X_ " + x + "\n");
 		Converter.generateEntry.add(index + 3, en);
 		newNode.addEntry(en);
 		
-		// $ns_ initial_node_pos $mnode_($i) 5
-		en = new Entry(this.label + " initial_node_pos " + insvar + " 5\n");
+		en = new Entry(newNode.getLabel() + " set Y_ " + y + "\n");
 		Converter.generateEntry.add(index + 4, en);
 		newNode.addEntry(en);
 		
-		// $ns_ at $opt(stop) "$mnode($i) reset" 
-		en = new Entry(this.getLabel() + " at " + getTime() + ".0001 \"" + insvar + " reset\"\n");
+		en = new Entry(newNode.getLabel() + " set Z_ 0\n");
 		Converter.generateEntry.add(index + 5, en);
+		newNode.addEntry(en);
+		
+		// $ns_ initial_node_pos $mnode_($i) 5
+		en = new Entry(this.label + " initial_node_pos " + newNode.getLabel() + " 5\n");
+		Converter.generateEntry.add(index + 6, en);
+		newNode.addEntry(en);
+		
+		// $ns_ at $opt(stop) "$mnode($i) reset" 
+		en = new Entry(this.getLabel() + " at " + getTime() + ".0001 \"" + newNode.getLabel() + " reset\"\n");
+		Converter.generateEntry.add(index + 7, en);
 		newNode.addEntry(en);
 		
 		// endregion generate auto tcl code
 		
 		getNodeList().add(newNode);		
 		return newNode;
-	}
-
-	@Override
-	public List<Node> getNodeList() {
-		return nodeList;
 	}
 
 	@Override

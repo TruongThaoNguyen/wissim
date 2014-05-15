@@ -11,7 +11,9 @@ import models.networkcomponents.Node;
 import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.events.AppEvent;
 import models.networkcomponents.protocols.ApplicationProtocol;
+import models.networkcomponents.protocols.ApplicationProtocol.ApplicationProtocolType;
 import models.networkcomponents.protocols.TransportProtocol;
+import models.networkcomponents.protocols.TransportProtocol.TransportProtocolType;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -44,7 +46,6 @@ public class CreateTrafficFlowDialog extends Dialog {
 	private List<EventEntry> eventList = new LinkedList<EventEntry>();
 	int trafficFlowCount = 0;
 	
-
 	/**
 	 * Create the dialog.
 	 * @param parent
@@ -216,24 +217,12 @@ public class CreateTrafficFlowDialog extends Dialog {
 				}
 				
 				// create transport protocol for source node
-				int transType = TransportProtocol.TCP;
-				String transName = "tcp_" + trafficFlowCount;
-				String keyTransName = "TCP";
-				switch (cbTransportProtocol.getText()) {
-				case "TCP":
-					transType = TransportProtocol.TCP;
-					transName = "tcp_" + trafficFlowCount;
-					keyTransName = "TCP";
-					break;
-				case "UDP":
-					transType = TransportProtocol.UDP;
-					transName = "udp_" + trafficFlowCount;
-					keyTransName = "UDP";
-					break;
-				}
+				TransportProtocolType transType = TransportProtocolType.valueOf(cbTransportProtocol.getText());
+				String transName = transType + "_" + trafficFlowCount;				
 				
 				TransportProtocol transProtocol = s.addTransportProtocol(transType, transName);
-				HashMap<String, String> transProtocolParams = ApplicationSettings.transportProtocols.get(keyTransName);
+				
+				HashMap<String, String> transProtocolParams = ApplicationSettings.transportProtocols.get(transType.toString());
 				Set<Entry<String, String>> set = transProtocolParams.entrySet();
 				Iterator<Entry<String, String>> i = set.iterator();
 				while (i.hasNext()) {
@@ -242,38 +231,13 @@ public class CreateTrafficFlowDialog extends Dialog {
 				}
 				
 				// create app protocol that use that transport protocol
-				int appType = ApplicationProtocol.CBR;
-				String appName = "cbr_" + trafficFlowCount;
-				String keyAppName = "CBR";
-				switch (cbApplication.getText()) {
-				case "CBR":
-					appType = ApplicationProtocol.CBR;
-					appName = "cbr_" + trafficFlowCount;
-					keyAppName = "CBR";
-					break;
-				case "VBR":
-					appType = ApplicationProtocol.VBR;
-					appName = "vbr_" + trafficFlowCount;
-					keyAppName = "VBR";
-					break;
-				case "FTP":
-					appType = ApplicationProtocol.FTP;
-					appName = "ftp_" + trafficFlowCount;
-					keyAppName = "FTP";
-					break;
-				case "Pareto":
-					appType = ApplicationProtocol.PARETO;
-					appName = "pareto_" + trafficFlowCount;
-					keyAppName = "Pareto";
-					break;
-				case "Telnet":
-					appType = ApplicationProtocol.TELNET;
-					appName = "telnet_" + trafficFlowCount;
-					keyAppName = "Telnet";
-					break;
-				}
+				ApplicationProtocolType appType = ApplicationProtocolType.valueOf(cbApplication.getText());				
+				String appName = appType + "_" + trafficFlowCount;				
+				
 				ApplicationProtocol appProtocol = transProtocol.addApp(appType, appName, d);
-				HashMap<String, String> appProtocolParams = ApplicationSettings.applicationProtocols.get(keyAppName);
+				
+				HashMap<String, String> appProtocolParams = ApplicationSettings.applicationProtocols.get(appType.toString());
+				
 				set = appProtocolParams.entrySet();
 				i = set.iterator();
 				while (i.hasNext()) {
@@ -293,7 +257,7 @@ public class CreateTrafficFlowDialog extends Dialog {
 					}
 					
 					int time = Integer.parseInt(item.getText(1));
-					new AppEvent(type, time, appProtocol);
+					appProtocol.addEvent(type, time);					
 				}				
 				
 				shlCreateTrafficFlow.close();

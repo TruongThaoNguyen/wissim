@@ -13,30 +13,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 import models.networkcomponents.Node;
+import models.networkcomponents.protocols.ApplicationProtocol.ApplicationProtocolType;
 
 public abstract class TransportProtocol implements Protocol {
-	public static final int TCP = 0, UDP = 1;
 	
-	protected Node node;
-	protected int type;
+	public static enum TransportProtocolType { NULL, TCP, UDP }
+	
+	protected TransportProtocolType type;
 
 	protected List<ApplicationProtocol> appList = new ArrayList<ApplicationProtocol>();
 	
-	protected TransportProtocol(int type, String name, Node node) {
+	protected TransportProtocol(TransportProtocolType type, String name) {
 		setName(name);
-		
-		this.node = node;				
 		this.type = type;
 	}
 
 	public List<ApplicationProtocol> getAppList() { return appList; }
 	
-	public abstract ApplicationProtocol addApp(int type, String name, Node destNode);
+	public abstract ApplicationProtocol addApp(ApplicationProtocolType type, String name, Node destNode);
 	
 	public abstract boolean removeApp(ApplicationProtocol app);
 	
-	public int getType() { return type; }
-	protected void setType(int type) { this.type = type; }
+	public TransportProtocolType getType() { return type; }
+	protected void setType(TransportProtocolType type) { this.type = type; }
 	
 	protected abstract void setName(String name);	
 }
