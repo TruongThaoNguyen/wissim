@@ -5,6 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.Observable;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import jxl.Workbook;
 import jxl.write.Label;
@@ -342,6 +346,45 @@ public abstract class Tab {
     layoutGroup = new Group(sash, SWT.NONE);
     layoutGroup.setText(Analyzer.getResourceString("Chart"));
     layoutGroup.setLayout(new GridLayout());
+
+    Button loadFile = new Button(layoutGroup, SWT.PUSH);
+    loadFile.setText(Analyzer.getResourceString("Load new trace file"));
+    loadFile.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
+    
+    /* Add listener to button loadFile */
+    loadFile.addSelectionListener(new SelectionAdapter() {
+      public void widgetSelected(SelectionEvent e) {
+    	  try {
+		    	JFileChooser chooser = new JFileChooser();
+				chooser.setMultiSelectionEnabled(true);
+		
+				chooser.showOpenDialog(null);
+				File[] files = chooser.getSelectedFiles();
+				if (files.length != 2) {
+					JOptionPane.showMessageDialog(null, "Need import 2 files");		
+				} else {
+		
+					if (files[0].getName().equals("Neighbors.txt")
+							|| files[0].getName().equals("Neighbors.tr")) {
+		
+						Analyzer.onFileOpen(files[0].getAbsolutePath(),
+								files[1].getAbsolutePath());
+						SleepPeriodTab.initSleepTime();
+					} else if (files[1].getName().equals("Neighbors.txt")
+							|| files[1].getName().equals("Neighbors.tr")) {
+		
+						Analyzer.onFileOpen(files[1].getAbsolutePath(),
+								files[0].getAbsolutePath());
+						SleepPeriodTab.initSleepTime();
+					} else
+						JOptionPane.showMessageDialog(null,
+								"Invalid file format");
+				}
+		    } catch (IOException e1) {
+				e1.printStackTrace();
+				}
+      }
+    });
     createLayoutComposite();
   }
 

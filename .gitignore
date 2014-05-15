@@ -14,3 +14,4 @@ tmp/**
 .checkstyle
 test_store/**
 *.dll
+/bin/
