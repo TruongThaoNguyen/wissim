@@ -18,12 +18,12 @@ import models.networkcomponents.protocols.ApplicationProtocol;
 public class SApplicationProtocol extends ApplicationProtocol implements TclObject, Scheduler {
 	
 	public SApplicationProtocol(String label) {
-		super(-1, label, null, null);
+		super(ApplicationProtocolType.NULL, label, null, null);
 		this.label = label;
 		addInsProc();
 	}
 	
-	public SApplicationProtocol(int type, String name, STransportProtocol tp, Node destNode) {
+	public SApplicationProtocol(ApplicationProtocolType type, String name, STransportProtocol tp, Node destNode) {
 		super(type, name, tp, destNode);
 		
 		addInsProc();
@@ -39,6 +39,18 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 		// TODO:
 	}
 
+	@Override
+	public double getEvent(double arg) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public HashMap<String, Double> getEvent() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	// endregion Scheduler
 	
 	// region ------------------- TCL properties ------------------- //	

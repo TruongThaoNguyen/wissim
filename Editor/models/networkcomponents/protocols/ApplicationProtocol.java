@@ -15,7 +15,8 @@ import models.networkcomponents.Node;
 import models.networkcomponents.events.AppEvent;
 
 public abstract class ApplicationProtocol implements Protocol {
-	public final static int CBR = 0, VBR = 1, FTP = 2, PARETO = 3, TELNET = 4;
+	
+	public static enum ApplicationProtocolType { NULL, CBR, VBR, FTP, PARETO, TELNET }
 	
 	/**
 	 * The transport protocol which this protocol bases on
@@ -27,14 +28,14 @@ public abstract class ApplicationProtocol implements Protocol {
 	 */
 	protected Node destNode;
 	
-	protected int type; 
+	protected ApplicationProtocolType type; 
 
 	/**
 	 * Constructor
 	 * @param name Name of this protocol
 	 * @param protocol The transport protocol in the lower layer of network protocol
 	 */
-	protected ApplicationProtocol(int type, String name, TransportProtocol protocol, Node destNode) {						
+	protected ApplicationProtocol(ApplicationProtocolType type, String name, TransportProtocol protocol, Node destNode) {						
 		setName(name);
 		this.transportProtocol = protocol;				
 		this.type = type;
@@ -55,9 +56,9 @@ public abstract class ApplicationProtocol implements Protocol {
 	 */
 	public abstract List<AppEvent> getEventList();
 	
-	public int getType() { return type; }
+	public ApplicationProtocolType getType() { return type; }
 	
 	public Node getDestNode() { return destNode; }
 	
-	protected abstract void setName(String name);
+	protected abstract void setName(String name);	
 }

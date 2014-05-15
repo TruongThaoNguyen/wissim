@@ -11,9 +11,11 @@ import models.converter.Entry;
 import models.converter.InsProc;
 import models.converter.InsVar;
 import models.converter.ParseException;
+import models.networkcomponents.Node;
 import models.networkcomponents.WirelessNode;
 import models.networkcomponents.events.NodeEvent;
 import models.networkcomponents.protocols.TransportProtocol;
+import models.networkcomponents.protocols.TransportProtocol.TransportProtocolType;
 
 public class SNode extends WirelessNode implements TclObject, Scheduler {
 	
@@ -37,20 +39,28 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 	
 	@Override
 	public void addEvent(double time, String arg) {
-		event.put(arg, time);		
-		// TODO:
+		this.event.put(arg, time);
+	}
+
+	@Override
+	public double getEvent(double arg) {
+		return event.get(arg);
+	}	
+	
+	@Override
+	public HashMap<String, Double> getEvent() {
+		return event;
 	}
 	
 	@Override
 	public List<NodeEvent> getEventList() {
-		// TODO Auto-generated method stub
+		// TODO
 		return null;
 	}
 
 	@Override
 	public void addEvent(int type, int raiseTime) {
-		// TODO Auto-generated method stub
-		
+		event.put(type + "", (double) raiseTime);
 	}
 
 	@Override
@@ -213,42 +223,46 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 	}
 	
 	@Override
-	public STransportProtocol addTransportProtocol(int type, String name) {
-		
+	public STransportProtocol addTransportProtocol(TransportProtocolType type, String name) {		
 		STransportProtocol tp = new STransportProtocol(type, name, this);
-		String id = Converter.global.getNetwork().getNodeList().indexOf(this) + "";
-		id += getTransportPrototolList().indexOf(tp);		
-		tp.setLabel("trans_(" + id + ")");
+		String label =  type + "_(" + this.getId() + "_" + this.getTransportPrototolList().size() + ")";
+		tp.setLabel("$" + label);
 		
 		addTransportProtocol(tp);
 		
-		// generate Tcl code		
-		int index = Converter.generateEntry.lastIndexOf(getEntry().get(getEntry().size() - 1));
+		// region ------------------- Generate Tcl Code ------------------- //
 		
+		int index = 0;
+		for (Node node : Converter.global.getNetwork().getNodeList()) {
+			SNode sn = (SNode) node;
+			index = Math.max(index, Converter.generateEntry.lastIndexOf(sn.getEntry().get(sn.getEntry().size() - 1)));
+		}
+				
 		// space
-		Converter.generateEntry.add(index + 1, new Entry("\n"));
-		
-		// set udp_($i) [new Agent/UDP]
-		Entry e = new Entry("set " + tp.getLabel() + " [new Agent/" + name + "]\n");
+		Entry e = new Entry("\n");
 		Converter.generateEntry.add(index + 2, e);
+		addEntry(e);
 		tp.addEntry(e);
 		
-		// $ns_ attach-agent $mnode_($s($i)) $udp_($i)
-		e = new Entry("$" + ((SNetwork)Converter.global.getNetwork()).getLabel() + " attach-agent $" + getLabel() + " $" + tp.getLabel() + "\n");
+		// set udp_($i) [new Agent/UDP]
+		e = new Entry("set " + label + " [new Agent/" + type + "]\n");
 		Converter.generateEntry.add(index + 3, e);
 		addEntry(e);
 		tp.addEntry(e);
 		
+		// $ns_ attach-agent $mnode_($s($i)) $udp_($i)
+		e = new Entry(((SNetwork)Converter.global.getNetwork()).getLabel() + " attach-agent " + getLabel() + " " + tp.getLabel() + "\n");
+		Converter.generateEntry.add(index + 4, e);
+		addEntry(e);
+		tp.addEntry(e);
+		
 		// $udp_($i) set fid_ 2
-		List<String> cmd = new ArrayList<>();
-		cmd.add("set");
-		cmd.add("fid_");
-		cmd.add("2");
-		try {
-			tp.parse(cmd, false);
-		} catch (Exception e1) {			
-			e1.printStackTrace();
-		}
+		e = new Entry(tp.getLabel() + " set fid_ 2\n");
+		Converter.generateEntry.add(index + 5, e);
+		addEntry(e);
+		tp.addEntry(e);
+		
+		// endregion Generate Tcl Code
 		
 		return tp;
 	}

@@ -13,36 +13,32 @@ import models.converter.InsVar;
 import models.converter.ParseException;
 import models.networkcomponents.Node;
 import models.networkcomponents.protocols.ApplicationProtocol;
+import models.networkcomponents.protocols.ApplicationProtocol.ApplicationProtocolType;
 import models.networkcomponents.protocols.TransportProtocol;
 
 public class STransportProtocol extends TransportProtocol implements TclObject, Scheduler {	
 	
+	private SNode node;
+	
 	protected STransportProtocol(String label) {				
-		super(-1, label, null);
-		this.label = label;
-		
-		if (label.equals("UDP")) setType(TransportProtocol.UDP);
-		if (label.equals("TCP")) setType(TransportProtocol.TCP);
+		super(TransportProtocolType.valueOf(label), label);
+		this.label = label;		
 		
 		addInsProc();
 	}	
 
-	public STransportProtocol(int type, String label, SNode node) {
-		super(type, label, node);
+	public STransportProtocol(TransportProtocolType type, String label, SNode node) {
+		super(type, label);
 		this.label = label;
+		this.node = node;
 		
 		addInsProc();
 	}
-
 	
-	private TransportProtocol connectedAgent = null;
+	STransportProtocol connectedAgent;
 	
 	public void setConnected(STransportProtocol agent) {
 		connectedAgent = agent;
-	}
-	
-	public TransportProtocol getConnected() {
-		return connectedAgent;
 	}
 	
 	// region ------------------- Scheduler ------------------- //
@@ -55,6 +51,18 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 		// TODO:
 	}
 
+	@Override
+	public double getEvent(double arg) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public HashMap<String, Double> getEvent() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	// endregion Scheduler
 	
 	// region ------------------- TCL properties ------------------- //
@@ -224,18 +232,100 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 		return getInsVar(param).toString();
 	}
 
-	public void addApp(SApplicationProtocol sApplicationProtocol) {
-		// TODO Auto-generated method stub
-		
+	public void addApp(SApplicationProtocol app) {
+		this.appList.add(app);
 	}
 	
 	@Override
-	public SApplicationProtocol addApp(int type, String name, Node destNode) {
-		SApplicationProtocol newApp = new SApplicationProtocol(type, name, this, destNode);
-		this.appList.add(newApp);
+	public SApplicationProtocol addApp(ApplicationProtocolType type, String name, Node destNode) {
+		SNode dest = (SNode)destNode;
+		
+		SApplicationProtocol app = new SApplicationProtocol(type, name, this, destNode);
+		String label =  type + "_(" + this.node.getId() + "_" + this.node.getTransportPrototolList().size() + ")";
+		app.setLabel("$" + label);
+
+		addApp(app);		
 			
-		// TODO Auto-generated Tcl code
-		return newApp;
+		// region ------------------- Generate Tcl code ------------------- //
+
+		int index = Converter.generateEntry.lastIndexOf(getEntry().get(getEntry().size() - 1));
+
+		// space
+		Entry e = new Entry("\n");
+		Converter.generateEntry.add(index + 1, e);
+		app.addEntry(e);
+		dest.addEntry(e);
+		this.addEntry(e);		
+		this.entryList.add(e);
+		this.node.addEntry(e);
+
+		// set sink_($i) [new Agent/Null]
+		e = new Entry("set sink_(" + dest.getId() + ") [new Agent/Null]\n");
+		Converter.generateEntry.add(index + 2, e);
+		app.addEntry(e);
+		dest.addEntry(e);
+		this.addEntry(e);		
+		this.entryList.add(e);
+		this.node.addEntry(e);
+		
+		
+		// $ns_ attach-agent $mnode_($d($i)) $sink_($i)
+		e = new Entry(Converter.global.getNetwork().getLabel() + " attach-agent " + dest.getLabel() + " $sink_(" + dest.getId() + ")\n");
+		Converter.generateEntry.add(index + 3, e);
+		app.addEntry(e);
+		dest.addEntry(e);
+		this.addEntry(e);		
+		this.entryList.add(e);
+		this.node.addEntry(e);
+		
+		// $mnode_($s($i)) setdest [$mnode_($d($i)) set X_] [$mnode_($d($i)) set Y_] 0
+		e = new Entry(this.node.getLabel() + " setdest [" + dest.getLabel() + " set X_] [" + dest.getLabel() + " set Y_] 0\n");
+		Converter.generateEntry.add(index + 4, e);
+		app.addEntry(e);
+		dest.addEntry(e);
+		this.addEntry(e);		
+		this.entryList.add(e);
+		this.node.addEntry(e);
+		
+		// $ns_ connect $udp_($i) $sink_($i)
+		e = new Entry(Converter.global.getNetwork().getLabel() + " connect " + this.getLabel() + " " + "$sink_(" + dest.getId() + ")\n");
+		Converter.generateEntry.add(index + 5, e);
+		app.addEntry(e);
+		dest.addEntry(e);
+		this.addEntry(e);		
+		this.entryList.add(e);
+		this.node.addEntry(e);
+		
+		// space
+		e = new Entry("\n");
+		Converter.generateEntry.add(index + 6, e);
+		app.addEntry(e);
+		dest.addEntry(e);
+		this.addEntry(e);		
+		this.entryList.add(e);
+		this.node.addEntry(e);
+		
+		// set cbr_($i) [new Application/Traffic/CBR]
+		e = new Entry("set " + label + " [new Application/Traffic/" + type + "]\n");
+		Converter.generateEntry.add(index + 7, e);
+		app.addEntry(e);
+		dest.addEntry(e);
+		this.addEntry(e);		
+		this.entryList.add(e);
+		this.node.addEntry(e);
+		
+		// $cbr_($i) attach-agent $udp_($i)
+		e = new Entry(app.getLabel() + " attach-agent " + this.getLabel() + "\n");
+		Converter.generateEntry.add(index + 8, e);
+		app.addEntry(e);
+		dest.addEntry(e);
+		this.addEntry(e);		
+		this.entryList.add(e);
+		this.node.addEntry(e);
+		
+		// endregion Generate Tcl code
+		
+		return app;
 	}
 
 	@Override

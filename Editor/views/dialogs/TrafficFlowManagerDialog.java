@@ -179,24 +179,8 @@ public class TrafficFlowManagerDialog extends Dialog {
 		for (Node n : workspace.getProject().getNetwork().getNodeList()) {
 			for (TransportProtocol tp : n.getTransportPrototolList()) {
 				for (ApplicationProtocol ap : tp.getAppList()) {
-					String type = "CBR";
-					switch (ap.getType()) {
-					case ApplicationProtocol.CBR:
-						type = "CBR";
-						break;
-					case ApplicationProtocol.VBR:
-						type = "VBR";
-						break;
-					case ApplicationProtocol.FTP:
-						type = "FTP";
-						break;
-					case ApplicationProtocol.PARETO:
-						type = "Pareto";
-						break;
-					case ApplicationProtocol.TELNET:
-						type = "Telnet";
-						break;
-					}
+					String type = ap.getType().toString();
+					
 					TableItem item = new TableItem(table, SWT.NONE);
 					item.setText(new String[] {
 							n.getId() + "",
