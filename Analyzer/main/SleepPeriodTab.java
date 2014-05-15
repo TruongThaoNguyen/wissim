@@ -88,11 +88,15 @@ public class SleepPeriodTab extends Tab implements Observer{
 			sleepTime[Integer.parseInt(packet.sourceID)] -= TRANSITION_TIME;								
 			// các node tiếp theo trên đường truyền packet						 								
 			for(int j = 0; j < packet.listNode.size(); j++){	
-				NodeTrace node = packet.listNode.get(j);								
-				if(packet.listNode.indexOf(node) == packet.listNode.size()-1)
-					sleepTime[node.id] -= TRANSITION_TIME;
+				NodeTrace node = packet.listNode.get(j);
+				if(packet.isSuccess){
+					if(packet.listNode.indexOf(node) == packet.listNode.size()-1)
+						sleepTime[node.id] -= TRANSITION_TIME;
+					else 
+						sleepTime[node.id] -= TRANSITION_TIME*2;	
+				}
 				else 
-					sleepTime[node.id] -= TRANSITION_TIME*2;	
+					sleepTime[node.id] -= TRANSITION_TIME*2;
 			}
 		}
   }
@@ -166,7 +170,7 @@ public class SleepPeriodTab extends Tab implements Observer{
 	    /* Add listener to add an element to the table */
 	    analyze.addSelectionListener(new SelectionAdapter() {
 	      public void widgetSelected(SelectionEvent e) {
-	    	if(Analyzer.mParser instanceof FullParser){
+//	    	if(Analyzer.mParser instanceof FullParser){
 	    	  if(filterByCombo.getSelectionIndex()==0){
 		    		if(equalCombo.getSelectionIndex()==-1 ){
 						MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
@@ -194,7 +198,7 @@ public class SleepPeriodTab extends Tab implements Observer{
 							 minText.setText(Double.toString(sleepTimeOfNode));
 						}
 						else{						
-							double maxSleepTime = STOP_TIME;
+							double maxSleepTime = 0;
 							double minSleepTime = STOP_TIME;
 							double totalSleepTime = 0;
 							
@@ -208,6 +212,8 @@ public class SleepPeriodTab extends Tab implements Observer{
 								 
 								 if(minSleepTime >= sleepTime[i])
 									 minSleepTime = sleepTime[i];
+								 if(maxSleepTime <= sleepTime[i])
+									 maxSleepTime = sleepTime[i];
 							}
 							avgText.setText(Double.toString(totalSleepTime/(No-1)));
 							maxText.setText(Double.toString(maxSleepTime));
@@ -254,7 +260,7 @@ public class SleepPeriodTab extends Tab implements Observer{
 	    			  minText.setText("");	
 	    		  }
 	    	  }
-	      }
+//	      }
 	    	}
 	    });    
 	   

@@ -245,6 +245,7 @@ public class FullParser extends AbstractParser{
 
 				} 
 				*/
+			if (!retval[0].equals("M")){
 				if (retval[6].length() > 0 && !retval[6].equals("HELLO") && retval.length > 10) {
 					
 					Event event = null;
@@ -257,6 +258,7 @@ public class FullParser extends AbstractParser{
 					event.packetType = retval[3];
 					listEvents.add(event);
 					setEnergyOfNode(event.sourceId, event.time, retval[13]);
+					
 					if (retval[0].equals("s") && retval[3].equals("RTR")) {
 						Packet newpacket = new Packet(retval[5], retval[6],
 								retval[2].substring(1, retval[2].length() - 1),
@@ -314,9 +316,33 @@ public class FullParser extends AbstractParser{
 					}
 
 				}
-
+			
+				/* broadcast packet*/
+				if(retval[6].equals("HELLO")){
+					if (retval[0].equals("s")){
+						Packet newpacket = new Packet(retval[5], retval[6],
+								retval[2].substring(1, retval[2].length() - 1),
+								"0", "-1", "255",
+								retval[7], retval[1], retval[1]);
+						newpacket.listNode = new ArrayList<NodeTrace>();
+						
+						listPacket.add(newpacket);
+					}
+					if (retval[0].equals("D")) {
+						for (int i = 0; i < listPacket.size(); i++) {
+							if (listPacket.get(i).id.equals(retval[5])) {
+								listPacket.get(i).listNode.add(new NodeTrace(
+										Integer.parseInt(retval[2].substring(1,
+												retval[2].length() - 1)),
+										retval[1]));								
+								listPacket.get(i).isSuccess = false;
+							}
+						}
+					}
+					
+				}
 				
-
+			}
 			}
 
 		}

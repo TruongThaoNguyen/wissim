@@ -105,7 +105,7 @@ public class EventParser extends AbstractParser {
 		while ((sCurrentLine = br.readLine()) != null) {
 			sCurrentLine = sCurrentLine.trim().replaceAll(" +", " ");
 			retval = sCurrentLine.split(" ");
-			if(retval[0].equals("M") == false && retval[6].equals("HELLO") == false && retval[14].substring(0, 2).equals("-1") == false){
+			if(retval[0].equals("M") == false && retval[6].equals("HELLO") == false ){
 			switch (retval[0]) {
 			case "s":
 				if (retval[3].equals("RTR")) {
@@ -204,6 +204,30 @@ public class EventParser extends AbstractParser {
 				break;
 
 			}
+			}
+			/* broadcast packet*/
+			if(retval[6].equals("HELLO")){
+				if (retval[0].equals("s")){
+					Packet newpacket = new Packet(retval[5], retval[6],
+							retval[2].substring(1, retval[2].length() - 1),
+							"0", "-1", "255",
+							retval[7], retval[1], retval[1]);
+					newpacket.listNode = new ArrayList<NodeTrace>();
+					
+					listPacket.add(newpacket);
+				}
+				if (retval[0].equals("D")) {
+					for (int i = 0; i < listPacket.size(); i++) {
+						if (listPacket.get(i).id.equals(retval[5])) {
+							listPacket.get(i).listNode.add(new NodeTrace(
+									Integer.parseInt(retval[2].substring(1,
+											retval[2].length() - 1)),
+									retval[1]));								
+							listPacket.get(i).isSuccess = false;
+						}
+					}
+				}
+				
 			}
 		}
 		br.close();
