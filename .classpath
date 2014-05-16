@@ -37,5 +37,6 @@
 	<classpathentry kind="lib" path="lib/visualyzer/gs-algo-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/visualyzer/gs-core-1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/visualyzer/gs-ui-1.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/editor/org.eclipse.swt.gtk.linux.x86_64.source_3.102.1.v20130827-2048.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

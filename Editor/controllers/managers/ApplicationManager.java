@@ -99,10 +99,10 @@ public class ApplicationManager {
 		// open Open Dialog
 		FileDialog openDialog = new FileDialog(mainWindow.getShell(), SWT.OPEN);
 		openDialog.setText("Open");
-		openDialog.setFilterPath("D:/");
+		openDialog.setFilterPath(Validator.getHomePath());
 		String[] filterExt = { "*.tcl" };
 		openDialog.setFilterExtensions(filterExt);
-		openDialog.setFilterNames(new String[] { "Wissim Project" });
+		openDialog.setFilterNames(new String[] { "Tcl Scripts" });
 		String path = openDialog.open();
      
 		if (path == null) return null;		
