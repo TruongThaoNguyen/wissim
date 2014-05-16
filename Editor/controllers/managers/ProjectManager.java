@@ -69,10 +69,12 @@ public class ProjectManager {
 		Project project;		
 		try {
 			project = Converter.CTD(script.toString());
-		} catch (ParseException e) {
-			project = null;
+		} catch (ParseException e) {			
+			return null;
 		}
 				
+		project.setPath(path);		
+		
 		// Initialize wireless network
 		WirelessNetwork network = project.getNetwork();
 		network.setName(name);

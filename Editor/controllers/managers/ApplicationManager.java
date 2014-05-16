@@ -63,42 +63,38 @@ import views.helpers.PrintHelper;
 public class ApplicationManager {
 	private static int newProjectCount = 1;
 	
-	public static Project newProject(Editor mainWindow) {
+	public static Project newProject(Editor editor) {
 		String defaultName = "Untitled" + newProjectCount;
-		CreateProjectResult result = (CreateProjectResult)new CreateProjectDialog(mainWindow.getShell(), SWT.SHEET, defaultName).open();				
+		CreateProjectResult result = (CreateProjectResult)new CreateProjectDialog(editor.getShell(), SWT.SHEET, defaultName).open();				
+		
 		if (result == null) return null;
 		
-		// set up path to save file
-		boolean confirmed = true;
-		File dir=new File(result.path);
-		if(!dir.exists()) {
-			dir.mkdir();
-		}
+		// set up path to save file		
+		File dir = new File(result.path);
+		if (!dir.exists()) dir.mkdir();		
 		
-			String path = Validator.getFilePath(result.path, Helper.getFileNameWithExt(result.name, "wis"));
-	
-			File f = new File(path);
-	
+		String path = Validator.getFilePath(result.path, Helper.getFileNameWithExt(result.name, "tcl"));
+		File f = new File(path);
+		
+		boolean confirmed = true;
+		
+		if (f.exists() == true)	confirmed = MessageDialog.openQuestion(editor.getShell(), "File Existed", "File existed in the selected directory. Do you want to override the existing file by the new one?");
+
+		if (confirmed == true) 
+		{
+			Project project;
+			WorkSpace.setTclFile(path);
+			project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "tcl"), result.width, result.height, result.time);
+			ApplicationSettings.applyDefaultSettingsToProject(project);
+			newProjectCount++;
 			
-			if (f.exists() == true)
-				confirmed = MessageDialog.openQuestion(mainWindow.getShell(), "File Existed", "File existed in the selected directory. Do you want to override the existing file by the new one?");
-	
-			if (confirmed == true) {
-				Project project;
-				WorkSpace.setTclFile(result.path+"/"+result.name+".tcl");
-				project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "wis"), result.width, result.height, result.time);
-				ApplicationSettings.applyDefaultSettingsToProject(project);
-				newProjectCount++;
-				
-				return project;
+			return project;
+		}
 			
-			}
-			
-		mainWindow.setFileProject(result.path+"/"+result.name);
+		editor.setFileProject(path);
 		return null;
 	}
 
-	
 	public static Project openProject(Editor mainWindow) {
 		// open Open Dialog
 		FileDialog openDialog = new FileDialog(mainWindow.getShell(), SWT.OPEN);
