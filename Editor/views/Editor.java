@@ -2,10 +2,7 @@ package views;
 
 import java.awt.Desktop;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -28,7 +25,6 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
-//import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -45,6 +41,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import controllers.Configure;
 import controllers.converter.Converter;
 import controllers.graphicscomponents.GSelectableObject;
 import controllers.graphicscomponents.GWirelessNode;
@@ -985,32 +982,15 @@ public class Editor extends MainContent implements Observer {
 		actScriptReferenceRemain.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/ruby.png"));
 	}
 	
-	public void ns2Config() {
-		String preNS2Path = "";
-		if(nsFilePath!=null){
-			preNS2Path = nsFilePath;
-		}
-		String filePathString = "NS2_path_store";
-			File file = new File(filePathString);
-			
-			FileDialog dialog = new FileDialog(getShell(), SWT.MULTI);
-	    dialog.open();
-	    if(dialog.getFilterPath() == null || dialog.getFileName() == null) nsFilePath = preNS2Path;
-	    else nsFilePath = dialog.getFilterPath() + "/" +dialog.getFileName();
+	/**
+	 * Set ns2 directory path
+	 * @author trongnguyen
+	 */
+	public void ns2Config() {				
+	    String path = (new FileDialog(getShell(), SWT.MULTI)).open();	    
+	    if (path == null) return;
 	    
-	    try {
-	    if (!file.exists()) {
-			
-				file.createNewFile();
-		}
-	    FileWriter fw = new FileWriter(file.getAbsoluteFile());
-		BufferedWriter bw = new BufferedWriter(fw);
-		bw.write(nsFilePath);
-		bw.close();
-	    } catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	    Configure.setNS2Path(path);
 	}
 	
 	public void actionOpen(Editor editor) {		
@@ -1034,18 +1014,16 @@ public class Editor extends MainContent implements Observer {
 		ApplicationManager.pasteNode(workspace,wn.getX()+1 , wn.getY()+1);
 	}
 	
+	/**
+	 * Save Scipt to file
+	 * @author trongnguyen
+	 */
 	public void saveScript() {
-		//TODO
-		
-		Workspace workspace = getWorkspace();
-		fileProject = fileProject.replace(".wis", ".tcl");
-		System.out.println(fileProject);
-//		try {
-//			ScriptGenerator.generateTcl(workspace.getProject(), fileProject, false, false);
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			ProjectManager.saveProject();
+		} catch (IOException err) {						
+			MessageDialog.openError(getShell(), "Save File Error", err.getMessage());
+		}
 	}
 	
 	public void updateDesign() {
@@ -1074,14 +1052,12 @@ public class Editor extends MainContent implements Observer {
 		lblNewLabel_2.setText(str);
 	}
 	
-	public void updateNetworkInfoLabel() {
-		Workspace workspace = getWorkspace();
-		WirelessNetwork network = workspace.getProject().getNetwork();
+	public void updateNetworkInfoLabel() {		
+		WirelessNetwork network = Workspace.getProject().getNetwork();
 		String str = "Networks" + "\n" + "Size : " + network.getWidth() 
 					+ "x" + network.getLength() + "\nNodes : " + network.getNodeList().size()
 					+ "\n" + "Times : " + network.getTime();
 		lblNewLabel_1.setText(str);
-		
 	}
 	
 //	public void editorInfo(){
@@ -1341,58 +1317,29 @@ public class Editor extends MainContent implements Observer {
 	}
 	
 	public void actionRunNS2() {
-		try {
-			String filePathString = "NS2_path_store";
-  			File file = new File(filePathString);
-  			if (!file.exists()) {
-  				boolean confirmed = MessageDialog.openQuestion(getShell(), "NS2 configuration", "NS2 configuration don't exists!. Please configure NS2 path to using this features!");
-  				if(confirmed == true) {
-  					ns2Config();
-  				}
-  				else return;
-  			}
-  			else {
-  				FileReader fr = new FileReader(file.getAbsoluteFile());
-  				BufferedReader br = new BufferedReader(fr);
-  				String temp = "";
-  				String sCurrentLine;
-  				while ((sCurrentLine = br.readLine()) != null) {
-  					temp += sCurrentLine;
-  				}
-  				System.out.println(temp);
-  				if(temp == "") {
-  					boolean confirmed = MessageDialog.openQuestion(getShell(), "NS2 configuration", "NS2 configuration don't exists!. Please configure NS2 path to using this features!");
-	  				if(confirmed == true) {
-	  					ns2Config();
-	  				}
-	  				else return;
-  				}
-  				nsFilePath = temp;
-  				
-  				br.close();
-  			}
-    	      String line;
-    	      saveScript();
-    	      Process p = Runtime.getRuntime().exec(
-    	    	      new String[]{
-//    	    	    		  "/bin/sh", "-c", "l"
-//    	    	    		  "/bin/bash","-c","/home/khaclinh/datasection/EE/workspace/ex2/aa.sh"
-    	    	    		  
-//    	    	    		  "/home/khaclinh/ns-allinone-2.34/ns-2.34/ns","simu.tcl"
-    	    	    		  nsFilePath,fileProject
-    	    	    		  });
-    	      p.waitFor();
-    	      BufferedReader input = new BufferedReader(
-    	          new InputStreamReader(p.getInputStream()));
-    	      String results = "";
-    	      while ((line = input.readLine()) != null) {
-    	        results += line+ "\n";
-    	      }
-    	      input.close();
-    	      styledTextConsole.setText(results);
-    	    } catch (Exception err) {
-    	      err.printStackTrace();
-    	    }
+		saveScript();		
+		if (Configure.getNS2Path() == null)	ns2Config();	
+  		
+		try 
+		{
+			String s = Configure.getTclFile();
+			Process p = Runtime.getRuntime().exec(Configure.getNS2Path() + "/bin/ns " + s);
+			p.waitFor();
+		
+			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));			
+			String line;
+		
+			while ((line = input.readLine()) != null) 
+			{				
+				styledTextConsole.append(line + "\n");
+			}
+		
+			input.close();			
+		}
+		catch (Exception err) 
+		{
+			MessageDialog.openError(getShell(), "NS2 runtime error", err.getMessage());
+		}
 	}
 	
 	public void actionImport() {
@@ -1720,11 +1667,7 @@ public class Editor extends MainContent implements Observer {
 	
 	public Action getActScriptReferenceRemain() {
 		return actScriptReferenceRemain;
-	}
-	
-	public String getNS2FilePath() {
-		return nsFilePath;
-	}
+	}	
 	
 	public Action getActConfigNS2() {
 		return actConfigNS2;
@@ -1736,14 +1679,6 @@ public class Editor extends MainContent implements Observer {
 	
 	public StyledText getStyledTextConsole() {
 		return styledTextConsole;
-	}
-	
-	public String getFileProject() {
-		return fileProject;
-	}
-	
-	public void setFileProject(String fileProject) {
-		this.fileProject = fileProject;
 	}
 	
 	public Project getProject() {
@@ -1836,9 +1771,6 @@ public class Editor extends MainContent implements Observer {
 //	private RulerScrolledComposite scrolledComposite;
 	
 	private ToolBar toolBar;
-	
-	private String nsFilePath;
-	private String fileProject;
 	
 	private Label lblNewLabel_1;
 	private Label lblNewLabel_2;

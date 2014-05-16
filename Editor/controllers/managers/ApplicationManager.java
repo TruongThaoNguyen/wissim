@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 
-import controllers.WorkSpace;
+import controllers.Configure;
 import controllers.graphicscomponents.GObstacle;
 import controllers.graphicscomponents.GSelectableObject;
 import controllers.graphicscomponents.GWirelessNode;
@@ -83,15 +83,14 @@ public class ApplicationManager {
 		if (confirmed == true) 
 		{
 			Project project;
-			WorkSpace.setTclFile(path);
+			Configure.setTclFile(path);
 			project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "tcl"), result.width, result.height, result.time);
 			ApplicationSettings.applyDefaultSettingsToProject(project);
 			newProjectCount++;
 			
 			return project;
 		}
-			
-		editor.setFileProject(path);
+					
 		return null;
 	}
 
@@ -103,16 +102,13 @@ public class ApplicationManager {
 		String[] filterExt = { "*.tcl" };
 		openDialog.setFilterExtensions(filterExt);
 		openDialog.setFilterNames(new String[] { "Tcl Scripts" });
+
 		String path = openDialog.open();
-     
 		if (path == null) return null;		
 
-		// open project
-		try {					
-			Project project = ProjectManager.loadProject(path);
-			WorkSpace.setTclFile(path);
-			mainWindow.setFileProject(path);
-			return project;
+		try {								
+			Configure.setTclFile(path);			
+			return ProjectManager.loadProject(path);
 		} catch (Exception e) {}
 		
 		return null;

@@ -9,7 +9,6 @@ import org.eclipse.swt.widgets.Display;
 
 import controllers.helpers.Helper;
 import models.Project;
-import models.configs.Parser;
 import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;

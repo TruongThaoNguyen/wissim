@@ -1,4 +1,4 @@
-package models.configs;
+package controllers.managers;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

@@ -1,41 +1,45 @@
 package controllers;
 
 
-public final class WorkSpace {
+public final class Configure {
 	static String directory;
 	static String traceFile;
 	static String namTraceFile;
-	static String ns2Path = "/home/trongnguyen/NS2/ns-2.35/";
+	static String ns2Path = "/home/trongnguyen/NS2/";
 	static String tclFile;
 	
 	/**
 	 * @return the tclFile name
 	 */
 	public static String getTclFile() {
-		return tclFile;
+		if (tclFile.contains("/")) return tclFile;
+		return directory + tclFile;
 	}
 	
 	/**
 	 * set tclFile name
 	 * @param tclFile new file name
 	 */
-	public static String setTclFile(String tclFile) {
-		return WorkSpace.tclFile = tclFile;
+	public static String setTclFile(String value) {
+		int i = value.lastIndexOf("/") + 1;
+		directory = value.substring(0, i);
+		return tclFile = value;
 	}
 	
 	/**
 	 * @return the traceFile name
 	 */
 	public static String getTraceFile() {
-		return traceFile;
+		if (traceFile.contains("/"));
+		return directory + traceFile;
 	}
 
 	/**
 	 * set traceFile name
 	 * @param traceFile new file name
 	 */
-	public static String setTraceFile(String traceFile) {
-		return WorkSpace.traceFile = traceFile;
+	public static String setTraceFile(String value) {		
+		return traceFile = value;
 	}
 
 	/**
@@ -43,14 +47,15 @@ public final class WorkSpace {
 	 * @return the namTraceFile
 	 */
 	public static String getNamTraceFile() {
-		return namTraceFile;
+		if (namTraceFile.contains("/")) return namTraceFile;
+		return directory + namTraceFile;
 	}
 
 	/**
 	 * @param namTraceFile the namTraceFile to set
 	 */
 	public static String setNamTraceFile(String namTraceFile) {
-		return WorkSpace.namTraceFile = namTraceFile;
+		return Configure.namTraceFile = namTraceFile;
 	}
 	
 	/**
@@ -66,9 +71,7 @@ public final class WorkSpace {
 	 * @param dir new directory
 	 * @return directory
 	 */
-	public static String setDirectory(String dir) {
-		// check if dir is special tcl file
-		if (dir.endsWith(".tcl")) return directory = dir.substring(0, directory.lastIndexOf("/") + 1); 
+	public static String setDirectory(String dir) {		
 		return directory = dir;
 	}
 
@@ -86,6 +89,23 @@ public final class WorkSpace {
 	
 	public static String setNS2Path(String path) {
 		// TODO
+		
+//	    try {	    	
+//	    	String filePathString = "NS2_path_store";
+//			File file = new File(filePathString);	
+//	    if (!file.exists()) {
+//			
+//				file.createNewFile();
+//		}
+//	    FileWriter fw = new FileWriter(file.getAbsoluteFile());
+//		BufferedWriter bw = new BufferedWriter(fw);
+//		bw.write(nsFilePath);
+//		bw.close();
+//	    } catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
 		return ns2Path = path;
 	}
 }

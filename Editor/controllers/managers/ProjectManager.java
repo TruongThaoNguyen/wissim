@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
-import controllers.WorkSpace;
+import controllers.Configure;
 import controllers.converter.Converter;
 import models.Project;
 import models.converter.ParseException;
@@ -82,7 +82,7 @@ public class ProjectManager {
 		network.setWidth(width);
 		network.setLength(length);		
 		
-		WorkSpace.setDirectory(path);
+		Configure.setDirectory(path);
 		
 		// save project
 		try {
@@ -98,7 +98,7 @@ public class ProjectManager {
 	 */
 	public static void saveProject() throws IOException {				
 //		String fileName = WorkSpace.getDirectory() + WorkSpace.getTclFile() +".tcl";
-		String fileName = WorkSpace.getTclFile();
+		String fileName = Configure.getTclFile();
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));				
 		bw.write(Converter.DTC());		
@@ -113,7 +113,7 @@ public class ProjectManager {
 	 * @throws IOException
 	 */
 	public static Project loadProject(String path) throws IOException, ParseException {
-		WorkSpace.setDirectory(path);		
+		Configure.setDirectory(path);		
 		BufferedReader br = new BufferedReader(new FileReader(path));
 		StringBuilder sb = new StringBuilder();
 	    String line = br.readLine();		

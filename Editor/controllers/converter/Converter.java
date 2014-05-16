@@ -9,7 +9,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import controllers.WorkSpace;
+import controllers.Configure;
 import controllers.converter.shadow.SProject;
 import models.Project;
 import models.converter.Entry;
@@ -168,10 +168,10 @@ public class Converter
 	
 	public static void main(String[] args)  throws Exception {		
 		if (System.getProperty("os.name").toLowerCase().indexOf("win") > 0)
-			WorkSpace.setDirectory("D:\\Work\\scripts\\30\\gpsr\\");
+			Configure.setDirectory("D:\\Work\\scripts\\30\\gpsr\\");
 		else
-			WorkSpace.setDirectory("/home/trongnguyen/scripts/30/gpsr/");
-		String fileName = WorkSpace.getDirectory() + "simulate.tcl";
+			Configure.setDirectory("/home/trongnguyen/scripts/30/gpsr/");
+		String fileName = Configure.getDirectory() + "simulate.tcl";
 		BufferedReader br = new BufferedReader(new FileReader(fileName));
 		StringBuilder sb = new StringBuilder();
 	    
@@ -195,7 +195,7 @@ public class Converter
 		
 		//Converter.DTC();
 		
-		fileName = WorkSpace.getDirectory() + "test.tcl";
+		fileName = Configure.getDirectory() + "test.tcl";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
 		bw.write(Converter.DTC());		
 		bw.close();

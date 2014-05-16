@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
-import controllers.WorkSpace;
+import controllers.Configure;
 import controllers.converter.Converter;
 import controllers.converter.Scanner;
 import controllers.converter.TclObject;
@@ -375,7 +375,7 @@ public class SProject  extends Project implements TclObject
 			protected String run(List<String> command) throws Exception {
 				if (command.size() != 1) throw new ParseException(ParseException.InvalidArgument);				
 							
-				String fileName =  WorkSpace.getDirectory() + Converter.parseIdentify(command.get(0));				
+				String fileName =  Configure.getDirectory() + Converter.parseIdentify(command.get(0));				
 				br = new BufferedReader(new FileReader(fileName));				
 				
 				StringBuilder sb = new StringBuilder();
@@ -404,7 +404,7 @@ public class SProject  extends Project implements TclObject
 				if (arg.size() != 3) throw new ParseException(ParseException.InvalidArgument);				
 				getNetwork().setWidth(Integer.parseInt(Converter.parseIdentify(arg.get(1))));
 				getNetwork().setLength(Integer.parseInt(Converter.parseIdentify(arg.get(2))));
-				return WorkSpace.setNamTraceFile(Converter.parseIdentify(arg.get(0)));
+				return Configure.setNamTraceFile(Converter.parseIdentify(arg.get(0)));
 			}
 			
 		};
@@ -414,7 +414,7 @@ public class SProject  extends Project implements TclObject
 			@Override
 			protected String run(List<String> arg) throws Exception {
 				if (arg.size() != 1 ) throw new ParseException(ParseException.InvalidArgument);
-				return WorkSpace.setTraceFile(Converter.parseIdentify(arg.get(0)));
+				return Configure.setTraceFile(Converter.parseIdentify(arg.get(0)));
 			}
 			
 		};
@@ -550,11 +550,11 @@ public class SProject  extends Project implements TclObject
 		try {
 			TclObject propaga = getObject(network.nodeConfig.getInsVar("-phyType").getValue());
 			TclObject antenna = getObject(network.nodeConfig.getInsVar("-antType" ).getValue());
-			
-			Runtime r = Runtime.getRuntime();
-			Process p = r.exec( WorkSpace.getNS2Path() + "indep-utils/propagation/threshold -m " +
-								network.nodeConfig.getInsVar("-propType").getValue().substring(12) + " " +
-								value);		
+						
+			Process p = Runtime.getRuntime().exec(
+					Configure.getNS2Path() + "ns-2.35/indep-utils/propagation/threshold -m " +
+					network.nodeConfig.getInsVar("-propType").getValue().substring(12) + " " +
+					value);		
 			
 			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			
