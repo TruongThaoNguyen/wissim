@@ -1316,14 +1316,17 @@ public class Editor extends MainContent implements Observer {
 		ApplicationManager.manageLabels(workspace);
 	}
 	
+	/**
+	 * Run NS2
+	 * @author trongnguyen
+	 */
 	public void actionRunNS2() {
 		saveScript();		
 		if (Configure.getNS2Path() == null)	ns2Config();	
   		
 		try 
-		{
-			String s = Configure.getTclFile();
-			Process p = Runtime.getRuntime().exec(Configure.getNS2Path() + "/bin/ns " + s);
+		{			
+			Process p = Runtime.getRuntime().exec(Configure.getNS2Path() + "/bin/ns " + Configure.getTclFile());
 			p.waitFor();
 		
 			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));			
