@@ -182,17 +182,11 @@ public class Workspace extends Composite {
 			else 								gn.updateBounds();	// update position 			
 		}		
 		
-		
-		System.out.println("{so node: }"+getProject().getNetwork().getNodeList().size());
-		System.out.println("{network size:x::"+getProject().getNetwork().getWidth()+";y::"+getProject().getNetwork().getLength()+"}");
-				
 		boolean isExisted;
 		// keep a list of nodes that did not have a graphic network (O(n^2))
 		for (Node n : getProject().getNetwork().getNodeList()) 
 		{
 			WirelessNode wn = (WirelessNode) n;
-			
-			System.out.println("{ID:"+wn.getId()+";X:"+wn.getX()+";Y:"+wn.getY()+";range:"+wn.getRange() + "}");
 			
 			// check whether nodes in getProject() are instantiated yet
 			isExisted = false;
@@ -209,7 +203,7 @@ public class Workspace extends Composite {
 			{				
 				GWirelessNode gnode = new GWirelessNode(this, SWT.NONE, (WirelessNode) n);		
 				gnode.moveAbove(null);	
-				System.out.println(this.getChildren().length);				
+//				System.out.println(this.getChildren().length);				
 			}
 		}	
 		

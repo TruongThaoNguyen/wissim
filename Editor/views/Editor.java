@@ -56,6 +56,8 @@ import views.dialogs.ConfigNodeDialog;
 import views.dialogs.PreferencesDialog;
 
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -92,7 +94,7 @@ public class Editor extends MainContent implements Observer {
 		
 		actionGetTab();
 		actionEvent();
-		getCTabFolder().setSelection(0);
+		getCTabFolder().setSelection(1);
 		
 		Display.getCurrent().addFilter(SWT.KeyDown, new Listener() {			
 			@Override
@@ -194,6 +196,21 @@ public class Editor extends MainContent implements Observer {
 		
 		
 		SashForm subSashForm = new SashForm(sashForm, SWT.VERTICAL);
+		subSashForm.addControlListener(new ControlListener() {
+			
+			@Override
+			public void controlResized(ControlEvent arg0) {
+				// TODO Auto-generated method stub
+				if(getWorkspace() != null)
+					getWorkspace().updateLayout();
+			}
+			
+			@Override
+			public void controlMoved(ControlEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		
 		contentComposite = new Composite(subSashForm, SWT.NONE);
 		contentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -231,6 +248,7 @@ public class Editor extends MainContent implements Observer {
 						styledTextConsole.setLayoutData(gd_styledText);
 		
 		subSashForm.setWeights(new int[] {215, 83});
+		
 		propertiesComposite = new Composite(sashForm,  SWT.BORDER | SWT.H_SCROLL);
 		GridData gd_propertiesComposite = new GridData(SWT.RIGHT, SWT.FILL, false, true);
 		
@@ -252,7 +270,22 @@ public class Editor extends MainContent implements Observer {
 		lblSss.setText("sss");
 		lblSss.setBounds(0, 101, 64, 14);
 		sashForm.setWeights(new int[] {418, 75});
-
+		sashForm.addControlListener(new ControlListener() {
+			
+			@Override
+			public void controlResized(ControlEvent arg0) {
+				// TODO Auto-generated method stub
+				if(getWorkspace() != null) {
+					getWorkspace().updateLayout();
+				}
+			}
+			
+			@Override
+			public void controlMoved(ControlEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 	}
 	
 	public void actionGetTab() {		
@@ -993,7 +1026,8 @@ public class Editor extends MainContent implements Observer {
 	    Configure.setNS2Path(path);
 	}
 	
-	public void actionOpen(Editor editor) {		
+	public void actionOpen(Editor editor) {	
+		tabFolder.setSelection(1);
 		if (ApplicationManager.openProject(editor) == null) return;		
 		showProject();		
 		getWorkspace().getSelectableObject().get(getWorkspace().getSelectableObject().size() - 1).moveAbove(null);
@@ -1811,6 +1845,8 @@ public class Editor extends MainContent implements Observer {
 		
 		updateNodeInfoLabel();
 		updateNetworkInfoLabel();
+		if(getWorkspace() != null)
+			getWorkspace().updateLayout();
 //		ec.updateDesign(this, styledText);
 //		ec.updateEditToDesign(this,styledText);
 			
