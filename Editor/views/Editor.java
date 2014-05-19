@@ -854,12 +854,12 @@ public class Editor extends MainContent implements Observer {
 			    
 			    
 			    pt = toolBar.toDisplay(pt);
-			    menu.setLocation(pt.x+550, pt.y);
+			    menu.setLocation(pt.x+480, pt.y);
 		        menu.setVisible(true);
 			}
 		};
 		actNetworkReferenceRemain.setToolTipText("External tools");
-		actNetworkReferenceRemain.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/ruby.png"));
+		actNetworkReferenceRemain.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/transmit.png"));
 		
 		actScriptReferenceRemain = new Action() {
 			public void run() {
@@ -974,7 +974,7 @@ public class Editor extends MainContent implements Observer {
 			    
 			    
 			    pt = toolBar.toDisplay(pt);
-			    menu.setLocation(pt.x+800, pt.y);
+			    menu.setLocation(pt.x+715, pt.y);
 		        menu.setVisible(true);
 			}
 		};

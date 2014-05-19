@@ -7,6 +7,7 @@ import java.util.Set;
 
 import models.Project;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -16,13 +17,16 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
 import controllers.managers.ApplicationSettings;
+import controllers.managers.ProjectManager;
 import views.Workspace;
 
 
@@ -163,11 +167,11 @@ public class ConfigNodeDialog extends Dialog {
 	 */
 	private void createContents() {
 		shlNodeConfiguration = new Shell(getParent(), getStyle());
-		shlNodeConfiguration.setSize(588, 551);
+		shlNodeConfiguration.setSize(688, 560);
 		
 		Composite composite = new Composite(shlNodeConfiguration, SWT.BORDER);
 		composite.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		composite.setBounds(0, 0, 582, 64);
+		composite.setBounds(10, 10, 668, 64);
 		
 		Label lblNetworkGeneralConfiguration = new Label(composite, SWT.NONE);
 		lblNetworkGeneralConfiguration.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
@@ -184,7 +188,7 @@ public class ConfigNodeDialog extends Dialog {
 		
 		Label lblDescription = new Label(composite, SWT.NONE);
 		lblDescription.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		lblDescription.setBounds(10, 35, 338, 15);
+		lblDescription.setBounds(10, 40, 351, 17);
 		switch (type) {
 		case PROJECT_CONFIG:
 			lblDescription.setText("Set up configuration for all nodes in the current network");
@@ -195,7 +199,7 @@ public class ConfigNodeDialog extends Dialog {
 		}
 		
 		Composite composite_1 = new Composite(shlNodeConfiguration, SWT.BORDER);
-		composite_1.setBounds(0, 474, 582, 48);
+		composite_1.setBounds(10, 475, 668, 48);
 		
 		Button btnResetDefault = new Button(composite_1, SWT.NONE);
 		btnResetDefault.addSelectionListener(new SelectionAdapter() {
@@ -204,7 +208,7 @@ public class ConfigNodeDialog extends Dialog {
 				loadContentsForAppConfig();
 			}
 		});
-		btnResetDefault.setBounds(270, 10, 89, 25);
+		btnResetDefault.setBounds(256, 10, 103, 25);
 		btnResetDefault.setText("Reset Default");
 		btnResetDefault.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -225,71 +229,82 @@ public class ConfigNodeDialog extends Dialog {
 		btnApply.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				boolean bApply = true;
 				switch (type) {
 				case APP_CONFIG:
 					try {
-						ApplicationSettings.nodeRange = Integer.parseInt(txtRange.getText());
-						//System.out.print(ApplicationSettings.nodeRange);
-						//Project project = workspace.getProject();
-						
-						//project.setNodeRange(Integer.parseInt(txtRange.getText()));
-						
-						ApplicationSettings.defaultTransportProtocol = new StringBuilder(cbTransportProtocol.getText());
-						ApplicationSettings.defaultApplicationProtocol = new StringBuilder(cbAppProtocol.getText());
-						
-						ApplicationSettings.defaultRoutingProtocol = new StringBuilder(cbRoutingProtocol.getText());
-						ApplicationSettings.defaultLinkLayer = new StringBuilder(cbLinkLayer.getText());
-						ApplicationSettings.defaultMac = new StringBuilder(cbMac.getText());
-						ApplicationSettings.defaultChannel = new StringBuilder(cbChannel.getText());
-						ApplicationSettings.defaultPropagationModel = new StringBuilder(cbPropagationModel.getText());
-						ApplicationSettings.defaultNetworkInterface = new StringBuilder(cbNetworkInterface.getText());
-						ApplicationSettings.defaultAntenna = new StringBuilder(cbAntenna.getText());
-						
-						ApplicationSettings.defaultInterfaceQueue = new StringBuilder(cbInterfaceQueue.getText());
-						ApplicationSettings.queueLength = spnQueueLength.getSelection();
-						
-						ApplicationSettings.iddleEnergy = Double.parseDouble(txtIddle.getText());
-						ApplicationSettings.receptionEnergy = Double.parseDouble(txtReception.getText());
-						ApplicationSettings.transmissionEnergy = Double.parseDouble(txtTransmission.getText());
-						ApplicationSettings.sleepEnergy = Double.parseDouble(txtSleep.getText());
-						
-						ApplicationSettings.saveNetworkConfig();
+						if(ProjectManager.getProject().getRoutingProtocols().get(cbRoutingProtocol.getText()) == null) {
+							MessageDialog.openError(getParent(), "Error", "Selected Routing protocol incorrect!");
+							bApply = false;
+						} else { 
+							ApplicationSettings.nodeRange = Integer.parseInt(txtRange.getText());
+							//System.out.print(ApplicationSettings.nodeRange);
+							//Project project = workspace.getProject();
+							
+							//project.setNodeRange(Integer.parseInt(txtRange.getText()));
+							
+							ApplicationSettings.defaultTransportProtocol = new StringBuilder(cbTransportProtocol.getText());
+							ApplicationSettings.defaultApplicationProtocol = new StringBuilder(cbAppProtocol.getText());
+							
+							ApplicationSettings.defaultRoutingProtocol = new StringBuilder(cbRoutingProtocol.getText());
+							ApplicationSettings.defaultLinkLayer = new StringBuilder(cbLinkLayer.getText());
+							ApplicationSettings.defaultMac = new StringBuilder(cbMac.getText());
+							ApplicationSettings.defaultChannel = new StringBuilder(cbChannel.getText());
+							ApplicationSettings.defaultPropagationModel = new StringBuilder(cbPropagationModel.getText());
+							ApplicationSettings.defaultNetworkInterface = new StringBuilder(cbNetworkInterface.getText());
+							ApplicationSettings.defaultAntenna = new StringBuilder(cbAntenna.getText());
+							
+							ApplicationSettings.defaultInterfaceQueue = new StringBuilder(cbInterfaceQueue.getText());
+							ApplicationSettings.queueLength = spnQueueLength.getSelection();
+							
+							ApplicationSettings.iddleEnergy = Double.parseDouble(txtIddle.getText());
+							ApplicationSettings.receptionEnergy = Double.parseDouble(txtReception.getText());
+							ApplicationSettings.transmissionEnergy = Double.parseDouble(txtTransmission.getText());
+							ApplicationSettings.sleepEnergy = Double.parseDouble(txtSleep.getText());
+							ProjectManager.getProject().setSelectedRoutingProtocol(cbRoutingProtocol.getText());
+							ApplicationSettings.saveNetworkConfig();
+						}
 					} catch (Exception exc) {
 						exc.printStackTrace();
 					}
 					break;
 				case PROJECT_CONFIG:
 					try {
-						Project project = workspace.getProject();
-						
-						project.setNodeRange(Integer.parseInt(txtRange.getText()));
-						
-						project.setSelectedTransportProtocol(cbTransportProtocol.getText());
-						project.setSelectedApplicationProtocol(cbAppProtocol.getText());
-						
-						project.setSelectedRoutingProtocol(cbRoutingProtocol.getText());
-						project.setSelectedLinkLayer(cbLinkLayer.getText());
-						project.setSelectedMac(cbMac.getText());
-						project.setSelectedChannel(cbChannel.getText());
-						project.setSelectedPropagationModel(cbPropagationModel.getText());
-						project.setSelectedNetworkInterface(cbNetworkInterface.getText());
-						project.setSelectedAntenna(cbAntenna.getText());
-						
-						project.setSelectedInterfaceQueue(cbInterfaceQueue.getText());
-						project.setQueueLength(spnQueueLength.getSelection());
-						
-						project.setIddleEnergy(Double.parseDouble(txtIddle.getText()));
-						project.setReceptionEnergy(Double.parseDouble(txtReception.getText()));
-						project.setReceptionEnergy(Double.parseDouble(txtTransmission.getText()));
-						project.setSleepEnergy(Double.parseDouble(txtSleep.getText()));						
-					} catch (Exception exc) {
+						if(ProjectManager.getProject().getRoutingProtocols().get(cbRoutingProtocol.getText()) == null) {
+							MessageDialog.openError(getParent(), "Error", "Selected Routing protocol incorrect!");
+							bApply = false;
+						} else { 
+							Project project = workspace.getProject();
+							
+							project.setNodeRange(Integer.parseInt(txtRange.getText()));
+							
+							project.setSelectedTransportProtocol(cbTransportProtocol.getText());
+							project.setSelectedApplicationProtocol(cbAppProtocol.getText());
+							
+							project.setSelectedRoutingProtocol(cbRoutingProtocol.getText());
+							project.setSelectedLinkLayer(cbLinkLayer.getText());
+							project.setSelectedMac(cbMac.getText());
+							project.setSelectedChannel(cbChannel.getText());
+							project.setSelectedPropagationModel(cbPropagationModel.getText());
+							project.setSelectedNetworkInterface(cbNetworkInterface.getText());
+							project.setSelectedAntenna(cbAntenna.getText());
+							
+							project.setSelectedInterfaceQueue(cbInterfaceQueue.getText());
+							project.setQueueLength(spnQueueLength.getSelection());
+							
+							project.setIddleEnergy(Double.parseDouble(txtIddle.getText()));
+							project.setReceptionEnergy(Double.parseDouble(txtReception.getText()));
+							project.setReceptionEnergy(Double.parseDouble(txtTransmission.getText()));
+							project.setSleepEnergy(Double.parseDouble(txtSleep.getText()));
+						}
+						} catch (Exception exc) {
 						exc.printStackTrace();
 					}
 					
 					break;
 				}
-				
-				shlNodeConfiguration.close();
+				if(bApply == true)
+					shlNodeConfiguration.close();
 			}
 		});
 		btnApply.setBounds(379, 10, 75, 25);
@@ -306,158 +321,209 @@ public class ConfigNodeDialog extends Dialog {
 		btnNewButton_2.setText("Cancel");
 		
 		Composite composite_2 = new Composite(shlNodeConfiguration, SWT.NONE);
-		composite_2.setBounds(0, 70, 582, 398);
+		composite_2.setBounds(0, 80, 691, 389);
 		
 		Group grpEnergyModel = new Group(composite_2, SWT.NONE);
 		grpEnergyModel.setText("Energy Model");
-		grpEnergyModel.setBounds(292, 237, 280, 151);
+		grpEnergyModel.setBounds(384, 238, 297, 151);
 		
 		Label lblNewLabel = new Label(grpEnergyModel, SWT.NONE);
 		lblNewLabel.setBounds(24, 29, 66, 15);
 		lblNewLabel.setText("Idle");
 		
 		Label lblReceptionPower = new Label(grpEnergyModel, SWT.NONE);
-		lblReceptionPower.setBounds(24, 56, 55, 15);
+		lblReceptionPower.setBounds(24, 56, 86, 21);
 		lblReceptionPower.setText("Reception");
 		
 		Label lblTransmissionPower = new Label(grpEnergyModel, SWT.NONE);
-		lblTransmissionPower.setBounds(24, 83, 86, 15);
+		lblTransmissionPower.setBounds(24, 83, 98, 15);
 		lblTransmissionPower.setText("Transmission");
 		
 		Label lblNewLabel_1 = new Label(grpEnergyModel, SWT.NONE);
-		lblNewLabel_1.setBounds(24, 110, 55, 15);
+		lblNewLabel_1.setBounds(24, 110, 66, 21);
 		lblNewLabel_1.setText("Sleep");
 		
 		txtIddle = new Text(grpEnergyModel, SWT.BORDER);
-		txtIddle.setBounds(130, 26, 76, 21);
+		txtIddle.setBounds(154, 29, 76, 21);
 		
 		txtReception = new Text(grpEnergyModel, SWT.BORDER);
-		txtReception.setBounds(130, 53, 76, 21);
+		txtReception.setBounds(154, 56, 76, 21);
 		
 		txtTransmission = new Text(grpEnergyModel, SWT.BORDER);
-		txtTransmission.setBounds(130, 80, 76, 21);
+		txtTransmission.setBounds(154, 83, 76, 21);
 		
 		txtSleep = new Text(grpEnergyModel, SWT.BORDER);
-		txtSleep.setBounds(130, 107, 76, 21);
+		txtSleep.setBounds(154, 110, 76, 21);
 		
 		Group grpQueue = new Group(composite_2, SWT.NONE);
 		grpQueue.setText("Queue");
-		grpQueue.setBounds(292, 130, 280, 91);
+		grpQueue.setBounds(384, 119, 297, 102);
 		
 		Label lblInterfaceQueue = new Label(grpQueue, SWT.NONE);
-		lblInterfaceQueue.setBounds(24, 30, 94, 15);
+		lblInterfaceQueue.setBounds(24, 30, 130, 22);
 		lblInterfaceQueue.setText("Interface Queue");
 		
 		cbInterfaceQueue = new Combo(grpQueue, SWT.NONE);
-		cbInterfaceQueue.setBounds(130, 27, 125, 23);
+		cbInterfaceQueue.setBounds(160, 30, 125, 23);
 		cbInterfaceQueue.setItems(new String[] {});
 		cbInterfaceQueue.select(0);
 		
 		spnQueueLength = new Spinner(grpQueue, SWT.BORDER);
-		spnQueueLength.setBounds(130, 56, 47, 22);
+		spnQueueLength.setBounds(160, 70, 47, 22);
 		spnQueueLength.setMinimum(30);
 		spnQueueLength.setSelection(50);
 		
 		Label lblQueueLength = new Label(grpQueue, SWT.NONE);
-		lblQueueLength.setBounds(24, 59, 94, 15);
+		lblQueueLength.setBounds(24, 73, 100, 19);
 		lblQueueLength.setText("Queue Length");
 		
 		Group grpPhysicLayer = new Group(composite_2, SWT.NONE);
 		grpPhysicLayer.setText("Physic Layer");
-		grpPhysicLayer.setBounds(10, 130, 267, 258);
+		grpPhysicLayer.setBounds(10, 95, 368, 293);
 		
 		Label lblRoutingProtocol = new Label(grpPhysicLayer, SWT.NONE);
-		lblRoutingProtocol.setBounds(10, 19, 100, 15);
+		lblRoutingProtocol.setBounds(10, 45, 134, 22);
 		lblRoutingProtocol.setText("Routing Protocol");
 		
 		cbRoutingProtocol = new Combo(grpPhysicLayer, SWT.NONE);
-		cbRoutingProtocol.setBounds(125, 12, 125, 23);
+		cbRoutingProtocol.setBounds(150, 38, 125, 23);
 		cbRoutingProtocol.setItems(new String[] {});
 		
 		Label lblLinkLayerType = new Label(grpPhysicLayer, SWT.NONE);
-		lblLinkLayerType.setBounds(10, 53, 94, 15);
+		lblLinkLayerType.setBounds(10, 79, 94, 22);
 		lblLinkLayerType.setText("Link Layer");
 		
 		cbLinkLayer = new Combo(grpPhysicLayer, SWT.NONE);
-		cbLinkLayer.setBounds(125, 47, 125, 23);
+		cbLinkLayer.setBounds(150, 73, 125, 23);
 		cbLinkLayer.setItems(new String[] {});
 		
 		Label lblMacType = new Label(grpPhysicLayer, SWT.NONE);
-		lblMacType.setBounds(10, 87, 55, 15);
+		lblMacType.setBounds(10, 113, 134, 15);
 		lblMacType.setText("Mac");
 		
 		cbMac = new Combo(grpPhysicLayer, SWT.NONE);
-		cbMac.setBounds(125, 82, 125, 23);
+		cbMac.setBounds(150, 108, 125, 23);
 		cbMac.setItems(new String[] {});
 		
 		Label lblChannel = new Label(grpPhysicLayer, SWT.NONE);
-		lblChannel.setBounds(10, 121, 55, 15);
+		lblChannel.setBounds(10, 147, 134, 28);
 		lblChannel.setText("Channel");
 		
 		Label lblPropagationmodel = new Label(grpPhysicLayer, SWT.NONE);
-		lblPropagationmodel.setBounds(10, 155, 108, 15);
+		lblPropagationmodel.setBounds(10, 181, 134, 28);
 		lblPropagationmodel.setText("Propagation Model");
 		
 		cbChannel = new Combo(grpPhysicLayer, SWT.NONE);
-		cbChannel.setBounds(125, 117, 125, 23);
+		cbChannel.setBounds(150, 143, 125, 23);
 		cbChannel.setItems(new String[] {});
 		
 		Label lblNetworkInterface = new Label(grpPhysicLayer, SWT.NONE);
-		lblNetworkInterface.setBounds(10, 189, 100, 15);
+		lblNetworkInterface.setBounds(10, 215, 134, 28);
 		lblNetworkInterface.setText("Network Interface");
 		
 		cbPropagationModel = new Combo(grpPhysicLayer, SWT.NONE);
-		cbPropagationModel.setBounds(125, 152, 125, 23);
+		cbPropagationModel.setBounds(150, 181, 125, 23);
 		cbPropagationModel.setItems(new String[] {});
 		
 		Label lblAntenna = new Label(grpPhysicLayer, SWT.NONE);
-		lblAntenna.setBounds(10, 223, 55, 15);
+		lblAntenna.setBounds(10, 249, 134, 25);
 		lblAntenna.setText("Antenna");
 		
 		cbNetworkInterface = new Combo(grpPhysicLayer, SWT.NONE);
-		cbNetworkInterface.setBounds(125, 187, 125, 23);
+		cbNetworkInterface.setBounds(150, 215, 125, 23);
 		cbNetworkInterface.setItems(new String[] {});
 		
 		cbAntenna = new Combo(grpPhysicLayer, SWT.NONE);
-		cbAntenna.setBounds(125, 222, 125, 23);
+		cbAntenna.setBounds(150, 249, 125, 23);
 		cbAntenna.setItems(new String[] {});
+		
+		Button button_1 = new Button(grpPhysicLayer, SWT.NONE);
+		button_1.setText("Config");
+		button_1.setBounds(281, 38, 75, 25);
+//		button_1.setEnabled(false);
+		button_1.addListener(SWT.Selection, new Listener() {
+			
+			@Override
+			public void handleEvent(Event arg0) {
+				// TODO Auto-generated method stub
+				String currentSelectedRouting = cbRoutingProtocol.getText();
+				System.out.println(currentSelectedRouting);
+				HashMap<String,HashMap <String,String>> input = ProjectManager.getProject().getRoutingProtocols();
+				if(input.get(currentSelectedRouting) != null) {
+					HashMap<String,String> value = input.get(currentSelectedRouting);
+					new ParameterConfigDialog(shlNodeConfiguration,SWT.SHEET, currentSelectedRouting,value).open();
+				} else {
+					MessageDialog.openError(getParent(), "Error", "Selected Routing protocol incorrect!");
+				}
+			}
+		});
+		
+		Button button_2 = new Button(grpPhysicLayer, SWT.NONE);
+		button_2.setText("Config");
+		button_2.setBounds(281, 73, 75, 25);
+		button_2.setEnabled(false);
+		
+		Button button_3 = new Button(grpPhysicLayer, SWT.NONE);
+		button_3.setText("Config");
+		button_3.setBounds(281, 108, 75, 25);
+		button_3.setEnabled(false);
+		
+		Button button_4 = new Button(grpPhysicLayer, SWT.NONE);
+		button_4.setText("Config");
+		button_4.setBounds(281, 143, 75, 25);
+		button_4.setEnabled(false);
+		
+		Button button_5 = new Button(grpPhysicLayer, SWT.NONE);
+		button_5.setText("Config");
+		button_5.setBounds(281, 181, 75, 25);
+		button_5.setEnabled(false);
+		
+		Button button_6 = new Button(grpPhysicLayer, SWT.NONE);
+		button_6.setText("Config");
+		button_6.setBounds(281, 215, 75, 25);
+		button_6.setEnabled(false);
+		
+		Button button_7 = new Button(grpPhysicLayer, SWT.NONE);
+		button_7.setText("Config");
+		button_7.setBounds(281, 249, 75, 25);
+		button_7.setEnabled(false);
 		
 		Group grpRange = new Group(composite_2, SWT.NONE);
 		grpRange.setText("Range");
-		grpRange.setBounds(10, 10, 267, 114);
+		grpRange.setBounds(10, 10, 368, 61);
 		
 		Label lblRange = new Label(grpRange, SWT.NONE);
-		lblRange.setBounds(66, 48, 48, 15);
+		lblRange.setBounds(66, 26, 48, 21);
 		lblRange.setText("Range");
 		
 		txtRange = new Text(grpRange, SWT.BORDER);
-		txtRange.setBounds(120, 45, 76, 21);
+		txtRange.setBounds(120, 26, 76, 21);
 		
 		Group grpProtocols = new Group(composite_2, SWT.NONE);
 		grpProtocols.setText("Protocols");
-		grpProtocols.setBounds(292, 10, 280, 114);
+		grpProtocols.setBounds(386, 10, 295, 103);
 		
 		Label lblTransportProtocol = new Label(grpProtocols, SWT.NONE);
-		lblTransportProtocol.setBounds(10, 24, 72, 15);
+		lblTransportProtocol.setBounds(10, 24, 88, 29);
 		lblTransportProtocol.setText("Transport");
 		
 		cbTransportProtocol = new Combo(grpProtocols, SWT.NONE);
-		cbTransportProtocol.setBounds(88, 21, 91, 23);
+		cbTransportProtocol.setBounds(104, 24, 91, 23);
 		
 		Label lblApplication = new Label(grpProtocols, SWT.NONE);
-		lblApplication.setBounds(10, 62, 72, 15);
+		lblApplication.setBounds(10, 62, 88, 25);
 		lblApplication.setText("Application");
 		
 		cbAppProtocol = new Combo(grpProtocols, SWT.NONE);
-		cbAppProtocol.setBounds(88, 59, 91, 23);
+		cbAppProtocol.setBounds(104, 62, 91, 23);
 		
 		Button btnConfig = new Button(grpProtocols, SWT.NONE);
-		btnConfig.setBounds(195, 21, 75, 25);
+		btnConfig.setBounds(210, 24, 75, 25);
 		btnConfig.setText("Config");
 		
 		Button button = new Button(grpProtocols, SWT.NONE);
 		button.setText("Config");
-		button.setBounds(195, 59, 75, 25);
+		button.setBounds(210, 62, 75, 25);
 		
 		shlNodeConfiguration.setDefaultButton(btnApply);
 	}

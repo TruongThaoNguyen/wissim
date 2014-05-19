@@ -107,8 +107,10 @@ public class ApplicationManager {
 		if (path == null) return null;		
 
 		try {								
-			Configure.setTclFile(path);			
-			return ProjectManager.loadProject(path);
+			Configure.setTclFile(path);
+			Project project = ProjectManager.loadProject(path);
+			ApplicationSettings.applyDefaultSettingsToProject(project);
+			return project;
 		} catch (Exception e) {}
 		
 		return null;
