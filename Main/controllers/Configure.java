@@ -5,7 +5,7 @@ public final class Configure {
 	static String directory;
 	static String traceFile;
 	static String namTraceFile;
-	static String ns2Path = "/home/trongnguyen/NS2/";
+	static String ns2Path = "/home/khaclinh/ns-allinone-2.34/";
 	static String tclFile;
 	
 	/**
@@ -71,8 +71,9 @@ public final class Configure {
 	 * @param dir new directory
 	 * @return directory
 	 */
-	public static String setDirectory(String dir) {		
-		return directory = dir;
+	public static String setDirectory(String dir) {
+		if (dir.endsWith(".tcl")) dir = dir.substring(0, dir.lastIndexOf("/"));
+		return directory = dir + "/";
 	}
 
 	/**

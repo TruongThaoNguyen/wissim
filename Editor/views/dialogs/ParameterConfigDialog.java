@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -22,11 +23,16 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
+import controllers.managers.ProjectManager;
+
+import views.MainWindow;
+
 public class ParameterConfigDialog extends Dialog {
 
 	protected Object result;
 	protected Shell shlParameterConfigure;
 	private Table table;
+	private String protocolName;
 
 	private HashMap<String, String> map = new HashMap<String, String>();
 
@@ -36,9 +42,11 @@ public class ParameterConfigDialog extends Dialog {
 	 * @param style
 	 * @param string 
 	 */
-	public ParameterConfigDialog(Shell parent, int style, String title) {
+	public ParameterConfigDialog(Shell parent, int style, String title,HashMap<String,String>value) {
 		super(parent, style);
 		setText(title);
+		setMap(value);
+		setProtocolName(title);
 	}
 
 	/**
@@ -63,11 +71,11 @@ public class ParameterConfigDialog extends Dialog {
 	 */
 	private void createContents() {
 		shlParameterConfigure = new Shell(getParent(), getStyle());
-		shlParameterConfigure.setSize(284, 282);
+		shlParameterConfigure.setSize(309, 404);
 		shlParameterConfigure.setText(getText());
 
 		table = new Table(shlParameterConfigure, SWT.BORDER | SWT.FULL_SELECTION);
-		table.setBounds(34, 34, 211, 178);
+		table.setBounds(10, 26, 287, 282);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
@@ -129,7 +137,7 @@ public class ParameterConfigDialog extends Dialog {
 		});		
 
 		TableColumn tblclmnParameter = new TableColumn(table, SWT.NONE);
-		tblclmnParameter.setWidth(101);
+		tblclmnParameter.setWidth(176);
 		tblclmnParameter.setText("Parameter");
 
 		TableColumn tblclmnValue = new TableColumn(table, SWT.NONE);
@@ -152,8 +160,47 @@ public class ParameterConfigDialog extends Dialog {
 				shlParameterConfigure.dispose();
 			}
 		});
-		btnClose.setBounds(101, 218, 75, 25);
-		btnClose.setText("Close");
+		btnClose.setBounds(186, 327, 75, 25);
+		btnClose.setText("Cancel");
+		
+		Button button = new Button(shlParameterConfigure, SWT.NONE);
+		button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				HashMap<String,String> routingProtocolMaps = new HashMap<String,String>();
+				int index = table.getTopIndex();
+				int flag = 0;
+				while (index < table.getItemCount()) {
+					final TableItem item = table.getItem(index);
+					if(item.getText(0).equals("")) {
+						 MessageDialog.openError(getParent(), "Error", "Parameter must be not empty!");
+						 flag = 1;
+					} else {
+						if(item.getText(1).equals("")) {
+							flag = 1;
+							MessageDialog.openError(getParent(), "Error", "Value must be not empty!");
+						} else {
+							routingProtocolMaps.put(item.getText(0), item.getText(1));
+						}
+					}
+					
+					index++;
+				}
+				if(flag == 0) {
+					if(routingProtocolMaps != null) {
+						ProjectManager.getProject().getRoutingProtocols().put(protocolName, routingProtocolMaps);
+						System.out.println(ProjectManager.getProject().getRoutingProtocols().get(protocolName));
+						boolean b = MessageDialog.openConfirm(getParent(), "Confirm", "Update successfull! Do you want to quit?");
+						if(b == true) {
+							shlParameterConfigure.dispose();
+						}
+					}
+				}
+			}
+		});
+		button.setText("Apply");
+		button.setBounds(77, 327, 75, 25);
+		
 
 	}
 
@@ -161,4 +208,11 @@ public class ParameterConfigDialog extends Dialog {
 		map.put(param, value);
 	}
 
+	public void setMap(HashMap<String,String> input) {
+		this.map = input;
+	}
+	
+	public void setProtocolName(String protocolName) {
+		this.protocolName = protocolName;
+	}
 }
