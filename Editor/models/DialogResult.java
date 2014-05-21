@@ -36,6 +36,8 @@ public class DialogResult {
 		public int creationType;
 		public int areaType;
 		public int numOfNodes;
+		public int x_range;
+		public int y_range;
 	}
 	
 	public class SearchNodeResult {

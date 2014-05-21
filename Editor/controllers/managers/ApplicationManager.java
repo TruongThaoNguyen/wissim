@@ -294,12 +294,19 @@ public class ApplicationManager {
 		if (workspace == null) return;
 		
 		CreateNodeSetResult result = (CreateNodeSetResult) new CreateNodeSetDialog(workspace.getShell(), SWT.SHEET, null).open();
-		
-		if (result.creationType == CreateNodeSetResult.RANDOM && result.areaType == CreateNodeSetResult.WHOLE_NETWORK) {
-			ProjectManager.createRandomNodes(result.numOfNodes, 0, null);
-			workspace.updateLayout();			
-			workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);
-			workspace.getGraphicNetwork().redraw();
+		if(result != null) {
+			if (result.creationType == CreateNodeSetResult.RANDOM && result.areaType == CreateNodeSetResult.WHOLE_NETWORK) {
+				ProjectManager.createRandomNodes(result.numOfNodes, 0, null);
+				workspace.updateLayout();			
+				workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);
+				workspace.getGraphicNetwork().redraw();
+			}
+			if (result.creationType == CreateNodeSetResult.GRID && result.areaType == CreateNodeSetResult.WHOLE_NETWORK) {
+				ProjectManager.createGridNodes(null, result.x_range, result.y_range);
+				workspace.updateLayout();			
+				workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);
+				workspace.getGraphicNetwork().redraw();
+			}
 		}
 	}
 
