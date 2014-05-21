@@ -306,6 +306,7 @@ public class ProjectManager {
 					if (area.contains(x, y)) ProjectManager.createSingleNode(x, y);				
 					x+= gSizeX;
 				}
+				x = gSizeX;
 				y += gSizeY;
 			}
 		}
@@ -316,6 +317,7 @@ public class ProjectManager {
 					ProjectManager.createSingleNode(x, y);				
 					x+= gSizeX;
 				}
+				x = gSizeX;
 				y += gSizeY;
 			}
 		}

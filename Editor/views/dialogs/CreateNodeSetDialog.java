@@ -1,12 +1,20 @@
 package views.dialogs;
 
+import javax.xml.ws.soap.Addressing;
+
 import models.DialogResult;
 import models.DialogResult.CreateNodeSetResult;
 import models.networkcomponents.features.Area;
 
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
@@ -18,6 +26,8 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.events.SelectionAdapter;
 
+import controllers.managers.ProjectManager;
+
 public class CreateNodeSetDialog extends Dialog {
 
 	protected Object result;
@@ -25,6 +35,8 @@ public class CreateNodeSetDialog extends Dialog {
 	private Text text;
 	
 	private Area selectedArea;
+	private Text text_1;
+	private Text text_2;
 
 	/**
 	 * Create the dialog.
@@ -59,14 +71,24 @@ public class CreateNodeSetDialog extends Dialog {
 	/**
 	 * Create contents of the dialog.
 	 */
+	public static boolean isInteger(String s) {
+	    try { 
+	        Integer.parseInt(s); 
+	    } catch(NumberFormatException e) { 
+	        return false; 
+	    }
+	    // only got here if we didn't return false
+	    return true;
+	}
+	
 	private void createContents() {
 		shlCreateASet = new Shell(getParent(), getStyle());
-		shlCreateASet.setSize(450, 324);
+		shlCreateASet.setSize(519, 415);
 		shlCreateASet.setText("Create A Set of Nodes");
 		
 		Composite composite = new Composite(shlCreateASet, SWT.BORDER);
 		composite.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		composite.setBounds(0, 0, 444, 56);
+		composite.setBounds(0, 0, 507, 56);
 		
 		Label lblNewLabel = new Label(composite, SWT.NONE);
 		lblNewLabel.setFont(SWTResourceManager.getFont("Segoe UI", 14, SWT.NORMAL));
@@ -75,10 +97,10 @@ public class CreateNodeSetDialog extends Dialog {
 		lblNewLabel.setText("Create A Set of Nodes");
 		
 		Composite composite_1 = new Composite(shlCreateASet, SWT.BORDER);
-		composite_1.setBounds(0, 236, 444, 59);
+		composite_1.setBounds(10, 294, 497, 59);
 		
 		Composite composite_2 = new Composite(shlCreateASet, SWT.NONE);
-		composite_2.setBounds(0, 62, 444, 168);
+		composite_2.setBounds(10, 62, 497, 168);
 		
 		Label lblMethod = new Label(composite_2, SWT.NONE);
 		lblMethod.setBounds(22, 29, 55, 15);
@@ -89,17 +111,70 @@ public class CreateNodeSetDialog extends Dialog {
 		combo.setBounds(87, 25, 114, 23);
 		combo.select(0);
 		
+		
 		Group grpNodes = new Group(composite_2, SWT.NONE);
 		grpNodes.setText("Nodes");
 		grpNodes.setBounds(22, 69, 398, 89);
 		
 		Label lblNumOfNodes = new Label(grpNodes, SWT.NONE);
-		lblNumOfNodes.setBounds(10, 26, 55, 15);
+		lblNumOfNodes.setBounds(10, 26, 67, 21);
 		lblNumOfNodes.setText("Quantity");
 		
 		text = new Text(grpNodes, SWT.BORDER);
 		text.setText("10");
-		text.setBounds(71, 23, 40, 21);
+		text.setBounds(83, 26, 40, 21);
+		
+		Label label = new Label(grpNodes, SWT.NONE);
+		label.setText("X-Range");
+		label.setBounds(251, 26, 55, 21);
+		
+		Label label_1 = new Label(grpNodes, SWT.NONE);
+		label_1.setText("Y-Range");
+		label_1.setBounds(251, 54, 55, 23);
+		
+		text_1 = new Text(grpNodes, SWT.BORDER);
+		text_1.setText("10");
+		text_1.setBounds(312, 26, 40, 21);
+		text_1.setEnabled(false);
+		
+		text_2 = new Text(grpNodes, SWT.BORDER);
+		text_2.setText("10");
+		text_2.setBounds(312, 56, 40, 21);
+		text_2.setEnabled(false);
+		
+		combo.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				if(combo.getSelectionIndex() == 1) {
+					text_1.setEnabled(true);
+					text_2.setEnabled(true);
+					text.setEnabled(false);
+				}
+				else {
+					text_1.setEnabled(false);
+					text_2.setEnabled(false);
+					text.setEnabled(true);
+				}
+
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				if(combo.getSelectionIndex() == 1) {
+					text_1.setEnabled(true);
+					text_2.setEnabled(true);
+					text.setEnabled(false);
+				}
+				else {
+					text_1.setEnabled(false);
+					text_2.setEnabled(false);
+					text.setEnabled(true);
+				}
+			}
+		});
 		
 		Label lblArea = new Label(grpNodes, SWT.NONE);
 		lblArea.setBounds(10, 54, 55, 15);
@@ -108,7 +183,9 @@ public class CreateNodeSetDialog extends Dialog {
 		final Combo combo_2 = new Combo(grpNodes, SWT.READ_ONLY);
 		combo_2.setEnabled(false);
 		combo_2.setItems(new String[] {"Whole Network", "Selected Area"});
-		combo_2.setBounds(71, 50, 129, 23);
+		combo_2.setBounds(83, 50, 129, 23);
+		
+		
 		
 		if (selectedArea == null)
 			combo_2.select(0);
@@ -121,14 +198,43 @@ public class CreateNodeSetDialog extends Dialog {
 		btnOk.addSelectionListener(new SelectionAdapter() {			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
+				boolean b= true;
 				CreateNodeSetResult r = new DialogResult().new CreateNodeSetResult();
-				
 				switch (combo.getItem(combo.getSelectionIndex())) {
-				case "RANDOM":
+				case "Random":
 					r.creationType = CreateNodeSetResult.RANDOM;
+					if(text.getText().equals("") || isInteger(text.getText()) == false) {
+						MessageDialog.openError(getParent(), "Error", "Number of Node must be integer!");
+						b = false;
+					}
+					if(b == true) {
+						r.numOfNodes = Integer.parseInt(text.getText());
+					}
 					break;
-				case "GRID":
+				case "Grid":
 					r.creationType = CreateNodeSetResult.GRID;
+					if(text_1.getText().equals("") || isInteger(text_1.getText()) == false) {
+						MessageDialog.openError(getParent(), "Error", "X range must be integer!");
+						b = false;
+					}
+					if(text_2.getText().equals("") || isInteger(text_2.getText()) == false) {
+						MessageDialog.openError(getParent(), "Error", "Y range must be integer!");
+						b = false;
+					}
+					if(b == true) {
+						if(Integer.parseInt(text_1.getText()) < 0 || Integer.parseInt(text_1.getText()) > ProjectManager.getProject().getNetwork().getWidth()) {
+							MessageDialog.openError(getParent(), "Error", "X range out of network!");
+							b = false;
+						}
+						if(Integer.parseInt(text_2.getText()) < 0 || Integer.parseInt(text_2.getText()) > ProjectManager.getProject().getNetwork().getLength()) {
+							MessageDialog.openError(getParent(), "Error", "Y range out of network!");
+							b = false;
+						}
+						if(b == true) {
+							r.x_range = Integer.parseInt(text_1.getText());
+							r.y_range = Integer.parseInt(text_2.getText());
+						}
+					}
 					break;
 				default:
 					r.creationType = CreateNodeSetResult.RANDOM;
@@ -144,11 +250,10 @@ public class CreateNodeSetDialog extends Dialog {
 				default:
 					r.areaType = CreateNodeSetResult.WHOLE_NETWORK;
 				}
-				
-				r.numOfNodes = Integer.parseInt(text.getText());
-				
-				result = r;
-				shlCreateASet.dispose();
+				if(b == true) {
+					result = r;
+					shlCreateASet.dispose();
+				}
 			}
 		});
 		
