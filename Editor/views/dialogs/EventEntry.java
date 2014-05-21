@@ -1,11 +1,13 @@
 package views.dialogs;
 
+import models.networkcomponents.events.Event.EventType;
+
 public class EventEntry {
-	public EventEntry(int type, int time) {
+	public EventEntry(EventType type, int time) {
 		this.type = type;
 		this.time = time;
 	}
 	
-	public int type;
+	public EventType type;
 	public int time;
 }

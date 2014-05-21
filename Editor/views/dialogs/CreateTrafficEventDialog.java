@@ -2,7 +2,7 @@ package views.dialogs;
 
 import java.util.List;
 
-import models.networkcomponents.events.AppEvent;
+import models.networkcomponents.events.Event.EventType;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -88,34 +88,14 @@ public class CreateTrafficEventDialog extends Dialog {
 		final Combo combo = new Combo(shlCreateTrafficEvent, SWT.NONE);
 		combo.setItems(new String[] {"START", "STOP"});
 		combo.setBounds(103, 76, 91, 23);
-		if (eventList.size() == 0)
-			combo.select(0);
-		else
-			switch (eventList.get(eventList.size() - 1).type) {
-			case AppEvent.START:
-				combo.select(1);
-				break;
-			case AppEvent.STOP:
-				combo.select(0);
-				break;
-			}
+		if (eventList.size() == 0)	combo.select(0);			
+		else						combo.select(combo.indexOf(eventList.get(eventList.size() - 1).toString()));			
 		
 		Button btnCreate = new Button(shlCreateTrafficEvent, SWT.NONE);
 		btnCreate.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int type = AppEvent.START;
-				
-				switch (combo.getText()) {
-				case "START":
-					type = AppEvent.START;
-					break;
-				case "STOP":
-					type = AppEvent.STOP;
-					break;
-				}
-				eventList.add(new EventEntry(type, scale.getSelection()));
-				
+			public void widgetSelected(SelectionEvent e) {								
+				eventList.add(new EventEntry(EventType.valueOf(combo.getText()), scale.getSelection()));				
 				shlCreateTrafficEvent.close();
 			}
 		});

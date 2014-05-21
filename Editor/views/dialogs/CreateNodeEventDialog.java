@@ -1,7 +1,8 @@
 package views.dialogs;
 
 import models.networkcomponents.WirelessNode;
-import models.networkcomponents.events.NodeEvent;
+import models.networkcomponents.events.Event;
+import models.networkcomponents.events.Event.EventType;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -71,19 +72,13 @@ public class CreateNodeEventDialog extends Dialog {
 		lblRaisedTime.setText("RaisedTime");
 		
 		int minTime = 1;
-		int type = NodeEvent.ON;
-		if (wirelessNode().getEventList().size() > 0) { 
-			NodeEvent lastEvent = wirelessNode().getEventList().get(wirelessNode().getEventList().size() - 1);
+		//int type = NodeEvent.ON;
+		EventType type = EventType.ON;
+		if (wirelessNode().getEventList().size() > 0)
+		{ 
+			Event lastEvent = wirelessNode().getEventList().get(wirelessNode().getEventList().size() - 1);
 			minTime = lastEvent.getRaisedTime() + 1;
-			
-			switch (lastEvent.getType()) {
-			case NodeEvent.ON:
-				type = NodeEvent.OFF;
-				break;
-			case NodeEvent.OFF:
-			default:
-				type = NodeEvent.ON;
-			}
+			type = EventType.valueOf(lastEvent.getType().toString());
 		}
 		
 		final Scale scale = new Scale(shlNewNodeEvent, SWT.NONE);
@@ -126,23 +121,14 @@ public class CreateNodeEventDialog extends Dialog {
 		final Combo combo = new Combo(shlNewNodeEvent, SWT.READ_ONLY);
 		combo.setItems(new String[] {"ON", "OFF"});
 		combo.setBounds(104, 90, 91, 23);
-		combo.select(type);
+		combo.select(combo.indexOf(type.toString()));
 		
 		btnAdd.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int type = NodeEvent.ON;
+			public void widgetSelected(SelectionEvent e) {				
+				EventType type = EventType.valueOf(combo.getItem(combo.getSelectionIndex()));				
 				
-				switch (combo.getItem(combo.getSelectionIndex())) {
-				case "ON":
-					type = NodeEvent.ON;
-					break;
-				case "OFF":
-					type = NodeEvent.OFF;
-					break;
-				}
-				
-				new NodeEvent(type, scale.getSelection(), wirelessNode());
+				wirelessNode().addEvent(type, scale.getSelection());				
 				shlNewNodeEvent.dispose();
 			}
 		});		

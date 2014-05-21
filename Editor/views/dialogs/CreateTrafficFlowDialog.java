@@ -9,7 +9,7 @@ import java.util.Set;
 
 import models.networkcomponents.Node;
 import models.networkcomponents.WirelessNetwork;
-import models.networkcomponents.events.AppEvent;
+import models.networkcomponents.events.Event.EventType;
 import models.networkcomponents.protocols.ApplicationProtocol;
 import models.networkcomponents.protocols.ApplicationProtocol.ApplicationProtocolType;
 import models.networkcomponents.protocols.TransportProtocol;
@@ -245,20 +245,7 @@ public class CreateTrafficFlowDialog extends Dialog {
 					appProtocol.addParameter(me.getKey(), me.getValue());
 				}
 				
-				for (TableItem item : table.getItems()) {
-					int type = AppEvent.START;
-					switch (item.getText(0)) {
-					case "START":
-						type = AppEvent.START;
-						break;
-					case "STOP":
-						type = AppEvent.STOP;
-						break;
-					}
-					
-					int time = Integer.parseInt(item.getText(1));
-					appProtocol.addEvent(type, time);					
-				}				
+				for (TableItem item : table.getItems())	appProtocol.addEvent(EventType.valueOf(item.getText(0)), Integer.parseInt(item.getText(1)));					
 				
 				shlCreateTrafficFlow.close();
 			}
@@ -284,18 +271,7 @@ public class CreateTrafficFlowDialog extends Dialog {
 		
 		for (EventEntry ee : eventList) {
 			TableItem item = new TableItem(table, SWT.NONE);
-			
-			String type = "";
-			switch (ee.type) {
-			case AppEvent.START:
-				type = "START";
-				break;
-			case AppEvent.STOP:
-				type = "STOP";
-				break;
-			}
-			
-			item.setText(new String[] { type, ee.time + "" });
+			item.setText(new String[] { ee.type.toString(), ee.time + "" });
 		}
 	}
 	

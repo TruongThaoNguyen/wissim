@@ -57,9 +57,8 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	}
 
 	@Override
-	public double getEvent(double arg) {
-		// TODO Auto-generated method stub
-		return 0;
+	public double getEvent(String arg) {
+		return event.get(arg);
 	}
 	
 	@Override

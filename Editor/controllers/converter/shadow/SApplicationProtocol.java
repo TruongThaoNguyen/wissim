@@ -12,13 +12,14 @@ import models.converter.InsProc;
 import models.converter.InsVar;
 import models.converter.ParseException;
 import models.networkcomponents.Node;
-import models.networkcomponents.events.AppEvent;
+import models.networkcomponents.events.Event;
+import models.networkcomponents.events.Event.EventType;
 import models.networkcomponents.protocols.ApplicationProtocol;
 
 public class SApplicationProtocol extends ApplicationProtocol implements TclObject, Scheduler {
 	
 	public SApplicationProtocol(String label) {
-		super(ApplicationProtocolType.NULL, label, null, null);
+		super(ApplicationProtocolType.CBR, label, null, null);
 		this.label = label;
 		addInsProc();
 	}
@@ -36,13 +37,11 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	@Override
 	public void addEvent(double time, String arg) {
 		event.put(arg, time);		
-		// TODO:
 	}
 
 	@Override
-	public double getEvent(double arg) {
-		// TODO Auto-generated method stub
-		return 0;
+	public double getEvent(String arg) {
+		return event.get(arg);
 	}
 	
 	@Override
@@ -229,7 +228,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	}
 
 	@Override
-	public boolean removeEvent(AppEvent e) {				
+	public boolean removeEvent(Event e) {				
 		// TODO: remove Event
 		
 		return true;
@@ -242,13 +241,13 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	}
 
 	@Override
-	public boolean addEvent(int type, int raisedTime) {
+	public boolean addEvent(EventType type, int raisedTime) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public List<AppEvent> getEventList() {
+	public List<Event> getEventList() {
 		// TODO Auto-generated method stub
 		return null;
 	}

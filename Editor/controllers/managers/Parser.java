@@ -7,37 +7,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import models.Project;
-import models.networkcomponents.Node;
-import models.networkcomponents.WirelessNetwork;
-import models.networkcomponents.WirelessNode;
-import models.networkcomponents.events.AppEvent;
-import models.networkcomponents.events.NodeEvent;
-import models.networkcomponents.features.Area;
-import models.networkcomponents.features.GraphicLabel;
-import models.networkcomponents.features.Label;
-import models.networkcomponents.protocols.ApplicationProtocol;
-import models.networkcomponents.protocols.TransportProtocol;
 import nu.xom.Attribute;
 import nu.xom.Builder;
-import nu.xom.Comment;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;
 import nu.xom.ParsingException;
 import nu.xom.Serializer;
 import nu.xom.ValidityException;
-import controllers.helpers.Helper;
 
 /**
  * Provide methods for parsing xml to Objects of program

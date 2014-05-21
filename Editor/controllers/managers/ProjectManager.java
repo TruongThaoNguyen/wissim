@@ -22,8 +22,7 @@ import models.networkcomponents.WirelessNode;
 import models.networkcomponents.algorithms.BFSAlgorithm;
 import models.networkcomponents.algorithms.DijikstraAlgorithm;
 import models.networkcomponents.algorithms.GreedyAlgorithm;
-import models.networkcomponents.events.AppEvent;
-import models.networkcomponents.events.NodeEvent;
+import models.networkcomponents.events.Event.EventType;
 import models.networkcomponents.features.*;
 import models.networkcomponents.protocols.ApplicationProtocol;
 
@@ -333,12 +332,9 @@ public class ProjectManager {
 	 */
 	public static boolean createEvent(WirelessNode node, int eventType, int raisedTime) { 
 		switch (eventType) {
-			case NodeEvent.ON:
-			case NodeEvent.OFF:
-				node.addEvent(eventType, raisedTime);				
-				return true;
-			default:
-				return false;
+			case 0: node.addEvent(EventType.ON,	raisedTime);	return true;
+			case 1:	node.addEvent(EventType.OFF, raisedTime);	return true;		
+			default: return false;
 		}
 	}
 
@@ -351,10 +347,8 @@ public class ProjectManager {
 	 */
 	public static boolean createEvent(ApplicationProtocol app, int eventType, int raisedTime) { 
 		switch(eventType) {
-			case AppEvent.START:
-			case AppEvent.STOP:
-				app.addEvent(eventType, raisedTime);				
-				return true;
+			case 0: app.addEvent(EventType.STOP, raisedTime); 	return true;
+			case 1:	app.addEvent(EventType.START, raisedTime);	return true;
 			default:
 				return false;
 		}

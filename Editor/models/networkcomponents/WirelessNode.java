@@ -12,7 +12,8 @@ package models.networkcomponents;
 import java.util.ArrayList;
 import java.util.List;
 
-import models.networkcomponents.events.NodeEvent;
+import models.networkcomponents.events.Event;
+import models.networkcomponents.events.Event.EventType;
 
 public abstract class WirelessNode extends Node {
 	/**
@@ -29,9 +30,9 @@ public abstract class WirelessNode extends Node {
 	public void addNeighbor		(WirelessNode node) { if (!neighborList.contains(node)) neighborList.add(node); }	
 	public void removeNeighbor	(WirelessNode node) { if (neighborList.contains(node))	neighborList.remove(node); }
 	
-	public abstract List<NodeEvent> getEventList();	
-	public abstract void 			addEvent(int type, int raiseTime);	
-	public abstract void 			removeEvent(NodeEvent event);
+	public abstract List<Event> getEventList();	
+	public abstract void 		addEvent(EventType type, int raiseTime);	
+	public abstract void 		removeEvent(Event event);
 	
 	public abstract int getRange();	
 	

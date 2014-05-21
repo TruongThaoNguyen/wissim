@@ -1,7 +1,7 @@
 package views.dialogs;
 
 import models.networkcomponents.WirelessNode;
-import models.networkcomponents.events.NodeEvent;
+import models.networkcomponents.events.Event;
 
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
@@ -152,19 +152,9 @@ public class NodeEventsDialog extends Dialog {
 		table.removeAll();
 		
 		// re-add items
-		for (NodeEvent e : wirelessNode().getEventList()) {
-			TableItem item = new TableItem(table, SWT.NONE);
-			String type;
-			
-			switch (e.getType()) {
-			case NodeEvent.ON:
-				type = "ON";
-				break;
-			case NodeEvent.OFF:
-			default:
-				type = "OFF";
-			}
-			item.setText(new String[] { type, e.getRaisedTime() + "" });
+		for (Event e : wirelessNode().getEventList()) {
+			TableItem item = new TableItem(table, SWT.NONE);			
+			item.setText(new String[] { e.getType().toString(), e.getRaisedTime() + "" });
 		}		
 	}
 }

@@ -52,9 +52,8 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 	}
 
 	@Override
-	public double getEvent(double arg) {
-		// TODO Auto-generated method stub
-		return 0;
+	public double getEvent(String arg) {
+		return event.get(arg);
 	}
 	
 	@Override

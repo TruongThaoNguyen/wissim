@@ -4,6 +4,6 @@ import java.util.HashMap;
 
 public interface Scheduler {	
 	void 	addEvent(double time, String arg);
-	double	getEvent(double arg);
+	double	getEvent(String arg);
 	HashMap<String, Double> getEvent();
 }

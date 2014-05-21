@@ -13,7 +13,8 @@ import models.converter.InsVar;
 import models.converter.ParseException;
 import models.networkcomponents.Node;
 import models.networkcomponents.WirelessNode;
-import models.networkcomponents.events.NodeEvent;
+import models.networkcomponents.events.Event;
+import models.networkcomponents.events.Event.EventType;
 import models.networkcomponents.protocols.TransportProtocol;
 import models.networkcomponents.protocols.TransportProtocol.TransportProtocolType;
 
@@ -43,9 +44,9 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 	}
 
 	@Override
-	public double getEvent(double arg) {
+	public double getEvent(String arg) {
 		return event.get(arg);
-	}	
+	}
 	
 	@Override
 	public HashMap<String, Double> getEvent() {
@@ -53,18 +54,18 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 	}
 	
 	@Override
-	public List<NodeEvent> getEventList() {
+	public List<Event> getEventList() {
 		// TODO
 		return null;
 	}
 
 	@Override
-	public void addEvent(int type, int raiseTime) {
+	public void addEvent(EventType type, int raiseTime) {
 		event.put(type + "", (double) raiseTime);
 	}
 
 	@Override
-	public void removeEvent(NodeEvent event) {
+	public void removeEvent(Event event) {
 		// TODO Auto-generated method stub
 		
 	}
