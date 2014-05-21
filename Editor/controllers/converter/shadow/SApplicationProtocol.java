@@ -228,28 +228,29 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	}
 
 	@Override
-	public boolean removeEvent(Event e) {				
-		// TODO: remove Event
+	public boolean removeEvent(Event e) {						
+		return event.remove(e) != null;		
+	}
+
+	@Override
+	public boolean addEvent(EventType type, double raisedTime) {		
+		event.put(type.toString(), raisedTime);
+		// TODO generate tcl code here
+		
 		
 		return true;
 	}
 
 	@Override
-	protected void setName(String name) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean addEvent(EventType type, int raisedTime) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public List<Event> getEventList() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Event> re = new ArrayList<Event>();
+		for (String key : event.keySet()) {
+			try {
+				re.add(new Event(EventType.valueOf(key), event.get(key)));
+			} 
+			catch(Exception e) {}
+		}
+		return re;
 	}
 	
 	// endregion Application properties

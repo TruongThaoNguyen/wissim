@@ -9,6 +9,7 @@
 
 package models.networkcomponents.protocols;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import models.networkcomponents.Node;
@@ -29,15 +30,14 @@ public abstract class ApplicationProtocol implements Protocol {
 	 */
 	protected Node destNode;
 	
-	protected ApplicationProtocolType type; 
-
+	protected ApplicationProtocolType type;
+	
 	/**
 	 * Constructor
 	 * @param name Name of this protocol
 	 * @param protocol The transport protocol in the lower layer of network protocol
 	 */
 	protected ApplicationProtocol(ApplicationProtocolType type, String name, TransportProtocol protocol, Node destNode) {						
-		setName(name);
 		this.transportProtocol = protocol;				
 		this.type = type;
 		this.destNode = destNode;
@@ -48,7 +48,7 @@ public abstract class ApplicationProtocol implements Protocol {
 	 * @param e Event will be added
 	 * @return <i>true</i> if success, else <i>false</i>
 	 */
-	public abstract boolean addEvent(EventType type, int raisedTime);	
+	public abstract boolean addEvent(EventType type, double raisedTime);	
 	public abstract boolean removeEvent(Event e);
 	
 	/**
@@ -59,7 +59,5 @@ public abstract class ApplicationProtocol implements Protocol {
 	
 	public ApplicationProtocolType getType() { return type; }
 	
-	public Node getDestNode() { return destNode; }
-	
-	protected abstract void setName(String name);	
+	public Node getDestNode() { return destNode; }	
 }

@@ -7,29 +7,24 @@ import java.util.Observable;
  * @author leecom
  *
  */
-public abstract class Event extends Observable {
+public class Event extends Observable {
 	public static enum EventType { STOP, START, ON, OFF }
 	
 	// time when event is raised
-	int raisedTime;
+	double raisedTime;
 	
 	// type of event
 	EventType type;
 	
-	/**
-	 * Constructor
-	 * Initialize an Event object with type and RaisedTime
-	 * @param type Type of event
-	 * @param raisedTime Time that the event is raised
-	 */
-	public Event(EventType type, int raisedTime) {
-		setRaisedTime(raisedTime);
+	public Event(EventType type, double raisedTime)
+	{
+		setRaisedTime((int) raisedTime);
 		setType(type);
 	}
 	
 	public EventType getType() { return type; }
 	
-	public int getRaisedTime() { return raisedTime; }
+	public int getRaisedTime() { return (int) raisedTime; }
 	
 	public void setRaisedTime(int rTime) { 
 		if (rTime > 0) {
