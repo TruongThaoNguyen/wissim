@@ -19,7 +19,7 @@ public abstract class TransportProtocol implements Protocol {
 	
 	public static enum TransportProtocolType { NULL, TCP, UDP }
 	
-	protected TransportProtocolType type;
+	protected TransportProtocolType type = null;
 
 	protected List<ApplicationProtocol> appList = new ArrayList<ApplicationProtocol>();
 	

@@ -258,10 +258,13 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 		tp.addEntry(e);
 		
 		// $udp_($i) set fid_ 2
-		e = new Entry(tp.getLabel() + " set fid_ 2\n");
-		Converter.generateEntry.add(index + 5, e);
-		addEntry(e);
-		tp.addEntry(e);
+		if (type == TransportProtocolType.UDP)
+		{
+			e = new Entry(tp.getLabel() + " set fid_ 2\n");
+			Converter.generateEntry.add(index + 5, e);
+			addEntry(e);
+			tp.addEntry(e);
+		}
 		
 		// endregion Generate Tcl Code
 		

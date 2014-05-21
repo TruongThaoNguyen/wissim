@@ -9,7 +9,6 @@
 
 package models.networkcomponents.protocols;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import models.networkcomponents.Node;
@@ -20,16 +19,6 @@ public abstract class ApplicationProtocol implements Protocol {
 	
 	public static enum ApplicationProtocolType { CBR, VBR, FTP, PARETO, TELNET }
 	
-	/**
-	 * The transport protocol which this protocol bases on
-	 */
-	protected TransportProtocol transportProtocol;
-	
-	/**
-	 * The destination node
-	 */
-	protected Node destNode;
-	
 	protected ApplicationProtocolType type;
 	
 	/**
@@ -37,12 +26,13 @@ public abstract class ApplicationProtocol implements Protocol {
 	 * @param name Name of this protocol
 	 * @param protocol The transport protocol in the lower layer of network protocol
 	 */
-	protected ApplicationProtocol(ApplicationProtocolType type, String name, TransportProtocol protocol, Node destNode) {						
-		this.transportProtocol = protocol;				
-		this.type = type;
-		this.destNode = destNode;
+	protected ApplicationProtocol(ApplicationProtocolType type) {
+		this.type = type;		
 	}
-
+	
+	protected	abstract void setDestNode(Node node);	
+	public 		abstract Node getDestNode();
+	
 	/**
 	 * Adds an event to the chain of events of this application protocol
 	 * @param e Event will be added
@@ -58,6 +48,4 @@ public abstract class ApplicationProtocol implements Protocol {
 	public abstract List<Event> getEventList();
 	
 	public ApplicationProtocolType getType() { return type; }
-	
-	public Node getDestNode() { return destNode; }	
 }

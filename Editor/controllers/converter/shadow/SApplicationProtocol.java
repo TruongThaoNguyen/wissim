@@ -15,18 +15,19 @@ import models.networkcomponents.Node;
 import models.networkcomponents.events.Event;
 import models.networkcomponents.events.Event.EventType;
 import models.networkcomponents.protocols.ApplicationProtocol;
+import models.networkcomponents.protocols.TransportProtocol.TransportProtocolType;
 
 public class SApplicationProtocol extends ApplicationProtocol implements TclObject, Scheduler {
 	
 	public SApplicationProtocol(String label) {
-		super(ApplicationProtocolType.CBR, label, null, null);
+		super(ApplicationProtocolType.valueOf(label));
 		this.label = label;
 		addInsProc();
 	}
 	
 	public SApplicationProtocol(ApplicationProtocolType type, String name, STransportProtocol tp, Node destNode) {
-		super(type, name, tp, destNode);
-		
+		super(type);		
+		setDestNode(destNode);
 		addInsProc();
 	}
 	
@@ -46,8 +47,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	
 	@Override
 	public HashMap<String, Double> getEvent() {
-		// TODO Auto-generated method stub
-		return null;
+		return event;
 	}
 	
 	// endregion Scheduler
@@ -186,7 +186,8 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	{
 		if (command.size() != 1) throw new ParseException(ParseException.InvalidArgument);
 		STransportProtocol tp = (STransportProtocol) Converter.global.getObject(Converter.parseIdentify(command.get(0)));;
-		tp.addApp(this);	
+		tp.addApp(this);
+		this.transportProtocol = tp;
 	}
 	
 	// endregion field
@@ -194,6 +195,8 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	// endregion
 
 	// region ------------------- Application properties ------------------- //
+	
+	private STransportProtocol transportProtocol;
 	
 	@Override
 	public String getName() {
@@ -251,6 +254,53 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 			catch(Exception e) {}
 		}
 		return re;
+	}
+
+	@Override
+	public Node getDestNode() {
+		if (transportProtocol == null) return null;
+		List<ApplicationProtocol> l = transportProtocol.getAppList();
+		
+		if (l.isEmpty()) return null;
+		return transportProtocol.getConnected().getNode();
+	}
+
+	@Override
+	protected void setDestNode(Node node) {
+		SNode destNode = (SNode) node;
+		
+		// connect base TransportProtocol to destNode's TransportProtocol
+		if (transportProtocol != null)
+		{
+			// Add a Agent/Null to destNode and connect this to transportProtocol
+			STransportProtocol newSink = destNode.addTransportProtocol(TransportProtocolType.NULL, destNode.getName() + "_sink");						
+			newSink.setLabel("$sink(" + destNode.getId() + destNode.getTransportPrototolList().size() + ")");
+			transportProtocol.setConnected(newSink);			
+			
+			// region -------------------  generate Tcl code ------------------- //
+
+			// find last index of entry in the global register			
+			int	index = Math.max(Math.max(
+					Converter.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)),
+					Converter.generateEntry.lastIndexOf(destNode.getEntry().get(destNode.getEntry().size() - 1))),					
+					Converter.generateEntry.lastIndexOf(transportProtocol.getEntry().get(transportProtocol.getEntry().size() - 1)));
+							
+			// 	$ns_ connect $udp_($i) $sink_($i)
+			Entry en = new Entry(Converter.global.getLabel() + " connect " + transportProtocol.getLabel() + " " + newSink.getLabel() + "\n"); 
+			Converter.generateEntry.add(index + 1, en);
+			this.addEntry(en);
+			transportProtocol.addEntry(en);
+			destNode.addEntry(en);
+			
+			// 	$mnode_($s($i)) setdest [$mnode_($d($i)) set X_] [$mnode_($d($i)) set Y_] 0
+			en = new Entry(transportProtocol.getNode().getLabel() + " setdest [" + destNode.getLabel() + "set X_] [" + destNode.getLabel() + " set Y_] 0\n"); 
+			Converter.generateEntry.add(index + 1, en);
+			this.addEntry(en);
+			transportProtocol.addEntry(en);
+			destNode.addEntry(en);
+			
+			// endregion generate Tcl code
+		}
 	}
 	
 	// endregion Application properties

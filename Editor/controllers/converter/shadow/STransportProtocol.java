@@ -21,7 +21,7 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 	private SNode node;
 	
 	protected STransportProtocol(String label) {				
-		super(TransportProtocolType.valueOf(label), label);
+		super(TransportProtocolType.valueOf(label.toUpperCase()), label);
 		this.label = label;		
 		
 		addInsProc();
@@ -39,6 +39,11 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 	
 	public void setConnected(STransportProtocol agent) {
 		connectedAgent = agent;
+	}
+	
+	public STransportProtocol getConnected()
+	{
+		return connectedAgent;
 	}
 	
 	// region ------------------- Scheduler ------------------- //
@@ -189,6 +194,10 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 	// endregion TCL properties
 	
 	// region ------------------- Transport properties ------------------- //
+	
+	public SNode getNode() { 
+		return node;
+	}
 	
 	public void setNode(SNode node) {
 		this.node = node;

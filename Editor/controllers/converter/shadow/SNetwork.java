@@ -287,7 +287,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 				STransportProtocol	agent = (STransportProtocol) Converter.global.getObject(Converter.parseIdentify(command.get(1)));				
 				
 				agent.setNode(node);
-				if (agent.getLabel() != "Null") node.addTransportProtocol(agent);
+				node.addTransportProtocol(agent);
 				return "";
 			}	
 			

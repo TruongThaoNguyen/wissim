@@ -3,6 +3,7 @@ package views.dialogs;
 import models.networkcomponents.Node;
 import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.protocols.ApplicationProtocol;
+import models.networkcomponents.protocols.ApplicationProtocol.ApplicationProtocolType;
 import models.networkcomponents.protocols.TransportProtocol;
 
 import org.eclipse.swt.SWT;
@@ -161,7 +162,7 @@ public class TrafficFlowManagerDialog extends Dialog {
 		btnEdit.setBounds(397, 57, 75, 25);
 		btnEdit.setText("Edit");
 		
-		WirelessNetwork wirelessNetwork = workspace.getProject().getNetwork();
+		WirelessNetwork wirelessNetwork = Workspace.getProject().getNetwork();
 		
 		Label lblNetworkInfo = new Label(composite_2, SWT.NONE);
 		lblNetworkInfo.setBounds(20, 5, 198, 15);
@@ -176,16 +177,17 @@ public class TrafficFlowManagerDialog extends Dialog {
 		int count = 0;
 		table.removeAll();
 		
-		for (Node n : workspace.getProject().getNetwork().getNodeList()) {
-			for (TransportProtocol tp : n.getTransportPrototolList()) {
-				for (ApplicationProtocol ap : tp.getAppList()) {
-					String type = ap.getType().toString();
-					
+		for (Node n : Workspace.getProject().getNetwork().getNodeList()) 
+		{
+			for (TransportProtocol tp : n.getTransportPrototolList()) 
+			{
+				for (ApplicationProtocol ap : tp.getAppList()) 
+				{				
 					TableItem item = new TableItem(table, SWT.NONE);
 					item.setText(new String[] {
 							n.getId() + "",
 							ap.getDestNode().getId() + "",
-							type
+							ap.getType().toString()
 					});
 				}
 				
@@ -204,7 +206,7 @@ public class TrafficFlowManagerDialog extends Dialog {
 			sid = Integer.parseInt(item.getText(0));
 			did = Integer.parseInt(item.getText(1));
 			
-			Node n = workspace.getProject().getNetwork().getNodeById(sid);
+			Node n = Workspace.getProject().getNetwork().getNodeById(sid);
 			for (TransportProtocol tp : n.getTransportPrototolList()) {
 				for (ApplicationProtocol ap : tp.getAppList()) {
 					if (ap.getDestNode().getId() == did) {
@@ -229,7 +231,7 @@ public class TrafficFlowManagerDialog extends Dialog {
 			sid = Integer.parseInt(item.getText(0));
 			did = Integer.parseInt(item.getText(1));
 			
-			Node n = workspace.getProject().getNetwork().getNodeById(sid);
+			Node n = Workspace.getProject().getNetwork().getNodeById(sid);
 			for (TransportProtocol tp : n.getTransportPrototolList()) {
 				for (ApplicationProtocol ap : tp.getAppList()) {
 					if (ap.getDestNode().getId() == did) {
