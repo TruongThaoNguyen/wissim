@@ -347,7 +347,7 @@ public class ProjectManager {
 	 */
 	public static boolean createEvent(ApplicationProtocol app, int eventType, int raisedTime) { 
 		switch(eventType) {
-			case 0: app.addEvent(EventType.STOP, raisedTime); 	return true;
+			case 0: app.addEvent(EventType.STOP, raisedTime); return true;
 			case 1:	app.addEvent(EventType.START, raisedTime);	return true;
 			default:
 				return false;
