@@ -288,7 +288,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 		if (transportProtocol != null)
 		{
 			// Add a Agent/Null to destNode and connect this to transportProtocol
-			STransportProtocol newSink = destNode.addTransportProtocol(TransportProtocolType.NULL, destNode.getName() + "_sink");						
+			STransportProtocol newSink = destNode.addTransportProtocol(TransportProtocolType.Null, destNode.getName() + "_sink");						
 			newSink.setLabel("$sink(" + destNode.getId() + destNode.getTransportPrototolList().size() + ")");
 			transportProtocol.setConnected(newSink);			
 			

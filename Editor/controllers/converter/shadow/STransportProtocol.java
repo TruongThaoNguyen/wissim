@@ -21,7 +21,7 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 	private SNode node;
 	
 	protected STransportProtocol(String label) {				
-		super(TransportProtocolType.valueOf(label.toUpperCase()), label);
+		super(TransportProtocolType.valueOf(label), label);
 		this.label = label;		
 		
 		addInsProc();
@@ -262,7 +262,7 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 		app.setLabel("$" + label);
 
 		addApp(app);						
-		connectedAgent = dest.addTransportProtocol(TransportProtocolType.NULL, name);
+		connectedAgent = dest.addTransportProtocol(TransportProtocolType.Null, name);
 			
 		// region ------------------- Generate Tcl code ------------------- //
 		
