@@ -258,6 +258,12 @@ public class NetworkLifeTimeTab extends Tab implements Observer {
 					    energyNodeDeadText.setFocus();
 		    	  }
 	    	  }
+	    	  else{
+		    		MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
+					dialog.setText("Error");
+					dialog.setMessage("Trace file don't have energy information!");
+				    dialog.open();
+		    	}
 	      }
 	    });    
 	   
