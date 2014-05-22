@@ -69,11 +69,6 @@ public class SCommonObject implements TclObject
 			return insProc.get(null).Run(command, isRecord);
 	}
 
-//	@Override
-//	public void addEvent(Double time, String arg) {
-//		event.put(arg, time);		
-//	}
-//	
 	@Override
 	public String getLabel() {
 		return label;

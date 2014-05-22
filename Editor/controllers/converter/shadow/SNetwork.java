@@ -47,13 +47,10 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	
 	@Override
 	public void addEvent(double time, String arg) {
-		event.put(arg, time);		
+		event.put(arg, time);
 		
 		// check if this event is stop event or not
-		if (arg.contains("end"))
-		{
-			setTime((int)time);
-		}
+		if (arg.contains("end")) setTime((int)time);				
 	}
 
 	@Override
@@ -261,19 +258,14 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 			@Override
 			public String run(List<String> command) throws Exception 
 			{
-				if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);
-				
-				double time = Double.parseDouble(Converter.parseIdentify(command.get(0)));
-				String arg  = Converter.parseIdentify(command.get(1));									
-										
-				addEvent(time, arg);
-				return arg;
+				if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);		
+				addEvent(Double.parseDouble(Converter.parseIdentify(command.get(0))), command.get(1));
+				return command.get(1);
 			}
 			
 			@Override
-			protected void record(List<String> command) {
-				entry = new Entry(this, command);
-				Converter.generateEntry.add(entry);
+			protected String print(List<String> arg) {
+				return getEvent(arg.get(1)) + " " + arg.get(1);
 			}
 		};
 

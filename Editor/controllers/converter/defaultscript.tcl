@@ -11,7 +11,6 @@ set opt(y)		1000		;# Y dimension of the topography
 
 set opt(ifqlen)		50		;# max packet in ifq
 set opt(nn)		0		;# number of nodes
-set opt(seed)		0.0
 set opt(stop)		500.0		;# simulation time
 set opt(tr)		Trace.tr	;# trace file
 set opt(nam)            nam.out.tr

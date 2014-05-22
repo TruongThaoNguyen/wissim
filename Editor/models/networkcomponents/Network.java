@@ -18,7 +18,7 @@ public abstract class Network extends Observable {
 	/**
 	 * Simulation Time
 	 */
-	private int time;
+	private static int time;
 	
 	protected List<Node> nodeList = new ArrayList<Node>();
 	
@@ -103,11 +103,11 @@ public abstract class Network extends Observable {
 	 * Set time for network. Only accept positive time
 	 * @param time
 	 */
-	public final void setTime(int time) {
-		if (time > 0 && time != this.time) 
+	public final void setTime(int value) {
+		if (value > 0 && value != time) 
 		{
-			this.time = time;
-			settime(time);			
+			time = value;
+			settime(value);			
 			setChanged();
 			notifyObservers("Time");
 		}
