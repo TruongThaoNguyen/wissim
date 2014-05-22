@@ -248,7 +248,22 @@ public class SProject  extends Project implements TclObject
 	
 	@Override
 	public InsVar setInsVar(String key, String value, String label) {
-		InsVar i = new InsVar(value, label);		
+		InsVar i;
+		
+		if (value.contains("[create-god"))	// check whether this insvar is god?
+		{
+			i = new InsVar(value, label) {				
+				public String toString()
+				{
+					return "[create-god " + getNetwork().getNodeList().size() + "]";
+				}
+			};
+		}
+		else 
+		{
+			i = new InsVar(value, label);					
+		}
+				
 		insVar.put(key, i);
 		if (insObj.containsKey(value)) getObject(value).setLabel("$" + key);
 		return i;
