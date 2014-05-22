@@ -238,6 +238,12 @@ public class EnergyTab extends Tab implements Observer{
 	    		  }
 	    	  }
 	    	}
+	    	else{
+	    		MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
+				dialog.setText("Error");
+				dialog.setMessage("Trace file don't have energy information!");
+			    dialog.open();
+	    	}
 	    }
 	    });    
 	   
