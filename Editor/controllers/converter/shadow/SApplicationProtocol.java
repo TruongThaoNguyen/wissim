@@ -196,7 +196,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	
 	// endregion
 
-	// region ------------------- Application properties --------------int index = Converter.----- //
+	// region ------------------- Application properties ------------------- //
 	
 	STransportProtocol transportProtocol;
 	
@@ -251,6 +251,10 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 		// generate tcl code here
 		int	index = Converter.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
 		
+		//	$ns_ at 100 "$cbr_($i) start"
+		Entry e = new Entry(Converter.global.getNetwork().getLabel() + " at " + raisedTime + " \"" + this.getLabel() + " " + type.toString().toLowerCase() + "\"\n");
+		Converter.generateEntry.add(index, e);
+		this.addEntry(e);
 		
 		return true;
 	}
