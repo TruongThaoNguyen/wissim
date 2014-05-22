@@ -1,35 +1,3 @@
-set opt(chan)		Channel/WirelessChannel
-set opt(prop)		Propagation/TwoRayGround
-set opt(netif)		Phy/WirelessPhy
-set opt(mac)		Mac/802_11
-set opt(ifq)		Queue/DropTail/PriQueue	;# for dsdv
-set opt(ll)		LL
-set opt(ant)            Antenna/OmniAntenna
-
-set opt(x)		1000		;# X dimension of the topography
-set opt(y)		1000		;# Y dimension of the topography
-
-set opt(ifqlen)		50		;# max packet in ifq
-set opt(nn)		0		;# number of nodes
-set opt(stop)		500.0		;# simulation time
-set opt(tr)		Trace.tr	;# trace file
-set opt(nam)            nam.out.tr
-set opt(rp)             GPSR		;# routing protocol script (dsr or dsdv)
-set opt(lm)             "off"		;# log movement
-
-set opt(energymodel)    EnergyModel     ;
-set opt(radiomodel)    	RadioModel      ;
-set opt(initialenergy)  1000		;# Initial energy in Joules
-set opt(checkpoint)	995
-set opt(idlePower) 	0.0096
-set opt(rxPower) 	0.021
-set opt(txPower) 	0.0255
-set opt(sleepPower) 	0.000648
-set opt(transitionPower) 0.024
-set opt(transitionTime)  0.0129
-
-# ======================================================================
-
 LL set mindelay_		50us
 LL set delay_			25us
 LL set bandwidth_		0
@@ -95,55 +63,50 @@ set startTime [clock seconds]
 
 # set up ns simulator and nam trace
 set ns_		[new Simulator]
-set chan	[new $opt(chan)]
-set prop	[new $opt(prop)]
+set chan	[new Channel/WirelessChannel]
+set prop	[new Propagation/TwoRayGround]
 set topo	[new Topography]
 
-set tracefd	[open $opt(tr) w]
-set namtrace	[open $opt(nam) w]
-
 # run the simulator
+set tracefd	[open Trace.tr w]
 $ns_ trace-all $tracefd 
-$ns_ namtrace-all-wireless $namtrace $opt(x) $opt(y) 
 
-$topo load_flatgrid $opt(x) $opt(y) 
+$topo load_flatgrid 1000 1000
 $prop topography $topo
 
-set god_ [create-god $opt(nn)]
+set god_ [create-god 0]
 
 # configure the nodes
-$ns_ node-config -adhocRouting $opt(rp) \
-		 -llType $opt(ll) \
-		 -macType $opt(mac) \
-		 -ifqType $opt(ifq) \
-		 -ifqLen $opt(ifqlen) \
-		 -antType $opt(ant) \
-		 -propType $opt(prop) \
-		 -phyType $opt(netif) \
-		 -channel [new $opt(chan)] \
+$ns_ node-config -adhocRouting GPSR \
+		 -llType LL \
+		 -macType Mac/802_11 \
+		 -ifqType Queue/DropTail/PriQueue \
+		 -ifqLen 50 \
+		 -antType Antenna/OmniAntenna \
+		 -propType Propagation/TwoRayGround \
+		 -phyType Phy/WirelessPhy \
+		 -channel [new Channel/WirelessChannel] \
 		 -topoInstance $topo \
 		 -agentTrace ON \
 		 -routerTrace ON \
 		 -macTrace OFF \
 		 -movementTrace OFF \
-		 -energyModel $opt(energymodel) \
-		 -idlePower $opt(idlePower) \
-		 -rxPower $opt(rxPower) \
-		 -txPower $opt(txPower) \
-		 -sleepPower $opt(sleepPower) \
-		 -transitionPower $opt(transitionPower) \
-		 -transitionTime $opt(transitionTime) \
-		 -initialEnergy $opt(initialenergy)
+		 -energyModel EnergyModel \
+		 -idlePower 0.0096 \
+		 -rxPower 0.021 \
+		 -txPower 0.0255 \
+		 -sleepPower 0.000648 \
+		 -transitionPower 0.024 \
+		 -transitionTime 0.0129 \
+		 -initialEnergy 1000
 
-# ending nam and the simulation
-$ns_ at $opt(stop) "$ns_ nam-end-wireless $opt(stop)" 
-$ns_ at $opt(stop) "stop" 
+# ending the simulation 
+$ns_ at 200 "stop" 
 
 proc stop {} {
-	global ns_ tracefd startTime namtrace
+	global ns_ tracefd startTime
 	$ns_ flush-trace
 	close $tracefd
-	close $namtrace
 	
 	puts "end simulation"
 

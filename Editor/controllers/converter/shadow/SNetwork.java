@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import controllers.converter.Converter;
-import controllers.converter.Scanner;
 import controllers.converter.Scheduler;
 import controllers.converter.TclObject;
 import models.converter.Entry;
