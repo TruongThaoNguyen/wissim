@@ -196,7 +196,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	
 	// endregion
 
-	// region ------------------- Application properties ------------------- //
+	// region ------------------- Application properties --------------int index = Converter.----- //
 	
 	STransportProtocol transportProtocol;
 	
@@ -240,7 +240,9 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	@Override
 	public boolean addEvent(EventType type, double raisedTime) {		
 		event.put(type.toString(), raisedTime);
-		// TODO generate tcl code here
+
+		// generate tcl code here
+		int	index = Converter.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
 		
 		
 		return true;

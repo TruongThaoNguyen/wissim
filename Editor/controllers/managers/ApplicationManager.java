@@ -140,7 +140,7 @@ public class ApplicationManager {
 		if (workspace == null) return;
 		FileDialog saveDialog = new FileDialog(workspace.getShell(), SWT.SAVE);
 		saveDialog.setText("Save");
-		saveDialog.setFileName(workspace.getProject().getNetwork().getName());
+		saveDialog.setFileName(Workspace.getProject().getNetwork().getName());
 		saveDialog.setFilterExtensions(new String[] { "*.wis" });
 		saveDialog.setFilterNames(new String[] {"Wissim Project"});
 		String path = saveDialog.open();
@@ -149,8 +149,8 @@ public class ApplicationManager {
 			return;
 		
 		try {
-			Project project = workspace.getProject();
-			project.setPath(path);
+			Workspace.getProject();
+			Project.setPath(path);
 			ProjectManager.saveProject();
 		} catch (Exception e) {
 			MessageDialog.openError(workspace.getShell(), "Error", "Some errors happened. Can not save file. Please try again later");
@@ -163,7 +163,7 @@ public class ApplicationManager {
 	}
 	
 	public static BufferedImage exportToImage(Workspace workspace, int imageMaxSize) {
-		Project project = workspace.getProject();
+		Project project = Workspace.getProject();
 		
 		int actualWidth = project.getNetwork().getWidth();
 		int actualLength = project.getNetwork().getLength();		
@@ -312,10 +312,10 @@ public class ApplicationManager {
 
 	public static void manageTrafficFlow(Workspace workspace) {
 		if (workspace != null)
-			if (workspace.getProject().getNetwork().getNodeList().size() < 2) {
+			if (Workspace.getProject().getNetwork().getNodeList().size() < 2) {
 				MessageDialog.openInformation(workspace.getShell(), "Two nodes required", "Please add more nodes to set up traffic flow");
 			} else {
-				new TrafficFlowManagerDialog(workspace.getShell(), SWT.SHEET, workspace).open();
+				new TrafficFlowManagerDialog(workspace.getShell(), SWT.SHEET).open();
 			}
 	}
 	
@@ -450,13 +450,16 @@ public class ApplicationManager {
 		if (result != null) {
 			try {
 				Workspace workspace = (Workspace) gWirelessNode.getParent();
-				if(workspace.getProject().getObstacleList() != null)
-				for (Area a : workspace.getProject().getObstacleList())
-					if (a.contains(result.x, result.y)) {
-						MessageDialog.openInformation(workspace.getShell(), "Cannot move node",
-								"Cannot move node to the new location because it is inside the obstacle");
-						return;
-					}						
+				Workspace.getProject();
+				if(Project.getObstacleList() != null) {
+					Workspace.getProject();
+					for (Area a : Project.getObstacleList())
+						if (a.contains(result.x, result.y)) {
+							MessageDialog.openInformation(workspace.getShell(), "Cannot move node",
+									"Cannot move node to the new location because it is inside the obstacle");
+							return;
+						}
+				}						
 				
 				gWirelessNode.getWirelessNode().setPosition(result.x, result.y);
 				
@@ -607,12 +610,12 @@ public class ApplicationManager {
 			
 			if (isConnect)
 				MessageDialog.openInformation(workspace.getShell(), "Network Connectivity", 
-						"The network " + workspace.getProject().getNetwork().getName() + " with " +
-								workspace.getProject().getNetwork().getNodeList().size() + " node(s) is connected");
+						"The network " + Workspace.getProject().getNetwork().getName() + " with " +
+								Workspace.getProject().getNetwork().getNodeList().size() + " node(s) is connected");
 			else
 				MessageDialog.openInformation(workspace.getShell(), "Network Connectivity", 
-						"The network " + workspace.getProject().getNetwork().getName() + " with " +
-								workspace.getProject().getNetwork().getNodeList().size() + " node(s) is not connected");				
+						"The network " + Workspace.getProject().getNetwork().getName() + " with " +
+								Workspace.getProject().getNetwork().getNodeList().size() + " node(s) is not connected");				
 		}
 	}
 
@@ -669,7 +672,7 @@ public class ApplicationManager {
 
 	public static void print(Workspace w) {
 		if (w == null) return;		
-		Project p = w.getProject();		
+		Project p = Workspace.getProject();		
 		PrinterData printerData = new PrintDialog(w.getShell(), SWT.SHEET).open();
 		
 		if (!(printerData == null)) {
