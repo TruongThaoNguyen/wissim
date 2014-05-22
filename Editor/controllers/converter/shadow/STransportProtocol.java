@@ -235,6 +235,12 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 	@Override
 	public void addParameter(String param, String value) {
 		insVar.put(param, new InsVar(param, value));
+		
+		// region ------------------- generate Tcl code ------------------- //
+
+		
+
+		// endregion generate Tcl code
 	}
 
 	@Override

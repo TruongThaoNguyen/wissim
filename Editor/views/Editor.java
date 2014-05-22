@@ -1118,11 +1118,11 @@ public class Editor extends MainContent implements Observer {
 //	}
 	
 	public void actionNew() {		
-		tabFolder.setSelection(0);		
+		tabFolder.setSelection(1);		
 		if (ApplicationManager.newProject(Editor.this) == null) return;		
 		showProject();
 		updateNetworkInfoLabel();
-		updateDesign();		
+		//updateDesign();		
 	}
 	
 	public void actionSave() {

@@ -398,7 +398,8 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	protected void settime(int time) {
 		// check if this event is stop event or not
 		for (String key : event.keySet()) {
-			if (key.contains(getLabel() + "halt") || key.contains("exit 0"))
+			//if (key.contains(getLabel() + "halt") || key.contains("exit 0"))
+			if (key.contains("stop"))
 				event.put(key, (double) time);
 		}
 	}
