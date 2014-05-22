@@ -225,6 +225,13 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	@Override
 	public void addParameter(String param, String value) {
 		insVar.put(param, new InsVar(param, value));
+		
+		// generate tcl code here
+		int	index = Converter.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
+		
+		Entry e = new Entry(this.getLabel() + " set " + param + " " + value + "\n");
+		Converter.generateEntry.add(index, e);
+		this.addEntry(e);
 	}
 
 	@Override

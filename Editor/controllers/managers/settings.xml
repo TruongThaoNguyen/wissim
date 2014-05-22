@@ -152,12 +152,11 @@
     <apps>
         <!-- Application protocols -->
         <app type="CBR" default="true">
-            <params>
-                <param property="sport_" value="0"/>
-                <param property="dport_" value="0"/>
-                <param property="packetSize_" value="50"/>
-                <param property="interval_" value="1"/>
-                <param property="rate_" value="0.1Mb"/>
+            <params>                
+            	<param property="type_" 		value="CBR"/>                
+                <param property="packetSize_" 	value="50"/>
+                <param property="interval_" 	value="1"/>
+                <param property="rate_" 		value="0.1Mb"/>
             </params>
         </app>
         <app type="VBR">

@@ -231,12 +231,7 @@ public class CreateTrafficFlowDialog extends Dialog {
 				
 				HashMap<String, String> appProtocolParams = ApplicationSettings.applicationProtocols.get(appType.toString());
 				
-				set = appProtocolParams.entrySet();
-				i = set.iterator();
-				while (i.hasNext()) {
-					Entry<String, String> me = i.next();
-					appProtocol.addParameter(me.getKey(), me.getValue());
-				}
+				appProtocol.setParameters(appProtocolParams);							
 				
 				for (TableItem item : table.getItems())	appProtocol.addEvent(EventType.valueOf(item.getText(0)), Integer.parseInt(item.getText(1)));					
 				
