@@ -217,10 +217,8 @@ public class CreateTrafficFlowDialog extends Dialog {
 				}
 				
 				// create transport protocol for source node
-				TransportProtocolType transType = TransportProtocolType.valueOf(cbTransportProtocol.getText());
-				String transName = transType + "_" + trafficFlowCount;				
-				
-				TransportProtocol transProtocol = s.addTransportProtocol(transType, transName);
+				TransportProtocolType transType = TransportProtocolType.valueOf(cbTransportProtocol.getText());					
+				TransportProtocol transProtocol = s.addTransportProtocol(transType, trafficFlowCount + "");
 				
 				HashMap<String, String> transProtocolParams = ApplicationSettings.transportProtocols.get(transType.toString());
 				Set<Entry<String, String>> set = transProtocolParams.entrySet();
@@ -231,10 +229,8 @@ public class CreateTrafficFlowDialog extends Dialog {
 				}
 				
 				// create app protocol that use that transport protocol
-				ApplicationProtocolType appType = ApplicationProtocolType.valueOf(cbApplication.getText());				
-				String appName = appType + "_" + trafficFlowCount;				
-				
-				ApplicationProtocol appProtocol = transProtocol.addApp(appType, appName, d);
+				ApplicationProtocolType appType = ApplicationProtocolType.valueOf(cbApplication.getText());												
+				ApplicationProtocol appProtocol = transProtocol.addApp(appType, trafficFlowCount + "", d);
 				
 				HashMap<String, String> appProtocolParams = ApplicationSettings.applicationProtocols.get(appType.toString());
 				

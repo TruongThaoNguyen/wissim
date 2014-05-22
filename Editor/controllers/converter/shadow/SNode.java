@@ -53,23 +53,6 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 		return event;
 	}
 	
-	@Override
-	public List<Event> getEventList() {
-		// TODO
-		return null;
-	}
-
-	@Override
-	public void addEvent(EventType type, int raiseTime) {
-		event.put(type + "", (double) raiseTime);
-	}
-
-	@Override
-	public void removeEvent(Event event) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	// endregion Scheduler
 	
 	// region ------------------- TCL properties ------------------- //
@@ -105,12 +88,14 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 
 	@Override
 	public void addEntry(Entry e) {
-		this.entryList.add(e);		
+		this.entryList.add(e);
+		((SNetwork)network).addEntry(e);
 	}
 	
 	@Override
 	public void addEntry(int index, Entry e) {
 		this.entryList.add(index, e);
+		((SNetwork)network).addEntry(e);
 	}
 
 	@Override
@@ -224,10 +209,10 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 	}
 	
 	@Override
-	public STransportProtocol addTransportProtocol(TransportProtocolType type, String name) {		
-		STransportProtocol tp = new STransportProtocol(type, name, this);
-		String label =  type + "_(" + this.getId() + "_" + this.getTransportPrototolList().size() + ")";
-		tp.setLabel("$" + label);
+	public STransportProtocol addTransportProtocol(TransportProtocolType type, String name) {
+		STransportProtocol tp = new STransportProtocol(type, type + "_" + name, this);
+		String label = (type + "_(" + name + ")").toLowerCase();
+		tp.setLabel("$" +  label);
 		
 		addTransportProtocol(tp);
 		
@@ -237,23 +222,18 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 		for (Node node : Converter.global.getNetwork().getNodeList()) {
 			SNode sn = (SNode) node;
 			index = Math.max(index, Converter.generateEntry.lastIndexOf(sn.getEntry().get(sn.getEntry().size() - 1)));
-		}
-				
+		}	
+		index += 1;
+		
 		// space
-		Entry e = new Entry("\n");
-		Converter.generateEntry.add(index + 2, e);
+		Entry e = new Entry(" \n");
+		Converter.generateEntry.add(index++, e);
 		addEntry(e);
 		tp.addEntry(e);
 		
 		// set udp_($i) [new Agent/UDP]
 		e = new Entry("set " + label + " [new Agent/" + type + "]\n");
-		Converter.generateEntry.add(index + 3, e);
-		addEntry(e);
-		tp.addEntry(e);
-		
-		// $ns_ attach-agent $mnode_($s($i)) $udp_($i)
-		e = new Entry(((SNetwork)Converter.global.getNetwork()).getLabel() + " attach-agent " + getLabel() + " " + tp.getLabel() + "\n");
-		Converter.generateEntry.add(index + 4, e);
+		Converter.generateEntry.add(index++, e);
 		addEntry(e);
 		tp.addEntry(e);
 		
@@ -261,10 +241,16 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 		if (type == TransportProtocolType.UDP)
 		{
 			e = new Entry(tp.getLabel() + " set fid_ 2\n");
-			Converter.generateEntry.add(index + 5, e);
+			Converter.generateEntry.add(index++, e);
 			addEntry(e);
 			tp.addEntry(e);
 		}
+		
+		// $ns_ attach-agent $mnode_($s($i)) $udp_($i)
+		e = new Entry(((SNetwork)Converter.global.getNetwork()).getLabel() + " attach-agent " + getLabel() + " " + tp.getLabel() + "\n");
+		Converter.generateEntry.add(index++, e);
+		addEntry(e);
+		tp.addEntry(e);		
 		
 		// endregion Generate Tcl Code
 		
@@ -288,5 +274,22 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 		return Converter.global.getNodeRange();
 	}
 
+	@Override
+	public List<Event> getEventList() {
+		// TODO
+		return null;
+	}
+	
+	@Override
+	public void addEvent(EventType type, int raiseTime) {
+		event.put(type + "", (double) raiseTime);
+	}
+
+	@Override
+	public void removeEvent(Event event) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	// endregion Wireless Node properties	
 }

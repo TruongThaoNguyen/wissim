@@ -353,39 +353,39 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		
 		// if (nodeList.isEmpty()) e = nodeConfig.getEntry();
 		// else 					e = ((SNode)nodeList.get(nodeList.size() - 1)).getEntry();		
-		int	index = Converter.generateEntry.lastIndexOf(e.get(e.size() - 1));		
+		int	index = Converter.generateEntry.lastIndexOf(e.get(e.size() - 1)) + 1;		
 		
 		// space
 		Entry en = new Entry("\n");
-		Converter.generateEntry.add(index + 1, en);
+		Converter.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
 		// create node 		set mnode_($i) [$ns_ node]
 		en = new Entry("set mnode_(" + newNode.getId() + ") [" + this.getLabel() + " node]\n");
-		Converter.generateEntry.add(index + 2, en);
+		Converter.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
 		// set position		$mnode_(0) set X_ 30	; $mnode_(0) set Y_ 860	; $mnode_(0) set Z_ 0
 		en = new Entry(newNode.getLabel() + " set X_ " + x + "\n");
-		Converter.generateEntry.add(index + 3, en);
+		Converter.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
 		en = new Entry(newNode.getLabel() + " set Y_ " + y + "\n");
-		Converter.generateEntry.add(index + 4, en);
+		Converter.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
 		en = new Entry(newNode.getLabel() + " set Z_ 0\n");
-		Converter.generateEntry.add(index + 5, en);
+		Converter.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
 		// $ns_ initial_node_pos $mnode_($i) 5
 		en = new Entry(this.label + " initial_node_pos " + newNode.getLabel() + " 5\n");
-		Converter.generateEntry.add(index + 6, en);
+		Converter.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
 		// $ns_ at $opt(stop) "$mnode($i) reset" 
 		en = new Entry(this.getLabel() + " at " + getTime() + ".0001 \"" + newNode.getLabel() + " reset\"\n");
-		Converter.generateEntry.add(index + 7, en);
+		Converter.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
 		// endregion generate auto tcl code

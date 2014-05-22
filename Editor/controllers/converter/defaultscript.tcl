@@ -136,10 +136,6 @@ $ns_ node-config -adhocRouting $opt(rp) \
 		 -transitionTime $opt(transitionTime) \
 		 -initialEnergy $opt(initialenergy)
 
-# <set up nodes here>
-
-# <set up connection here>
-
 # ending nam and the simulation
 $ns_ at $opt(stop) "$ns_ nam-end-wireless $opt(stop)" 
 $ns_ at $opt(stop) "stop" 

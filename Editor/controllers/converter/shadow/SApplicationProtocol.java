@@ -76,11 +76,13 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	@Override
 	public void addEntry(Entry e) {
 		entryList.add(e);	
+		if (transportProtocol != null) transportProtocol.addEntry(e);
 	}
 	
 	@Override
 	public void addEntry(int index, Entry e) {
 		entryList.add(index, e);
+		if (transportProtocol != null) transportProtocol.addEntry(e);
 	}
 	
 	@Override
@@ -196,7 +198,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 
 	// region ------------------- Application properties ------------------- //
 	
-	private STransportProtocol transportProtocol;
+	STransportProtocol transportProtocol;
 	
 	@Override
 	public String getName() {
