@@ -21,10 +21,15 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.Bullet;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.LineStyleEvent;
+import org.eclipse.swt.custom.LineStyleListener;
+import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -58,10 +63,16 @@ import views.dialogs.PreferencesDialog;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -226,10 +237,26 @@ public class Editor extends MainContent implements Observer {
 		tbtmEdit.setControl(composite);
 		composite.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
-		text = new Text(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
+		text = new StyledText(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
 		text.setTextDirection(335544320);
-		text.setFont(SWTResourceManager.getFont("Ubuntu Mono", 11, SWT.NORMAL));
+		text.setFont(SWTResourceManager.getFont("Ubuntu Mono", 12, SWT.NORMAL));
 		formToolkit.adapt(text, true, true);
+		// line number
+		text.addModifyListener(new ModifyListener() {			
+			@Override
+			public void modifyText(ModifyEvent event) {
+				int maxLine = text.getLineCount();
+				int lineCountWidth = Math.max(String.valueOf(maxLine).length(), 3);
+
+				StyleRange style = new StyleRange();
+				style.metrics = new GlyphMetrics(0, 0, lineCountWidth * 8 + 5);
+				Bullet bullet = new Bullet(ST.BULLET_NUMBER, style);
+				text.setLineBullet(0, text.getLineCount(), bullet);
+				
+				Device device = Display.getCurrent();		
+				style.foreground = new Color(device, new RGB(150, 150, 150));
+			}
+		});		
 		
 		CTabItem tbtmDesign = new CTabItem(tabFolder, SWT.PUSH);
 		tbtmDesign.setText("Design");
@@ -1800,7 +1827,7 @@ public class Editor extends MainContent implements Observer {
 	private Action actScriptReferenceRemain;
 	private Action actNetworkReferenceRemain;
 		
-	private Text text;
+	private StyledText text;
 	private Text styledTextConsole;	
 	
 //	private RulerScrolledComposite scrolledComposite;
