@@ -1,6 +1,7 @@
 package controllers.converter.shadow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -229,7 +230,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 		// generate tcl code here
 		int	index = Converter.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
 		
-		Entry e = new Entry(this.getLabel() + " set " + param + " " + value + "\n");
+		Entry e = new Entry(getInsProc("set"), Arrays.asList(param + "", value + ""));
 		Converter.generateEntry.add(index, e);
 		this.addEntry(e);
 	}

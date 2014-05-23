@@ -237,15 +237,6 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 		addEntry(e);
 		tp.addEntry(e);
 		
-		// $udp_($i) set fid_ 2
-		if (type == TransportProtocolType.UDP)
-		{
-			e = new Entry(tp.getLabel() + " set fid_ 2\n");
-			Converter.generateEntry.add(index++, e);
-			addEntry(e);
-			tp.addEntry(e);
-		}
-		
 		// $ns_ attach-agent $mnode_($s($i)) $udp_($i)
 		e = new Entry(((SNetwork)Converter.global.getNetwork()).getLabel() + " attach-agent " + getLabel() + " " + tp.getLabel() + "\n");
 		Converter.generateEntry.add(index++, e);
