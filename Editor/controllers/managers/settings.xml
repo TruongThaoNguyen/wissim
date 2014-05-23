@@ -6,10 +6,14 @@
         <queue-length>50</queue-length>
     </node-settings>
     <energy-model>
-        <iddle>0.2</iddle>
-        <reception>1.0</reception>
-        <transmission>2.0</transmission>
-        <sleep>0.001</sleep>
+    	<energyModel>EnergyModel</energyModel>
+        <iddle>0.0096</iddle>
+        <reception>0.021</reception>
+        <transmission>0.0255</transmission>
+        <sleep>0.000648</sleep>
+        <transitionPower>0.024</transitionPower>
+		<transitionTime>0.0129</transitionTime>
+		<initialEnergy>1000</initialEnergy>
     </energy-model>
     <routing-protocols>
         <!-- Routing protocols -->
@@ -143,11 +147,15 @@
         </protocol>
         <protocol type="UDP">
             <params>
-                <param property="sport_" value="0"/>
-                <param property="dport_" value="0"/>
-                <param property="packetSize_" value="1460"/>
+                <param property="fid_" value="2"/>
             </params>
         </protocol>
+        <protocol type="Null">
+        	<params>        	
+         		<param property="sport_" value="0"/>
+				<param property="dport_" value="0"/>
+			</params>
+		</protocol>
     </transport-protocols>
     <apps>
         <!-- Application protocols -->
@@ -157,6 +165,8 @@
                 <param property="packetSize_" 	value="50"/>
                 <param property="interval_" 	value="1"/>
                 <param property="rate_" 		value="0.1Mb"/>
+                <param property="sport_"		value="0"/>
+                <param property="dport_"		value="0"/>
             </params>
         </app>
         <app type="VBR">
@@ -218,20 +228,20 @@
         </propagation-model>
     </propagation-models>
     <network-interfaces>
-        <network-interface type="Wireless Phy" default="true">
+        <network-interface type="WirelessPhy" default="true">
             <params>
                 <param property="CPThresh_" value="10.0"/>
                 <param property="CSThresh_" value="1.559e-11"/>
-                <param property="RXThresh_" value="3.652e-10"/>
+                <param property="RXThresh_" value="1.20174e-07"/>
                 <param property="Rb_" value="2*1e6"/>
-                <param property="freq_" value="914e+6"/>
+                <param property="freq_" value="914e+08"/>
                 <param property="L_" value="1.0"/>
-                <param property="Pt_" value="8.5872e-4"/>
+                <param property="Pt_" value="0.281838"/>
             </params>
         </network-interface>
     </network-interfaces>
     <antennas>
-        <antenna type="Omni Antenna" default="true">
+        <antenna type="OmniAntenna" default="true">
             <params>
                 <param property="X_" value="0"/>
                 <param property="Y_" value="0"/>
@@ -244,7 +254,7 @@
     <interface-queues>
         <interface-queue type="Droptail/Priqueue" default="true">
             <params>
-                <param property="" value=""/>
+                <param property="Prefer_Routing_Protocols" value="1"/>
             </params>
         </interface-queue>
     </interface-queues>
