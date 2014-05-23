@@ -346,14 +346,12 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		
 		// region ------------------- auto generate tcl code ------------------- //
 
-		// find last index of network's component in the global register
-		List<Entry> e;	
-		
-		e = nodeConfig.getEntry();
-		
-		// if (nodeList.isEmpty()) e = nodeConfig.getEntry();
-		// else 					e = ((SNode)nodeList.get(nodeList.size() - 1)).getEntry();		
-		int	index = Converter.generateEntry.lastIndexOf(e.get(e.size() - 1)) + 1;		
+		// find last index of network's component in the global register					
+		int	index = 0;
+		for (Entry entry : nodeConfig.getEntry()) {
+			index = Math.max(index, Converter.generateEntry.lastIndexOf(entry));
+		}
+		index++;
 		
 		// space
 		Entry en = new Entry("\n");
