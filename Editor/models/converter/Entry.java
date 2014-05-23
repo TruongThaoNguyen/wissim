@@ -1,6 +1,8 @@
 package models.converter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import controllers.converter.Converter;
@@ -8,9 +10,7 @@ import controllers.converter.Converter;
 public class Entry {				
 	private InsProc insProc;
 	private List<String> arg;
-	private String sperator;
-	
-	private boolean isAuto;
+	private String sperator;	
 	
 	/**
 	 * Create new Register Entry.
@@ -20,7 +20,7 @@ public class Entry {
 	 * @param sperator
 	 */
 	public Entry(InsProc insProc, List<String> arg, String sperator)
-	{		
+	{
 		this.insProc = insProc;
 		if (insProc.insprocName == null)
 		{		
@@ -44,30 +44,15 @@ public class Entry {
 		}
 		
 		this.sperator = sperator;
-		isAuto = false;
 	}
 
-	/**
-	 * Create new Register Entry for InsProc Null.
-	 * @param insProc
-	 * @param sperator
-	 */
-	public Entry(InsProc insProc, String sperator)
-	{
-		this.insProc = insProc;
-		this.arg = null;
-		this.sperator = sperator;
-		
-		isAuto = false;
-	}
-	
 	/**
 	 * Create new Register Entry without parse identify argument.
 	 * @param insProc
 	 * @param arg
 	 */
 	public Entry(InsProc insProc, List<String> arg)
-	{		
+	{
 		String l = arg.get(arg.size() - 1);
 		CharType type = CharType.TypeOf(l.charAt(0));
 		if (type == CharType.Semicolon || type == CharType.Separator) 
@@ -78,26 +63,18 @@ public class Entry {
 		else this.sperator = "\n";
 		
 		this.insProc = insProc;	
-		this.arg 	 = arg;
-		this.isAuto  = false;
+		this.arg 	 = arg;		
 	}
-	
-	public Entry(String command)
+
+	public Entry(String arg)
 	{
-		arg = new ArrayList<String>();
-		arg.add(command);
-		
-		isAuto = true;
+		insProc = Converter.global.getInsProc(null);
+		this.arg = Arrays.asList(arg);
+		this.sperator = "";
 	}
 	
-	public String print() {
-		if (isAuto)
-		{
-			return arg.get(0);
-		}
-		else
-		{	
-			return insProc.Print(arg) + " " + sperator;
-		}
+	@Override
+	public String toString() {
+		return insProc.Print(arg) + " " + sperator;
 	}
 }

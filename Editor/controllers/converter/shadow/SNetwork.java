@@ -1,6 +1,7 @@
 package controllers.converter.shadow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -358,11 +359,11 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		newNode.addEntry(en);
 		
 		// set position		$mnode_(0) set X_ 30	; $mnode_(0) set Y_ 860	; $mnode_(0) set Z_ 0
-		en = new Entry(newNode.getLabel() + " set X_ " + x + "\n");
+		en = new Entry(newNode.getInsProc("set"), Arrays.asList("X_", x + ""));
 		Converter.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
-		en = new Entry(newNode.getLabel() + " set Y_ " + y + "\n");
+		en = new Entry(newNode.getInsProc("set"), Arrays.asList("Y_", y + ""));
 		Converter.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		

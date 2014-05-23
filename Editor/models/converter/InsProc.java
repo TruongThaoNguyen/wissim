@@ -1,5 +1,7 @@
 package models.converter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import controllers.converter.Converter;
@@ -100,10 +102,9 @@ public abstract class InsProc
 		}
 		else 
 		{
-			entry = new Entry(this, "\n");
+			entry = new Entry(this, new ArrayList<>(Arrays.asList("\n")));
 		}
 		
 		Converter.generateEntry.add(entry);
 	}
-
 }

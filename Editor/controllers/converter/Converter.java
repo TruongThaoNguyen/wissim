@@ -52,7 +52,7 @@ public class Converter
 		
 		for (Entry e : generateEntry) 
 		{
-			String value = e.print();
+			String value = e.toString();
 			System.out.print(value);
 			Scanner scanner = new Scanner(value);
 			token.addAll(scanner.scan());

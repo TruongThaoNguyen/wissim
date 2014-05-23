@@ -28,8 +28,9 @@ public abstract class Network extends Observable {
 	 * @param y y - dimension of new node
 	 * @param range communication range
 	 * @return new Node
+	 * @throws Exception 
 	 */
-	public abstract Node addNode(int x, int y);	
+	public abstract Node addNode(int x, int y) throws Exception;	
 	
 	/**
 	 * Remove node from network
