@@ -618,7 +618,8 @@ public class SProject  extends Project implements TclObject
 	private void setConfig(String label, String selected) {
 		// check current selected routing protocol
 		InsVar insVar = network.nodeConfig.getInsVar(label);
-		if (insVar == null || !insVar.getValue().equals(selected))
+		//if (insVar == null || !insVar.getValue().equals(selected))
+		if (insVar == null)
 		{
 			network.nodeConfig.setInsVar(label, selected);
 
