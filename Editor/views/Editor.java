@@ -242,7 +242,7 @@ public class Editor extends MainContent implements Observer {
 		Composite bottomComposite = new Composite(subSashForm, SWT.NONE);
 		bottomComposite.setLayout(new GridLayout(1, false));
 
-						styledTextConsole = new StyledText(bottomComposite, SWT.BORDER);
+						styledTextConsole = new Text(bottomComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
 						GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true);
 						gd_styledText.heightHint = 91;
 						styledTextConsole.setLayoutData(gd_styledText);
@@ -1361,17 +1361,15 @@ public class Editor extends MainContent implements Observer {
 		try 
 		{			
 			Process p = Runtime.getRuntime().exec(Configure.getNS2Path() + "/bin/ns " + Configure.getTclFile());
-			p.waitFor();
-		
+			//p.waitFor();
+			
 			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));			
 			String line;
 		
 			while ((line = input.readLine()) != null) 
 			{				
 				styledTextConsole.append(line + "\n");
-			}
-		
-			input.close();			
+			}		
 		}
 		catch (Exception err) 
 		{
@@ -1714,7 +1712,7 @@ public class Editor extends MainContent implements Observer {
 		return actRunNS2;
 	}
 	
-	public StyledText getStyledTextConsole() {
+	public Text getStyledTextConsole() {
 		return styledTextConsole;
 	}
 	
@@ -1803,7 +1801,7 @@ public class Editor extends MainContent implements Observer {
 	private Action actNetworkReferenceRemain;
 		
 	private Text text;
-	private StyledText styledTextConsole;	
+	private Text styledTextConsole;	
 	
 //	private RulerScrolledComposite scrolledComposite;
 	
