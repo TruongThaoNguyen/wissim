@@ -150,12 +150,6 @@
                 <param property="fid_" value="2"/>
             </params>
         </protocol>
-        <protocol type="Null">
-        	<params>        	
-         		<param property="sport_" value="0"/>
-				<param property="dport_" value="0"/>
-			</params>
-		</protocol>
     </transport-protocols>
     <apps>
         <!-- Application protocols -->
