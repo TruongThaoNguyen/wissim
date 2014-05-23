@@ -12,8 +12,6 @@ import models.networkcomponents.features.GraphicLabel;
 import models.networkcomponents.features.Label;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -125,7 +123,7 @@ public class GWirelessNode extends GSelectableObject {
 					int x = (int) (((double)gx - gnetwork.getLocation().x) / gnetwork.getRatio());
 					int y = (int) (((double)gy - gnetwork.getLocation().y) / gnetwork.getRatio());
 					
-					for (Area a : workspace.getProject().getObstacleList())
+					for (Area a : Project.getObstacleList())
 						if (a.contains(x, y))
 							return;
 

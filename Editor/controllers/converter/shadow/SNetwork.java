@@ -326,7 +326,8 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		// remove register entry
 		for (Entry e : ((SNode)n).getEntry())
 		{
-			Converter.generateEntry.remove(e);				
+			boolean ok = Converter.generateEntry.remove(e);
+			System.out.print(ok);
 		}	
 		
 		return true;
@@ -369,7 +370,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		
 		en = new Entry(newNode.getLabel() + " set Z_ 0\n");
 		Converter.generateEntry.add(index++, en);
-		newNode.addEntry(en);
+		newNode.addEntry(en);		
 		
 		// $ns_ initial_node_pos $mnode_($i) 5
 		en = new Entry(this.label + " initial_node_pos " + newNode.getLabel() + " 5\n");
@@ -377,7 +378,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		newNode.addEntry(en);
 		
 		// $ns_ at $opt(stop) "$mnode($i) reset" 
-		en = new Entry(this.getLabel() + " at " + getTime() + ".0001 \"" + newNode.getLabel() + " reset\"\n");
+		en = new Entry(this.label + " at " + getTime() + ".0001 \"" + newNode.getLabel() + " reset\"\n");
 		Converter.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
