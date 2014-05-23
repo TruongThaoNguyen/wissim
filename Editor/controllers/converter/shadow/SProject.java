@@ -18,7 +18,7 @@ import models.converter.InsProc;
 import models.converter.InsVar;
 import models.converter.ParseException;
 import models.converter.Token;
-import models.converter.TokenType;
+import models.converter.Token.TokenType;
 
 /**
  * GlobalObject.java
@@ -525,9 +525,9 @@ public class SProject  extends Project implements TclObject
 		{
 			Scanner scanner = new Scanner(command.get(i));
 			List<Token> token = scanner.scanWord();
-			if (scanner.haveNext() || token.size() != 1 || token.get(0).Type != TokenType.Brace) 
+			if (scanner.haveNext() || token.size() != 1 || token.get(0).Type() != TokenType.Brace) 
 				throw new ParseException(ParseException.InvalidArgument);
-			arg[i] = token.get(0).Value;
+			arg[i] = token.get(0).Value();
 		}
 		
 		Scanner scanner = new Scanner(arg[1]);

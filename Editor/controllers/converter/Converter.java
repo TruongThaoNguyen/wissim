@@ -1,9 +1,7 @@
 package controllers.converter;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -15,7 +13,7 @@ import models.Project;
 import models.converter.Entry;
 import models.converter.ParseException;
 import models.converter.Token;
-import models.converter.TokenType;
+import models.converter.Token.TokenType;
 
 /**
  * Parser.java file.
@@ -46,13 +44,21 @@ public class Converter
 	 * DTC - Design to Code.
 	 * Generate TCL code from Project model.
 	 * @return List of String, each element of List is a line of TCL scripts
+	 * @throws ParseException 
 	 */
-	public static String DTC() {		
-		StringBuilder sb = new StringBuilder();		
-		for (Entry e : generateEntry) {
-			sb.append(e.print());
-		}			
-		return sb.toString();	
+	
+	public static List<Token> DTC() throws ParseException {
+		List<Token> token = new ArrayList<Token>();
+		
+		for (Entry e : generateEntry) 
+		{
+			String value = e.print();
+			System.out.print(value);
+			Scanner scanner = new Scanner(value);
+			token.addAll(scanner.scan());
+		}
+		
+		return token;
 	}
 	
 	/**
@@ -70,41 +76,39 @@ public class Converter
 		
 		for (Token token : tokenList) 
 		{					
-			switch (token.Type) 
+			switch (token.Type()) 
 			{
-				case Identify:
-				case Brace:		
-					result.append(token.Value);
-					break;
-
 				case Parenthesis:	
-					result.append("(");
-					result.append(parseIdentify(token.Value));
-					result.append(")");
+					result.append(token.print());
 					break;
 
 				case Referent:
-					result.append(global.getInsVar(parseIdentify(token.Value)).getValue());
+					result.append(global.getInsVar(parseIdentify(token.Value())).getValue());
 					break;
 					
 				case Bracket:
-					Scanner subScanner = new Scanner(token.Value);
+					Scanner subScanner = new Scanner(token.Value());
 					List<String> command = subScanner.scanCommand();
 					if (subScanner.haveNext()) throw new ParseException(ParseException.InvalidArgument);					
 					
 					String r = global.parse(command, false); 
 					if (r != null)	result.append(r);
-					else
-					{
-						result.append("[");
-						result.append(token.Value);
-						result.append("]");
-					}									
+					else			result.append(token.print());																	
 					break;		
 					
 				case Quote:
-					result.append(parseQuote(token.Value));
-					break;							
+					result.append(parseQuote(token.Value()));
+					break;
+									
+				case Keyword:
+				case Separator:
+				case Identify:
+				case Brace:		
+					result.append(token.Value());
+					break;
+					
+				case Space:
+				case Comment: throw new ParseException(ParseException.InvalidSymbol);
 			}
 		}
 		
@@ -129,8 +133,8 @@ public class Converter
 		
 			for (Token token : tokenList) 
 			{
-				if (token.Type == TokenType.Referent)				
-					result.append(global.getInsVar(parseIdentify(token.Value)).getValue());
+				if (token.Type() == TokenType.Referent)				
+					result.append(global.getInsVar(parseIdentify(token.Value())).getValue());
 				else				
 					result.append(token.print());				
 			}
@@ -193,12 +197,7 @@ public class Converter
 		
 		// Do something with project object
 		
-		//Converter.DTC();
-		
-		fileName = Configure.getDirectory() + "test.tcl";
-		BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
-		bw.write(Converter.DTC());		
-		bw.close();
+		Converter.DTC();
 	}
 
 }

@@ -2,7 +2,9 @@ package views;
 
 import java.awt.Desktop;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.Observer;
 
 import models.Project;
 import models.converter.ParseException;
+import models.converter.Token;
 import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.WirelessNode;
 
@@ -24,8 +27,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.Bullet;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.LineStyleEvent;
-import org.eclipse.swt.custom.LineStyleListener;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -322,7 +323,14 @@ public class Editor extends MainContent implements Observer {
 			{
 				if(tabFolder.getSelectionIndex() == 0)		// Edit
 				{
-					updateDesign();					  
+					try 
+					{
+						updateDesign();
+					}
+					catch (ParseException e) 
+					{						
+						MessageDialog.openError(getShell(), "Something wrong", e.getMessage());
+					}					  
 				}
 				else										// Design
 				{
@@ -1079,16 +1087,44 @@ public class Editor extends MainContent implements Observer {
 	 * Save Scipt to file
 	 * @author trongnguyen
 	 */
-	public void saveScript() {
+	public void saveScript() {			
+		String fileName = Configure.getTclFile();
+			
 		try {
-			ProjectManager.saveProject();
-		} catch (IOException err) {						
+			if (tabFolder.getSelectionIndex() == 0)	// edit
+			{
+				BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
+				bw.write(text.getText());
+				bw.close();		
+			}
+			else 									// design
+			{
+				ProjectManager.saveProject();
+			}
+		}
+		catch (Exception err) {						
 			MessageDialog.openError(getShell(), "Save File Error", err.getMessage());
 		}
 	}
 	
-	public void updateDesign() {
-		text.setText(Converter.DTC());
+	/**
+	 * show Tcl code with highlight.
+	 * @author trongnguyen
+	 * @throws ParseException 
+	 */
+	public void updateDesign() throws ParseException {
+		text.setText("");
+		int index = 0;
+		
+		for (Token token : Converter.DTC()) 
+		{
+			// add text
+			String s = token.print();
+			text.append(s);
+			index += s.length();
+		
+			// add style
+		}		
 	}
 	
 	public void updateNodeInfoLabel() {

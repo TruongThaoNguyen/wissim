@@ -16,6 +16,7 @@ import controllers.Configure;
 import controllers.converter.Converter;
 import models.Project;
 import models.converter.ParseException;
+import models.converter.Token;
 import models.networkcomponents.Node;
 import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.WirelessNode;
@@ -86,7 +87,7 @@ public class ProjectManager {
 		// save project
 		try {
 			saveProject();
-		} catch(IOException e) {}
+		} catch(Exception e) {}
 				
 		return project;
 	}
@@ -94,13 +95,15 @@ public class ProjectManager {
 	/**
 	 * Store Tcl script to file
 	 * @throws IOException
+	 * @throws ParseException 
 	 */
-	public static void saveProject() throws IOException {				
-//		String fileName = WorkSpace.getDirectory() + WorkSpace.getTclFile() +".tcl";
+	public static void saveProject() throws IOException, ParseException {						
 		String fileName = Configure.getTclFile();
 		
-		BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));				
-		bw.write(Converter.DTC());		
+		BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
+		for (Token token : Converter.DTC()) {
+			bw.write(token.Value());
+		}					
 		bw.close();				
 	}
 	
