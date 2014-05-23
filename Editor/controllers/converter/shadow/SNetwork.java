@@ -31,6 +31,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	{		
 		this.label = label;	
 		nodeConfig = new SCommonObject("node-config");
+		nodeConfig.setParent(this);
 		addInsProc();
 	}
 	

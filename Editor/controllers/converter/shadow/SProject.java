@@ -617,22 +617,36 @@ public class SProject  extends Project implements TclObject
 	
 	private void setConfig(String label, String selected) {
 		// check current selected routing protocol
-		InsVar insVar = network.getInsVar(label);
+		InsVar insVar = network.nodeConfig.getInsVar(label);
 		if (insVar == null || !insVar.getValue().equals(selected))
 		{
-			network.setInsVar(label, selected);
+			network.nodeConfig.setInsVar(label, selected);
 
 			// add new tcl code for new routing protocol
 			SCommonObject newObj = new SCommonObject(selected, getRoutingProtocols().get(selected));
 			insObj.put(selected, newObj);			
 			
 			int index = 0;
+			
+			// # selected
+			Entry newEntry = new Entry("# " + selected + "\n");
+			Converter.generateEntry.add(index++, newEntry);
+			network.nodeConfig.addEntry(newEntry);
+			newObj.addEntry(newEntry);
+			
 			for (String key : newObj.getInsVar().keySet()) 
 			{
-				Entry newEntry = new Entry(key + " " + newObj.getInsVar(key) + "\n"); 
-				addEntry(index++, newEntry);
+				newEntry = new Entry(selected + " set " + key + " " + newObj.getInsVar(key) + "\n");
+				Converter.generateEntry.add(index++, newEntry);
+				network.nodeConfig.addEntry(newEntry);
 				newObj.addEntry(newEntry);
 			}
+			
+			// space
+			newEntry = new Entry(" \n");
+			Converter.generateEntry.add(index++, newEntry);
+			network.nodeConfig.addEntry(newEntry);
+			newObj.addEntry(newEntry);
 		}
 	}
 

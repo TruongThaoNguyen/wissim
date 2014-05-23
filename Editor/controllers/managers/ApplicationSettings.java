@@ -351,32 +351,32 @@ public class ApplicationSettings {
 	}
 	
 	public static void applyDefaultSettingsToProject(Project project) {
-		project.setAntennas(antennas);
-		project.setApplicationProtocols(applicationProtocols);
-		project.setChannels(channels);
+		Project.setAntennas(antennas);
+		Project.setApplicationProtocols(applicationProtocols);
+		Project.setChannels(channels);
 		project.setIddleEnergy(iddleEnergy);
-		project.setInterfaceQueues(interfaceQueues);
-		project.setLinkLayers(linkLayers);
-		project.setMacs(macs);
-		project.setNetworkInterfaces(networkInterfaces);
+		Project.setInterfaceQueues(interfaceQueues);
+		Project.setLinkLayers(linkLayers);
+		Project.setMacs(macs);
+		Project.setNetworkInterfaces(networkInterfaces);
 		project.setNodeRange(nodeRange);
-		project.setPropagationModels(propagationModels);
+		Project.setPropagationModels(propagationModels);
 		project.setQueueLength(queueLength);
 		project.setReceptionEnergy(receptionEnergy);
-		project.setRoutingProtocols(routingProtocols);
+		Project.setRoutingProtocols(routingProtocols);
 		project.setSleepEnergy(sleepEnergy);
 		project.setTransmissionEnergy(transmissionEnergy);
-		project.setTransportProtocols(transportProtocols);
+		Project.setTransportProtocols(transportProtocols);
 		
 		project.setSelectedAntenna(defaultAntenna.toString());
-		project.setSelectedApplicationProtocol(defaultApplicationProtocol.toString());
+		Project.setSelectedApplicationProtocol(defaultApplicationProtocol.toString());
 		project.setSelectedChannel(defaultChannel.toString());
 		project.setSelectedInterfaceQueue(defaultInterfaceQueue.toString());
 		project.setSelectedLinkLayer(defaultLinkLayer.toString());
 		project.setSelectedMac(defaultMac.toString());
 		project.setSelectedPropagationModel(defaultPropagationModel.toString());
 		project.setSelectedRoutingProtocol(defaultRoutingProtocol.toString());
-		project.setSelectedTransportProtocol(defaultTransportProtocol.toString());
+		Project.setSelectedTransportProtocol(defaultTransportProtocol.toString());
 		project.setSelectedNetworkInterface(defaultNetworkInterface.toString());
 	}
 	
