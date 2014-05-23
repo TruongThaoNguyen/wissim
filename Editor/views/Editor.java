@@ -1127,7 +1127,7 @@ public class Editor extends MainContent implements Observer {
 			Color color;
 	        switch(token.Type()) 
 	        {
-	        	case Keyword:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_CYAN);	break;
+	        	case Keyword:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_BLUE);	break;
 	        	case Comment:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN);	break;
 	        	case Quote:		color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_YELLOW);	break;
 	        	case Referent:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED);	break;
