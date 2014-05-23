@@ -207,28 +207,28 @@
         </link-layer>
     </link-layers>
     <macs>
-        <mac type="802.11" default="true">
+        <mac type="Mac/802_11" default="true">
             <params>
                 <param property="" value=""/>
             </params>
         </mac>
     </macs>
     <channels>
-        <channel type="Wireless" default="true">
+        <channel type="Channel/WirelessChannel" default="true">
             <params>
                 <param property="" value=""/>
             </params>
         </channel>
     </channels>
     <propagation-models>
-        <propagation-model type="Two Ray Ground" default="true">
+        <propagation-model type="Propagation/TwoRayGround" default="true">
             <params>
                 <param property="" value=""/>
             </params>
         </propagation-model>
     </propagation-models>
     <network-interfaces>
-        <network-interface type="WirelessPhy" default="true">
+        <network-interface type="Phy/WirelessPhy" default="true">
             <params>
                 <param property="CPThresh_" value="10.0"/>
                 <param property="CSThresh_" value="1.559e-11"/>
@@ -241,7 +241,7 @@
         </network-interface>
     </network-interfaces>
     <antennas>
-        <antenna type="OmniAntenna" default="true">
+        <antenna type="Antenna/OmniAntenna" default="true">
             <params>
                 <param property="X_" value="0"/>
                 <param property="Y_" value="0"/>
@@ -252,7 +252,7 @@
         </antenna>
     </antennas>
     <interface-queues>
-        <interface-queue type="Droptail/Priqueue" default="true">
+        <interface-queue type="Queue/Droptail/Priqueue" default="true">
             <params>
                 <param property="Prefer_Routing_Protocols" value="1"/>
             </params>
