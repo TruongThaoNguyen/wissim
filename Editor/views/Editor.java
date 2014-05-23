@@ -182,8 +182,7 @@ public class Editor extends MainContent implements Observer {
 	private void createContent() {
 		setLayout(new GridLayout(1, false));
 		
-
-		// ------------- toolbar ------------- //
+		// region ------------------- toolbar ------------- //
 		
 //		Composite toolbarComposite = new Composite(this,  SWT.BORDER);
 //		GridData gd_toolbarComposite = new GridData(SWT.LEFT, SWT.TOP, true, false, 1, 1);
@@ -196,18 +195,15 @@ public class Editor extends MainContent implements Observer {
 		
 		toolBarManager = new ToolBarManager(toolBar);
 		
-				
-				
-		
-		// ------------- main composite ------------- //
+		// endregion		
+
+		// region ------------------- body ---------------- //
 		
 		sashForm = new SashForm(this, SWT.HORIZONTAL);
 		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
-		// ------------- properties composite ------------- //
-		
-		
+						
 		SashForm subSashForm = new SashForm(sashForm, SWT.VERTICAL);
+		subSashForm.setWeights(new int[] {215, 83});
 		subSashForm.addControlListener(new ControlListener() {
 			
 			@Override
@@ -224,12 +220,16 @@ public class Editor extends MainContent implements Observer {
 			}
 		});
 		
+		// region ------------------- content Composite ------------------- //
+		
 		contentComposite = new Composite(subSashForm, SWT.NONE);
 		contentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		contentComposite.setLayout(new FillLayout());
 		
 		tabFolder = new CTabFolder(contentComposite, SWT.BORDER | SWT.FLAT | SWT.BOTTOM);
 		tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+		
+		// region ------------------- Edit tab ------------------- //
 		
 		CTabItem tbtmEdit = new CTabItem(tabFolder, SWT.PUSH);
 		tbtmEdit.setText("Edit");
@@ -259,6 +259,10 @@ public class Editor extends MainContent implements Observer {
 			}
 		});		
 		
+		// endregion Edit tab
+		
+		// region ------------------- Design tab ------------------- //
+
 		CTabItem tbtmDesign = new CTabItem(tabFolder, SWT.PUSH);
 		tbtmDesign.setText("Design");
 //				scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -267,16 +271,24 @@ public class Editor extends MainContent implements Observer {
 //				scrolledComposite.setExpandHorizontal(true);
 //				scrolledComposite.setExpandVertical(true);
 		
+		// endregion Design tab
+		
+		// endregion content Composite
+		
+		// region ------------------- console composite ------------------- //
+
 		Composite bottomComposite = new Composite(subSashForm, SWT.NONE);
 		bottomComposite.setLayout(new GridLayout(1, false));
 
-						styledTextConsole = new Text(bottomComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
-						GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true);
-						gd_styledText.heightHint = 91;
-						styledTextConsole.setLayoutData(gd_styledText);
-		
-		subSashForm.setWeights(new int[] {215, 83});
-		
+		styledTextConsole = new Text(bottomComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
+		GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd_styledText.heightHint = 91;
+		styledTextConsole.setLayoutData(gd_styledText);
+						
+		// endregion console composite
+						
+		// region ------------------- properties composite ------------------- //		
+				
 		propertiesComposite = new Composite(sashForm,  SWT.BORDER | SWT.H_SCROLL);
 		GridData gd_propertiesComposite = new GridData(SWT.RIGHT, SWT.FILL, false, true);
 		
@@ -314,6 +326,10 @@ public class Editor extends MainContent implements Observer {
 				
 			}
 		});
+		
+		// endregion properties composite
+
+		// endregion body
 	}
 	
 	public void actionGetTab() {		
