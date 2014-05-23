@@ -79,7 +79,9 @@ public class Converter
 			switch (token.Type()) 
 			{
 				case Parenthesis:	
-					result.append(token.toString());
+					result.append("(");
+					result.append(parseIdentify(token.Value()));
+					result.append(")");
 					break;
 
 				case Referent:
