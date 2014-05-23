@@ -1115,15 +1115,39 @@ public class Editor extends MainContent implements Observer {
 	public void updateDesign() throws ParseException {
 		text.setText("");
 		int index = 0;
-		
+		String s = "";
 		for (Token token : Converter.DTC()) 
 		{
 			// add text
-			String s = token.print();
-			text.append(s);
 			index += s.length();
+			s = token.toString();
+			text.append(s);			
 		
-			// add style
+			// add style, The style itself depends on the region type, use colors from the system	        
+			Color color;
+	        switch(token.Type()) 
+	        {
+	        	case Keyword:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_CYAN);	break;
+	        	case Comment:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN);	break;
+	        	case Quote:		color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_YELLOW);	break;
+	        	case Referent:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED);	break;
+				case Brace:
+				case Bracket:			
+				case Parenthesis:													
+				case Identify:
+				case Separator:
+				case Space:					
+				default:
+					continue;
+	        }
+	 
+	        // Define the position and limit
+	        StyleRange sr = new StyleRange();
+	        sr.foreground = color;
+	        sr.start = index;
+	        sr.length = s.length();
+	        
+	        text.setStyleRange(sr);
 		}		
 	}
 	

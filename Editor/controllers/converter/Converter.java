@@ -79,7 +79,7 @@ public class Converter
 			switch (token.Type()) 
 			{
 				case Parenthesis:	
-					result.append(token.print());
+					result.append(token.toString());
 					break;
 
 				case Referent:
@@ -93,7 +93,7 @@ public class Converter
 					
 					String r = global.parse(command, false); 
 					if (r != null)	result.append(r);
-					else			result.append(token.print());																	
+					else			result.append(token.toString());																	
 					break;		
 					
 				case Quote:
@@ -136,7 +136,7 @@ public class Converter
 				if (token.Type() == TokenType.Referent)				
 					result.append(global.getInsVar(parseIdentify(token.Value())).getValue());
 				else				
-					result.append(token.print());				
+					result.append(token.toString());				
 			}
 			result.append(" ");
 		}

@@ -97,7 +97,7 @@ public class Token {
 	 * print without space
 	 * @return
 	 */
-	public String print() 
+	public String toString() 
 	{
 		switch (type) 
 		{			
