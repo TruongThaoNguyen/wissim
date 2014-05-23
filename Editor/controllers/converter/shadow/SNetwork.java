@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import com.sun.java_cup.internal.runtime.Scanner;
+
 import controllers.converter.Converter;
 import controllers.converter.Scheduler;
 import controllers.converter.TclObject;
@@ -261,6 +263,10 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 			{
 				if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);		
 				addEvent(Double.parseDouble(Converter.parseIdentify(command.get(0))), command.get(1));
+				
+				// check if it is about node
+				//Scanner scanner = new Scanner(commad.get(1))
+				
 				return command.get(1);
 			}
 			

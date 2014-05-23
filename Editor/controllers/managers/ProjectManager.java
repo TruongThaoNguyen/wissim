@@ -102,7 +102,7 @@ public class ProjectManager {
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
 		for (Token token : Converter.DTC()) {
-			bw.write(token.Value());
+			bw.write(token.toString());
 		}					
 		bw.close();				
 	}
