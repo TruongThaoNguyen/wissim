@@ -186,8 +186,6 @@ public class Workspace extends Composite {
 		// keep a list of nodes that did not have a graphic network (O(n^2))
 		for (Node n : getProject().getNetwork().getNodeList()) 
 		{
-			WirelessNode wn = (WirelessNode) n;
-			
 			// check whether nodes in getProject() are instantiated yet
 			isExisted = false;
 			for (GWirelessNode gn : getGraphicNodes())
@@ -207,9 +205,9 @@ public class Workspace extends Composite {
 			}
 		}	
 		
-		if (getProject().getObstacleList() != null)
+		if (Project.getObstacleList() != null)
 		{
-			for (Area area : getProject().getObstacleList()) 
+			for (Area area : Project.getObstacleList()) 
 			{
 				// check whether area in getProject() are instantiated yet			
 				isExisted = false;
@@ -234,7 +232,7 @@ public class Workspace extends Composite {
 		{
 			// check whether the graphic node is sill represented of a node
 			isExisted = false;
-			for (Area area : getProject().getObstacleList())
+			for (Area area : Project.getObstacleList())
 			{
 				if (garea.getArea().getId() == area.getId()) 
 				{
