@@ -202,8 +202,7 @@ public class Editor extends MainContent implements Observer {
 		sashForm = new SashForm(this, SWT.HORIZONTAL);
 		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 						
-		SashForm subSashForm = new SashForm(sashForm, SWT.VERTICAL);
-		subSashForm.setWeights(new int[] {215, 83});
+		SashForm subSashForm = new SashForm(sashForm, SWT.VERTICAL);		
 		subSashForm.addControlListener(new ControlListener() {
 			
 			@Override
@@ -242,6 +241,7 @@ public class Editor extends MainContent implements Observer {
 		text.setTextDirection(335544320);
 		text.setFont(SWTResourceManager.getFont("Ubuntu Mono", 12, SWT.NORMAL));
 		formToolkit.adapt(text, true, true);
+
 		// line number
 		text.addModifyListener(new ModifyListener() {			
 			@Override
@@ -265,11 +265,6 @@ public class Editor extends MainContent implements Observer {
 
 		CTabItem tbtmDesign = new CTabItem(tabFolder, SWT.PUSH);
 		tbtmDesign.setText("Design");
-//				scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-////				scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-//				tbtmDesign.setControl(scrolledComposite);
-//				scrolledComposite.setExpandHorizontal(true);
-//				scrolledComposite.setExpandVertical(true);
 		
 		// endregion Design tab
 		
@@ -283,10 +278,12 @@ public class Editor extends MainContent implements Observer {
 		styledTextConsole = new Text(bottomComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
 		GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd_styledText.heightHint = 91;
-		styledTextConsole.setLayoutData(gd_styledText);
+		styledTextConsole.setLayoutData(gd_styledText);	
 						
 		// endregion console composite
-						
+		
+		subSashForm.setWeights(new int[] {184, 68});
+		
 		// region ------------------- properties composite ------------------- //		
 				
 		propertiesComposite = new Composite(sashForm,  SWT.BORDER | SWT.H_SCROLL);
