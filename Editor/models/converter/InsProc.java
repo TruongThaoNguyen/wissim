@@ -57,7 +57,7 @@ public abstract class InsProc
 	 * @param arg arguments
 	 * @return
 	 */
-	public String Print(List<String> arg) {
+	public String Print(List<String> arg) {		
 		return 	(parent.getLabel() == null ? "" : parent.getLabel() + " " ) + 
 				(insprocName == null ? "" : insprocName + " " ) + 
 				print(arg);

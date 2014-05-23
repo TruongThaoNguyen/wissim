@@ -607,48 +607,13 @@ public class SProject  extends Project implements TclObject
 	@Override public void setTransmissionEnergy	(double value) { network.setInsVar("-energyModel", "EnergyModel"); network.setInsVar("-transitionPower",value + ""); }
 	@Override public void setInitialEnergy		(double value) { network.setInsVar("-energyModel", "EnergyModel"); network.setInsVar("-initialEnergy", 	value + ""); }
 	
-	@Override public void setSelectedRoutingProtocol	(String selected) {	setConfig("-adhocRouting",	selected); }
-	@Override public void setSelectedLinkLayer			(String selected) { setConfig("-llType", 		selected); }
-	@Override public void setSelectedMac				(String selected) {	setConfig("-macType", 		selected); }
-	@Override public void setSelectedInterfaceQueue		(String selected) {	setConfig("-ifqType", 		selected); }
-	@Override public void setSelectedAntenna			(String selected) {	setConfig("-antType", 		selected); }
-	@Override public void setSelectedPropagationModel	(String selected) {	setConfig("-propType", 		selected); }	
-	@Override public void setSelectedNetworkInterface	(String selected) { setConfig("-phyType", 		selected); }	
-	
-	private void setConfig(String label, String selected) {
-		// check current selected routing protocol
-		InsVar insVar = network.nodeConfig.getInsVar(label);
-		//if (insVar == null || !insVar.getValue().equals(selected))		
-		{
-			network.nodeConfig.setInsVar(label, selected);
-
-			// add new tcl code for new routing protocol
-			SCommonObject newObj = new SCommonObject(selected, getRoutingProtocols().get(selected));
-			insObj.put(selected, newObj);			
-			
-			int index = 0;
-			
-			// # selected
-			Entry newEntry = new Entry("# " + selected + "\n");
-			Converter.generateEntry.add(index++, newEntry);
-			network.nodeConfig.addEntry(newEntry);
-			newObj.addEntry(newEntry);
-			
-			for (String key : newObj.getInsVar().keySet()) 
-			{
-				newEntry = new Entry(selected + " set " + key + " " + newObj.getInsVar(key) + "\n");
-				Converter.generateEntry.add(index++, newEntry);
-				network.nodeConfig.addEntry(newEntry);
-				newObj.addEntry(newEntry);
-			}
-			
-			// space
-			newEntry = new Entry(" \n");
-			Converter.generateEntry.add(index++, newEntry);
-			network.nodeConfig.addEntry(newEntry);
-			newObj.addEntry(newEntry);
-		}
-	}
+	@Override public void setSelectedRoutingProtocol	(String selected) {	network.nodeConfig.setInsVar("-adhocRouting",	selected); }
+	@Override public void setSelectedLinkLayer			(String selected) { network.nodeConfig.setInsVar("-llType", 		selected); }
+	@Override public void setSelectedMac				(String selected) {	network.nodeConfig.setInsVar("-macType", 		selected); }
+	@Override public void setSelectedInterfaceQueue		(String selected) {	network.nodeConfig.setInsVar("-ifqType", 		selected); }
+	@Override public void setSelectedAntenna			(String selected) {	network.nodeConfig.setInsVar("-antType", 		selected); }
+	@Override public void setSelectedPropagationModel	(String selected) {	network.nodeConfig.setInsVar("-propType", 		selected); }	
+	@Override public void setSelectedNetworkInterface	(String selected) { network.nodeConfig.setInsVar("-phyType", 		selected); }	
 
 	// endregion Set	
 	

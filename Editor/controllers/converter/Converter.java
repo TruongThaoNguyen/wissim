@@ -49,6 +49,8 @@ public class Converter
 	
 	public static List<Token> DTC() throws ParseException {
 		List<Token> token = new ArrayList<Token>();
+
+		
 		
 		for (Entry e : generateEntry) 
 		{
