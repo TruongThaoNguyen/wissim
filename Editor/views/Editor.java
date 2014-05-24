@@ -280,6 +280,14 @@ public class Editor extends MainContent implements Observer {
 		gd_styledText.heightHint = 91;
 		styledTextConsole.setLayoutData(gd_styledText);	
 						
+		styledTextConsole.addModifyListener(new ModifyListener() {
+			
+			@Override
+			public void modifyText(ModifyEvent arg0) {
+				// TODO Auto-generated method stub
+				System.out.println(styledTextConsole.getText());
+			}
+		});
 		// endregion console composite
 		
 		subSashForm.setWeights(new int[] {184, 68});
@@ -840,6 +848,7 @@ public class Editor extends MainContent implements Observer {
 		
 		actRunNS2 = new Action("Run NS2"){
 			public void run() {
+				styledTextConsole.setText("Running ... \n");
 				actionRunNS2();
 			}
 		};
@@ -1455,13 +1464,17 @@ public class Editor extends MainContent implements Observer {
 	 * @author trongnguyen
 	 */
 	public void actionRunNS2() {
+		for(int i = 0; i< 100000;i ++) {
+			styledTextConsole.append(i+"\n");
+		}
+		styledTextConsole.getParent().notify();
 		saveScript();		
 		if (Configure.getNS2Path() == null)	ns2Config();	
   		
 		try 
 		{			
 			Process p = Runtime.getRuntime().exec(Configure.getNS2Path() + "/bin/ns " + Configure.getTclFile());
-			//p.waitFor();
+			p.waitFor();
 			
 			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));			
 			String line;

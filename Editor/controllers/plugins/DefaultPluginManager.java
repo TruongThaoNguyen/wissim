@@ -327,6 +327,7 @@ public class DefaultPluginManager implements PluginManager {
         // expand all plugin archives
         FileFilter zipFilter = new ZipFileFilter();
         File[] zipFiles = pluginsDirectory.listFiles(zipFilter);
+        System.out.println(zipFiles.length);
         if (zipFiles != null) {
         	for (File zipFile : zipFiles) {
         		try {
