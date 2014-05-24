@@ -116,18 +116,25 @@ public class SProject  extends Project implements TclObject
 			return obj.parse(command, isRecord);
 		}
 		
-		obj = new SCommonObject(arg);
-		p = obj.getInsProc(Converter.parseIdentify(command.get(1)));
-		if (p != null)
-		{			
-			insObj.put(arg, obj);
-			command.remove(0);
-			command.remove(0);
-			return p.Run(command,isRecord);
-		}
+//		obj = new SCommonObject(arg);
+//		p = obj.getInsProc(Converter.parseIdentify(command.get(1)));
+//		if (p != null)
+//		{			
+//			insObj.put(arg, obj);
+//			command.remove(0);
+//			command.remove(0);
+//			return p.Run(command,isRecord);
+//		}
+		
+		if (parseConfig(command)) return "";
 		
 		// Undefined insProc 
 		return getInsProc(null).Run(command, isRecord);
+	}
+	
+	private boolean parseConfig(List<String> command)
+	{
+		return true;
 	}
 	
 	// endregion Parse

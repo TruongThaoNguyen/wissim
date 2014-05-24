@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import com.sun.java_cup.internal.runtime.Scanner;
-
 import controllers.converter.Converter;
 import controllers.converter.Scheduler;
 import controllers.converter.TclObject;
