@@ -1219,43 +1219,58 @@ public class Editor extends MainContent implements Observer {
 	 * @author trongnguyen
 	 * @throws ParseException 
 	 */
-	public void updateDesign() throws ParseException {
+	public void updateDesign() throws ParseException {				
 		text.setText("");
-		int index = 0;
-		String s = "";
-		for (Token token : Converter.DTC()) 
-		{
-			// add text
-			index += s.length();
-			s = token.toString();
-			text.append(s);			
 		
-			// add style, The style itself depends on the region type, use colors from the system	        
-			Color color;
-	        switch(token.Type()) 
-	        {
-	        	case Keyword:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_BLUE);	break;
-	        	case Comment:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN);	break;
-	        	case Quote:		color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_YELLOW);	break;
-	        	case Referent:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED);	break;
-				case Brace:
-				case Bracket:			
-				case Parenthesis:													
-				case Identify:
-				case Separator:
-				case Space:					
-				default:
-					continue;
-	        }
-	 
-	        // Define the position and limit
-	        StyleRange sr = new StyleRange();
-	        sr.foreground = color;
-	        sr.start = index;
-	        sr.length = s.length();
-	        
-	        text.setStyleRange(sr);
-		}		
+		Display.getCurrent().asyncExec(new Runnable() {			
+			@Override
+			public void run() {						
+				int index = 0;
+				String s = "";				
+				try {
+					for (Token token : Converter.DTC()) 
+					{
+						// add text
+						index += s.length();
+						s = token.toString();
+						text.append(s);			
+					
+						// add style, The style itself depends on the region type, use colors from the system	        
+						Color color;
+					    switch(token.Type()) 
+					    {
+					    	case Keyword:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_BLUE);	break;
+					    	case Comment:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN);	break;
+					    	case Quote:		color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_YELLOW);	break;
+					    	case Referent:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED);	break;
+							case Brace:
+							case Bracket:			
+							case Parenthesis:													
+							case Identify:
+							case Separator:
+							case Space:					
+							default:
+								continue;
+					    }
+ 
+					    // Define the position and limit
+					    StyleRange sr = new StyleRange();
+					    sr.foreground = color;
+					    sr.start = index;
+					    sr.length = s.length();
+					    
+					    text.setStyleRange(sr);
+					    
+//					    try {
+//							Thread.sleep(10);
+//						} catch (InterruptedException e) {}
+					}
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}		
+			}
+		});
 	}
 	
 	public void updateNodeInfoLabel() {
@@ -1313,7 +1328,8 @@ public class Editor extends MainContent implements Observer {
 	
 	public void actionNew() {		
 		tabFolder.setSelection(1);		
-		if (ApplicationManager.newProject(Editor.this) == null) return;		
+		if (ApplicationManager.newProject(Editor.this) == null) return;
+		actionDefaultConfiguration();
 		showProject();
 		updateNetworkInfoLabel();
 		//updateDesign();		

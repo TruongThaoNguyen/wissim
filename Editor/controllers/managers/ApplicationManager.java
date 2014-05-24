@@ -83,10 +83,9 @@ public class ApplicationManager {
 
 		if (confirmed == true) 
 		{
-			Configure.setTclFile(path);									
-			new ConfigNodeDialog(editor.getShell(), SWT.SHEET, ConfigNodeDialog.APP_CONFIG, null).open();
-			Project project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "tcl"), result.width, result.height, result.time);			
-			ApplicationSettings.applyDefaultSettingsToProject(project);			
+			Configure.setTclFile(path);												
+			Project project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "tcl"), result.width, result.height, result.time);
+			ApplicationSettings.applyDefaultSettingsToProject(project);
 			newProjectCount++;			
 			return project;
 		}
