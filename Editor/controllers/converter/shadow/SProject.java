@@ -578,9 +578,11 @@ public class SProject  extends Project implements TclObject
 	
 	// region ------------------- Set ------------------- //
 
-	@Override public void setNodeRange(int value) {	
-		nodeRange = value;
-		
+	/**
+	 * Run Threshold to configure propagationModel and Antenna to fit with nodeRange.
+	 * Call after setting each ones of nodeRange, propagationModel and Antenna
+	 */
+	private void runThreshold() {
 		try {
 			HashMap<String, String> propaga = getPropagationModels().get(getSelectedPropagationModel());
 			HashMap<String, String> antenna = getAntennas().get(getSelectedAntenna());			
@@ -590,7 +592,7 @@ public class SProject  extends Project implements TclObject
 			Process p = Runtime.getRuntime().exec(
 					Configure.getNS2Path() + "ns-2.35/indep-utils/propagation/threshold -m " +
 					getSelectedPropagationModel().substring(12) + " " +					
-					value);		
+					nodeRange);		
 			
 			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));			
 			String line;
@@ -614,6 +616,8 @@ public class SProject  extends Project implements TclObject
 		}
 	}
 	
+	@Override public void setNodeRange(int value) {	nodeRange = value;	runThreshold();	}
+	
 	@Override public void setSelectedChannel(String selected)	{ network.nodeConfig.setInsVar("-channel", "[new " + selected + "]"); }	
 		
 	@Override public void setQueueLength		(int 	value)	{ network.nodeConfig.setInsVar("-ifqLen", value + ""); }
@@ -626,10 +630,10 @@ public class SProject  extends Project implements TclObject
 	@Override public void setSelectedRoutingProtocol	(String selected) {	network.nodeConfig.setInsVar("-adhocRouting",	selected); }
 	@Override public void setSelectedLinkLayer			(String selected) { network.nodeConfig.setInsVar("-llType", 		selected); }
 	@Override public void setSelectedMac				(String selected) {	network.nodeConfig.setInsVar("-macType", 		selected); }
-	@Override public void setSelectedInterfaceQueue		(String selected) {	network.nodeConfig.setInsVar("-ifqType", 		selected); }
-	@Override public void setSelectedAntenna			(String selected) {	network.nodeConfig.setInsVar("-antType", 		selected); }
-	@Override public void setSelectedPropagationModel	(String selected) {	network.nodeConfig.setInsVar("-propType", 		selected); }	
-	@Override public void setSelectedNetworkInterface	(String selected) { network.nodeConfig.setInsVar("-phyType", 		selected); }	
+	@Override public void setSelectedInterfaceQueue		(String selected) {	network.nodeConfig.setInsVar("-ifqType", 		selected); }		
+	@Override public void setSelectedNetworkInterface	(String selected) { network.nodeConfig.setInsVar("-phyType", 		selected); }
+	@Override public void setSelectedAntenna			(String selected) {	network.nodeConfig.setInsVar("-antType", 		selected); runThreshold(); }
+	@Override public void setSelectedPropagationModel	(String selected) {	network.nodeConfig.setInsVar("-propType", 		selected); runThreshold(); }
 
 	// endregion Set	
 	

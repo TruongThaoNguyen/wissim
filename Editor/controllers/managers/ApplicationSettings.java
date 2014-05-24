@@ -362,14 +362,16 @@ public class ApplicationSettings {
 		Project.setInterfaceQueues(interfaceQueues);
 		Project.setLinkLayers(linkLayers);
 		Project.setMacs(macs);
-		Project.setNetworkInterfaces(networkInterfaces);		
+		Project.setNetworkInterfaces(networkInterfaces);
+		project.setNodeRange(nodeRange);
 		Project.setPropagationModels(propagationModels);
 		project.setQueueLength(queueLength);
 		project.setReceptionEnergy(receptionEnergy);
 		Project.setRoutingProtocols(routingProtocols);
 		project.setSleepEnergy(sleepEnergy);
 		project.setTransmissionEnergy(transmissionEnergy);
-		Project.setTransportProtocols(transportProtocols);		
+		Project.setTransportProtocols(transportProtocols);
+		
 		project.setSelectedAntenna(defaultAntenna.toString());
 		Project.setSelectedApplicationProtocol(defaultApplicationProtocol.toString());
 		project.setSelectedChannel(defaultChannel.toString());
@@ -380,9 +382,6 @@ public class ApplicationSettings {
 		project.setSelectedRoutingProtocol(defaultRoutingProtocol.toString());
 		Project.setSelectedTransportProtocol(defaultTransportProtocol.toString());
 		project.setSelectedNetworkInterface(defaultNetworkInterface.toString());
-		
-		// always setting NodeRange after setting PropagationModels and Antennas 
-		project.setNodeRange(nodeRange);
 	}
 	
 	public static org.eclipse.swt.graphics.Color colorAWTtoSWT(Color color) {
