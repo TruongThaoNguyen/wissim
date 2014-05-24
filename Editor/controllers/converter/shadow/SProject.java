@@ -134,7 +134,15 @@ public class SProject  extends Project implements TclObject
 	
 	private boolean parseConfig(List<String> command)
 	{
-		return true;
+		for (String key : configure.keySet()) {
+			if (configure.get(key).keySet().contains(command.get(0)))
+			{
+				configure.get(key).get(command.get(0)).put(command.get(1), command.get(2));
+				return true;				
+			}
+		}
+		
+		return false;
 	}
 	
 	// endregion Parse

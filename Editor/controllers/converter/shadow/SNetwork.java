@@ -61,8 +61,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	
 	@Override
 	public HashMap<String, Double> getEvent() {
-		// TODO Auto-generated method stub
-		return null;
+		return event;
 	}
 	
 	// endregion Event
