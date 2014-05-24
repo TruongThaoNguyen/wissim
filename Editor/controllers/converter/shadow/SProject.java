@@ -582,30 +582,31 @@ public class SProject  extends Project implements TclObject
 		nodeRange = value;
 		
 		try {
-			TclObject propaga = getObject(network.nodeConfig.getInsVar("-phyType").getValue());
-			TclObject antenna = getObject(network.nodeConfig.getInsVar("-antType" ).getValue());
-						
+			HashMap<String, String> propaga = getPropagationModels().get(getSelectedPropagationModel());
+			HashMap<String, String> antenna = getAntennas().get(getSelectedAntenna());			
+			
+			System.out.print("Set node range\nRun threshold\n");
+			
 			Process p = Runtime.getRuntime().exec(
 					Configure.getNS2Path() + "ns-2.35/indep-utils/propagation/threshold -m " +
-					network.nodeConfig.getInsVar("-propType").getValue().substring(12) + " " +
+					getSelectedPropagationModel().substring(12) + " " +					
 					value);		
 			
-			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			
+			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));			
 			String line;
-			line = br.readLine();															// distance =		
-		    line = br.readLine();															// propagation model:
-		    line = br.readLine();															// 
-		    line = br.readLine();															// Selected parameters:
-		    line = br.readLine();	propaga.setInsVar("Pt_", 		line.substring(16));	// transmit power:		    	
-		    line = br.readLine();	propaga.setInsVar("freq_", 		line.substring(11));	// frequency:
-		    line = br.readLine();	antenna.setInsVar("Gt_",		line.substring(23));	// transmit antenna gain:
-		    line = br.readLine();	antenna.setInsVar("Gr_",		line.substring(22));	// receive antenna gain:
-		    line = br.readLine();	propaga.setInsVar("L_",			line.substring(13));	// system loss:
-		    line = br.readLine();	antenna.setInsVar("Z_",			line.substring(25));	// transmit antenna height:
-		    line = br.readLine();															// receive antenna height:
-		    line = br.readLine();															// 
-		    line = br.readLine();	antenna.setInsVar("RXThresh_",	line.substring(34));	// Receiving threshold RXThresh_ is:
+			System.out.println(line = br.readLine());													// distance =		
+			System.out.println(line = br.readLine());													// propagation model:
+			System.out.println(line = br.readLine());													// 
+			System.out.println(line = br.readLine());													// Selected parameters:
+			System.out.println(line = br.readLine());	propaga.put("Pt_", 		line.substring(16));	// transmit power:		    	
+			System.out.println(line = br.readLine());	propaga.put("freq_", 	line.substring(11));	// frequency:
+			System.out.println(line = br.readLine());	antenna.put("Gt_",		line.substring(23));	// transmit antenna gain:
+			System.out.println(line = br.readLine());	antenna.put("Gr_",		line.substring(22));	// receive antenna gain:
+			System.out.println(line = br.readLine());	propaga.put("L_",		line.substring(13));	// system loss:
+			System.out.println(line = br.readLine());	antenna.put("Z_",		line.substring(25));	// transmit antenna height:
+			System.out.println(line = br.readLine());													// receive antenna height:
+			System.out.println(line = br.readLine());													// 
+			System.out.println(line = br.readLine());	antenna.put("RXThresh_",line.substring(34));	// Receiving threshold RXThresh_ is:
 		    
 			br.close();			
 		} catch (Exception e) {
