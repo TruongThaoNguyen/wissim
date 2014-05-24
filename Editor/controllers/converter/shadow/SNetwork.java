@@ -6,12 +6,15 @@ import java.util.HashMap;
 import java.util.List;
 
 import controllers.converter.Converter;
+import controllers.converter.Scanner;
 import controllers.converter.Scheduler;
 import controllers.converter.TclObject;
 import models.converter.Entry;
 import models.converter.InsProc;
 import models.converter.InsVar;
 import models.converter.ParseException;
+import models.converter.Token;
+import models.converter.Token.TokenType;
 import models.networkcomponents.Node;
 import models.networkcomponents.WirelessNetwork;
 
@@ -261,8 +264,17 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 				if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);		
 				addEvent(Double.parseDouble(Converter.parseIdentify(command.get(0))), command.get(1));
 				
-				// check if it is about node
-				//Scanner scanner = new Scanner(commad.get(1))
+				// check if it is about node				
+				List<Token> token = new Scanner(command.get(1)).scanWord();
+				if (token.size() == 1 && token.get(0).Type() == TokenType.Quote)
+				{
+					List<String> cmd = new Scanner(token.get(0).Value()).scanCommand();
+					if (cmd.size() > 1)
+					{
+						TclObject o = Converter.global.getObject(Converter.parseIdentify(cmd.get(0)));
+						if (o != null) o.addEntry(entry);						
+					}
+				}
 				
 				return command.get(1);
 			}
@@ -329,6 +341,8 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		// remove register entry
 		for (Entry e : ((SNode)n).getEntry())
 		{
+			int i = Converter.generateEntry.indexOf(e);
+			if (Converter.generateEntry.get(i - 1).toString().trim().isEmpty()) Converter.generateEntry.remove(i - 1);
 			Converter.generateEntry.remove(e);			
 		}	
 		
