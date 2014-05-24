@@ -43,12 +43,13 @@ import controllers.graphicscomponents.GWirelessNode;
 import controllers.graphicscomponents.GraphicPath;
 import controllers.helpers.Helper;
 import controllers.helpers.Validator;
-import views.CreateProjectDialog;
 import views.Editor;
 import views.SearchNodeDialog;
 import views.Workspace;
+import views.dialogs.ConfigNodeDialog;
 import views.dialogs.CreateNodeDialog;
 import views.dialogs.CreateNodeSetDialog;
+import views.dialogs.CreateProjectDialog;
 import views.dialogs.EditNetworkSizeDialog;
 import views.dialogs.ExportImageDialog;
 import views.dialogs.ImportLocationDataDialog;
@@ -82,12 +83,11 @@ public class ApplicationManager {
 
 		if (confirmed == true) 
 		{
-			Project project;
-			Configure.setTclFile(path);
-			project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "tcl"), result.width, result.height, result.time);
-			ApplicationSettings.applyDefaultSettingsToProject(project);
-			newProjectCount++;
-			
+			Configure.setTclFile(path);									
+			new ConfigNodeDialog(editor.getShell(), SWT.SHEET, ConfigNodeDialog.APP_CONFIG, null).open();
+			Project project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "tcl"), result.width, result.height, result.time);			
+			ApplicationSettings.applyDefaultSettingsToProject(project);			
+			newProjectCount++;			
 			return project;
 		}
 					
@@ -247,22 +247,6 @@ public class ApplicationManager {
 			tabFolder.dispose();
 		}		
 	}
-
-//	public static void undoState(Workspace workspace) {
-//		if (workspace != null) {		
-//			Project p = workspace.getCareTaker().getLastState();
-//			if (p != null)
-//				workspace.setProject(p);
-//		}
-//	}
-
-//	public static void redoState(Workspace workspace) {
-//		if (workspace == null) return;
-//		
-//		Project p = workspace.getCareTaker().getNextState();
-//		if (p != null)
-//			workspace.setProject(p);
-//	}
 
 	public static void createASingleNode(Workspace workspace) {
 		if (workspace == null) return;

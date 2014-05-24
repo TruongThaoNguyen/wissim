@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import controllers.Configure;
@@ -46,12 +47,29 @@ public class Converter
 	 * @return List of String, each element of List is a line of TCL scripts
 	 * @throws ParseException 
 	 */
-	
 	public static List<Token> DTC() throws ParseException {
 		List<Token> token = new ArrayList<Token>();
 
+		// configure
+		for (String k : Project.configure.keySet()) {			
+			HashMap<String, String> h = Project.getConfig(k).get(global.getSelectedConfig(k));
+			if (h != null)
+			{
+				for (String key : h.keySet()) 
+				{
+					String arg = h.get(key);					
+					token.add(new Token(TokenType.Identify, global.getSelectedConfig(k) + " "));
+					token.add(new Token(TokenType.Keyword, "set "));
+					token.add(new Token(TokenType.Identify, key + " " + arg + "\n"));				
+				}				
+				token.add(new Token(TokenType.Separator, "\n"));
+			}
+		}
 		
+		// remove raw space line
+		while (generateEntry.get(0).toString().trim().isEmpty()) generateEntry.remove(0);
 		
+		// generate code		
 		for (Entry e : generateEntry) 
 		{
 			String value = e.toString();

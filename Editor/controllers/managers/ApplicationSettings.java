@@ -325,10 +325,14 @@ public class ApplicationSettings {
 				defaultProtocol.append(pType);
 			
 			HashMap<String, String> paramMap = new HashMap<String, String>();
-			Elements params = p.getFirstChildElement("params").getChildElements();
-			for (int j = 0; j < params.size(); j++) {
-				Element param = params.get(j);
-				paramMap.put(param.getAttributeValue("property"), param.getAttributeValue("value"));
+			Element param = p.getFirstChildElement("params");
+			if (param != null)
+			{
+				Elements params = param.getChildElements();			
+				for (int j = 0; j < params.size(); j++) {
+					Element pa = params.get(j);
+					paramMap.put(pa.getAttributeValue("property"), pa.getAttributeValue("value"));
+				}
 			}
 			
 			protocols.put(pType, paramMap);
@@ -350,7 +354,7 @@ public class ApplicationSettings {
 		}
 	}
 	
-	public static void applyDefaultSettingsToProject(Project project) {
+	public static void applyDefaultSettingsToProject(Project project) {			
 		Project.setAntennas(antennas);
 		Project.setApplicationProtocols(applicationProtocols);
 		Project.setChannels(channels);
@@ -358,14 +362,9 @@ public class ApplicationSettings {
 		Project.setInterfaceQueues(interfaceQueues);
 		Project.setLinkLayers(linkLayers);
 		Project.setMacs(macs);
-		Project.setNetworkInterfaces(networkInterfaces);
-		project.setNodeRange(nodeRange);
-		Project.setPropagationModels(propagationModels);
-		project.setQueueLength(queueLength);
-		project.setReceptionEnergy(receptionEnergy);
-		Project.setRoutingProtocols(routingProtocols);
-		project.setSleepEnergy(sleepEnergy);
-		project.setTransmissionEnergy(transmissionEnergy);
+		Project.setNetworkInterfaces(networkInterfaces);		
+		Project.setPropagationModels(propagationModels);			
+		Project.setRoutingProtocols(routingProtocols);		
 		Project.setTransportProtocols(transportProtocols);
 		
 		project.setSelectedAntenna(defaultAntenna.toString());
@@ -378,6 +377,12 @@ public class ApplicationSettings {
 		project.setSelectedRoutingProtocol(defaultRoutingProtocol.toString());
 		Project.setSelectedTransportProtocol(defaultTransportProtocol.toString());
 		project.setSelectedNetworkInterface(defaultNetworkInterface.toString());
+		
+		project.setNodeRange(nodeRange);
+		project.setQueueLength(queueLength);
+		project.setReceptionEnergy(receptionEnergy);
+		project.setSleepEnergy(sleepEnergy);
+		project.setTransmissionEnergy(transmissionEnergy);
 	}
 	
 	public static org.eclipse.swt.graphics.Color colorAWTtoSWT(Color color) {

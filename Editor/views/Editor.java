@@ -378,30 +378,124 @@ public class Editor extends MainContent implements Observer {
 	@Override
 	protected void updateMenu() {
 		menuManager.add(menuManager_File);
-//		menuManager.add(menuManager_Edit);
-//		menuManager.add(menuManager_View);
-//		menuManager.add(menuManager_Feature);
-//		menuManager.add(menuManager_Manage);
-//		menuManager.add(menuManager_Generate);
-//		menuManager.add(menuMenager_Setting);
+		menuManager.add(menuManager_Edit);
+		menuManager.add(menuManager_View);
+		menuManager.add(menuManager_Feature);
+		menuManager.add(menuManager_Manage);		
+		menuManager.add(menuMenager_Setting);
 		menuManager.add(menuManager_Help);
 	}
 	
-	private void createMenu() {				
-	{	// ------------- File ------------- //
+	private void createMenu() {
+		
+		// region ------------------- File ------------------- //
 
 		menuManager_File = new MenuManager("&File");
-		menuManager_File.add(actNew);
-//		
-	}
+		menuManager_File.add(actNew);		
+		menuManager_File.add(actOpen);
+		menuManager_File.add(actSave);
+		menuManager_File.add(actSaveAs);		
+		menuManager_File.add(new Separator());
+		menuManager_File.add(actImport);
+		{
+			MenuManager menuManager_2 = new MenuManager("Export");
+			menuManager_File.add(menuManager_2);
+			menuManager_2.add(actToImage);
+		//	menuManager_2.add(actToPDF);
+		}
+		menuManager_File.add(actPrint);
+		menuManager_File.add(new Separator());
+		menuManager_File.add(actClose);
+		menuManager_File.add(actExit);
+		
+		// endregion
+
+		// region ------------------- Edit ------------------- //
+
+		menuManager_Edit = new MenuManager("&Edit");				
+		menuManager_Edit.add(actChangeNetworkSize);
+		menuManager_Edit.add(actConfigureNodes);
+		{
+			MenuManager menuManager_2 = new MenuManager("Create");
+			menuManager_Edit.add(menuManager_2);
+			menuManager_2.add(actCreateASingleNode);
+			menuManager_2.add(actCreateASetOfNodes);
+			menuManager_2.add(new Separator());
+			menuManager_2.add(actCreateARandomNode);
+		}
+		menuManager_Edit.add(new Separator());
+		menuManager_Edit.add(actDeleteNodes);
+		menuManager_Edit.add(actDeleteAllNodes);
+
+		// endregion Edit
 	
-	{	// ------------- Help ------------- //
-		menuManager_Help = new MenuManager("&Help");		
-		//menuManager_Help.add(actDocumentation);
-		//menuManager_Help.add(actDemos);
+		// region ------------------- View ------------------- //
+
+		menuManager_View = new MenuManager("&View");		
+		menuManager_View.add(actZoomIn);
+		menuManager_View.add(actZoomOut);
+		menuManager_View.add(new Separator());
+		menuManager_View.add(actViewNetworkInfo);
+		menuManager_View.add(actViewNodeInfo);
+		menuManager_View.add(new Separator());
+		menuManager_View.add(actShowRange);
+		menuManager_View.add(actShowNeighbors);
+		menuManager_View.add(new Separator());
+		menuManager_View.add(actShowConnection);
+		menuManager_View.add(actShowObstacles);
+		menuManager_View.add(new Separator());
+		menuManager_View.add(actShowRulers);
+		
+		// endregion View
+		
+		// region ------------------- Feature ------------------- //
+
+		menuManager_Feature = new MenuManager("Features");		
+		menuManager_Feature.add(actSearchNode);
+		menuManager_Feature.add(actIdentifyBoundary);
+		menuManager_Feature.add(new Separator());
+		menuManager_Feature.add(actCheckConnectivity);
+		{
+			MenuManager menuManager_2 = new MenuManager("Planar Graph");
+			menuManager_Feature.add(menuManager_2);
+			menuManager_2.add(actViewRNGGraph);
+			menuManager_2.add(actViewGGGraph);
+		}
+		menuManager_Feature.add(actViewVoronoiDiagram);
+		menuManager_Feature.add(actViewDelaunayTriangulation);
+		menuManager_Feature.add(new Separator());
+		menuManager_Feature.add(actFindPathByGreedy);
+		menuManager_Feature.add(actViewShortestPath);
+		menuManager_Feature.add(actViewShortestPathTree);
+
+		// endregion Feature
+		
+		// region ------------------- Manager ------------------- //
+
+		menuManager_Manage = new MenuManager("Manager");		
+		menuManager_Manage.add(actManageLabels);
+		menuManager_Manage.add(actManagePaths);
+		menuManager_Manage.add(actManageTrafficFlow);		
+		
+		// endregion manager
+		
+		// region ------------------- Setting ------------------- //
+		
+		menuMenager_Setting = new MenuManager("&Settings");		
+		menuMenager_Setting.add(actDefaultConfiguration);
+		menuMenager_Setting.add(actVisualizeSettings);
+
+		// endregion Setting
+		
+		// region ------------------- Help ------------------- //
+		
+		menuManager_Help = new MenuManager("&Help");	
+		menuManager_Help.add(actDocumentation);
+		menuManager_Help.add(actDemos);
 		menuManager_Help.add(new Separator());
 		menuManager_Help.add(actAbout);
-	}	
+		
+		// endregion help
 	}
 	
 	/**
@@ -1721,18 +1815,6 @@ public class Editor extends MainContent implements Observer {
 		return actToImage;
 	}
 
-//	public Action getActToPDF() {
-//		return actToPDF;
-//	}
-
-	public Action getActUndo() {
-		return actUndo;
-	}
-
-	public Action getActRedo() {
-		return actRedo;
-	}
-
 	public Action getActViewNetworkInfo() {
 		return actViewNetworkInfo;
 	}
@@ -1779,10 +1861,6 @@ public class Editor extends MainContent implements Observer {
 
 	public Action getActPrint() {
 		return actPrint;
-	}
-
-	public Action getActSaveAll() {
-		return actSaveAll;
 	}
 
 	public Action getActZoomIn() {
@@ -1849,8 +1927,7 @@ public class Editor extends MainContent implements Observer {
 	private MenuManager menuManager_Edit;
 	private MenuManager menuManager_View;
 	private MenuManager menuManager_Feature;
-	private MenuManager menuManager_Manage;
-	private MenuManager menuManager_Generate;
+	private MenuManager menuManager_Manage;	
 	private MenuManager menuMenager_Setting;
 	private MenuManager menuManager_Help;
 	
@@ -1862,8 +1939,6 @@ public class Editor extends MainContent implements Observer {
 	private Action actToImage;
 	private Action actClose;
 	private Action actExit;
-	private Action actUndo;
-	private Action actRedo;
 	private Action actConfigureNodes;
 	private Action actCreateASingleNode;
 	private Action actCreateASetOfNodes;
@@ -1893,7 +1968,6 @@ public class Editor extends MainContent implements Observer {
 	private Action actDemos;
 	private Action actAbout;
 	private Action actPrint;
-	private Action actSaveAll;
 	private Action actZoomIn;
 	private Action actZoomOut;
 	private Action actCreateARandomNode;

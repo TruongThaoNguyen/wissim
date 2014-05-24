@@ -116,18 +116,33 @@ public class SProject  extends Project implements TclObject
 			return obj.parse(command, isRecord);
 		}
 		
-		obj = new SCommonObject(arg);
-		p = obj.getInsProc(Converter.parseIdentify(command.get(1)));
-		if (p != null)
-		{			
-			insObj.put(arg, obj);
-			command.remove(0);
-			command.remove(0);
-			return p.Run(command,isRecord);
-		}
+//		obj = new SCommonObject(arg);
+//		p = obj.getInsProc(Converter.parseIdentify(command.get(1)));
+//		if (p != null)
+//		{			
+//			insObj.put(arg, obj);
+//			command.remove(0);
+//			command.remove(0);
+//			return p.Run(command,isRecord);
+//		}
+		
+		if (parseConfig(command)) return "";
 		
 		// Undefined insProc 
 		return getInsProc(null).Run(command, isRecord);
+	}
+	
+	private boolean parseConfig(List<String> command)
+	{
+		for (String key : configure.keySet()) {
+			if (configure.get(key).keySet().contains(command.get(0)))
+			{
+				configure.get(key).get(command.get(0)).put(command.get(1), command.get(2));
+				return true;				
+			}
+		}
+		
+		return false;
 	}
 	
 	// endregion Parse
@@ -561,36 +576,37 @@ public class SProject  extends Project implements TclObject
 	
 	// region ------------------- Configure ------------------- //
 	
-	// region ------------------- Set ------------------- //
-
-	@Override public void setNodeRange(int value) {	
-		nodeRange = value;
-		
+	/**
+	 * Run Threshold to configure propagationModel and Antenna to fit with nodeRange.
+	 * Call after setting each ones of nodeRange, propagationModel and Antenna
+	 */
+	private void runThreshold() {
 		try {
-			TclObject propaga = getObject(network.nodeConfig.getInsVar("-phyType").getValue());
-			TclObject antenna = getObject(network.nodeConfig.getInsVar("-antType" ).getValue());
-						
+			HashMap<String, String> propaga = getPropagationModels().get(getSelectedPropagationModel());
+			HashMap<String, String> antenna = getAntennas().get(getSelectedAntenna());			
+			
+			System.out.print("Set node range\nRun threshold\n");
+			
 			Process p = Runtime.getRuntime().exec(
 					Configure.getNS2Path() + "ns-2.35/indep-utils/propagation/threshold -m " +
-					network.nodeConfig.getInsVar("-propType").getValue().substring(12) + " " +
-					value);		
+					getSelectedPropagationModel().substring(12) + " " +					
+					nodeRange);		
 			
-			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			
+			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));			
 			String line;
-			line = br.readLine();															// distance =		
-		    line = br.readLine();															// propagation model:
-		    line = br.readLine();															// 
-		    line = br.readLine();															// Selected parameters:
-		    line = br.readLine();	propaga.setInsVar("Pt_", 		line.substring(16));	// transmit power:		    	
-		    line = br.readLine();	propaga.setInsVar("freq_", 		line.substring(11));	// frequency:
-		    line = br.readLine();	antenna.setInsVar("Gt_",		line.substring(23));	// transmit antenna gain:
-		    line = br.readLine();	antenna.setInsVar("Gr_",		line.substring(22));	// receive antenna gain:
-		    line = br.readLine();	propaga.setInsVar("L_",			line.substring(13));	// system loss:
-		    line = br.readLine();	antenna.setInsVar("Z_",			line.substring(25));	// transmit antenna height:
-		    line = br.readLine();															// receive antenna height:
-		    line = br.readLine();															// 
-		    line = br.readLine();	antenna.setInsVar("RXThresh_",	line.substring(34));	// Receiving threshold RXThresh_ is:
+			System.out.println(line = br.readLine());													// distance =		
+			System.out.println(line = br.readLine());													// propagation model:
+			System.out.println(line = br.readLine());													// 
+			System.out.println(line = br.readLine());													// Selected parameters:
+			System.out.println(line = br.readLine());	propaga.put("Pt_", 		line.substring(16));	// transmit power:		    	
+			System.out.println(line = br.readLine());	propaga.put("freq_", 	line.substring(11));	// frequency:
+			System.out.println(line = br.readLine());	antenna.put("Gt_",		line.substring(23));	// transmit antenna gain:
+			System.out.println(line = br.readLine());	antenna.put("Gr_",		line.substring(22));	// receive antenna gain:
+			System.out.println(line = br.readLine());	propaga.put("L_",		line.substring(13));	// system loss:
+			System.out.println(line = br.readLine());	antenna.put("Z_",		line.substring(25));	// transmit antenna height:
+			System.out.println(line = br.readLine());													// receive antenna height:
+			System.out.println(line = br.readLine());													// 
+			System.out.println(line = br.readLine());	antenna.put("RXThresh_",line.substring(34));	// Receiving threshold RXThresh_ is:
 		    
 			br.close();			
 		} catch (Exception e) {
@@ -598,49 +614,55 @@ public class SProject  extends Project implements TclObject
 		}
 	}
 	
-	@Override public void setSelectedChannel(String selected) {	network.setInsVar("-channel", "[new " + selected + "]\n"); }	
-		
-	@Override public void setQueueLength		(int 	value) { network.setInsVar("-ifqLen", value + ""); }
-	@Override public void setIddleEnergy		(double value) { network.setInsVar("-energyModel", "EnergyModel"); network.setInsVar("-idlePower", 		value + ""); }
-	@Override public void setReceptionEnergy	(double value) { network.setInsVar("-energyModel", "EnergyModel"); network.setInsVar("-rxPower", 		value + ""); }
-	@Override public void setSleepEnergy		(double value) { network.setInsVar("-energyModel", "EnergyModel"); network.setInsVar("-sleepPower", 	value + ""); }
-	@Override public void setTransmissionEnergy	(double value) { network.setInsVar("-energyModel", "EnergyModel"); network.setInsVar("-transitionPower",value + ""); }
-	@Override public void setInitialEnergy		(double value) { network.setInsVar("-energyModel", "EnergyModel"); network.setInsVar("-initialEnergy", 	value + ""); }
+	// region ------------------- Set ------------------- //
 	
-	@Override public void setSelectedRoutingProtocol	(String selected) {	network.nodeConfig.setInsVar("-adhocRouting",	selected); }
-	@Override public void setSelectedLinkLayer			(String selected) { network.nodeConfig.setInsVar("-llType", 		selected); }
-	@Override public void setSelectedMac				(String selected) {	network.nodeConfig.setInsVar("-macType", 		selected); }
-	@Override public void setSelectedInterfaceQueue		(String selected) {	network.nodeConfig.setInsVar("-ifqType", 		selected); }
-	@Override public void setSelectedAntenna			(String selected) {	network.nodeConfig.setInsVar("-antType", 		selected); }
-	@Override public void setSelectedPropagationModel	(String selected) {	network.nodeConfig.setInsVar("-propType", 		selected); }	
-	@Override public void setSelectedNetworkInterface	(String selected) { network.nodeConfig.setInsVar("-phyType", 		selected); }	
+	@Override public void setSelectedChannel			(String selected) { network.nodeConfig.setInsVar("-channel", "[new " + 	selected + "]"); }		
+	@Override public void setSelectedRoutingProtocol	(String selected) {	network.nodeConfig.setInsVar("-adhocRouting",		selected); }
+	@Override public void setSelectedLinkLayer			(String selected) { network.nodeConfig.setInsVar("-llType", 			selected); }
+	@Override public void setSelectedMac				(String selected) {	network.nodeConfig.setInsVar("-macType", 			selected); }
+	@Override public void setSelectedInterfaceQueue		(String selected) {	network.nodeConfig.setInsVar("-ifqType", 			selected); }		
+	@Override public void setSelectedNetworkInterface	(String selected) { network.nodeConfig.setInsVar("-phyType", 			selected); }
+	@Override public void setSelectedAntenna			(String selected) {	network.nodeConfig.setInsVar("-antType", 			selected); runThreshold(); }
+	@Override public void setSelectedPropagationModel	(String selected) {	network.nodeConfig.setInsVar("-propType", 			selected); runThreshold(); }
 
+	@Override public void setNodeRange			(int 	value) { nodeRange = value;	runThreshold();	}		
+	@Override public void setQueueLength		(int 	value) { network.nodeConfig.setInsVar("-ifqLen", value + ""); }
+	@Override public void setIddleEnergy		(double value) { network.nodeConfig.setInsVar("-energyModel", "EnergyModel"); network.setInsVar("-idlePower", 		value + ""); }
+	@Override public void setReceptionEnergy	(double value) { network.nodeConfig.setInsVar("-energyModel", "EnergyModel"); network.setInsVar("-rxPower", 		value + ""); }
+	@Override public void setSleepEnergy		(double value) { network.nodeConfig.setInsVar("-energyModel", "EnergyModel"); network.setInsVar("-sleepPower", 		value + ""); }
+	@Override public void setTransmissionEnergy	(double value) { network.nodeConfig.setInsVar("-energyModel", "EnergyModel"); network.setInsVar("-transitionPower",	value + ""); }
+	@Override public void setInitialEnergy		(double value) { network.nodeConfig.setInsVar("-energyModel", "EnergyModel"); network.setInsVar("-initialEnergy", 	value + ""); }
+	
 	// endregion Set	
 	
 	// region ------------------- get ------------------- //
 
-	@Override public String getSelectedChannel() 	{
+	@Override public String getSelectedChannel() 	
+	{
 		String v = network.getInsVar("-channel").getValue();
 		if (v.startsWith("[new")) return v.substring(5, v.length() - 7);
 		return v;
 	}
+		
+	public String getSelectedConfig(String key)  	{ return network.nodeConfig.getInsVar(key) == null ? null : network.nodeConfig.getInsVar(key).getValue(); }
 	
-	@Override public int 	getQueueLength() 		{ return Integer.parseInt  (network.getInsVar("-ifqLen"			).getValue()); }
-	@Override public double getSleepEnergy() 		{ return Double.parseDouble(network.getInsVar("-sleepPower"		).getValue()); }
-	@Override public double getTransmissionEnergy() { return Double.parseDouble(network.getInsVar("-transitionPower").getValue()); }
-	@Override public double getIddleEnergy() 		{ return Double.parseDouble(network.getInsVar("-idlePower"		).getValue()); }
-	@Override public double getReceptionEnergy() 	{ return Double.parseDouble(network.getInsVar("-rxPower"		).getValue()); }
-	@Override public double getInitialEnergy()		{ return Double.parseDouble(network.getInsVar("-initialEnergy"	).getValue()); }
+	@Override public String getSelectedRoutingProtocol() 	{ return network.nodeConfig.getInsVar("-adhocRouting"	).getValue(); }
+	@Override public String getSelectedLinkLayer()			{ return network.nodeConfig.getInsVar("-llType"			).getValue(); }
+	@Override public String getSelectedMac() 				{ return network.nodeConfig.getInsVar("-macType"		).getValue(); }
+	@Override public String getSelectedPropagationModel()	{ return network.nodeConfig.getInsVar("-propType"		).getValue(); }
+	@Override public String getSelectedAntenna() 			{ return network.nodeConfig.getInsVar("-antType"		).getValue(); }
+	@Override public String getSelectedInterfaceQueue() 	{ return network.nodeConfig.getInsVar("-ifqType"		).getValue(); }
+	@Override public String getSelectedNetworkInterface() 	{ return network.nodeConfig.getInsVar("-phyType"		).getValue(); }
 	
-	@Override public String getSelectedRoutingProtocol() 	{ return network.getInsVar("-adhocRouting"	).getValue(); }
-	@Override public String getSelectedLinkLayer()			{ return network.getInsVar("-llType"		).getValue(); }
-	@Override public String getSelectedMac() 				{ return network.getInsVar("-macType"		).getValue(); }
-	@Override public String getSelectedPropagationModel()	{ return network.getInsVar("-propType"		).getValue(); }
-	@Override public String getSelectedAntenna() 			{ return network.getInsVar("-antType"		).getValue(); }
-	@Override public String getSelectedInterfaceQueue() 	{ return network.getInsVar("-ifqType"		).getValue(); }
-	@Override public String getSelectedNetworkInterface() 	{ return network.getInsVar("-phyType"		).getValue(); }
+	@Override public int 	getQueueLength() 		{ return Integer.parseInt  (network.nodeConfig.getInsVar("-ifqLen"			).getValue()); }
+	@Override public double getSleepEnergy() 		{ return Double.parseDouble(network.nodeConfig.getInsVar("-sleepPower"		).getValue()); }
+	@Override public double getTransmissionEnergy() { return Double.parseDouble(network.nodeConfig.getInsVar("-transitionPower"	).getValue()); }
+	@Override public double getIddleEnergy() 		{ return Double.parseDouble(network.nodeConfig.getInsVar("-idlePower"		).getValue()); }
+	@Override public double getReceptionEnergy() 	{ return Double.parseDouble(network.nodeConfig.getInsVar("-rxPower"			).getValue()); }
+	@Override public double getInitialEnergy()		{ return Double.parseDouble(network.nodeConfig.getInsVar("-initialEnergy"	).getValue()); }
 	
 	// endregion get
+	
 	// endregion Configre
 
 	// endregion Project feature
