@@ -325,10 +325,14 @@ public class ApplicationSettings {
 				defaultProtocol.append(pType);
 			
 			HashMap<String, String> paramMap = new HashMap<String, String>();
-			Elements params = p.getFirstChildElement("params").getChildElements();
-			for (int j = 0; j < params.size(); j++) {
-				Element param = params.get(j);
-				paramMap.put(param.getAttributeValue("property"), param.getAttributeValue("value"));
+			Element param = p.getFirstChildElement("params");
+			if (param != null)
+			{
+				Elements params = param.getChildElements();			
+				for (int j = 0; j < params.size(); j++) {
+					Element pa = params.get(j);
+					paramMap.put(pa.getAttributeValue("property"), pa.getAttributeValue("value"));
+				}
 			}
 			
 			protocols.put(pType, paramMap);

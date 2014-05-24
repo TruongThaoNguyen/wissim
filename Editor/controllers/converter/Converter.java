@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import controllers.Configure;
@@ -50,7 +51,23 @@ public class Converter
 	public static List<Token> DTC() throws ParseException {
 		List<Token> token = new ArrayList<Token>();
 
+		// configure
+		for (String k : Project.configure.keySet()) {			
+			HashMap<String, String> h = Project.getConfig(k).get(global.getSelectedConfig(k));
+			if (h != null)
+			for (String key : h.keySet()) 
+			{
+				String arg = h.get(key);
+				
+				token.add(new Token(TokenType.Identify, global.getSelectedConfig(k) + " "));
+				token.add(new Token(TokenType.Keyword, "set "));
+				token.add(new Token(TokenType.Identify, key + " " + arg + "\n"));				
+			}			
+			
+			token.add(new Token(TokenType.Separator, "\n"));
+		}
 		
+		// generate code
 		
 		for (Entry e : generateEntry) 
 		{

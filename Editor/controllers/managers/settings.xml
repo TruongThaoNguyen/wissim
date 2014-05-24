@@ -202,23 +202,14 @@
     </link-layers>
     <macs>
         <mac type="Mac/802_11" default="true">
-            <params>
-                <param property="" value=""/>
-            </params>
         </mac>
     </macs>
     <channels>
         <channel type="Channel/WirelessChannel" default="true">
-            <params>
-                <param property="" value=""/>
-            </params>
         </channel>
     </channels>
     <propagation-models>
         <propagation-model type="Propagation/TwoRayGround" default="true">
-            <params>
-                <param property="" value=""/>
-            </params>
         </propagation-model>
     </propagation-models>
     <network-interfaces>
