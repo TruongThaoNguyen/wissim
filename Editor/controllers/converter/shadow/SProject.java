@@ -409,7 +409,8 @@ public class SProject  extends Project implements TclObject
 			protected String run(List<String> command) throws Exception {
 				if (command.size() != 1) throw new ParseException(ParseException.InvalidArgument);				
 							
-				String fileName =  Configure.getDirectory() + Converter.parseIdentify(command.get(0));				
+				String fileName =  Configure.getTclFile().substring(0, Configure.getTclFile().lastIndexOf("/") + 1)
+								+  Converter.parseIdentify(command.get(0));				
 				br = new BufferedReader(new FileReader(fileName));				
 				
 				StringBuilder sb = new StringBuilder();
@@ -610,7 +611,7 @@ public class SProject  extends Project implements TclObject
 		    
 			br.close();			
 		} catch (Exception e) {
-			System.err.print("cannot run");
+			System.err.print(e.getMessage());
 		}
 	}
 	

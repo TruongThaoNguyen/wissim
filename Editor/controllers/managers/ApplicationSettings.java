@@ -290,26 +290,22 @@ public class ApplicationSettings {
 		
 		// gets default energy-model
 		Element eEnergyModel = root.getFirstChildElement("energy-model");
-		Element eIddle = eEnergyModel.getFirstChildElement("iddle");
-		iddleEnergy = Double.parseDouble(eIddle.getValue());
-		Element eReception = eEnergyModel.getFirstChildElement("reception");
-		receptionEnergy = Double.parseDouble(eReception.getValue());
-		Element eTransmission = eEnergyModel.getFirstChildElement("transmission");
-		transmissionEnergy = Double.parseDouble(eTransmission.getValue());
-		Element eSleep = eEnergyModel.getFirstChildElement("sleep");
-		sleepEnergy = Double.parseDouble(eSleep.getValue());
+		iddleEnergy 		= Double.parseDouble(eEnergyModel.getFirstChildElement("iddle"			).getValue());
+		receptionEnergy 	= Double.parseDouble(eEnergyModel.getFirstChildElement("reception"		).getValue());	
+		transmissionEnergy 	= Double.parseDouble(eEnergyModel.getFirstChildElement("transmission"	).getValue());
+		sleepEnergy 		= Double.parseDouble(eEnergyModel.getFirstChildElement("sleep"			).getValue());
 		
 		// gets default protocols
-		getProtocols(root, "routing-protocols", routingProtocols, defaultRoutingProtocol);		
-		getProtocols(root, "transport-protocols", transportProtocols, defaultTransportProtocol);			
-		getProtocols(root, "apps", applicationProtocols, defaultApplicationProtocol);		
-		getProtocols(root, "link-layers", linkLayers, defaultLinkLayer);
-		getProtocols(root, "macs", macs, defaultMac);
-		getProtocols(root, "channels", channels, defaultChannel);
-		getProtocols(root, "propagation-models", propagationModels, defaultPropagationModel);
-		getProtocols(root, "network-interfaces", networkInterfaces, defaultNetworkInterface);
-		getProtocols(root, "antennas", antennas, defaultAntenna);
-		getProtocols(root, "interface-queues", interfaceQueues, defaultInterfaceQueue);
+		getProtocols(root, "routing-protocols", 	routingProtocols, 		defaultRoutingProtocol		);		
+		getProtocols(root, "transport-protocols", 	transportProtocols, 	defaultTransportProtocol	);			
+		getProtocols(root, "apps", 					applicationProtocols, 	defaultApplicationProtocol	);		
+		getProtocols(root, "link-layers", 			linkLayers, 			defaultLinkLayer			);
+		getProtocols(root, "macs", 					macs, 					defaultMac					);
+		getProtocols(root, "channels", 				channels, 				defaultChannel				);
+		getProtocols(root, "propagation-models", 	propagationModels, 		defaultPropagationModel		);
+		getProtocols(root, "network-interfaces", 	networkInterfaces, 		defaultNetworkInterface		);
+		getProtocols(root, "antennas",				antennas, 				defaultAntenna				);
+		getProtocols(root, "interface-queues", 		interfaceQueues, 		defaultInterfaceQueue		);
 		
 		return doc;
 	}

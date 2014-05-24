@@ -12,17 +12,14 @@ public final class Configure {
 	 * @return the tclFile name
 	 */
 	public static String getTclFile() {
-		if (tclFile.contains("/")) return tclFile;
-		return directory + tclFile;
+		return tclFile;		
 	}
 	
 	/**
 	 * set tclFile name
 	 * @param tclFile new file name
 	 */
-	public static String setTclFile(String value) {
-		int i = value.lastIndexOf("/") + 1;
-		directory = value.substring(0, i);
+	public static String setTclFile(String value) {		
 		return tclFile = value;
 	}
 	
@@ -65,16 +62,16 @@ public final class Configure {
 	public static String getDirectory() {
 		return directory;
 	}
-	
-	/**
-	 * set current workspace directory
-	 * @param dir new directory
-	 * @return directory
-	 */
-	public static String setDirectory(String dir) {
-		if (dir.endsWith(".tcl")) dir = dir.substring(0, dir.lastIndexOf("/"));
-		return directory = dir + "/";
-	}
+//	
+//	/**
+//	 * set current workspace directory
+//	 * @param dir new directory
+//	 * @return directory
+//	 */
+//	public static String setDirectory(String dir) {
+//		if (dir.endsWith(".tcl")) dir = dir.substring(0, dir.lastIndexOf("/"));
+//		return directory = dir + "/";
+//	}
 
 	/**
 	 * get path to installed ns2

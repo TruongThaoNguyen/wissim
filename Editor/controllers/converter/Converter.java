@@ -194,9 +194,9 @@ public class Converter
 	
 	public static void main(String[] args)  throws Exception {		
 		if (System.getProperty("os.name").toLowerCase().indexOf("win") > 0)
-			Configure.setDirectory("D:\\Work\\scripts\\30\\gpsr\\");
+			Configure.setTclFile("D:\\Work\\scripts\\30\\gpsr\\");
 		else
-			Configure.setDirectory("/home/trongnguyen/scripts/30/gpsr/");
+			Configure.setTclFile("/home/trongnguyen/scripts/30/gpsr/");
 		String fileName = Configure.getDirectory() + "simulate.tcl";
 		BufferedReader br = new BufferedReader(new FileReader(fileName));
 		StringBuilder sb = new StringBuilder();
