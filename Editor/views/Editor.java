@@ -77,11 +77,10 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-/*
+/**
  * Author: Trong Nguyen
  * 
  */
-
 public class Editor extends MainContent implements Observer {
 
 	/**
@@ -207,7 +206,6 @@ public class Editor extends MainContent implements Observer {
 			
 			@Override
 			public void controlResized(ControlEvent arg0) {
-				// TODO Auto-generated method stub
 				if(getWorkspace() != null)
 					getWorkspace().updateLayout();
 			}
@@ -284,7 +282,6 @@ public class Editor extends MainContent implements Observer {
 			
 			@Override
 			public void modifyText(ModifyEvent arg0) {
-				// TODO Auto-generated method stub
 				System.out.println(styledTextConsole.getText());
 			}
 		});
@@ -319,7 +316,6 @@ public class Editor extends MainContent implements Observer {
 			
 			@Override
 			public void controlResized(ControlEvent arg0) {
-				// TODO Auto-generated method stub
 				if(getWorkspace() != null) {
 					getWorkspace().updateLayout();
 				}
@@ -971,13 +967,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionManageTrafficFlow();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionManageTrafficFlow();
 					}
 				});
@@ -988,13 +982,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionManagePath();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionManagePath();
 					}
 				});
@@ -1005,13 +997,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionManageLabels();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionManageLabels();
 					}
 				});
@@ -1022,13 +1012,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionShowRulers();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionShowRulers();
 					}
 				});
@@ -1054,13 +1042,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionImport();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionImport();
 						
 					}
@@ -1072,13 +1058,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionToImage();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionToImage();
 					}
 				});
@@ -1089,13 +1073,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionDocumentation();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionDocumentation();
 					}
 				});
@@ -1106,13 +1088,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionDemos();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionDemos();
 					}
 				});
@@ -1123,13 +1103,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionPrint();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionPrint();
 					}
 				});
@@ -1140,14 +1118,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionAbout();
-						
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionAbout();
 					}
 				});
@@ -1275,7 +1250,6 @@ public class Editor extends MainContent implements Observer {
 //						} catch (InterruptedException e) {}
 					}
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}		
 			}
@@ -2017,7 +1991,6 @@ public class Editor extends MainContent implements Observer {
 	
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
 		Workspace workspace = getWorkspace();
 		if (arg0 instanceof WorkspacePropertyManager) {
 			String desc = (String) arg1;
