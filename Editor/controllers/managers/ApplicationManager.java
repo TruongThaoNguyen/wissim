@@ -46,6 +46,7 @@ import controllers.helpers.Validator;
 import views.Editor;
 import views.SearchNodeDialog;
 import views.Workspace;
+import views.dialogs.ConfigNodeDialog;
 import views.dialogs.CreateNodeDialog;
 import views.dialogs.CreateNodeSetDialog;
 import views.dialogs.CreateProjectDialog;
@@ -82,12 +83,11 @@ public class ApplicationManager {
 
 		if (confirmed == true) 
 		{
-			Project project;
-			Configure.setTclFile(path);
-			project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "tcl"), result.width, result.height, result.time);
-			ApplicationSettings.applyDefaultSettingsToProject(project);
-			newProjectCount++;
-			
+			Configure.setTclFile(path);									
+			new ConfigNodeDialog(editor.getShell(), SWT.SHEET, ConfigNodeDialog.APP_CONFIG, null).open();
+			Project project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "tcl"), result.width, result.height, result.time);			
+			ApplicationSettings.applyDefaultSettingsToProject(project);			
+			newProjectCount++;			
 			return project;
 		}
 					

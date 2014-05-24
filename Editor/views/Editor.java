@@ -372,10 +372,9 @@ public class Editor extends MainContent implements Observer {
 		menuManager.add(menuManager_File);
 		menuManager.add(menuManager_Edit);
 		menuManager.add(menuManager_View);
-//		menuManager.add(menuManager_Feature);
-//		menuManager.add(menuManager_Manage);
-//		menuManager.add(menuManager_Generate);
-//		menuManager.add(menuMenager_Setting);
+		menuManager.add(menuManager_Feature);
+		menuManager.add(menuManager_Manage);		
+		menuManager.add(menuMenager_Setting);
 		menuManager.add(menuManager_Help);
 	}
 	
@@ -1915,8 +1914,7 @@ public class Editor extends MainContent implements Observer {
 	private MenuManager menuManager_Edit;
 	private MenuManager menuManager_View;
 	private MenuManager menuManager_Feature;
-	private MenuManager menuManager_Manage;
-	private MenuManager menuManager_Generate;
+	private MenuManager menuManager_Manage;	
 	private MenuManager menuMenager_Setting;
 	private MenuManager menuManager_Help;
 	
