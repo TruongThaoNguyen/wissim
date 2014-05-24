@@ -370,8 +370,8 @@ public class Editor extends MainContent implements Observer {
 	@Override
 	protected void updateMenu() {
 		menuManager.add(menuManager_File);
-//		menuManager.add(menuManager_Edit);
-//		menuManager.add(menuManager_View);
+		menuManager.add(menuManager_Edit);
+		menuManager.add(menuManager_View);
 //		menuManager.add(menuManager_Feature);
 //		menuManager.add(menuManager_Manage);
 //		menuManager.add(menuManager_Generate);
