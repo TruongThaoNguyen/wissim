@@ -17,28 +17,28 @@
     </energy-model>
     <routing-protocols>
         <!-- Routing protocols -->
-        <routing-protocol type="AODV">
+        <routing-protocol type="Agent/AODV">
             <params>
                 <param property="" value=""/>
             </params>
         </routing-protocol>
-        <routing-protocol type="DSR">
+        <routing-protocol type="Agent/DSR">
             <params>
                 <param property="" value=""/>
             </params>
         </routing-protocol>
-        <routing-protocol type="DSDV">
+        <routing-protocol type="Agent/DSDV">
             <params>
                 <param property="" value=""/>
             </params>
         </routing-protocol>
-        <routing-protocol type="GPSR">
+        <routing-protocol type="Agent/GPSR">
             <params>
                 <param property="hello_period_" value="5"/>
                 <param property="energy_checkpoint_" value="995"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="GOAL">
+        <routing-protocol type="Agent/GOAL">
             <params>
                 <param property="hello_period_" value="0"/>
                 <param property="energy_checkpoint_" value="995"/>
@@ -49,7 +49,7 @@
                 <param property="limit_" value="0"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="SCALEGOAL">
+        <routing-protocol type="Agent/SCALEGOAL">
             <params>
                 <param property="hello_period_" value="0"/>
                 <param property="energy_checkpoint_" value="995"/>
@@ -59,7 +59,7 @@
                 <param property="limit_boundhole_hop_" value="80"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="HEXAGON">
+        <routing-protocol type="Agent/HEXAGON">
             <params>
                 <param property="hello_period_" value="0"/>
                 <param property="energy_checkpoint_" value="995"/>
@@ -68,7 +68,7 @@
                 <param property="limit_boundhole_hop_" value="80"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="SCALEHEXAGON">
+        <routing-protocol type="Agent/SCALEHEXAGON">
             <params>
                 <param property="hello_period_" value="0"/>
                 <param property="energy_checkpoint_" value="995"/>
@@ -77,7 +77,7 @@
                 <param property="limit_boundhole_hop_" value="80"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="EHDS">
+        <routing-protocol type="Agent/EHDS">
             <params>
                 <param property="hello_period_" value="0"/>
                 <param property="energy_checkpoint_" value="995"/>
@@ -86,7 +86,7 @@
                 <param property="limit_boundhole_hop_" value="80"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="ELLIPSE">
+        <routing-protocol type="Agent/ELLIPSE">
             <params>
                 <param property="hello_period_" value="0"/>
                 <param property="energy_checkpoint_" value="995"/>
@@ -96,7 +96,7 @@
                 <param property="limit_boundhole_hop_" value="80"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="GRIDOFFLINE" default="true">
+        <routing-protocol type="Agent/GRIDOFFLINE" default="true">
             <params>
                 <param property="hello_period_" value="0"/>
                 <param property="energy_checkpoint_" value="995"/>
@@ -106,7 +106,7 @@
                 <param property="limit_boundhole_hop_" value="80"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="GRIDONLINE">
+        <routing-protocol type="Agent/GRIDONLINE">
             <params>
                 <param property="hello_period_" value="0"/>
                 <param property="energy_checkpoint_" value="995"/>
@@ -116,7 +116,7 @@
                 <param property="limit_boundhole_hop_" value="80"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="CONVEXONLINE">
+        <routing-protocol type="Agent/CONVEXONLINE">
             <params>
                 <param property="hello_period_" value="0"/>
                 <param property="energy_checkpoint_" value="995"/>
@@ -126,7 +126,7 @@
                 <param property="limit_boundhole_hop_" value="80"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="ELBAR">
+        <routing-protocol type="Agent/ELBAR">
             <params>
                 <param property="hello_period_" value="5"/>
                 <param property="range_" value="40"/>
@@ -237,7 +237,7 @@
         </antenna>
     </antennas>
     <interface-queues>
-        <interface-queue type="Queue/Droptail/Priqueue" default="true">
+        <interface-queue type="Queue/DropTail/PriQueue" default="true">
             <params>
                 <param property="Prefer_Routing_Protocols" value="1"/>
             </params>
