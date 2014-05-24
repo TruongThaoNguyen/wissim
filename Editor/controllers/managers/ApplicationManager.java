@@ -248,22 +248,6 @@ public class ApplicationManager {
 		}		
 	}
 
-//	public static void undoState(Workspace workspace) {
-//		if (workspace != null) {		
-//			Project p = workspace.getCareTaker().getLastState();
-//			if (p != null)
-//				workspace.setProject(p);
-//		}
-//	}
-
-//	public static void redoState(Workspace workspace) {
-//		if (workspace == null) return;
-//		
-//		Project p = workspace.getCareTaker().getNextState();
-//		if (p != null)
-//			workspace.setProject(p);
-//	}
-
 	public static void createASingleNode(Workspace workspace) {
 		if (workspace == null) return;
 		
