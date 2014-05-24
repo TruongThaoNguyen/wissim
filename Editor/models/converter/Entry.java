@@ -74,6 +74,6 @@ public class Entry {
 	
 	@Override
 	public String toString() {
-		return insProc.Print(arg) + " " + sperator;
+		return insProc.Print(arg) + sperator;
 	}
 }

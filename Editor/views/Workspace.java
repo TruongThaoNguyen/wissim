@@ -258,7 +258,7 @@ public class Workspace extends Composite {
 			gnetwork.setInitLocation(gnetwork.getLocation().x, gnetwork.getLocation().y);			
 		}
 		
-		// update rulers
+		// update rulers ???
 		try {
 			((RulerScrolledComposite)getParent()).updateRulers();
 		} catch (Exception e) {}

@@ -76,6 +76,7 @@ public abstract class InsProc
 			if (o != null)	sb.append(o.getLabel() + " ");		
 			else			sb.append(string + " ");		
 		}
+		if (sb.length() > 0) sb.deleteCharAt(sb.length() - 1);
 		return sb.toString();
 	}
 

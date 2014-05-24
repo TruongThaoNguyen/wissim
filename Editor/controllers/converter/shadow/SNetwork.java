@@ -329,8 +329,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		// remove register entry
 		for (Entry e : ((SNode)n).getEntry())
 		{
-			boolean ok = Converter.generateEntry.remove(e);
-			System.out.print(ok);
+			Converter.generateEntry.remove(e);			
 		}	
 		
 		return true;
