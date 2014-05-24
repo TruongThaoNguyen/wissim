@@ -354,7 +354,7 @@ public class ApplicationSettings {
 		}
 	}
 	
-	public static void applyDefaultSettingsToProject(Project project) {
+	public static void applyDefaultSettingsToProject(Project project) {			
 		Project.setAntennas(antennas);
 		Project.setApplicationProtocols(applicationProtocols);
 		Project.setChannels(channels);
@@ -362,14 +362,9 @@ public class ApplicationSettings {
 		Project.setInterfaceQueues(interfaceQueues);
 		Project.setLinkLayers(linkLayers);
 		Project.setMacs(macs);
-		Project.setNetworkInterfaces(networkInterfaces);
-		project.setNodeRange(nodeRange);
-		Project.setPropagationModels(propagationModels);
-		project.setQueueLength(queueLength);
-		project.setReceptionEnergy(receptionEnergy);
-		Project.setRoutingProtocols(routingProtocols);
-		project.setSleepEnergy(sleepEnergy);
-		project.setTransmissionEnergy(transmissionEnergy);
+		Project.setNetworkInterfaces(networkInterfaces);		
+		Project.setPropagationModels(propagationModels);			
+		Project.setRoutingProtocols(routingProtocols);		
 		Project.setTransportProtocols(transportProtocols);
 		
 		project.setSelectedAntenna(defaultAntenna.toString());
@@ -382,6 +377,12 @@ public class ApplicationSettings {
 		project.setSelectedRoutingProtocol(defaultRoutingProtocol.toString());
 		Project.setSelectedTransportProtocol(defaultTransportProtocol.toString());
 		project.setSelectedNetworkInterface(defaultNetworkInterface.toString());
+		
+		project.setNodeRange(nodeRange);
+		project.setQueueLength(queueLength);
+		project.setReceptionEnergy(receptionEnergy);
+		project.setSleepEnergy(sleepEnergy);
+		project.setTransmissionEnergy(transmissionEnergy);
 	}
 	
 	public static org.eclipse.swt.graphics.Color colorAWTtoSWT(Color color) {
