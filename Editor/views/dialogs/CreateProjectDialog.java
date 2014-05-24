@@ -1,4 +1,4 @@
-package views;
+package views.dialogs;
 
 import models.DialogResult;
 import models.DialogResult.CreateProjectResult;
