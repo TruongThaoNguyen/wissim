@@ -427,6 +427,7 @@ public class ApplicationManager {
 	}
 
 	public static void moveNodeTo(GWirelessNode gWirelessNode) {
+		System.out.println("move to");
 		NodeLocationResult result = (NodeLocationResult) new NodeLocationDialog(
 				gWirelessNode.getShell(), SWT.SHEET, gWirelessNode.getWirelessNode()).open();
 
@@ -443,9 +444,11 @@ public class ApplicationManager {
 							return;
 						}
 				}						
-				
-				gWirelessNode.getWirelessNode().setPosition(result.x, result.y);
-				
+//				System.out.println(gWirelessNode.getWirelessNode().getX());
+				WirelessNode wn = (WirelessNode)ProjectManager.getProject().getNetwork().getNodeById(gWirelessNode.getWirelessNode().getId());
+				wn.setPosition(result.x, result.y);
+//				gWirelessNode.getWirelessNode().setPosition(result.x, result.y);
+//				System.out.println(gWirelessNode.getWirelessNode().getX());
 				// save state
 //				workspace.getCareTaker().save(workspace.getProject(), "Move node");
 			} catch (Exception e) {

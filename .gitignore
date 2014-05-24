@@ -16,3 +16,4 @@ test_store/**
 *.dll
 *tr
 /bin/
+Main/controllers/Configure.java
