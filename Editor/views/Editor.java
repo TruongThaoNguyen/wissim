@@ -951,8 +951,7 @@ public class Editor extends MainContent implements Observer {
 		
 		actRunNS2 = new Action("Run NS2"){
 			public void run() {
-				actionSave();
-				styledTextConsole.setText("Running ... \n");
+				actionSave();				
 				actionRunNS2();
 			}
 		};
@@ -1576,6 +1575,7 @@ public class Editor extends MainContent implements Observer {
 		if (Configure.getNS2Path() == null)	ns2Config();	
   		
 		final Display display = Display.getCurrent();
+		styledTextConsole.append("\nRunning ... \n");
 		
 		new Thread(new Runnable() {			
 			@Override
@@ -1596,14 +1596,16 @@ public class Editor extends MainContent implements Observer {
 								styledTextConsole.append(s + "\n");									
 							}
 						});
-					}												
+					}
+					
+					styledTextConsole.append("\nfinish!\n");
 				}
 				catch (IOException err) 
 				{					
 					MessageDialog.openError(getShell(), "NS2 runtime error", err.getMessage());
 				}		
 			}
-		}).start();
+		}).start();		
 	}
 	
 	public void actionImport() {
