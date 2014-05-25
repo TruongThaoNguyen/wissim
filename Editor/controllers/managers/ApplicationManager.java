@@ -124,7 +124,7 @@ public class ApplicationManager {
 			
 //			workspace.setSavedStateIndex(workspace.getCareTaker().getCurrentStateIndex());
 			
-			mainWindow.getActSave().setEnabled(false);
+//			mainWindow.getActSave().setEnabled(false);
 //			CTabFolder cTabFolder = (CTabFolder) workspace.getParent().getParent();
 //			cTabFolder.getSelection().setText(workspace.getProject().getNetwork().getName());
 		} catch (IOException e) {
