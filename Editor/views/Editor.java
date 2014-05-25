@@ -1234,10 +1234,7 @@ public class Editor extends MainContent implements Observer {
 					display.syncExec(new Runnable() {						
 						@Override
 						public void run() {		
-							
-							// add text							
-							//text.append(s[0]);			
-						
+												
 							// add style, The style itself depends on the region type, use colors from the system	        
 							Color color = null;
 						    switch(token.Type()) 
@@ -1265,9 +1262,6 @@ public class Editor extends MainContent implements Observer {
 							    
 							    text.setStyleRange(sr);	
 						    }
-//						    try {							
-//								Thread.sleep(3);
-//							} catch (InterruptedException e) {}
 						}					
 					});			
 				}				
