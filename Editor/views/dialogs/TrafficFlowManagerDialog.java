@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import views.Editor;
 import views.Workspace;
 
 public class TrafficFlowManagerDialog extends Dialog {
@@ -36,7 +37,7 @@ public class TrafficFlowManagerDialog extends Dialog {
 	 */
 	public TrafficFlowManagerDialog(Shell parent, int style) {
 		super(parent, style);
-		setText("SWT Dialog");		
+		setText("SWT Dialog");
 	}
 
 	/**

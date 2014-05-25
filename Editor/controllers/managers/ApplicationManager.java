@@ -247,7 +247,7 @@ public class ApplicationManager {
 		}		
 	}
 
-	public static void createASingleNode(Workspace workspace) {
+	public static void createASingleNode(Workspace workspace, Editor editor) {
 		if (workspace == null) return;
 		
 		CreateSingleNodeResult result = (CreateSingleNodeResult)new CreateNodeDialog(workspace.getShell(), SWT.SHEET).open();
@@ -263,6 +263,7 @@ public class ApplicationManager {
 //				workspace.getGraphicNodeByNode(wnode).setSelect(true);
 				workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);				
 				workspace.getGraphicNetwork().redraw();
+				editor.getActSave().setEnabled(true);
 			} else {
 				MessageDialog.openInformation(workspace.getShell(), "Cannot create node", "Cannot create node at specified location.\r\n" +
 						"Some reasons may happen:\r\n" +
@@ -273,7 +274,7 @@ public class ApplicationManager {
 		}
 	}
 
-	public static void createASetOfNodes(Workspace workspace) {
+	public static void createASetOfNodes(Workspace workspace,Editor editor) {
 		if (workspace == null) return;
 		
 		CreateNodeSetResult result = (CreateNodeSetResult) new CreateNodeSetDialog(workspace.getShell(), SWT.SHEET, null).open();
@@ -283,12 +284,15 @@ public class ApplicationManager {
 				workspace.updateLayout();			
 				workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);
 				workspace.getGraphicNetwork().redraw();
+				editor.getActSave().setEnabled(true);
+				
 			}
 			if (result.creationType == CreateNodeSetResult.GRID && result.areaType == CreateNodeSetResult.WHOLE_NETWORK) {
 				ProjectManager.createGridNodes(null, result.x_range, result.y_range);
 				workspace.updateLayout();			
 				workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);
 				workspace.getGraphicNetwork().redraw();
+				editor.getActSave().setEnabled(true);
 			}
 		}
 	}
@@ -308,8 +312,9 @@ public class ApplicationManager {
 		gwnode.getParent().layout(true);
 	}
 
-	public static void deleteNodes(Workspace workspace) {
-		if (workspace == null) return;
+	public static boolean deleteNodes(Workspace workspace) {
+		if (workspace == null) return false;
+		boolean rlt = false;
 		
 		boolean answer = MessageDialog.openConfirm(workspace.getShell(), "Delete node(s)", "Are you sure to delete the node(s)?");
 
@@ -320,14 +325,17 @@ public class ApplicationManager {
 						GWirelessNode gn = (GWirelessNode)o;
 						ProjectManager.deleteNode(gn.getWirelessNode());
 						gn.dispose();
+						rlt = true;
 					}
 				}
 				
 //				workspace.getCareTaker().save(workspace.getProject(), "Delete Node(s)");
 			} catch (Exception e) {
+				MessageDialog.openError(workspace.getShell(), "Error", "Delete a set of node not completed!");
 				e.printStackTrace();
 			}
 		}
+		return rlt;
 	}
 	
 	public static GWirelessNode copyNode(Workspace workspace) {
@@ -360,9 +368,9 @@ public class ApplicationManager {
 		}
 	}
 	
-	public static void deleteAllNodes(Workspace w) {
-		if (w == null) return;
-		
+	public static boolean deleteAllNodes(Workspace w) {
+		if (w == null) return false;
+		boolean b = false;
 		if (MessageDialog.openConfirm(w.getShell(), "Delete All nodes?", "Are you sure to delete all nodes?")) {		
 			Control[] cs = w.getChildren();
 			List<Control> tempControls = new ArrayList<Control>();
@@ -378,8 +386,10 @@ public class ApplicationManager {
 				Control c = tempControls.get(0);
 				tempControls.remove(c);
 				c.dispose();
-			}					
+			}		
+			b = true;
 		}
+		return b;
 	}
 
 	public static void viewNetworkInfo(Workspace workspace) {
@@ -553,7 +563,8 @@ public class ApplicationManager {
 		}
 	}
 
-	public static void createARandomNode(Workspace w) {
+	public static boolean createARandomNode(Workspace w) {
+		boolean rlt = false;
 		if (w != null) {
 			// create a random node
 			WirelessNode wnode = ProjectManager.createARandomNode();
@@ -566,8 +577,10 @@ public class ApplicationManager {
 				w.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);
 				
 				w.getGraphicNetwork().redraw();
+				rlt = true;
 			}
 		}
+		return rlt;
 	}
 
 	public static void showRange(Workspace workspace) {

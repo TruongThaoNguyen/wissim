@@ -604,7 +604,8 @@ public class Editor extends MainContent implements Observer {
 
 		actConfigureNodes = new Action("Configure Node(s)") {
 			public void run() {
-				actionConfigureNode();				
+				actionConfigureNode();		
+				actSave.setEnabled(true);
 			}
 		};
 		actConfigureNodes.setToolTipText("Configure Node (ATL + F)");
@@ -950,6 +951,7 @@ public class Editor extends MainContent implements Observer {
 		
 		actRunNS2 = new Action("Run NS2"){
 			public void run() {
+				actionSave();
 				styledTextConsole.setText("Running ... \n");
 				actionRunNS2();
 			}
@@ -1360,17 +1362,17 @@ public class Editor extends MainContent implements Observer {
 		Workspace workspace = getWorkspace();
 		
 		if (workspace != null)
-			new ConfigNodeDialog(getShell(), SWT.SHEET, ConfigNodeDialog.PROJECT_CONFIG, workspace).open();
+			new ConfigNodeDialog(getShell(), SWT.SHEET, ConfigNodeDialog.PROJECT_CONFIG, workspace,Editor.this).open();
 	}
 	
 	public void actionCreateASingleNode() {
 		Workspace workspace = getWorkspace();
-		ApplicationManager.createASingleNode(workspace);
+		ApplicationManager.createASingleNode(workspace,Editor.this);
 	}
 	
 	public void actionCreateASetOfNode() {
 		Workspace workspace = getWorkspace();
-		ApplicationManager.createASetOfNodes(workspace);
+		ApplicationManager.createASetOfNodes(workspace,Editor.this);
 	}
 	
 	public void actionManageTrafficFlow() {
@@ -1380,7 +1382,8 @@ public class Editor extends MainContent implements Observer {
 	
 	public void actionDeleteNodes() {
 		Workspace workspace = getWorkspace();
-		ApplicationManager.deleteNodes(workspace);
+		if(ApplicationManager.deleteNodes(workspace))
+			actSave.setEnabled(true);
 	}
 	
 	public void actionViewNetworkInfo() {
@@ -1445,7 +1448,7 @@ public class Editor extends MainContent implements Observer {
 	}
 	
 	public void actionDefaultConfiguration() {
-		new ConfigNodeDialog(getShell(), SWT.SHEET, ConfigNodeDialog.APP_CONFIG, null).open();
+		new ConfigNodeDialog(getShell(), SWT.SHEET, ConfigNodeDialog.APP_CONFIG, null,Editor.this).open();
 	}
 	
 	public void actionDocumentation() {
@@ -1489,12 +1492,14 @@ public class Editor extends MainContent implements Observer {
 	
 	public void actionCreateARandomNode() {
 		Workspace w = getWorkspace();
-		ApplicationManager.createARandomNode(w);
+		if(ApplicationManager.createARandomNode(w))
+			actSave.setEnabled(true);
 	}
 	
 	public void actionDeleteAllNodes() {
 		Workspace w = getWorkspace();
-		ApplicationManager.deleteAllNodes(w);
+		if(ApplicationManager.deleteAllNodes(w))
+			actSave.setEnabled(true);
 	}
 	
 	public void actionShowRange() {

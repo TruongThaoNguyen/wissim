@@ -23,6 +23,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
+import views.Editor;
+
 import controllers.managers.ProjectManager;
 
 public class ParameterConfigDialog extends Dialog {
@@ -31,6 +33,7 @@ public class ParameterConfigDialog extends Dialog {
 	protected Shell shlParameterConfigure;
 	private Table table;
 	private String protocolName;
+	private Editor editorP;
 
 	private HashMap<String, String> map = new HashMap<String, String>();
 
@@ -40,11 +43,12 @@ public class ParameterConfigDialog extends Dialog {
 	 * @param style
 	 * @param string 
 	 */
-	public ParameterConfigDialog(Shell parent, int style, String title,HashMap<String,String>value) {
+	public ParameterConfigDialog(Shell parent, int style, String title,HashMap<String,String>value,Editor editor) {
 		super(parent, style);
 		setText(title);
 		setMap(value);
 		setProtocolName(title);
+		this.editorP = editor;
 	}
 
 	/**
@@ -187,9 +191,9 @@ public class ParameterConfigDialog extends Dialog {
 				if(flag == 0) {
 					if(routingProtocolMaps != null) {
 						ProjectManager.getProject().getRoutingProtocols().put(protocolName, routingProtocolMaps);
-						System.out.println(ProjectManager.getProject().getRoutingProtocols().get(protocolName));
 						boolean b = MessageDialog.openConfirm(getParent(), "Confirm", "Update successfull! Do you want to quit?");
 						if(b == true) {
+							editorP.getActSave().setEnabled(true);
 							shlParameterConfigure.dispose();
 						}
 					}
