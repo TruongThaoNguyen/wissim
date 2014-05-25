@@ -5,7 +5,8 @@ public final class Configure {
 	static String directory;
 	static String traceFile;
 	static String namTraceFile;
-	static String ns2Path = "/home/khaclinh/ns-allinone-2.34/";
+	//static String ns2Path = "/home/khaclinh/ns-allinone-2.34/";
+	static String ns2Path = "/home/trongnguyen/NS2/";
 	static String tclFile;
 	
 	/**

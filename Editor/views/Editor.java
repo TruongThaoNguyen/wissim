@@ -178,11 +178,6 @@ public class Editor extends MainContent implements Observer {
 		statesHandler.initialize();
 	}
 	
-	@Override
-	public final Shell getShell() {
-		return super.getShell();
-	}
-	
 	/**
 	 * createContent
 	 */
@@ -1575,6 +1570,7 @@ public class Editor extends MainContent implements Observer {
 	public void actionRunNS2() {		
 		if (Configure.getNS2Path() == null)	ns2Config();	
   		
+		final Shell shell = getShell();
 		final Display display = Display.getCurrent();
 		styledTextConsole.append("\nRunning ... \n");
 		
@@ -1607,7 +1603,7 @@ public class Editor extends MainContent implements Observer {
 				}
 				catch (IOException err) 
 				{					
-					MessageDialog.openError(getShell(), "NS2 runtime error", err.getMessage());
+					MessageDialog.openError(shell, "NS2 runtime error", err.getMessage());
 				}		
 			}
 		}).start();		
