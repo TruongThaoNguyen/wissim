@@ -1,7 +1,6 @@
 package views;
 
 import java.awt.Desktop;
-import java.awt.Dialog;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -43,8 +42,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.wb.swt.ResourceManager;
@@ -177,6 +176,11 @@ public class Editor extends MainContent implements Observer {
 
 		statesHandler = new StatesHandler(this);
 		statesHandler.initialize();
+	}
+	
+	@Override
+	public final Shell getShell() {
+		return super.getShell();
 	}
 	
 	/**
@@ -1562,30 +1566,39 @@ public class Editor extends MainContent implements Observer {
 	 * @author trongnguyen
 	 */
 	public void actionRunNS2() {
-		for(int i = 0; i< 100000;i ++) {
-			styledTextConsole.append(i+"\n");
-		}
-		styledTextConsole.getParent().notify();
+		
 		saveScript();		
 		if (Configure.getNS2Path() == null)	ns2Config();	
   		
-		try 
-		{			
-			Process p = Runtime.getRuntime().exec(Configure.getNS2Path() + "/bin/ns " + Configure.getTclFile());
-			p.waitFor();
-			
-			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));			
-			String line;
+		final Display display = Display.getCurrent();
 		
-			while ((line = input.readLine()) != null) 
-			{				
-				styledTextConsole.append(line + "\n");
-			}		
-		}
-		catch (Exception err) 
-		{
-			MessageDialog.openError(getShell(), "NS2 runtime error", err.getMessage());
-		}
+		new Thread(new Runnable() {			
+			@Override
+			public void run() {		
+				try 
+				{			
+					Process p = Runtime.getRuntime().exec(Configure.getNS2Path() + "/bin/ns " + Configure.getTclFile());
+					p.waitFor();
+					
+					BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));			
+					final String[] line = new String[1];
+				
+					while ((line[0] = input.readLine()) != null) 
+					{				
+						display.asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								styledTextConsole.append(line[0] + "\n");	
+							}
+						});						
+					}		
+				}
+				catch (Exception err) 
+				{					
+					MessageDialog.openError(getShell(), "NS2 runtime error", err.getMessage());
+				}		
+			}
+		}).start();
 	}
 	
 	public void actionImport() {
