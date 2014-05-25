@@ -1572,9 +1572,7 @@ public class Editor extends MainContent implements Observer {
 	 * Run NS2
 	 * @author trongnguyen
 	 */
-	public void actionRunNS2() {
-		
-		saveScript();		
+	public void actionRunNS2() {		
 		if (Configure.getNS2Path() == null)	ns2Config();	
   		
 		final Display display = Display.getCurrent();
