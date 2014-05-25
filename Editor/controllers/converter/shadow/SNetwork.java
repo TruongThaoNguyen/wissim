@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import controllers.Configure;
 import controllers.converter.Converter;
 import controllers.converter.Scanner;
 import controllers.converter.Scheduler;
@@ -202,12 +203,14 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 				if (command.size() == 0)	throw new ParseException(ParseException.MissArgument);
 				if (command.size() > 1)		throw new ParseException(ParseException.InvalidArgument);
 				
-				return setInsVar("trace-all", Converter.parseIdentify(command.get(0)), command.get(0)).getValue();
+				return Configure.setTraceFile(Converter.parseIdentify(command.get(0)));
+				//return setInsVar("trace-all", Converter.parseIdentify(command.get(0)), command.get(0)).getValue();
 			}
 
 			@Override
 			public String print(List<String> command) {
-				return getInsVar("trace-all").getLabel();
+				//return getInsVar("trace-all").getLabel();
+				return Configure.getTraceFile();
 			}			
 		};
 	
