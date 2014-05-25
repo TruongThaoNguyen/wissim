@@ -1596,9 +1596,7 @@ public class Editor extends MainContent implements Observer {
 								styledTextConsole.append(s + "\n");									
 							}
 						});
-					}
-					
-					styledTextConsole.append("\nfinish!\n");
+					}					
 				}
 				catch (IOException err) 
 				{					
