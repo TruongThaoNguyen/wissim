@@ -44,10 +44,52 @@ public class Converter
 	/**
 	 * DTC - Design to Code.
 	 * Generate TCL code from Project model.
-	 * @return List of String, each element of List is a line of TCL scripts
+	 * @return String
 	 * @throws ParseException 
 	 */
-	public static List<Token> DTC() throws ParseException {
+	public static String DTC() throws ParseException {
+		StringBuilder sb = new StringBuilder();
+		
+		// configure
+		for (String k : Project.configure.keySet()) {
+			HashMap<String, String> h = Project.getConfig(k).get(global.getSelectedConfig(k));
+			if (h != null)
+			{
+				for (String key : h.keySet()) 
+				{										
+					sb.append(global.getSelectedConfig(k));
+					sb.append(" set ");
+					sb.append(key);
+					sb.append(" ");
+					sb.append(h.get(key));
+					sb.append("\n");
+				}				
+				
+				sb.append("\n");				
+			}
+		}
+		
+		// remove raw space line
+		while (generateEntry.get(0).toString().trim().isEmpty()) generateEntry.remove(0);
+		
+		// generate code		
+		for (Entry e : generateEntry) 
+		{
+			String value = e.toString();			System.out.print(value);
+			sb.append(value);
+		}
+		
+		return sb.toString();
+	}
+	
+	/**
+	 * DTC - Design to Code
+	 * Generate TCL code form Project model.
+	 * Split Tcl code to token to display with style
+	 * @return list of token
+	 * @throws ParseException
+	 */
+	public static List<Token> DTC_token() throws ParseException {
 		List<Token> token = new ArrayList<Token>();
 
 		// configure
@@ -56,11 +98,10 @@ public class Converter
 			if (h != null)
 			{
 				for (String key : h.keySet()) 
-				{
-					String arg = h.get(key);					
-					token.add(new Token(TokenType.Identify, global.getSelectedConfig(k) + " "));
-					token.add(new Token(TokenType.Keyword, "set "));
-					token.add(new Token(TokenType.Identify, key + " " + arg + "\n"));				
+				{					
+					token.add(new Token(TokenType.Identify, global.getSelectedConfig(k)));
+					token.add(new Token(TokenType.Keyword, " set "));
+					token.add(new Token(TokenType.Identify, key + " " + h.get(key) + "\n"));				
 				}				
 				token.add(new Token(TokenType.Separator, "\n"));
 			}
@@ -72,8 +113,7 @@ public class Converter
 		// generate code		
 		for (Entry e : generateEntry) 
 		{
-			String value = e.toString();
-			System.out.print(value);
+			String value = e.toString();			System.out.print(value);
 			Scanner scanner = new Scanner(value);
 			token.addAll(scanner.scan());
 		}

@@ -100,10 +100,8 @@ public class ProjectManager {
 	public static void saveProject() throws IOException, ParseException {						
 		String fileName = Configure.getTclFile();
 		
-		BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
-		for (Token token : Converter.DTC()) {
-			bw.write(token.toString());
-		}					
+		BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));		
+		bw.write(Converter.DTC());
 		bw.close();				
 	}
 	

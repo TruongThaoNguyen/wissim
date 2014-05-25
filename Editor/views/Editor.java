@@ -1,6 +1,7 @@
 package views;
 
 import java.awt.Desktop;
+import java.awt.Dialog;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -42,6 +43,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.wb.swt.ResourceManager;
@@ -106,6 +109,7 @@ public class Editor extends MainContent implements Observer {
 		actionGetTab();
 		actionEvent();
 		getCTabFolder().setSelection(1);
+		sashForm.setWeights(new int[] {525, 111});
 		
 		Display.getCurrent().addFilter(SWT.KeyDown, new Listener() {			
 			@Override
@@ -272,12 +276,12 @@ public class Editor extends MainContent implements Observer {
 
 		Composite bottomComposite = new Composite(subSashForm, SWT.NONE);
 		bottomComposite.setLayout(new GridLayout(1, false));
-
+				
 		styledTextConsole = new Text(bottomComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
 		GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd_styledText.heightHint = 91;
 		styledTextConsole.setLayoutData(gd_styledText);	
-						
+								
 		styledTextConsole.addModifyListener(new ModifyListener() {
 			
 			@Override
@@ -285,15 +289,17 @@ public class Editor extends MainContent implements Observer {
 				System.out.println(styledTextConsole.getText());
 			}
 		});
+
 		// endregion console composite
 		
-		subSashForm.setWeights(new int[] {184, 68});
+		progressBar = new ProgressBar(subSashForm, SWT.NONE);
+		formToolkit.adapt(progressBar, true, true);
+		subSashForm.setWeights(new int[] {311, 108, 5});
 		
 		// region ------------------- properties composite ------------------- //		
 				
 		propertiesComposite = new Composite(sashForm,  SWT.BORDER | SWT.H_SCROLL);
-		GridData gd_propertiesComposite = new GridData(SWT.RIGHT, SWT.FILL, false, true);
-		
+		GridData gd_propertiesComposite = new GridData(SWT.RIGHT, SWT.FILL, false, true);		
 		propertiesComposite.setLayoutData(gd_propertiesComposite);
 		gd_propertiesComposite.heightHint = 50;
 		
@@ -311,7 +317,7 @@ public class Editor extends MainContent implements Observer {
 		Label lblSss = new Label(propertiesComposite, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.CENTER);
 		lblSss.setText("sss");
 		lblSss.setBounds(0, 101, 64, 14);
-		sashForm.setWeights(new int[] {418, 75});
+		
 		sashForm.addControlListener(new ControlListener() {
 			
 			@Override
@@ -1204,56 +1210,70 @@ public class Editor extends MainContent implements Observer {
 	 * @throws ParseException 
 	 */
 	public void updateDesign() throws ParseException {				
-		text.setText("");
 		
-		Display.getCurrent().asyncExec(new Runnable() {			
+		// set text
+		text.setText(Converter.DTC());
+		
+		// set style
+		final List<Token> tokenList = Converter.DTC_token();
+		final Display display = Display.getCurrent();
+		
+		new Thread(new Runnable() 
+		{
 			@Override
-			public void run() {						
-				int index = 0;
-				String s = "";				
-				try {
-					for (Token token : Converter.DTC()) 
-					{
-						// add text
-						index += s.length();
-						s = token.toString();
-						text.append(s);			
+			public void run() 
+			{		
+				final int[] index = new int[1];
+				final String[] s = new String[1];
+				s[0] = "";
+				for (final Token token : tokenList)
+				{			
+					index[0] += s[0].length();
+					s[0] = token.toString();
 					
-						// add style, The style itself depends on the region type, use colors from the system	        
-						Color color;
-					    switch(token.Type()) 
-					    {
-					    	case Keyword:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_BLUE);	break;
-					    	case Comment:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN);	break;
-					    	case Quote:		color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_YELLOW);	break;
-					    	case Referent:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED);	break;
-							case Brace:
-							case Bracket:			
-							case Parenthesis:													
-							case Identify:
-							case Separator:
-							case Space:					
-							default:
-								continue;
-					    }
- 
-					    // Define the position and limit
-					    StyleRange sr = new StyleRange();
-					    sr.foreground = color;
-					    sr.start = index;
-					    sr.length = s.length();
-					    
-					    text.setStyleRange(sr);
-					    
-//					    try {
-//							Thread.sleep(10);
-//						} catch (InterruptedException e) {}
-					}
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}		
+					display.syncExec(new Runnable() {						
+						@Override
+						public void run() {		
+							
+							// add text							
+							//text.append(s[0]);			
+						
+							// add style, The style itself depends on the region type, use colors from the system	        
+							Color color = null;
+						    switch(token.Type()) 
+						    {
+						    	case Keyword:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_BLUE);	break;
+						    	case Comment:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN);	break;
+						    	case Quote:		color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_YELLOW);	break;
+						    	case Referent:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED);	break;
+								case Brace:
+								case Bracket:			
+								case Parenthesis:													
+								case Identify:
+								case Separator:
+								case Space:					
+								default:		color = null;							
+						    }
+			
+						    if (color != null)
+						    {
+							    // Define the position and limit
+							    StyleRange sr = new StyleRange();
+							    sr.foreground = color;
+							    sr.start = index[0];
+							    sr.length = s[0].length();
+							    
+							    text.setStyleRange(sr);	
+						    }
+//						    try {							
+//								Thread.sleep(3);
+//							} catch (InterruptedException e) {}
+						}					
+					});			
+				}				
 			}
-		});
+		}).start();
+		
 	}
 	
 	public void updateNodeInfoLabel() {
@@ -1987,6 +2007,7 @@ public class Editor extends MainContent implements Observer {
 	private Label lblNewLabel_1;
 	private Label lblNewLabel_2;
 	private final FormToolkit formToolkit = new FormToolkit(Display.getDefault());
+	private ProgressBar progressBar;
 	
 	
 	@Override
