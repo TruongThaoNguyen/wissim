@@ -607,7 +607,7 @@ public class SProject  extends Project implements TclObject
 			System.out.println(line = br.readLine());	antenna.put("Z_",		line.substring(25));	// transmit antenna height:
 			System.out.println(line = br.readLine());													// receive antenna height:
 			System.out.println(line = br.readLine());													// 
-			System.out.println(line = br.readLine());	antenna.put("RXThresh_",line.substring(34));	// Receiving threshold RXThresh_ is:
+			System.out.println(line = br.readLine());	propaga.put("RXThresh_",line.substring(34));	// Receiving threshold RXThresh_ is:
 		    
 			br.close();			
 		} catch (Exception e) {
