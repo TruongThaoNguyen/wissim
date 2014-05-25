@@ -350,6 +350,7 @@ public class Editor extends MainContent implements Observer {
 			{
 				if(tabFolder.getSelectionIndex() == 0)		// Edit
 				{
+					statesHandler.initialize();
 					try 
 					{
 						updateDesign();
@@ -361,6 +362,7 @@ public class Editor extends MainContent implements Observer {
 				}
 				else										// Design
 				{
+					statesHandler.activeProject();
 					if(text.getText() != "") 
 					{
 						try 
@@ -1918,6 +1920,14 @@ public class Editor extends MainContent implements Observer {
 	
 	public Action getActRunNS2() {
 		return actRunNS2;
+	}
+	
+	public Action getActDefaultConfiguration() {
+		return actDefaultConfiguration;
+	}
+	
+	public Action getActVisualizeSettings() {
+		return actVisualizeSettings;
 	}
 	
 	public Text getStyledTextConsole() {

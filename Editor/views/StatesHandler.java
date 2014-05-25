@@ -54,6 +54,8 @@ public class StatesHandler {
 		window.getActRunNS2().setEnabled(false);
 		window.getActNetworkReferenceRemain().setEnabled(false);
 		window.getActScriptReferenceRemain().setEnabled(false);
+		window.getActDefaultConfiguration().setEnabled(false);
+		window.getActVisualizeSettings().setEnabled(false);
 	}
 	
 	public void activeProject() {
@@ -102,6 +104,8 @@ public class StatesHandler {
 		window.getActRunNS2().setEnabled(true);
 		window.getActNetworkReferenceRemain().setEnabled(true);
 		window.getActScriptReferenceRemain().setEnabled(true);
+		window.getActDefaultConfiguration().setEnabled(true);
+		window.getActVisualizeSettings().setEnabled(true);
 	}
 
 	public void activeMouseCreateArea() {
