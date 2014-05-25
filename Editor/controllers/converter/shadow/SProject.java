@@ -137,7 +137,7 @@ public class SProject  extends Project implements TclObject
 		for (String key : configure.keySet()) {
 			if (configure.get(key).keySet().contains(command.get(0)))
 			{
-				configure.get(key).get(command.get(0)).put(command.get(1), command.get(2));
+				configure.get(key).get(command.get(0)).put(command.get(2), command.get(3));
 				return true;				
 			}
 		}

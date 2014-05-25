@@ -1576,7 +1576,7 @@ public class Editor extends MainContent implements Observer {
 			@Override
 			public void run() {		
 				try 
-				{							
+				{						
 					Process p = Runtime.getRuntime().exec(Configure.getNS2Path() + "/bin/ns " + Configure.getTclFile());
 					
 					BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));			
