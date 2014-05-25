@@ -1580,12 +1580,11 @@ public class Editor extends MainContent implements Observer {
 				try 
 				{		
 					Process p = null;
-					File pathToExecutable = new File( Configure.getNS2Path() + "/bin/ns" );
-					ProcessBuilder pb = new ProcessBuilder(pathToExecutable.getAbsolutePath(),Configure.getTclFile());
+					File pathToExecutable = new File(Configure.getNS2Path() + "/bin/ns");
+					ProcessBuilder pb = new ProcessBuilder(pathToExecutable.getAbsolutePath(),Configure.getTclFile());					
 					pb.directory(new File(Configure.getDirectory()).getAbsoluteFile());
 					pb.redirectErrorStream(true);
-					p = pb.start();
-					
+					p = pb.start();				
 					
 					BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));			
 					String line;
