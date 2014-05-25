@@ -91,16 +91,16 @@ public abstract class Project {
 		
 	public static HashMap<String, HashMap<String, String>> getConfig(String label) 	{ return configure.get(label); }
 	
-	public static HashMap<String, HashMap<String, String>> getRoutingProtocols() 	{ return configure.get("-adhocRouting");		}
-	public static HashMap<String, HashMap<String, String>> getLinkLayers() 			{ return configure.get("-llType");				}
-	public static HashMap<String, HashMap<String, String>> getMacs() 				{ return configure.get("-macType"); 			}	
-	public static HashMap<String, HashMap<String, String>> getPropagationModels() 	{ return configure.get("-propType");			}
-	public static HashMap<String, HashMap<String, String>> getNetworkInterfaces() 	{ return configure.get("-phyType");				}
-	public static HashMap<String, HashMap<String, String>> getAntennas() 			{ return configure.get("-antType");				}
-	public static HashMap<String, HashMap<String, String>> getInterfaceQueues() 	{ return configure.get("-ifqType");				}
-	public static HashMap<String, HashMap<String, String>> getChannels()			{ return configure.get("-channel"); 			}
-	public static HashMap<String, HashMap<String, String>> getTransportProtocols()	{ return configure.get("transportProtocols");	}
-	public static HashMap<String, HashMap<String, String>> getApplicationProtocols(){ return configure.get("applicationProtocols");	}
+	public static HashMap<String, HashMap<String, String>> getRoutingProtocols() 	{ return configure.get("-adhocRouting");		}//
+	public static HashMap<String, HashMap<String, String>> getLinkLayers() 			{ return configure.get("-llType");				}//
+	public static HashMap<String, HashMap<String, String>> getMacs() 				{ return configure.get("-macType"); 			}//
+	public static HashMap<String, HashMap<String, String>> getPropagationModels() 	{ return configure.get("-propType");			}//
+	public static HashMap<String, HashMap<String, String>> getNetworkInterfaces() 	{ return configure.get("-phyType");				}//
+	public static HashMap<String, HashMap<String, String>> getAntennas() 			{ return configure.get("-antType");				}//
+	public static HashMap<String, HashMap<String, String>> getInterfaceQueues() 	{ return configure.get("-ifqType");				}//
+	public static HashMap<String, HashMap<String, String>> getChannels()			{ return configure.get("-channel"); 			}//
+	public static HashMap<String, HashMap<String, String>> getTransportProtocols()	{ return configure.get("transportProtocols");	}//
+	public static HashMap<String, HashMap<String, String>> getApplicationProtocols(){ return configure.get("applicationProtocols");	}//
 	
 	// endregion Configure properties
 	

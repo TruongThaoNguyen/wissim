@@ -583,7 +583,7 @@ public class SProject  extends Project implements TclObject
 	 */
 	private void runThreshold() {
 		try {
-			HashMap<String, String> propaga = getPropagationModels().get(getSelectedPropagationModel());
+			HashMap<String, String> netinte = getNetworkInterfaces().get(getSelectedNetworkInterface());
 			HashMap<String, String> antenna = getAntennas().get(getSelectedAntenna());			
 			
 			System.out.print("Set node range\nRun threshold\n");
@@ -599,15 +599,15 @@ public class SProject  extends Project implements TclObject
 			System.out.println(line = br.readLine());													// propagation model:
 			System.out.println(line = br.readLine());													// 
 			System.out.println(line = br.readLine());													// Selected parameters:
-			System.out.println(line = br.readLine());	propaga.put("Pt_", 		line.substring(16));	// transmit power:		    	
-			System.out.println(line = br.readLine());	propaga.put("freq_", 	line.substring(11));	// frequency:
+			System.out.println(line = br.readLine());	netinte.put("Pt_", 		line.substring(16));	// transmit power:		    	
+			System.out.println(line = br.readLine());	netinte.put("freq_", 	line.substring(11));	// frequency:
 			System.out.println(line = br.readLine());	antenna.put("Gt_",		line.substring(23));	// transmit antenna gain:
 			System.out.println(line = br.readLine());	antenna.put("Gr_",		line.substring(22));	// receive antenna gain:
-			System.out.println(line = br.readLine());	propaga.put("L_",		line.substring(13));	// system loss:
+			System.out.println(line = br.readLine());	netinte.put("L_",		line.substring(13));	// system loss:
 			System.out.println(line = br.readLine());	antenna.put("Z_",		line.substring(25));	// transmit antenna height:
 			System.out.println(line = br.readLine());													// receive antenna height:
 			System.out.println(line = br.readLine());													// 
-			System.out.println(line = br.readLine());	propaga.put("RXThresh_",line.substring(34));	// Receiving threshold RXThresh_ is:
+			System.out.println(line = br.readLine());	netinte.put("RXThresh_",line.substring(34));	// Receiving threshold RXThresh_ is:
 		    
 			br.close();			
 		} catch (Exception e) {
