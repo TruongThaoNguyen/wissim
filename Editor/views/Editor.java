@@ -1572,13 +1572,12 @@ public class Editor extends MainContent implements Observer {
 	 * Run NS2
 	 * @author trongnguyen
 	 */
-	public void actionRunNS2() {
-		
-		saveScript();		
-		if (Configure.getNS2Path() == null)	ns2Config();
-		
-		
+	public void actionRunNS2() {		
+		if (Configure.getNS2Path() == null)	ns2Config();	
+  		
 		final Display display = Display.getCurrent();
+		styledTextConsole.append("\nRunning ... \n");
+		
 		new Thread(new Runnable() {			
 			@Override
 			public void run() {		
@@ -1604,14 +1603,16 @@ public class Editor extends MainContent implements Observer {
 								styledTextConsole.append(s + "\n");									
 							}
 						});
-					}												
+					}
+					
+					styledTextConsole.append("\nfinish!\n");
 				}
 				catch (IOException err) 
 				{					
 					MessageDialog.openError(getShell(), "NS2 runtime error", err.getMessage());
 				}		
 			}
-		}).start();
+		}).start();		
 	}
 	
 	public void actionImport() {
