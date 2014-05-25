@@ -1576,24 +1576,24 @@ public class Editor extends MainContent implements Observer {
 			@Override
 			public void run() {		
 				try 
-				{			
+				{							
 					Process p = Runtime.getRuntime().exec(Configure.getNS2Path() + "/bin/ns " + Configure.getTclFile());
-					p.waitFor();
 					
 					BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));			
-					final String[] line = new String[1];
+					String line;
 				
-					while ((line[0] = input.readLine()) != null) 
-					{				
+					while ((line = input.readLine()) != null) 
+					{						
+						final String s = line;
 						display.asyncExec(new Runnable() {
 							@Override
-							public void run() {
-								styledTextConsole.append(line[0] + "\n");	
+							public void run() {																				
+								styledTextConsole.append(s + "\n");									
 							}
-						});						
-					}		
+						});
+					}												
 				}
-				catch (Exception err) 
+				catch (IOException err) 
 				{					
 					MessageDialog.openError(getShell(), "NS2 runtime error", err.getMessage());
 				}		
