@@ -951,7 +951,7 @@ public class Editor extends MainContent implements Observer {
 		
 		actRunNS2 = new Action("Run NS2"){
 			public void run() {
-				actionSave();				
+				styledTextConsole.setText("Running ... \n");
 				actionRunNS2();
 			}
 		};
@@ -1169,6 +1169,7 @@ public class Editor extends MainContent implements Observer {
 		tabFolder.setSelection(1);
 		if (ApplicationManager.openProject(editor) == null) return;		
 		showProject();		
+		System.setProperty("user.dir", Configure.getDirectory());
 		getWorkspace().getSelectableObject().get(getWorkspace().getSelectableObject().size() - 1).moveAbove(null);
 		updateNetworkInfoLabel();
 		updateNodeInfoLabel();
@@ -1581,8 +1582,14 @@ public class Editor extends MainContent implements Observer {
 			@Override
 			public void run() {		
 				try 
-				{							
-					Process p = Runtime.getRuntime().exec(Configure.getNS2Path() + "/bin/ns " + Configure.getTclFile());
+				{		
+					Process p = null;
+					File pathToExecutable = new File( Configure.getNS2Path() + "/bin/ns" );
+					ProcessBuilder pb = new ProcessBuilder(pathToExecutable.getAbsolutePath(),Configure.getTclFile());
+					pb.directory(new File(Configure.getDirectory()).getAbsoluteFile());
+					pb.redirectErrorStream(true);
+					p = pb.start();
+					
 					
 					BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));			
 					String line;
