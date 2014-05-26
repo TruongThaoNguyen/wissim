@@ -22,24 +22,34 @@ public final class Configure {
 	 * @param tclFile new file name
 	 */
 	public static String setTclFile(String value) {
-		int i = value.lastIndexOf("/") + 1;
-		directory = value.substring(0, i);
+		int i = value.lastIndexOf("/");
+		if (i != -1)
+		{			
+			directory = value.substring(0, i + 1);
+			return tclFile = value.substring(i + 1);
+		}		
+			
 		return tclFile = value;
 	}
 	
 	/**
 	 * @return the traceFile name
 	 */
-	public static String getTraceFile() {
-		if (traceFile.contains("/"));
-		return directory + traceFile;
+	public static String getTraceFile() {		
+		return traceFile;
 	}
 
 	/**
 	 * set traceFile name
 	 * @param traceFile new file name
 	 */
-	public static String setTraceFile(String value) {		
+	public static String setTraceFile(String value) {
+		int i = value.lastIndexOf("/");
+		if (i != -1)
+		{			
+			directory = value.substring(0, i + 1);
+			return traceFile = value.substring(i + 1);
+		}		
 		return traceFile = value;
 	}
 

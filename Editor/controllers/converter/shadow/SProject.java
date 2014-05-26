@@ -363,10 +363,16 @@ public class SProject  extends Project implements TclObject
 				if (command.size() == 0)	throw new ParseException(ParseException.MissArgument);
 				if (command.size() > 2) 	throw new ParseException(ParseException.InvalidArgument);
 				
-				String arg = Converter.parseIdentify(command.get(1));
-				if (!arg.equals("w") && !arg.equals("r")) throw new ParseException(ParseException.InvalidArgument);
+				String arg1 = Converter.parseIdentify(command.get(0));
+				String arg2 = Converter.parseIdentify(command.get(1));				
 				
-				return "[open " + Converter.parseIdentify(command.get(0)) + " " + command.get(1) + "]";
+				SCommonObject file = new SCommonObject("");				
+				String id = addObject(file);
+				file.setLabel("[open " + arg1 + " " + arg2 + "]");
+				file.setInsVar("name",	arg1);
+				file.setInsVar("arg", 	arg2);
+							
+				return id;
 			}	
 		};
 	
@@ -432,27 +438,26 @@ public class SProject  extends Project implements TclObject
 			}
 		};
 	
-		new InsProc(this, "nametrace-all-wireless") {
-
-			@Override
-			protected String run(List<String> arg) throws Exception {
-				if (arg.size() != 3) throw new ParseException(ParseException.InvalidArgument);				
-				getNetwork().setWidth(Integer.parseInt(Converter.parseIdentify(arg.get(1))));
-				getNetwork().setLength(Integer.parseInt(Converter.parseIdentify(arg.get(2))));
-				return Configure.setNamTraceFile(Converter.parseIdentify(arg.get(0)));
-			}
-			
-		};
-	
-		new InsProc(this, "trace-all") {
-
-			@Override
-			protected String run(List<String> arg) throws Exception {
-				if (arg.size() != 1 ) throw new ParseException(ParseException.InvalidArgument);
-				return Configure.setTraceFile(Converter.parseIdentify(arg.get(0)));
-			}
-			
-		};
+//		new InsProc(this, "nametrace-all-wireless") {
+//
+//			@Override
+//			protected String run(List<String> arg) throws Exception {
+//				if (arg.size() != 3) throw new ParseException(ParseException.InvalidArgument);				
+//				getNetwork().setWidth(Integer.parseInt(Converter.parseIdentify(arg.get(1))));
+//				getNetwork().setLength(Integer.parseInt(Converter.parseIdentify(arg.get(2))));
+//				return Configure.setNamTraceFile(Converter.parseIdentify(arg.get(0)));
+//			}
+//			
+//		};
+//	
+//		new InsProc(this, "trace-all") {
+//
+//			@Override
+//			protected String run(List<String> arg) throws Exception {
+//				if (arg.size() != 1 ) throw new ParseException(ParseException.InvalidArgument);														
+//				return Configure.setTraceFile(Converter.parseIdentify(arg.get(0)));
+//			}						
+//		};
 	}
 
 	private int checkOperator(String s)	{

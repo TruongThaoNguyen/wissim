@@ -207,11 +207,11 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 				//return setInsVar("trace-all", Converter.parseIdentify(command.get(0)), command.get(0)).getValue();
 			}
 
-			@Override
-			public String print(List<String> command) {
-				//return getInsVar("trace-all").getLabel();
-				return Configure.getTraceFile();
-			}			
+//			@Override
+//			public String print(List<String> command) {
+//				//return getInsVar("trace-all").getLabel();
+//				return "[open " + Configure.getTraceFile() + " w]";
+//			}			
 		};
 	
 		new InsProc(this, "node-config") {
