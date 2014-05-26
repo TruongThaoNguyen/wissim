@@ -33,11 +33,9 @@ public class MainWindow extends ApplicationWindow {
 //	/**
 //	 * 
 //	 */
-//	private Button btnAnalyzer;
 	private Editor editor;
 	private static Analyzer analyzer;
 	private Visualizer visualizer;
-//	private Composite mainComposite;
 	private MenuManager menuManager;
 	private StatusLineManager statusLineManager;
 
