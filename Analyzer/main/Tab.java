@@ -9,6 +9,8 @@ import java.util.Observable;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import jxl.Workbook;
 import jxl.write.Label;
@@ -355,6 +357,9 @@ public abstract class Tab {
     loadFile.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(SelectionEvent e) {
     	  try {
+    		  	try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } 
+		    	catch (ClassNotFoundException | InstantiationException | IllegalAccessException 
+		    			| UnsupportedLookAndFeelException ex) { }
 		    	JFileChooser chooser = new JFileChooser();
 				chooser.setMultiSelectionEnabled(true);
 		

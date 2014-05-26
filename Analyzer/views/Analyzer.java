@@ -6,6 +6,8 @@ import java.util.MissingResourceException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import main.DelayTab;
 import main.EfficiencyTab;
@@ -61,6 +63,9 @@ public void initAnalyzer(){
 	if(mParser == null){
 		  /*Gọi hàm khởi tạo các đối tượng Node và Packet*/
 			    try {
+			    	try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } 
+			    	catch (ClassNotFoundException | InstantiationException | IllegalAccessException 
+			    			| UnsupportedLookAndFeelException ex) { }
 			    	JFileChooser chooser = new JFileChooser();
 					chooser.setMultiSelectionEnabled(true);
 			
