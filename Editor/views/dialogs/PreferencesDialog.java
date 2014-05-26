@@ -86,7 +86,7 @@ public class PreferencesDialog extends Dialog {
 					Workspace w = mainWindow.getWorkspace();
 						for (Control c : w.getChildren())
 							c.redraw();
-				} catch (IOException e1) {
+				} catch (Exception e1) {
 					MessageDialog.openError(getParent(), "Error", "Cannot save preference changes.\r\n" +
 							"Please try again later");
 				}

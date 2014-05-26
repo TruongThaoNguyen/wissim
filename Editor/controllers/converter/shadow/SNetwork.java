@@ -1,9 +1,11 @@
 package controllers.converter.shadow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import controllers.Configure;
 import controllers.converter.Converter;
 import controllers.converter.Scanner;
 import controllers.converter.Scheduler;
@@ -12,6 +14,8 @@ import models.converter.Entry;
 import models.converter.InsProc;
 import models.converter.InsVar;
 import models.converter.ParseException;
+import models.converter.Token;
+import models.converter.Token.TokenType;
 import models.networkcomponents.Node;
 import models.networkcomponents.WirelessNetwork;
 
@@ -32,6 +36,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	{		
 		this.label = label;	
 		nodeConfig = new SCommonObject("node-config");
+		nodeConfig.setParent(this);
 		addInsProc();
 	}
 	
@@ -47,13 +52,10 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	
 	@Override
 	public void addEvent(double time, String arg) {
-		event.put(arg, time);		
+		event.put(arg, time);
 		
 		// check if this event is stop event or not
-		if (arg.contains("end"))
-		{
-			setTime((int)time);
-		}
+		if (arg.contains("end")) setTime((int)time);				
 	}
 
 	@Override
@@ -63,8 +65,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	
 	@Override
 	public HashMap<String, Double> getEvent() {
-		// TODO Auto-generated method stub
-		return null;
+		return event;
 	}
 	
 	// endregion Event
@@ -202,12 +203,14 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 				if (command.size() == 0)	throw new ParseException(ParseException.MissArgument);
 				if (command.size() > 1)		throw new ParseException(ParseException.InvalidArgument);
 				
-				return setInsVar("trace-all", Converter.parseIdentify(command.get(0)), command.get(0)).getValue();
+				return Configure.setTraceFile(Converter.parseIdentify(command.get(0)));
+				//return setInsVar("trace-all", Converter.parseIdentify(command.get(0)), command.get(0)).getValue();
 			}
 
 			@Override
 			public String print(List<String> command) {
-				return getInsVar("trace-all").getLabel();
+				//return getInsVar("trace-all").getLabel();
+				return Configure.getTraceFile();
 			}			
 		};
 	
@@ -261,19 +264,27 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 			@Override
 			public String run(List<String> command) throws Exception 
 			{
-				if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);
+				if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);		
+				addEvent(Double.parseDouble(Converter.parseIdentify(command.get(0))), command.get(1));
 				
-				double time = Double.parseDouble(Converter.parseIdentify(command.get(0)));
-				String arg  = Converter.parseIdentify(command.get(1));									
-										
-				addEvent(time, arg);
-				return arg;
+				// check if it is about node				
+				List<Token> token = new Scanner(command.get(1)).scanWord();
+				if (token.size() == 1 && token.get(0).Type() == TokenType.Quote)
+				{
+					List<String> cmd = new Scanner(token.get(0).Value()).scanCommand();
+					if (cmd.size() > 1)
+					{
+						TclObject o = Converter.global.getObject(Converter.parseIdentify(cmd.get(0)));
+						if (o != null) o.addEntry(entry);						
+					}
+				}
+				
+				return command.get(1);
 			}
 			
 			@Override
-			protected void record(List<String> command) {
-				entry = new Entry(this, command);
-				Converter.generateEntry.add(entry);
+			protected String print(List<String> arg) {
+				return getEvent(arg.get(1)) + " " + arg.get(1);
 			}
 		};
 
@@ -333,7 +344,9 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		// remove register entry
 		for (Entry e : ((SNode)n).getEntry())
 		{
-			Converter.generateEntry.remove(e);				
+			int i = Converter.generateEntry.indexOf(e);
+			if (Converter.generateEntry.get(i - 1).toString().trim().isEmpty()) Converter.generateEntry.remove(i - 1);
+			Converter.generateEntry.remove(e);			
 		}	
 		
 		return true;
@@ -346,14 +359,12 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		
 		// region ------------------- auto generate tcl code ------------------- //
 
-		// find last index of network's component in the global register
-		List<Entry> e;	
-		
-		e = nodeConfig.getEntry();
-		
-		// if (nodeList.isEmpty()) e = nodeConfig.getEntry();
-		// else 					e = ((SNode)nodeList.get(nodeList.size() - 1)).getEntry();		
-		int	index = Converter.generateEntry.lastIndexOf(e.get(e.size() - 1)) + 1;		
+		// find last index of network's component in the global register					
+		int	index = 0;
+		for (Entry entry : nodeConfig.getEntry()) {
+			index = Math.max(index, Converter.generateEntry.lastIndexOf(entry));
+		}
+		index++;
 		
 		// space
 		Entry en = new Entry("\n");
@@ -366,17 +377,17 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		newNode.addEntry(en);
 		
 		// set position		$mnode_(0) set X_ 30	; $mnode_(0) set Y_ 860	; $mnode_(0) set Z_ 0
-		en = new Entry(newNode.getLabel() + " set X_ " + x + "\n");
+		en = new Entry(newNode.getInsProc("set"), Arrays.asList("X_", x + ""));
 		Converter.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
-		en = new Entry(newNode.getLabel() + " set Y_ " + y + "\n");
+		en = new Entry(newNode.getInsProc("set"), Arrays.asList("Y_", y + ""));
 		Converter.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
 		en = new Entry(newNode.getLabel() + " set Z_ 0\n");
 		Converter.generateEntry.add(index++, en);
-		newNode.addEntry(en);
+		newNode.addEntry(en);		
 		
 		// $ns_ initial_node_pos $mnode_($i) 5
 		en = new Entry(this.label + " initial_node_pos " + newNode.getLabel() + " 5\n");
@@ -384,7 +395,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		newNode.addEntry(en);
 		
 		// $ns_ at $opt(stop) "$mnode($i) reset" 
-		en = new Entry(this.getLabel() + " at " + getTime() + ".0001 \"" + newNode.getLabel() + " reset\"\n");
+		en = new Entry(this.label + " at " + getTime() + ".0001 \"" + newNode.getLabel() + " reset\"\n");
 		Converter.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		

@@ -6,35 +6,39 @@
         <queue-length>50</queue-length>
     </node-settings>
     <energy-model>
-        <iddle>0.2</iddle>
-        <reception>1.0</reception>
-        <transmission>2.0</transmission>
-        <sleep>0.001</sleep>
+    	<energyModel>EnergyModel</energyModel>
+        <iddle>0.0096</iddle>
+        <reception>0.021</reception>
+        <transmission>0.0255</transmission>
+        <sleep>0.000648</sleep>
+        <transitionPower>0.024</transitionPower>
+		<transitionTime>0.0129</transitionTime>
+		<initialEnergy>1000</initialEnergy>
     </energy-model>
     <routing-protocols>
         <!-- Routing protocols -->
-        <routing-protocol type="AODV">
+        <routing-protocol type="Agent/AODV">
             <params>
                 <param property="" value=""/>
             </params>
         </routing-protocol>
-        <routing-protocol type="DSR">
+        <routing-protocol type="Agent/DSR">
             <params>
                 <param property="" value=""/>
             </params>
         </routing-protocol>
-        <routing-protocol type="DSDV">
+        <routing-protocol type="Agent/DSDV">
             <params>
                 <param property="" value=""/>
             </params>
         </routing-protocol>
-        <routing-protocol type="GPSR">
+        <routing-protocol type="Agent/GPSR">
             <params>
                 <param property="hello_period_" value="5"/>
                 <param property="energy_checkpoint_" value="995"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="GOAL">
+        <routing-protocol type="Agent/GOAL">
             <params>
                 <param property="hello_period_" value="0"/>
                 <param property="energy_checkpoint_" value="995"/>
@@ -45,7 +49,7 @@
                 <param property="limit_" value="0"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="SCALEGOAL">
+        <routing-protocol type="Agent/SCALEGOAL">
             <params>
                 <param property="hello_period_" value="0"/>
                 <param property="energy_checkpoint_" value="995"/>
@@ -55,7 +59,7 @@
                 <param property="limit_boundhole_hop_" value="80"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="HEXAGON">
+        <routing-protocol type="Agent/HEXAGON">
             <params>
                 <param property="hello_period_" value="0"/>
                 <param property="energy_checkpoint_" value="995"/>
@@ -64,7 +68,7 @@
                 <param property="limit_boundhole_hop_" value="80"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="SCALEHEXAGON">
+        <routing-protocol type="Agent/SCALEHEXAGON">
             <params>
                 <param property="hello_period_" value="0"/>
                 <param property="energy_checkpoint_" value="995"/>
@@ -73,7 +77,7 @@
                 <param property="limit_boundhole_hop_" value="80"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="EHDS">
+        <routing-protocol type="Agent/EHDS">
             <params>
                 <param property="hello_period_" value="0"/>
                 <param property="energy_checkpoint_" value="995"/>
@@ -82,7 +86,7 @@
                 <param property="limit_boundhole_hop_" value="80"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="ELLIPSE">
+        <routing-protocol type="Agent/ELLIPSE">
             <params>
                 <param property="hello_period_" value="0"/>
                 <param property="energy_checkpoint_" value="995"/>
@@ -92,7 +96,7 @@
                 <param property="limit_boundhole_hop_" value="80"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="GRIDOFFLINE" default="true">
+        <routing-protocol type="Agent/GRIDOFFLINE" default="true">
             <params>
                 <param property="hello_period_" value="0"/>
                 <param property="energy_checkpoint_" value="995"/>
@@ -102,7 +106,7 @@
                 <param property="limit_boundhole_hop_" value="80"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="GRIDONLINE">
+        <routing-protocol type="Agent/GRIDONLINE">
             <params>
                 <param property="hello_period_" value="0"/>
                 <param property="energy_checkpoint_" value="995"/>
@@ -112,7 +116,7 @@
                 <param property="limit_boundhole_hop_" value="80"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="CONVEXONLINE">
+        <routing-protocol type="Agent/CONVEXONLINE">
             <params>
                 <param property="hello_period_" value="0"/>
                 <param property="energy_checkpoint_" value="995"/>
@@ -122,7 +126,7 @@
                 <param property="limit_boundhole_hop_" value="80"/>
             </params>
         </routing-protocol>
-        <routing-protocol type="ELBAR">
+        <routing-protocol type="Agent/ELBAR">
             <params>
                 <param property="hello_period_" value="5"/>
                 <param property="range_" value="40"/>
@@ -143,21 +147,20 @@
         </protocol>
         <protocol type="UDP">
             <params>
-                <param property="sport_" value="0"/>
-                <param property="dport_" value="0"/>
-                <param property="packetSize_" value="1460"/>
+                <param property="fid_" value="2"/>
             </params>
         </protocol>
     </transport-protocols>
     <apps>
         <!-- Application protocols -->
         <app type="CBR" default="true">
-            <params>
-                <param property="sport_" value="0"/>
-                <param property="dport_" value="0"/>
-                <param property="packetSize_" value="50"/>
-                <param property="interval_" value="1"/>
-                <param property="rate_" value="0.1Mb"/>
+            <params>                
+            	<param property="type_" 		value="CBR"/>                
+                <param property="packetSize_" 	value="50"/>
+                <param property="interval_" 	value="1"/>
+                <param property="rate_" 		value="0.1Mb"/>
+                <param property="sport_"		value="0"/>
+                <param property="dport_"		value="0"/>
             </params>
         </app>
         <app type="VBR">
@@ -198,41 +201,32 @@
         </link-layer>
     </link-layers>
     <macs>
-        <mac type="802.11" default="true">
-            <params>
-                <param property="" value=""/>
-            </params>
+        <mac type="Mac/802_11" default="true">
         </mac>
     </macs>
     <channels>
-        <channel type="Wireless" default="true">
-            <params>
-                <param property="" value=""/>
-            </params>
+        <channel type="Channel/WirelessChannel" default="true">
         </channel>
     </channels>
     <propagation-models>
-        <propagation-model type="Two Ray Ground" default="true">
-            <params>
-                <param property="" value=""/>
-            </params>
+        <propagation-model type="Propagation/TwoRayGround" default="true">
         </propagation-model>
     </propagation-models>
     <network-interfaces>
-        <network-interface type="Wireless Phy" default="true">
+        <network-interface type="Phy/WirelessPhy" default="true">
             <params>
                 <param property="CPThresh_" value="10.0"/>
                 <param property="CSThresh_" value="1.559e-11"/>
-                <param property="RXThresh_" value="3.652e-10"/>
+                <param property="RXThresh_" value="1.20174e-07"/>
                 <param property="Rb_" value="2*1e6"/>
-                <param property="freq_" value="914e+6"/>
+                <param property="freq_" value="914e+08"/>
                 <param property="L_" value="1.0"/>
-                <param property="Pt_" value="8.5872e-4"/>
+                <param property="Pt_" value="0.281838"/>
             </params>
         </network-interface>
     </network-interfaces>
     <antennas>
-        <antenna type="Omni Antenna" default="true">
+        <antenna type="Antenna/OmniAntenna" default="true">
             <params>
                 <param property="X_" value="0"/>
                 <param property="Y_" value="0"/>
@@ -243,9 +237,9 @@
         </antenna>
     </antennas>
     <interface-queues>
-        <interface-queue type="Droptail/Priqueue" default="true">
+        <interface-queue type="Queue/DropTail/PriQueue" default="true">
             <params>
-                <param property="" value=""/>
+                <param property="Prefer_Routing_Protocols" value="1"/>
             </params>
         </interface-queue>
     </interface-queues>

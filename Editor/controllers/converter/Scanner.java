@@ -6,7 +6,7 @@ import java.util.List;
 import models.converter.CharType;
 import models.converter.ParseException;
 import models.converter.Token;
-import models.converter.TokenType;
+import models.converter.Token.TokenType;
 
 /**
  * Scanner.java
@@ -33,7 +33,6 @@ public class Scanner {
 	public boolean haveNext() {
 		return index < code.length();
 	}
-
 
 	/**
 	 * Split tcl code to words.
@@ -155,7 +154,7 @@ public class Scanner {
 		while (index < code.length())
 		{
 			switch (CharType.TypeOf(code.charAt(index)))
-			{
+			{							
 				case Separator: line++;
 				case Semicolon:					
 					index++;
@@ -191,8 +190,7 @@ public class Scanner {
 					tokenList.add(new Token(TokenType.Brace, scanBrace()));
 					break;				
 
-				case Referent:
-					index++;
+				case Referent:					
 					tokenList.add(new Token(TokenType.Referent, scanReferent()));
 					break;
 					
@@ -200,10 +198,80 @@ public class Scanner {
 					tokenList.add(new Token(TokenType.Identify, scanIdentify()));					
 					break;				
 					
+				case Space:										
 				case BraceClose:
 				case BracketClose:
 				case ParenthesisClose:														
-				case Space:
+				case Unknow:
+					throw new ParseException(ParseException.InvalidSymbol);
+			}
+		}
+		
+		return tokenList;
+	}	
+
+	/**
+	 * Split Tcl code to words. using for display only.
+	 * @return List of tokens
+	 * @throws ParseException
+	 */
+	public List<Token> scan() throws ParseException
+	{
+		List<Token> tokenList = new ArrayList<Token>();
+				
+		while (index < code.length())
+		{
+			switch (CharType.TypeOf(code.charAt(index)))
+			{	
+				case Comment:
+					int i = ++index;
+					while (index < code.length() && code.charAt(index) != '\n') index++;
+					tokenList.add(new Token(TokenType.Comment, code.substring(i, index)));
+					break;
+			
+				case Quote:
+					tokenList.add(new Token(TokenType.Quote, scanQuote()));
+					break;
+					
+				case ParenthesisOpen:
+					tokenList.add(new Token(TokenType.Parenthesis, scanParenthesis()));
+					break;
+		
+				case BracketOpen:
+					tokenList.add(new Token(TokenType.Bracket, scanBracket()));
+					break;
+					
+				case BraceOpen:
+					tokenList.add(new Token(TokenType.Brace, scanBrace()));
+					break;				
+
+				case Referent:					
+					tokenList.add(new Token(TokenType.Referent, scanReferent()));
+					break;
+					
+				case BackSlash:
+					tokenList.add(new Token(TokenType.Identify, "\\"));
+					index++;
+					break;
+					
+				case Letter:
+					tokenList.add(new Token(TokenType.Identify, scanIdentify()).ChecKeyword());
+					break;				
+					
+				case Separator:
+				case Semicolon:							
+					tokenList.add(new Token(TokenType.Separator, code.charAt(index) + ""));
+					index++;		
+					break;
+					
+				case Space:						
+					tokenList.add(new Token(TokenType.Space, code.charAt(index) + ""));
+					index++;
+					break;
+					
+				case BraceClose:
+				case BracketClose:
+				case ParenthesisClose:														
 				case Unknow:
 					throw new ParseException(ParseException.InvalidSymbol);
 			}
@@ -341,7 +409,7 @@ public class Scanner {
 	 */
 	private String scanReferent() throws ParseException 
 	{
-		int i =  index;
+		int i = ++index;
 		while (index < code.length() && CharType.TypeOf(code.charAt(index)) == CharType.Letter)	index++;
 		
 		if (index < code.length() && CharType.TypeOf(code.charAt(index)) == CharType.ParenthesisOpen) scanParenthesis();

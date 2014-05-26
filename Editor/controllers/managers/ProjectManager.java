@@ -16,6 +16,7 @@ import controllers.Configure;
 import controllers.converter.Converter;
 import models.Project;
 import models.converter.ParseException;
+import models.converter.Token;
 import models.networkcomponents.Node;
 import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.WirelessNode;
@@ -72,7 +73,7 @@ public class ProjectManager {
 			return null;
 		}
 				
-		project.setPath(path);		
+		Project.setPath(path);		
 		
 		// Initialize wireless network
 		WirelessNetwork network = project.getNetwork();
@@ -81,12 +82,12 @@ public class ProjectManager {
 		network.setWidth(width);
 		network.setLength(length);		
 		
-		Configure.setDirectory(path);
+		Configure.setTclFile(path);
 		
 		// save project
 		try {
 			saveProject();
-		} catch(IOException e) {}
+		} catch(Exception e) {}
 				
 		return project;
 	}
@@ -94,13 +95,13 @@ public class ProjectManager {
 	/**
 	 * Store Tcl script to file
 	 * @throws IOException
+	 * @throws ParseException 
 	 */
-	public static void saveProject() throws IOException {				
-//		String fileName = WorkSpace.getDirectory() + WorkSpace.getTclFile() +".tcl";
+	public static void saveProject() throws IOException, ParseException {						
 		String fileName = Configure.getTclFile();
 		
-		BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));				
-		bw.write(Converter.DTC());		
+		BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));		
+		bw.write(Converter.DTC());
 		bw.close();				
 	}
 	
@@ -112,7 +113,7 @@ public class ProjectManager {
 	 * @throws IOException
 	 */
 	public static Project loadProject(String path) throws IOException, ParseException {
-		Configure.setDirectory(path);		
+		Configure.setTclFile(path);		
 		BufferedReader br = new BufferedReader(new FileReader(path));
 		StringBuilder sb = new StringBuilder();
 	    String line = br.readLine();		
@@ -209,7 +210,8 @@ public class ProjectManager {
 		// check if the location is inside a hole
 		if(Project.getObstacleList() != null)
 		{
-			for (Area obstacle : getProject().getObstacleList()) {
+			getProject();
+			for (Area obstacle : Project.getObstacleList()) {
 				if (obstacle.contains(x, y)) return null;
 			}
 		}
@@ -380,7 +382,8 @@ public class ProjectManager {
 	// create Obstacle 
 	public static boolean addObstacle(Area area) { return false; }
 	
-	public static List<Area> getObstacles() { return getProject().getObstacleList(); }
+	public static List<Area> getObstacles() { getProject();
+	return Project.getObstacleList(); }
 	
 	public static List<WirelessNode> getNeighbors(WirelessNode node) { return node.getNeighborList(); }
 	
@@ -447,7 +450,8 @@ public class ProjectManager {
 	}
 
 	public static boolean addNewLabel(Label label) {
-		List<Label> labelList = getProject().getLabelList();
+		getProject();
+		List<Label> labelList = Project.getLabelList();
 		
 		// check for existing label
 		for (int i = 0; i < labelList.size(); i++) {
@@ -455,13 +459,15 @@ public class ProjectManager {
 				return false;
 		}
 		
+		getProject();
 		// add new label
-		getProject().getLabelList().add(label);
+		Project.getLabelList().add(label);
 		return true;
 	}
 	
 	public static boolean removeLabel(String labelName) {
-		List<Label> labelList = getProject().getLabelList();
+		getProject();
+		List<Label> labelList = Project.getLabelList();
 		Label lbl = null;
 		
 		// check for existing label

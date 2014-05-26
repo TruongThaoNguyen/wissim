@@ -1,6 +1,7 @@
 package controllers.converter.shadow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 	private SNode node;
 	
 	protected STransportProtocol(String label) {				
-		super(TransportProtocolType.valueOf(label.toUpperCase()), label);
+		super(TransportProtocolType.valueOf(label), label);
 		this.label = label;		
 		
 		addInsProc();
@@ -229,7 +230,7 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 		insVar.clear();
 		for (String key : params.keySet()) {
 			addParameter(key, params.get(key));
-		}
+		}		
 	}
 
 	@Override
@@ -237,9 +238,13 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 		insVar.put(param, new InsVar(param, value));
 		
 		// region ------------------- generate Tcl code ------------------- //
-
 		
-
+		int	index = Converter.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
+		
+		Entry e = new Entry(getInsProc("set"), Arrays.asList(param + "", value + ""));
+		Converter.generateEntry.add(index, e);
+		this.addEntry(e);
+		
 		// endregion generate Tcl code
 	}
 
@@ -262,7 +267,7 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 		app.setLabel("$" + label);
 
 		addApp(app);						
-		connectedAgent = dest.addTransportProtocol(TransportProtocolType.NULL, name);
+		connectedAgent = dest.addTransportProtocol(TransportProtocolType.Null, name);
 			
 		// region ------------------- Generate Tcl code ------------------- //
 		

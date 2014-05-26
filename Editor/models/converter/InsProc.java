@@ -1,5 +1,7 @@
 package models.converter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import controllers.converter.Converter;
@@ -55,7 +57,7 @@ public abstract class InsProc
 	 * @param arg arguments
 	 * @return
 	 */
-	public String Print(List<String> arg) {
+	public String Print(List<String> arg) {		
 		return 	(parent.getLabel() == null ? "" : parent.getLabel() + " " ) + 
 				(insprocName == null ? "" : insprocName + " " ) + 
 				print(arg);
@@ -74,6 +76,7 @@ public abstract class InsProc
 			if (o != null)	sb.append(o.getLabel() + " ");		
 			else			sb.append(string + " ");		
 		}
+		if (sb.length() > 0) sb.deleteCharAt(sb.length() - 1);
 		return sb.toString();
 	}
 
@@ -100,10 +103,9 @@ public abstract class InsProc
 		}
 		else 
 		{
-			entry = new Entry(this, "\n");
+			entry = new Entry(this, new ArrayList<>(Arrays.asList("\n")));
 		}
 		
 		Converter.generateEntry.add(entry);
 	}
-
 }

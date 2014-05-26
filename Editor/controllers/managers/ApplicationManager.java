@@ -43,12 +43,13 @@ import controllers.graphicscomponents.GWirelessNode;
 import controllers.graphicscomponents.GraphicPath;
 import controllers.helpers.Helper;
 import controllers.helpers.Validator;
-import views.CreateProjectDialog;
 import views.Editor;
 import views.SearchNodeDialog;
 import views.Workspace;
+import views.dialogs.ConfigNodeDialog;
 import views.dialogs.CreateNodeDialog;
 import views.dialogs.CreateNodeSetDialog;
+import views.dialogs.CreateProjectDialog;
 import views.dialogs.EditNetworkSizeDialog;
 import views.dialogs.ExportImageDialog;
 import views.dialogs.ImportLocationDataDialog;
@@ -82,12 +83,10 @@ public class ApplicationManager {
 
 		if (confirmed == true) 
 		{
-			Project project;
-			Configure.setTclFile(path);
-			project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "tcl"), result.width, result.height, result.time);
+			Configure.setTclFile(path);												
+			Project project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "tcl"), result.width, result.height, result.time);
 			ApplicationSettings.applyDefaultSettingsToProject(project);
-			newProjectCount++;
-			
+			newProjectCount++;			
 			return project;
 		}
 					
@@ -125,7 +124,7 @@ public class ApplicationManager {
 			
 //			workspace.setSavedStateIndex(workspace.getCareTaker().getCurrentStateIndex());
 			
-			mainWindow.getActSave().setEnabled(false);
+//			mainWindow.getActSave().setEnabled(false);
 //			CTabFolder cTabFolder = (CTabFolder) workspace.getParent().getParent();
 //			cTabFolder.getSelection().setText(workspace.getProject().getNetwork().getName());
 		} catch (IOException e) {
@@ -140,7 +139,7 @@ public class ApplicationManager {
 		if (workspace == null) return;
 		FileDialog saveDialog = new FileDialog(workspace.getShell(), SWT.SAVE);
 		saveDialog.setText("Save");
-		saveDialog.setFileName(workspace.getProject().getNetwork().getName());
+		saveDialog.setFileName(Workspace.getProject().getNetwork().getName());
 		saveDialog.setFilterExtensions(new String[] { "*.wis" });
 		saveDialog.setFilterNames(new String[] {"Wissim Project"});
 		String path = saveDialog.open();
@@ -149,8 +148,8 @@ public class ApplicationManager {
 			return;
 		
 		try {
-			Project project = workspace.getProject();
-			project.setPath(path);
+			Workspace.getProject();
+			Project.setPath(path);
 			ProjectManager.saveProject();
 		} catch (Exception e) {
 			MessageDialog.openError(workspace.getShell(), "Error", "Some errors happened. Can not save file. Please try again later");
@@ -163,7 +162,7 @@ public class ApplicationManager {
 	}
 	
 	public static BufferedImage exportToImage(Workspace workspace, int imageMaxSize) {
-		Project project = workspace.getProject();
+		Project project = Workspace.getProject();
 		
 		int actualWidth = project.getNetwork().getWidth();
 		int actualLength = project.getNetwork().getLength();		
@@ -248,23 +247,7 @@ public class ApplicationManager {
 		}		
 	}
 
-//	public static void undoState(Workspace workspace) {
-//		if (workspace != null) {		
-//			Project p = workspace.getCareTaker().getLastState();
-//			if (p != null)
-//				workspace.setProject(p);
-//		}
-//	}
-
-//	public static void redoState(Workspace workspace) {
-//		if (workspace == null) return;
-//		
-//		Project p = workspace.getCareTaker().getNextState();
-//		if (p != null)
-//			workspace.setProject(p);
-//	}
-
-	public static void createASingleNode(Workspace workspace) {
+	public static void createASingleNode(Workspace workspace, Editor editor) {
 		if (workspace == null) return;
 		
 		CreateSingleNodeResult result = (CreateSingleNodeResult)new CreateNodeDialog(workspace.getShell(), SWT.SHEET).open();
@@ -280,6 +263,7 @@ public class ApplicationManager {
 //				workspace.getGraphicNodeByNode(wnode).setSelect(true);
 				workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);				
 				workspace.getGraphicNetwork().redraw();
+				editor.getActSave().setEnabled(true);
 			} else {
 				MessageDialog.openInformation(workspace.getShell(), "Cannot create node", "Cannot create node at specified location.\r\n" +
 						"Some reasons may happen:\r\n" +
@@ -290,7 +274,7 @@ public class ApplicationManager {
 		}
 	}
 
-	public static void createASetOfNodes(Workspace workspace) {
+	public static void createASetOfNodes(Workspace workspace,Editor editor) {
 		if (workspace == null) return;
 		
 		CreateNodeSetResult result = (CreateNodeSetResult) new CreateNodeSetDialog(workspace.getShell(), SWT.SHEET, null).open();
@@ -300,22 +284,25 @@ public class ApplicationManager {
 				workspace.updateLayout();			
 				workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);
 				workspace.getGraphicNetwork().redraw();
+				editor.getActSave().setEnabled(true);
+				
 			}
 			if (result.creationType == CreateNodeSetResult.GRID && result.areaType == CreateNodeSetResult.WHOLE_NETWORK) {
 				ProjectManager.createGridNodes(null, result.x_range, result.y_range);
 				workspace.updateLayout();			
 				workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);
 				workspace.getGraphicNetwork().redraw();
+				editor.getActSave().setEnabled(true);
 			}
 		}
 	}
 
 	public static void manageTrafficFlow(Workspace workspace) {
 		if (workspace != null)
-			if (workspace.getProject().getNetwork().getNodeList().size() < 2) {
+			if (Workspace.getProject().getNetwork().getNodeList().size() < 2) {
 				MessageDialog.openInformation(workspace.getShell(), "Two nodes required", "Please add more nodes to set up traffic flow");
 			} else {
-				new TrafficFlowManagerDialog(workspace.getShell(), SWT.SHEET, workspace).open();
+				new TrafficFlowManagerDialog(workspace.getShell(), SWT.SHEET).open();
 			}
 	}
 	
@@ -325,8 +312,9 @@ public class ApplicationManager {
 		gwnode.getParent().layout(true);
 	}
 
-	public static void deleteNodes(Workspace workspace) {
-		if (workspace == null) return;
+	public static boolean deleteNodes(Workspace workspace) {
+		if (workspace == null) return false;
+		boolean rlt = false;
 		
 		boolean answer = MessageDialog.openConfirm(workspace.getShell(), "Delete node(s)", "Are you sure to delete the node(s)?");
 
@@ -337,14 +325,17 @@ public class ApplicationManager {
 						GWirelessNode gn = (GWirelessNode)o;
 						ProjectManager.deleteNode(gn.getWirelessNode());
 						gn.dispose();
+						rlt = true;
 					}
 				}
 				
 //				workspace.getCareTaker().save(workspace.getProject(), "Delete Node(s)");
 			} catch (Exception e) {
+				MessageDialog.openError(workspace.getShell(), "Error", "Delete a set of node not completed!");
 				e.printStackTrace();
 			}
 		}
+		return rlt;
 	}
 	
 	public static GWirelessNode copyNode(Workspace workspace) {
@@ -377,9 +368,9 @@ public class ApplicationManager {
 		}
 	}
 	
-	public static void deleteAllNodes(Workspace w) {
-		if (w == null) return;
-		
+	public static boolean deleteAllNodes(Workspace w) {
+		if (w == null) return false;
+		boolean b = false;
 		if (MessageDialog.openConfirm(w.getShell(), "Delete All nodes?", "Are you sure to delete all nodes?")) {		
 			Control[] cs = w.getChildren();
 			List<Control> tempControls = new ArrayList<Control>();
@@ -395,8 +386,10 @@ public class ApplicationManager {
 				Control c = tempControls.get(0);
 				tempControls.remove(c);
 				c.dispose();
-			}					
+			}		
+			b = true;
 		}
+		return b;
 	}
 
 	public static void viewNetworkInfo(Workspace workspace) {
@@ -444,22 +437,28 @@ public class ApplicationManager {
 	}
 
 	public static void moveNodeTo(GWirelessNode gWirelessNode) {
+		System.out.println("move to");
 		NodeLocationResult result = (NodeLocationResult) new NodeLocationDialog(
 				gWirelessNode.getShell(), SWT.SHEET, gWirelessNode.getWirelessNode()).open();
 
 		if (result != null) {
 			try {
 				Workspace workspace = (Workspace) gWirelessNode.getParent();
-				if(workspace.getProject().getObstacleList() != null)
-				for (Area a : workspace.getProject().getObstacleList())
-					if (a.contains(result.x, result.y)) {
-						MessageDialog.openInformation(workspace.getShell(), "Cannot move node",
-								"Cannot move node to the new location because it is inside the obstacle");
-						return;
-					}						
-				
-				gWirelessNode.getWirelessNode().setPosition(result.x, result.y);
-				
+				Workspace.getProject();
+				if(Project.getObstacleList() != null) {
+					Workspace.getProject();
+					for (Area a : Project.getObstacleList())
+						if (a.contains(result.x, result.y)) {
+							MessageDialog.openInformation(workspace.getShell(), "Cannot move node",
+									"Cannot move node to the new location because it is inside the obstacle");
+							return;
+						}
+				}						
+//				System.out.println(gWirelessNode.getWirelessNode().getX());
+				WirelessNode wn = (WirelessNode)ProjectManager.getProject().getNetwork().getNodeById(gWirelessNode.getWirelessNode().getId());
+				wn.setPosition(result.x, result.y);
+//				gWirelessNode.getWirelessNode().setPosition(result.x, result.y);
+//				System.out.println(gWirelessNode.getWirelessNode().getX());
 				// save state
 //				workspace.getCareTaker().save(workspace.getProject(), "Move node");
 			} catch (Exception e) {
@@ -564,7 +563,8 @@ public class ApplicationManager {
 		}
 	}
 
-	public static void createARandomNode(Workspace w) {
+	public static boolean createARandomNode(Workspace w) {
+		boolean rlt = false;
 		if (w != null) {
 			// create a random node
 			WirelessNode wnode = ProjectManager.createARandomNode();
@@ -577,8 +577,10 @@ public class ApplicationManager {
 				w.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);
 				
 				w.getGraphicNetwork().redraw();
+				rlt = true;
 			}
 		}
+		return rlt;
 	}
 
 	public static void showRange(Workspace workspace) {
@@ -607,12 +609,12 @@ public class ApplicationManager {
 			
 			if (isConnect)
 				MessageDialog.openInformation(workspace.getShell(), "Network Connectivity", 
-						"The network " + workspace.getProject().getNetwork().getName() + " with " +
-								workspace.getProject().getNetwork().getNodeList().size() + " node(s) is connected");
+						"The network " + Workspace.getProject().getNetwork().getName() + " with " +
+								Workspace.getProject().getNetwork().getNodeList().size() + " node(s) is connected");
 			else
 				MessageDialog.openInformation(workspace.getShell(), "Network Connectivity", 
-						"The network " + workspace.getProject().getNetwork().getName() + " with " +
-								workspace.getProject().getNetwork().getNodeList().size() + " node(s) is not connected");				
+						"The network " + Workspace.getProject().getNetwork().getName() + " with " +
+								Workspace.getProject().getNetwork().getNodeList().size() + " node(s) is not connected");				
 		}
 	}
 
@@ -669,7 +671,7 @@ public class ApplicationManager {
 
 	public static void print(Workspace w) {
 		if (w == null) return;		
-		Project p = w.getProject();		
+		Project p = Workspace.getProject();		
 		PrinterData printerData = new PrintDialog(w.getShell(), SWT.SHEET).open();
 		
 		if (!(printerData == null)) {

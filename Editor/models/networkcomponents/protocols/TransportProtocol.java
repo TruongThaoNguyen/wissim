@@ -17,7 +17,7 @@ import models.networkcomponents.protocols.ApplicationProtocol.ApplicationProtoco
 
 public abstract class TransportProtocol implements Protocol {
 	
-	public static enum TransportProtocolType { NULL, TCP, UDP }
+	public static enum TransportProtocolType { Null, TCP, UDP }
 	
 	protected TransportProtocolType type = null;
 

@@ -8,26 +8,27 @@ import java.util.Set;
 import models.Project;
 
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.wb.swt.SWTResourceManager;
 
+import views.Editor;
+import views.Workspace;
 import controllers.managers.ApplicationSettings;
 import controllers.managers.ProjectManager;
-import views.Workspace;
 
 
 public class ConfigNodeDialog extends Dialog {
@@ -55,6 +56,7 @@ public class ConfigNodeDialog extends Dialog {
 	
 	private int type;
 	private Workspace workspace;
+	private Editor editor;
 
 	/**
 	 * Create the dialog.
@@ -62,12 +64,13 @@ public class ConfigNodeDialog extends Dialog {
 	 * @param style
 	 * @param workspace 
 	 */
-	public ConfigNodeDialog(Shell parent, int style, int type, Workspace workspace) {
+	public ConfigNodeDialog(Shell parent, int style, int type, Workspace workspace,Editor editor) {
 		super(parent, style);
 		setText("SWT Dialog");
 		
 		this.type = type;
 		this.workspace = workspace;
+		this.editor = editor;
 	}
 
 	/**
@@ -263,6 +266,7 @@ public class ConfigNodeDialog extends Dialog {
 							ApplicationSettings.sleepEnergy = Double.parseDouble(txtSleep.getText());
 							ProjectManager.getProject().setSelectedRoutingProtocol(cbRoutingProtocol.getText());
 							ApplicationSettings.saveNetworkConfig();
+							editor.getActSave().setEnabled(true);
 						}
 					} catch (Exception exc) {
 						exc.printStackTrace();
@@ -296,6 +300,7 @@ public class ConfigNodeDialog extends Dialog {
 							project.setReceptionEnergy(Double.parseDouble(txtReception.getText()));
 							project.setReceptionEnergy(Double.parseDouble(txtTransmission.getText()));
 							project.setSleepEnergy(Double.parseDouble(txtSleep.getText()));
+							editor.getActSave().setEnabled(true);
 						}
 						} catch (Exception exc) {
 						exc.printStackTrace();
@@ -451,7 +456,7 @@ public class ConfigNodeDialog extends Dialog {
 				HashMap<String,HashMap <String,String>> input = ProjectManager.getProject().getRoutingProtocols();
 				if(input.get(currentSelectedRouting) != null) {
 					HashMap<String,String> value = input.get(currentSelectedRouting);
-					new ParameterConfigDialog(shlNodeConfiguration,SWT.SHEET, currentSelectedRouting,value).open();
+					new ParameterConfigDialog(shlNodeConfiguration,SWT.SHEET, currentSelectedRouting,value,editor).open();
 				} else {
 					MessageDialog.openError(getParent(), "Error", "Selected Routing protocol incorrect!");
 				}

@@ -94,9 +94,11 @@ public class CreateTrafficEventDialog extends Dialog {
 		Button btnCreate = new Button(shlCreateTrafficEvent, SWT.NONE);
 		btnCreate.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {								
-				eventList.add(new EventEntry(EventType.valueOf(combo.getText()), scale.getSelection()));				
-				shlCreateTrafficEvent.close();
+			public void widgetSelected(SelectionEvent e) {			
+				if (!combo.getText().isEmpty()) {
+					eventList.add(new EventEntry(EventType.valueOf(combo.getText()), scale.getSelection()));				
+					shlCreateTrafficEvent.close();	
+				}
 			}
 		});
 		btnCreate.setBounds(62, 117, 75, 25);

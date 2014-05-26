@@ -1,6 +1,7 @@
 package controllers.converter.shadow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -225,6 +226,13 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	@Override
 	public void addParameter(String param, String value) {
 		insVar.put(param, new InsVar(param, value));
+		
+		// generate tcl code here
+		int	index = Converter.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
+		
+		Entry e = new Entry(getInsProc("set"), Arrays.asList(param + "", value + ""));
+		Converter.generateEntry.add(index, e);
+		this.addEntry(e);
 	}
 
 	@Override
@@ -240,8 +248,14 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	@Override
 	public boolean addEvent(EventType type, double raisedTime) {		
 		event.put(type.toString(), raisedTime);
-		// TODO generate tcl code here
+
+		// generate tcl code here
+		int	index = Converter.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
 		
+		//	$ns_ at 100 "$cbr_($i) start"
+		Entry e = new Entry(Converter.global.getNetwork().getLabel() + " at " + raisedTime + " \"" + this.getLabel() + " " + type.toString().toLowerCase() + "\"\n");
+		Converter.generateEntry.add(index, e);
+		this.addEntry(e);
 		
 		return true;
 	}
@@ -275,7 +289,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 		if (transportProtocol != null)
 		{
 			// Add a Agent/Null to destNode and connect this to transportProtocol
-			STransportProtocol newSink = destNode.addTransportProtocol(TransportProtocolType.NULL, destNode.getName() + "_sink");						
+			STransportProtocol newSink = destNode.addTransportProtocol(TransportProtocolType.Null, destNode.getName() + "_sink");						
 			newSink.setLabel("$sink(" + destNode.getId() + destNode.getTransportPrototolList().size() + ")");
 			transportProtocol.setConnected(newSink);			
 			

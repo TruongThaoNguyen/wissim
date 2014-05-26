@@ -2,6 +2,7 @@ package controllers.converter.shadow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import controllers.converter.Converter;
@@ -23,8 +24,9 @@ public class SCommonObject implements TclObject
 	private String label;
 	private List<Entry> entryList = new ArrayList<Entry>();
 	private HashMap<String, InsProc> insProc  = new HashMap<String, InsProc>();	
-	private HashMap<String, InsVar>  insVar  = new HashMap<String, InsVar>();
-//	private HashMap<String, Double> event = new HashMap<String, Double>();
+	private HashMap<String, InsVar>  insVar  = new LinkedHashMap<String, InsVar>();
+	
+	private TclObject parent;
 	
 	/**
 	 * Create new Shadow Common Object.
@@ -54,6 +56,10 @@ public class SCommonObject implements TclObject
 		addInsProc();
 	}
 	
+	public void setParent(TclObject p)
+	{
+		parent = p;
+	}
 	
 	@Override
 	public String parse(List<String> command, boolean isRecord) throws Exception {
@@ -69,11 +75,6 @@ public class SCommonObject implements TclObject
 			return insProc.get(null).Run(command, isRecord);
 	}
 
-//	@Override
-//	public void addEvent(Double time, String arg) {
-//		event.put(arg, time);		
-//	}
-//	
 	@Override
 	public String getLabel() {
 		return label;
@@ -87,11 +88,13 @@ public class SCommonObject implements TclObject
 	@Override
 	public void addEntry(Entry e) {
 		entryList.add(e);	
+		if (parent != null) parent.addEntry(e);
 	}
 	
 	@Override
 	public void addEntry(int index, Entry e) {
 		entryList.add(index, e);
+		if (parent != null) parent.addEntry(e);
 	}
 	
 	@Override

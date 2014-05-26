@@ -36,11 +36,11 @@ public class AboutWindow extends TitleAreaDialog {
 		Label lblCopyrightBy = new Label(container, SWT.NONE);
 		lblCopyrightBy.setAlignment(SWT.CENTER);
 		lblCopyrightBy.setBounds(10, 30, 430, 20);
-		lblCopyrightBy.setText("© 2013 Trong Nguyen, All Rights Reserved.");		
+		lblCopyrightBy.setText("© 2014 SEDIC Laboratory, All Rights Reserved.");		
 		Label lblLab = new Label(container, SWT.NONE);
 		lblLab.setAlignment(SWT.CENTER);
 		lblLab.setBounds(10, 60, 430, 20);
-		lblLab.setText("Sedic laboratory");
+		lblLab.setText("Trong D. Nguyen");
 		
 		Label lblSchool = new Label(container, SWT.NONE);
 		lblSchool.setAlignment(SWT.CENTER);
@@ -49,7 +49,7 @@ public class AboutWindow extends TitleAreaDialog {
 		
 		Label lblAddressLabel = new Label(container, SWT.NONE);
 		lblAddressLabel.setAlignment(SWT.CENTER);
-		lblAddressLabel.setText("No 1, Dai Co Viet St, Ha Noi, Vietnam");
+		lblAddressLabel.setText("http://sedic.soict.hust.edu.vn");
 		lblAddressLabel.setBounds(10, 100, 430, 20);
 		
 
@@ -62,6 +62,7 @@ public class AboutWindow extends TitleAreaDialog {
 	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
+		parent.setTouchEnabled(true);
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
 				true);
 	}

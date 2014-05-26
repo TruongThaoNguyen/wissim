@@ -3,7 +3,6 @@ package views.dialogs;
 import models.networkcomponents.Node;
 import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.protocols.ApplicationProtocol;
-import models.networkcomponents.protocols.ApplicationProtocol.ApplicationProtocolType;
 import models.networkcomponents.protocols.TransportProtocol;
 
 import org.eclipse.swt.SWT;
@@ -20,6 +19,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import views.Editor;
 import views.Workspace;
 
 public class TrafficFlowManagerDialog extends Dialog {
@@ -28,8 +28,6 @@ public class TrafficFlowManagerDialog extends Dialog {
 	protected Shell shlTrafficFlowGenerator;
 	private Table table;
 	private Label lblCount;
-	
-	private Workspace workspace;
 
 	/**
 	 * Create the dialog.
@@ -37,11 +35,9 @@ public class TrafficFlowManagerDialog extends Dialog {
 	 * @param style
 	 * @param wirelessNetwork 
 	 */
-	public TrafficFlowManagerDialog(Shell parent, int style, Workspace workspace) {
+	public TrafficFlowManagerDialog(Shell parent, int style) {
 		super(parent, style);
 		setText("SWT Dialog");
-		
-		this.workspace = workspace;
 	}
 
 	/**
@@ -114,7 +110,7 @@ public class TrafficFlowManagerDialog extends Dialog {
 		btnAdd.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				new CreateTrafficFlowDialog(shlTrafficFlowGenerator, SWT.SHEET, workspace).open();
+				new CreateTrafficFlowDialog(shlTrafficFlowGenerator, SWT.SHEET).open();
 				updateContent();
 			}
 		});

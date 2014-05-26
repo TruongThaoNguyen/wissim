@@ -40,7 +40,6 @@ public class CreateTrafficFlowDialog extends Dialog {
 	protected Object result;
 	protected Shell shlCreateTrafficFlow;
 	
-	private Workspace workspace;
 	private Table table;
 	
 	private List<EventEntry> eventList = new LinkedList<EventEntry>();
@@ -52,14 +51,12 @@ public class CreateTrafficFlowDialog extends Dialog {
 	 * @param style
 	 * @param wirelessNetwork 
 	 */
-	public CreateTrafficFlowDialog(Shell parent, int style, Workspace workspace) {
+	public CreateTrafficFlowDialog(Shell parent, int style) {
 		super(parent, style);
-		setText("SWT Dialog");
-		
-		this.workspace = workspace;
+		setText("SWT Dialog");		
 		
 		// calculate traffic flow number
-		for (Node n : workspace.getProject().getNetwork().getNodeList()) {
+		for (Node n : Workspace.getProject().getNetwork().getNodeList()) {
 			for (TransportProtocol tp : n.getTransportPrototolList()) {
 				trafficFlowCount += tp.getAppList().size();
 			}
@@ -111,7 +108,7 @@ public class CreateTrafficFlowDialog extends Dialog {
 		final Combo cbDestNode = new Combo(composite_1, SWT.NONE);
 		cbDestNode.setBounds(304, 30, 47, 23);
 		
-		final WirelessNetwork wirelessNetwork = workspace.getProject().getNetwork();
+		final WirelessNetwork wirelessNetwork = Workspace.getProject().getNetwork();
 		
 		for (Node n : wirelessNetwork.getNodeList()) {
 			cbSourceNode.add(n.getId() + "");
@@ -234,12 +231,7 @@ public class CreateTrafficFlowDialog extends Dialog {
 				
 				HashMap<String, String> appProtocolParams = ApplicationSettings.applicationProtocols.get(appType.toString());
 				
-				set = appProtocolParams.entrySet();
-				i = set.iterator();
-				while (i.hasNext()) {
-					Entry<String, String> me = i.next();
-					appProtocol.addParameter(me.getKey(), me.getValue());
-				}
+				appProtocol.setParameters(appProtocolParams);							
 				
 				for (TableItem item : table.getItems())	appProtocol.addEvent(EventType.valueOf(item.getText(0)), Integer.parseInt(item.getText(1)));					
 				

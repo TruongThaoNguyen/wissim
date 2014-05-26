@@ -26,68 +26,72 @@ public class ApplicationSettings {
 	public static final boolean RULER_SHOW = true, RULER_HIDE = false;
 	
 	// configuration path of application
-	public static String SETTINGS_PATH = ApplicationSettings.class.getResource("settings.xml").getPath();
-	public static String GRAPHICS_SETTINGS_PATH = ApplicationSettings.class.getResource("graphics-settings.xml").getPath();
+	private static String SETTINGS_PATH() 			throws Exception { return ApplicationSettings.class.getResource("settings.xml").getPath(); }
+	private static String GRAPHICS_SETTINGS_PATH()	throws Exception { return ApplicationSettings.class.getResource("graphics-settings.xml").getPath(); }
 	
 	private static Document settingsDoc;
 	
 	// application variables for settings
-	public static Point networkSize;
-	public static int nodeRange;
-	public static int queueLength;
-	public static HashMap<String, HashMap<String, String>> routingProtocols = new HashMap<String, HashMap<String, String>>();
-	public static StringBuilder defaultRoutingProtocol = new StringBuilder();
-	public static HashMap<String, HashMap<String, String>> transportProtocols = new HashMap<String, HashMap<String, String>>();
-	public static StringBuilder defaultTransportProtocol = new StringBuilder();
+	public static Point  networkSize 		= new Point(100, 100);
+	public static int 	 nodeRange 			= 40;
+	public static int 	 queueLength 		= 50;
+	public static double iddleEnergy		= 0.0096;
+	public static double receptionEnergy 	= 0.21;
+	public static double transmissionEnergy = 0.025;
+	public static double sleepEnergy		= 0.000648;
+	
+	public static HashMap<String, HashMap<String, String>> routingProtocols 	= new HashMap<String, HashMap<String, String>>();
+	public static HashMap<String, HashMap<String, String>> transportProtocols	= new HashMap<String, HashMap<String, String>>();
 	public static HashMap<String, HashMap<String, String>> applicationProtocols = new HashMap<String, HashMap<String, String>>();
-	public static StringBuilder defaultApplicationProtocol = new StringBuilder();	
-	public static HashMap<String, HashMap<String, String>> linkLayers = new HashMap<String, HashMap<String, String>>();
-	public static StringBuilder defaultLinkLayer = new StringBuilder();
-	public static HashMap<String, HashMap<String, String>> macs = new HashMap<String, HashMap<String, String>>();
-	public static StringBuilder defaultMac = new StringBuilder();
-	public static HashMap<String, HashMap<String, String>> channels = new HashMap<String, HashMap<String, String>>();
-	public static StringBuilder defaultChannel = new StringBuilder();
-	public static HashMap<String, HashMap<String, String>> propagationModels = new HashMap<String, HashMap<String, String>>();
-	public static StringBuilder defaultPropagationModel = new StringBuilder();
-	public static HashMap<String, HashMap<String, String>> networkInterfaces = new HashMap<String, HashMap<String, String>>();
-	public static StringBuilder defaultNetworkInterface = new StringBuilder();
-	public static HashMap<String, HashMap<String, String>> antennas = new HashMap<String, HashMap<String, String>>();
-	public static StringBuilder defaultAntenna = new StringBuilder();
-	public static HashMap<String, HashMap<String, String>> interfaceQueues = new HashMap<String, HashMap<String, String>>();
-	public static StringBuilder defaultInterfaceQueue = new StringBuilder();
-	public static double iddleEnergy;
-	public static double receptionEnergy;
-	public static double transmissionEnergy;
-	public static double sleepEnergy;
+	public static HashMap<String, HashMap<String, String>> linkLayers 			= new HashMap<String, HashMap<String, String>>();
+	public static HashMap<String, HashMap<String, String>> macs 				= new HashMap<String, HashMap<String, String>>();
+	public static HashMap<String, HashMap<String, String>> channels 			= new HashMap<String, HashMap<String, String>>();
+	public static HashMap<String, HashMap<String, String>> propagationModels 	= new HashMap<String, HashMap<String, String>>();
+	public static HashMap<String, HashMap<String, String>> networkInterfaces 	= new HashMap<String, HashMap<String, String>>();
+	public static HashMap<String, HashMap<String, String>> antennas 			= new HashMap<String, HashMap<String, String>>();
+	public static HashMap<String, HashMap<String, String>> interfaceQueues 		= new HashMap<String, HashMap<String, String>>();
+	
+	public static StringBuilder defaultRoutingProtocol 		= new StringBuilder();	
+	public static StringBuilder defaultTransportProtocol 	= new StringBuilder();	
+	public static StringBuilder defaultApplicationProtocol 	= new StringBuilder();		
+	public static StringBuilder defaultLinkLayer 			= new StringBuilder();	
+	public static StringBuilder defaultMac 					= new StringBuilder();	
+	public static StringBuilder defaultChannel 				= new StringBuilder();	
+	public static StringBuilder defaultPropagationModel 	= new StringBuilder();	
+	public static StringBuilder defaultNetworkInterface 	= new StringBuilder();	
+	public static StringBuilder defaultAntenna 				= new StringBuilder();	
+	public static StringBuilder defaultInterfaceQueue 		= new StringBuilder();
+	
 	
 	// application variables for graphics settings
-	public static Color backgroundColor;	
-	public static Color nodeColor;
-	public static int nodeSize;
-	public static int nodeBorderType;	
-	public static Color greedyPathColor;
-	public static int greedyPathThickness;
-	public static Color shortestPathColor;
-	public static int shortestPathThickness;
-	public static Color userDefinedPathColor;
-	public static int userDefinedPathThickness;
-	public static Color obstacleBackgroundColor;
-	public static int obstacleBorderThickness;
-	public static boolean isRulerShown;
 	
-	private static final Color defaultBackgroundColor = Helper.hex2Rgb("#ffffff");
-	private static final Color defaultNodeColor = Helper.hex2Rgb("#dcdcdc");
-	private static final int defaultNodeSize = 10;
-	private static final int defaultNodeBorderType = ApplicationSettings.CIRCLE;
-	private static final Color defaultGreedyPathColor = Helper.hex2Rgb("#660033");
-	private static final int defaultGreedyPathThickness = 2;
-	private static final Color defaultShortestPathColor = Helper.hex2Rgb("#330066");
-	private static final int defaultShortestPathThickness = 2;
-	private static final Color defaultUserDefinedPathColor = Helper.hex2Rgb("#ff3d3d");
-	private static final int defaultUserDefinedPathThickness = 2;
-	private static final Color defaultObstacleBackgroundColor = Helper.hex2Rgb("#cc9999");
-	private static final int defaultObstacleBorderThickness = 1;
-	private static final boolean defaultIsRulerShown = ApplicationSettings.RULER_SHOW;
+	public static int		nodeSize 					= 10;
+	public static int 		nodeBorderType 				= ApplicationSettings.CIRCLE;
+	public static int 		greedyPathThickness 		= 2;
+	public static int 		shortestPathThickness	 	= 2;
+	public static int 		userDefinedPathThickness	= 2;
+	public static int 		obstacleBorderThickness 	= 1;
+	public static Color 	backgroundColor 			= Helper.hex2Rgb("#ffffff");
+	public static Color 	nodeColor 					= Helper.hex2Rgb("#dcdcdc");	
+	public static Color 	greedyPathColor 			= Helper.hex2Rgb("#660033");	
+	public static Color 	shortestPathColor 			= Helper.hex2Rgb("#330066");	
+	public static Color 	userDefinedPathColor 		= Helper.hex2Rgb("#ff3d3d");	
+	public static Color 	obstacleBackgroundColor 	= Helper.hex2Rgb("#cc9999");	
+	public static boolean 	isRulerShown 				= ApplicationSettings.RULER_SHOW;
+	
+	private static final int 	defaultNodeSize 				= 10;
+	private static final int 	defaultNodeBorderType 			= ApplicationSettings.CIRCLE;
+	private static final int 	defaultGreedyPathThickness 		= 2;
+	private static final int 	defaultShortestPathThickness 	= 2;
+	private static final int 	defaultUserDefinedPathThickness	= 2;
+	private static final int 	defaultObstacleBorderThickness 	= 1;
+	private static final Color 	defaultBackgroundColor 			= Helper.hex2Rgb("#ffffff");
+	private static final Color 	defaultNodeColor 				= Helper.hex2Rgb("#dcdcdc");	
+	private static final Color 	defaultGreedyPathColor 			= Helper.hex2Rgb("#660033");	
+	private static final Color 	defaultShortestPathColor 		= Helper.hex2Rgb("#330066");	
+	private static final Color 	defaultUserDefinedPathColor 	= Helper.hex2Rgb("#ff3d3d");	
+	private static final Color 	defaultObstacleBackgroundColor 	= Helper.hex2Rgb("#cc9999");	
+	private static final boolean defaultIsRulerShown 			= ApplicationSettings.RULER_SHOW;
 
 	/**
 	 * Load application configuration
@@ -95,17 +99,17 @@ public class ApplicationSettings {
 	 * @throws ParsingException 
 	 * @throws ValidityException 
 	 */
-	public static void loadConfig() throws ValidityException, ParsingException, IOException {
+	public static void loadConfig() throws Exception {
 		settingsDoc = loadNetworkConfig();
 		loadGraphicConfig();
 	}
 	
-	public static void saveConfig() throws IOException {
+	public static void saveConfig() throws Exception {
 		saveNetworkConfig();
 		saveGraphicConfig();
 	}
 	
-	public static void saveNetworkConfig() throws IOException {
+	public static void saveNetworkConfig() throws Exception {
 		Element root = settingsDoc.getRootElement();
 		
 		// sets default node range
@@ -147,10 +151,10 @@ public class ApplicationSettings {
 		setDefaultProtocol(root, "antennas", defaultAntenna);
 		setDefaultProtocol(root, "interface-queues", defaultInterfaceQueue);
 		
-		Parser.saveXml(settingsDoc, SETTINGS_PATH);
+		Parser.saveXml(settingsDoc, SETTINGS_PATH());
 	}
 
-	public static void saveGraphicConfig() throws IOException {
+	public static void saveGraphicConfig() throws Exception {
 		Element eGraphicSettings = new Element("settings");
 		Document doc = new Document(eGraphicSettings);
 		
@@ -199,14 +203,14 @@ public class ApplicationSettings {
 		
 		eGraphicSettings.appendChild(ePaths);
 		
-		Parser.saveXml(doc, GRAPHICS_SETTINGS_PATH);
+		Parser.saveXml(doc, GRAPHICS_SETTINGS_PATH());
 	}
 
-	private static void loadGraphicConfig() throws ValidityException, ParsingException, IOException {
+	private static void loadGraphicConfig() throws Exception {
 		Document doc = null;
 		
 		try {
-			doc = Parser.parse(GRAPHICS_SETTINGS_PATH);		
+			doc = Parser.parse(GRAPHICS_SETTINGS_PATH());		
 		} catch (Exception e) {
 			try {
 				doc = Parser.parse("graphics-settings.xml");
@@ -258,16 +262,16 @@ public class ApplicationSettings {
 		}
 	}
 
-	private static Document loadNetworkConfig() throws ValidityException, ParsingException, IOException {
+	private static Document loadNetworkConfig() throws Exception {
 		Document doc = null;
 		
 		try {
-			doc = Parser.parse(SETTINGS_PATH);
+			doc = Parser.parse(SETTINGS_PATH());
 		} catch (Exception e) {
 			try {
 				doc = Parser.parse("settings.xml");
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				throw e;
 			}
 		} 
 		
@@ -290,26 +294,22 @@ public class ApplicationSettings {
 		
 		// gets default energy-model
 		Element eEnergyModel = root.getFirstChildElement("energy-model");
-		Element eIddle = eEnergyModel.getFirstChildElement("iddle");
-		iddleEnergy = Double.parseDouble(eIddle.getValue());
-		Element eReception = eEnergyModel.getFirstChildElement("reception");
-		receptionEnergy = Double.parseDouble(eReception.getValue());
-		Element eTransmission = eEnergyModel.getFirstChildElement("transmission");
-		transmissionEnergy = Double.parseDouble(eTransmission.getValue());
-		Element eSleep = eEnergyModel.getFirstChildElement("sleep");
-		sleepEnergy = Double.parseDouble(eSleep.getValue());
+		iddleEnergy 		= Double.parseDouble(eEnergyModel.getFirstChildElement("iddle"			).getValue());
+		receptionEnergy 	= Double.parseDouble(eEnergyModel.getFirstChildElement("reception"		).getValue());	
+		transmissionEnergy 	= Double.parseDouble(eEnergyModel.getFirstChildElement("transmission"	).getValue());
+		sleepEnergy 		= Double.parseDouble(eEnergyModel.getFirstChildElement("sleep"			).getValue());
 		
 		// gets default protocols
-		getProtocols(root, "routing-protocols", routingProtocols, defaultRoutingProtocol);		
-		getProtocols(root, "transport-protocols", transportProtocols, defaultTransportProtocol);			
-		getProtocols(root, "apps", applicationProtocols, defaultApplicationProtocol);		
-		getProtocols(root, "link-layers", linkLayers, defaultLinkLayer);
-		getProtocols(root, "macs", macs, defaultMac);
-		getProtocols(root, "channels", channels, defaultChannel);
-		getProtocols(root, "propagation-models", propagationModels, defaultPropagationModel);
-		getProtocols(root, "network-interfaces", networkInterfaces, defaultNetworkInterface);
-		getProtocols(root, "antennas", antennas, defaultAntenna);
-		getProtocols(root, "interface-queues", interfaceQueues, defaultInterfaceQueue);
+		getProtocols(root, "routing-protocols", 	routingProtocols, 		defaultRoutingProtocol		);		
+		getProtocols(root, "transport-protocols", 	transportProtocols, 	defaultTransportProtocol	);			
+		getProtocols(root, "apps", 					applicationProtocols, 	defaultApplicationProtocol	);		
+		getProtocols(root, "link-layers", 			linkLayers, 			defaultLinkLayer			);
+		getProtocols(root, "macs", 					macs, 					defaultMac					);
+		getProtocols(root, "channels", 				channels, 				defaultChannel				);
+		getProtocols(root, "propagation-models", 	propagationModels, 		defaultPropagationModel		);
+		getProtocols(root, "network-interfaces", 	networkInterfaces, 		defaultNetworkInterface		);
+		getProtocols(root, "antennas",				antennas, 				defaultAntenna				);
+		getProtocols(root, "interface-queues", 		interfaceQueues, 		defaultInterfaceQueue		);
 		
 		return doc;
 	}
@@ -325,10 +325,14 @@ public class ApplicationSettings {
 				defaultProtocol.append(pType);
 			
 			HashMap<String, String> paramMap = new HashMap<String, String>();
-			Elements params = p.getFirstChildElement("params").getChildElements();
-			for (int j = 0; j < params.size(); j++) {
-				Element param = params.get(j);
-				paramMap.put(param.getAttributeValue("property"), param.getAttributeValue("value"));
+			Element param = p.getFirstChildElement("params");
+			if (param != null)
+			{
+				Elements params = param.getChildElements();			
+				for (int j = 0; j < params.size(); j++) {
+					Element pa = params.get(j);
+					paramMap.put(pa.getAttributeValue("property"), pa.getAttributeValue("value"));
+				}
 			}
 			
 			protocols.put(pType, paramMap);
@@ -350,34 +354,35 @@ public class ApplicationSettings {
 		}
 	}
 	
-	public static void applyDefaultSettingsToProject(Project project) {
-		project.setAntennas(antennas);
-		project.setApplicationProtocols(applicationProtocols);
-		project.setChannels(channels);
+	public static void applyDefaultSettingsToProject(Project project) {			
+		Project.setAntennas(antennas);
+		Project.setApplicationProtocols(applicationProtocols);
+		Project.setChannels(channels);
 		project.setIddleEnergy(iddleEnergy);
-		project.setInterfaceQueues(interfaceQueues);
-		project.setLinkLayers(linkLayers);
-		project.setMacs(macs);
-		project.setNetworkInterfaces(networkInterfaces);
-		project.setNodeRange(nodeRange);
-		project.setPropagationModels(propagationModels);
-		project.setQueueLength(queueLength);
-		project.setReceptionEnergy(receptionEnergy);
-		project.setRoutingProtocols(routingProtocols);
-		project.setSleepEnergy(sleepEnergy);
-		project.setTransmissionEnergy(transmissionEnergy);
-		project.setTransportProtocols(transportProtocols);
+		Project.setInterfaceQueues(interfaceQueues);
+		Project.setLinkLayers(linkLayers);
+		Project.setMacs(macs);
+		Project.setNetworkInterfaces(networkInterfaces);		
+		Project.setPropagationModels(propagationModels);			
+		Project.setRoutingProtocols(routingProtocols);		
+		Project.setTransportProtocols(transportProtocols);
 		
 		project.setSelectedAntenna(defaultAntenna.toString());
-		project.setSelectedApplicationProtocol(defaultApplicationProtocol.toString());
+		Project.setSelectedApplicationProtocol(defaultApplicationProtocol.toString());
 		project.setSelectedChannel(defaultChannel.toString());
 		project.setSelectedInterfaceQueue(defaultInterfaceQueue.toString());
 		project.setSelectedLinkLayer(defaultLinkLayer.toString());
 		project.setSelectedMac(defaultMac.toString());
 		project.setSelectedPropagationModel(defaultPropagationModel.toString());
 		project.setSelectedRoutingProtocol(defaultRoutingProtocol.toString());
-		project.setSelectedTransportProtocol(defaultTransportProtocol.toString());
+		Project.setSelectedTransportProtocol(defaultTransportProtocol.toString());
 		project.setSelectedNetworkInterface(defaultNetworkInterface.toString());
+		
+		project.setNodeRange(nodeRange);
+		project.setQueueLength(queueLength);
+		project.setReceptionEnergy(receptionEnergy);
+		project.setSleepEnergy(sleepEnergy);
+		project.setTransmissionEnergy(transmissionEnergy);
 	}
 	
 	public static org.eclipse.swt.graphics.Color colorAWTtoSWT(Color color) {

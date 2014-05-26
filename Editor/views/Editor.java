@@ -2,7 +2,9 @@ package views;
 
 import java.awt.Desktop;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.Observer;
 
 import models.Project;
 import models.converter.ParseException;
+import models.converter.Token;
 import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.WirelessNode;
 
@@ -21,10 +24,13 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.Bullet;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -36,6 +42,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.wb.swt.ResourceManager;
@@ -58,18 +66,23 @@ import views.dialogs.PreferencesDialog;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-/*
+/**
  * Author: Trong Nguyen
  * 
  */
-
 public class Editor extends MainContent implements Observer {
 
 	/**
@@ -95,6 +108,7 @@ public class Editor extends MainContent implements Observer {
 		actionGetTab();
 		actionEvent();
 		getCTabFolder().setSelection(1);
+		sashForm.setWeights(new int[] {525, 111});
 		
 		Display.getCurrent().addFilter(SWT.KeyDown, new Listener() {			
 			@Override
@@ -170,8 +184,7 @@ public class Editor extends MainContent implements Observer {
 	private void createContent() {
 		setLayout(new GridLayout(1, false));
 		
-
-		// ------------- toolbar ------------- //
+		// region ------------------- toolbar ------------- //
 		
 //		Composite toolbarComposite = new Composite(this,  SWT.BORDER);
 //		GridData gd_toolbarComposite = new GridData(SWT.LEFT, SWT.TOP, true, false, 1, 1);
@@ -184,23 +197,18 @@ public class Editor extends MainContent implements Observer {
 		
 		toolBarManager = new ToolBarManager(toolBar);
 		
-				
-				
-		
-		// ------------- main composite ------------- //
+		// endregion		
+
+		// region ------------------- body ---------------- //
 		
 		sashForm = new SashForm(this, SWT.HORIZONTAL);
 		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
-		// ------------- properties composite ------------- //
-		
-		
-		SashForm subSashForm = new SashForm(sashForm, SWT.VERTICAL);
+						
+		SashForm subSashForm = new SashForm(sashForm, SWT.VERTICAL);		
 		subSashForm.addControlListener(new ControlListener() {
 			
 			@Override
 			public void controlResized(ControlEvent arg0) {
-				// TODO Auto-generated method stub
 				if(getWorkspace() != null)
 					getWorkspace().updateLayout();
 			}
@@ -212,12 +220,16 @@ public class Editor extends MainContent implements Observer {
 			}
 		});
 		
+		// region ------------------- content Composite ------------------- //
+		
 		contentComposite = new Composite(subSashForm, SWT.NONE);
 		contentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		contentComposite.setLayout(new FillLayout());
 		
 		tabFolder = new CTabFolder(contentComposite, SWT.BORDER | SWT.FLAT | SWT.BOTTOM);
 		tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+		
+		// region ------------------- Edit tab ------------------- //
 		
 		CTabItem tbtmEdit = new CTabItem(tabFolder, SWT.PUSH);
 		tbtmEdit.setText("Edit");
@@ -226,32 +238,67 @@ public class Editor extends MainContent implements Observer {
 		tbtmEdit.setControl(composite);
 		composite.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
-		text = new Text(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
+		text = new StyledText(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
 		text.setTextDirection(335544320);
-		text.setFont(SWTResourceManager.getFont("Ubuntu Mono", 11, SWT.NORMAL));
+		text.setFont(SWTResourceManager.getFont("Ubuntu Mono", 12, SWT.NORMAL));
 		formToolkit.adapt(text, true, true);
+
+		// line number
+		text.addModifyListener(new ModifyListener() {			
+			@Override
+			public void modifyText(ModifyEvent event) {
+				int maxLine = text.getLineCount();
+				int lineCountWidth = Math.max(String.valueOf(maxLine).length(), 3);
+
+				StyleRange style = new StyleRange();
+				style.metrics = new GlyphMetrics(0, 0, lineCountWidth * 8 + 5);
+				Bullet bullet = new Bullet(ST.BULLET_NUMBER, style);
+				text.setLineBullet(0, text.getLineCount(), bullet);
+				
+				Device device = Display.getCurrent();		
+				style.foreground = new Color(device, new RGB(150, 150, 150));
+			}
+		});		
 		
+		// endregion Edit tab
+		
+		// region ------------------- Design tab ------------------- //
+
 		CTabItem tbtmDesign = new CTabItem(tabFolder, SWT.PUSH);
 		tbtmDesign.setText("Design");
-//				scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-////				scrolledComposite = new RulerScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-//				tbtmDesign.setControl(scrolledComposite);
-//				scrolledComposite.setExpandHorizontal(true);
-//				scrolledComposite.setExpandVertical(true);
 		
+		// endregion Design tab
+		
+		// endregion content Composite
+		
+		// region ------------------- console composite ------------------- //
+
 		Composite bottomComposite = new Composite(subSashForm, SWT.NONE);
 		bottomComposite.setLayout(new GridLayout(1, false));
+				
+		styledTextConsole = new Text(bottomComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
+		GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd_styledText.heightHint = 91;
+		styledTextConsole.setLayoutData(gd_styledText);	
+								
+		styledTextConsole.addModifyListener(new ModifyListener() {
+			
+			@Override
+			public void modifyText(ModifyEvent arg0) {
+				System.out.println(styledTextConsole.getText());
+			}
+		});
 
-						styledTextConsole = new StyledText(bottomComposite, SWT.BORDER);
-						GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true);
-						gd_styledText.heightHint = 91;
-						styledTextConsole.setLayoutData(gd_styledText);
+		// endregion console composite
 		
-		subSashForm.setWeights(new int[] {215, 83});
+		progressBar = new ProgressBar(subSashForm, SWT.NONE);
+		formToolkit.adapt(progressBar, true, true);
+		subSashForm.setWeights(new int[] {311, 108, 5});
 		
+		// region ------------------- properties composite ------------------- //		
+				
 		propertiesComposite = new Composite(sashForm,  SWT.BORDER | SWT.H_SCROLL);
-		GridData gd_propertiesComposite = new GridData(SWT.RIGHT, SWT.FILL, false, true);
-		
+		GridData gd_propertiesComposite = new GridData(SWT.RIGHT, SWT.FILL, false, true);		
 		propertiesComposite.setLayoutData(gd_propertiesComposite);
 		gd_propertiesComposite.heightHint = 50;
 		
@@ -269,12 +316,11 @@ public class Editor extends MainContent implements Observer {
 		Label lblSss = new Label(propertiesComposite, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.CENTER);
 		lblSss.setText("sss");
 		lblSss.setBounds(0, 101, 64, 14);
-		sashForm.setWeights(new int[] {418, 75});
+		
 		sashForm.addControlListener(new ControlListener() {
 			
 			@Override
 			public void controlResized(ControlEvent arg0) {
-				// TODO Auto-generated method stub
 				if(getWorkspace() != null) {
 					getWorkspace().updateLayout();
 				}
@@ -286,6 +332,10 @@ public class Editor extends MainContent implements Observer {
 				
 			}
 		});
+		
+		// endregion properties composite
+
+		// endregion body
 	}
 	
 	public void actionGetTab() {		
@@ -295,10 +345,19 @@ public class Editor extends MainContent implements Observer {
 			{
 				if(tabFolder.getSelectionIndex() == 0)		// Edit
 				{
-					updateDesign();					  
+					statesHandler.initialize();
+					try 
+					{
+						updateDesign();
+					}
+					catch (ParseException e) 
+					{						
+						MessageDialog.openError(getShell(), "Something wrong", e.getMessage());
+					}					  
 				}
 				else										// Design
 				{
+					statesHandler.activeProject();
 					if(text.getText() != "") 
 					{
 						try 
@@ -322,30 +381,124 @@ public class Editor extends MainContent implements Observer {
 	@Override
 	protected void updateMenu() {
 		menuManager.add(menuManager_File);
-//		menuManager.add(menuManager_Edit);
-//		menuManager.add(menuManager_View);
-//		menuManager.add(menuManager_Feature);
-//		menuManager.add(menuManager_Manage);
-//		menuManager.add(menuManager_Generate);
-//		menuManager.add(menuMenager_Setting);
+		menuManager.add(menuManager_Edit);
+		menuManager.add(menuManager_View);
+		menuManager.add(menuManager_Feature);
+		menuManager.add(menuManager_Manage);		
+		menuManager.add(menuMenager_Setting);
 		menuManager.add(menuManager_Help);
 	}
 	
-	private void createMenu() {				
-	{	// ------------- File ------------- //
+	private void createMenu() {
+		
+		// region ------------------- File ------------------- //
 
 		menuManager_File = new MenuManager("&File");
-		menuManager_File.add(actNew);
-//		
-	}
+		menuManager_File.add(actNew);		
+		menuManager_File.add(actOpen);
+		menuManager_File.add(actSave);
+		menuManager_File.add(actSaveAs);		
+		menuManager_File.add(new Separator());
+		menuManager_File.add(actImport);
+		{
+			MenuManager menuManager_2 = new MenuManager("Export");
+			menuManager_File.add(menuManager_2);
+			menuManager_2.add(actToImage);
+		//	menuManager_2.add(actToPDF);
+		}
+		menuManager_File.add(actPrint);
+		menuManager_File.add(new Separator());
+		menuManager_File.add(actClose);
+		menuManager_File.add(actExit);
+		
+		// endregion
+
+		// region ------------------- Edit ------------------- //
+
+		menuManager_Edit = new MenuManager("&Edit");				
+		menuManager_Edit.add(actChangeNetworkSize);
+		menuManager_Edit.add(actConfigureNodes);
+		{
+			MenuManager menuManager_2 = new MenuManager("Create");
+			menuManager_Edit.add(menuManager_2);
+			menuManager_2.add(actCreateASingleNode);
+			menuManager_2.add(actCreateASetOfNodes);
+			menuManager_2.add(new Separator());
+			menuManager_2.add(actCreateARandomNode);
+		}
+		menuManager_Edit.add(new Separator());
+		menuManager_Edit.add(actDeleteNodes);
+		menuManager_Edit.add(actDeleteAllNodes);
+
+		// endregion Edit
 	
-	{	// ------------- Help ------------- //
-		menuManager_Help = new MenuManager("&Help");		
-		//menuManager_Help.add(actDocumentation);
-		//menuManager_Help.add(actDemos);
+		// region ------------------- View ------------------- //
+
+		menuManager_View = new MenuManager("&View");		
+		menuManager_View.add(actZoomIn);
+		menuManager_View.add(actZoomOut);
+		menuManager_View.add(new Separator());
+		menuManager_View.add(actViewNetworkInfo);
+		menuManager_View.add(actViewNodeInfo);
+		menuManager_View.add(new Separator());
+		menuManager_View.add(actShowRange);
+		menuManager_View.add(actShowNeighbors);
+		menuManager_View.add(new Separator());
+		menuManager_View.add(actShowConnection);
+		menuManager_View.add(actShowObstacles);
+		menuManager_View.add(new Separator());
+		menuManager_View.add(actShowRulers);
+		
+		// endregion View
+		
+		// region ------------------- Feature ------------------- //
+
+		menuManager_Feature = new MenuManager("Features");		
+		menuManager_Feature.add(actSearchNode);
+		menuManager_Feature.add(actIdentifyBoundary);
+		menuManager_Feature.add(new Separator());
+		menuManager_Feature.add(actCheckConnectivity);
+		{
+			MenuManager menuManager_2 = new MenuManager("Planar Graph");
+			menuManager_Feature.add(menuManager_2);
+			menuManager_2.add(actViewRNGGraph);
+			menuManager_2.add(actViewGGGraph);
+		}
+		menuManager_Feature.add(actViewVoronoiDiagram);
+		menuManager_Feature.add(actViewDelaunayTriangulation);
+		menuManager_Feature.add(new Separator());
+		menuManager_Feature.add(actFindPathByGreedy);
+		menuManager_Feature.add(actViewShortestPath);
+		menuManager_Feature.add(actViewShortestPathTree);
+
+		// endregion Feature
+		
+		// region ------------------- Manager ------------------- //
+
+		menuManager_Manage = new MenuManager("Manager");		
+		menuManager_Manage.add(actManageLabels);
+		menuManager_Manage.add(actManagePaths);
+		menuManager_Manage.add(actManageTrafficFlow);		
+		
+		// endregion manager
+		
+		// region ------------------- Setting ------------------- //
+		
+		menuMenager_Setting = new MenuManager("&Settings");		
+		menuMenager_Setting.add(actDefaultConfiguration);
+		menuMenager_Setting.add(actVisualizeSettings);
+
+		// endregion Setting
+		
+		// region ------------------- Help ------------------- //
+		
+		menuManager_Help = new MenuManager("&Help");	
+		menuManager_Help.add(actDocumentation);
+		menuManager_Help.add(actDemos);
 		menuManager_Help.add(new Separator());
 		menuManager_Help.add(actAbout);
-	}	
+		
+		// endregion help
 	}
 	
 	/**
@@ -446,7 +599,8 @@ public class Editor extends MainContent implements Observer {
 
 		actConfigureNodes = new Action("Configure Node(s)") {
 			public void run() {
-				actionConfigureNode();				
+				actionConfigureNode();		
+				actSave.setEnabled(true);
 			}
 		};
 		actConfigureNodes.setToolTipText("Configure Node (ATL + F)");
@@ -792,6 +946,7 @@ public class Editor extends MainContent implements Observer {
 		
 		actRunNS2 = new Action("Run NS2"){
 			public void run() {
+				styledTextConsole.setText("Running ... \n");
 				actionRunNS2();
 			}
 		};
@@ -820,13 +975,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionManageTrafficFlow();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionManageTrafficFlow();
 					}
 				});
@@ -837,13 +990,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionManagePath();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionManagePath();
 					}
 				});
@@ -854,13 +1005,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionManageLabels();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionManageLabels();
 					}
 				});
@@ -871,13 +1020,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionShowRulers();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionShowRulers();
 					}
 				});
@@ -903,13 +1050,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionImport();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionImport();
 						
 					}
@@ -921,13 +1066,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionToImage();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionToImage();
 					}
 				});
@@ -938,13 +1081,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionDocumentation();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionDocumentation();
 					}
 				});
@@ -955,13 +1096,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionDemos();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionDemos();
 					}
 				});
@@ -972,13 +1111,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionPrint();
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionPrint();
 					}
 				});
@@ -989,14 +1126,11 @@ public class Editor extends MainContent implements Observer {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionAbout();
-						
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						actionAbout();
 					}
 				});
@@ -1030,6 +1164,7 @@ public class Editor extends MainContent implements Observer {
 		tabFolder.setSelection(1);
 		if (ApplicationManager.openProject(editor) == null) return;		
 		showProject();		
+		System.setProperty("user.dir", Configure.getDirectory());
 		getWorkspace().getSelectableObject().get(getWorkspace().getSelectableObject().size() - 1).moveAbove(null);
 		updateNetworkInfoLabel();
 		updateNodeInfoLabel();
@@ -1052,16 +1187,90 @@ public class Editor extends MainContent implements Observer {
 	 * Save Scipt to file
 	 * @author trongnguyen
 	 */
-	public void saveScript() {
+	public void saveScript() {			
+		String fileName = Configure.getTclFile();
+			
 		try {
-			ProjectManager.saveProject();
-		} catch (IOException err) {						
+			if (tabFolder.getSelectionIndex() == 0)	// edit
+			{
+				BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
+				bw.write(text.getText());
+				bw.close();		
+			}
+			else 									// design
+			{
+				ProjectManager.saveProject();
+			}
+		}
+		catch (Exception err) {						
 			MessageDialog.openError(getShell(), "Save File Error", err.getMessage());
 		}
 	}
 	
-	public void updateDesign() {
+	/**
+	 * show Tcl code with highlight.
+	 * @author trongnguyen
+	 * @throws ParseException 
+	 */
+	public void updateDesign() throws ParseException {				
+		
+		// set text
 		text.setText(Converter.DTC());
+		
+		// set style
+		final List<Token> tokenList = Converter.DTC_token();
+		final Display display = Display.getCurrent();
+		
+		new Thread(new Runnable() 
+		{
+			@Override
+			public void run() 
+			{		
+				final int[] index = new int[1];
+				final String[] s = new String[1];
+				s[0] = "";
+				for (final Token token : tokenList)
+				{			
+					index[0] += s[0].length();
+					s[0] = token.toString();
+					
+					display.syncExec(new Runnable() {						
+						@Override
+						public void run() {		
+												
+							// add style, The style itself depends on the region type, use colors from the system	        
+							Color color = null;
+						    switch(token.Type()) 
+						    {
+						    	case Keyword:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_BLUE);	break;
+						    	case Comment:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN);	break;
+						    	case Quote:		color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_YELLOW);	break;
+						    	case Referent:	color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED);	break;
+								case Brace:
+								case Bracket:			
+								case Parenthesis:													
+								case Identify:
+								case Separator:
+								case Space:					
+								default:		color = null;							
+						    }
+			
+						    if (color != null)
+						    {
+							    // Define the position and limit
+							    StyleRange sr = new StyleRange();
+							    sr.foreground = color;
+							    sr.start = index[0];
+							    sr.length = s[0].length();
+							    
+							    text.setStyleRange(sr);	
+						    }
+						}					
+					});			
+				}				
+			}
+		}).start();
+		
 	}
 	
 	public void updateNodeInfoLabel() {
@@ -1119,7 +1328,8 @@ public class Editor extends MainContent implements Observer {
 	
 	public void actionNew() {		
 		tabFolder.setSelection(1);		
-		if (ApplicationManager.newProject(Editor.this) == null) return;		
+		if (ApplicationManager.newProject(Editor.this) == null) return;
+		actionDefaultConfiguration();
 		showProject();
 		updateNetworkInfoLabel();
 		//updateDesign();		
@@ -1147,17 +1357,17 @@ public class Editor extends MainContent implements Observer {
 		Workspace workspace = getWorkspace();
 		
 		if (workspace != null)
-			new ConfigNodeDialog(getShell(), SWT.SHEET, ConfigNodeDialog.PROJECT_CONFIG, workspace).open();
+			new ConfigNodeDialog(getShell(), SWT.SHEET, ConfigNodeDialog.PROJECT_CONFIG, workspace,Editor.this).open();
 	}
 	
 	public void actionCreateASingleNode() {
 		Workspace workspace = getWorkspace();
-		ApplicationManager.createASingleNode(workspace);
+		ApplicationManager.createASingleNode(workspace,Editor.this);
 	}
 	
 	public void actionCreateASetOfNode() {
 		Workspace workspace = getWorkspace();
-		ApplicationManager.createASetOfNodes(workspace);
+		ApplicationManager.createASetOfNodes(workspace,Editor.this);
 	}
 	
 	public void actionManageTrafficFlow() {
@@ -1167,7 +1377,8 @@ public class Editor extends MainContent implements Observer {
 	
 	public void actionDeleteNodes() {
 		Workspace workspace = getWorkspace();
-		ApplicationManager.deleteNodes(workspace);
+		if(ApplicationManager.deleteNodes(workspace))
+			actSave.setEnabled(true);
 	}
 	
 	public void actionViewNetworkInfo() {
@@ -1232,7 +1443,7 @@ public class Editor extends MainContent implements Observer {
 	}
 	
 	public void actionDefaultConfiguration() {
-		new ConfigNodeDialog(getShell(), SWT.SHEET, ConfigNodeDialog.APP_CONFIG, null).open();
+		new ConfigNodeDialog(getShell(), SWT.SHEET, ConfigNodeDialog.APP_CONFIG, null,Editor.this).open();
 	}
 	
 	public void actionDocumentation() {
@@ -1276,12 +1487,14 @@ public class Editor extends MainContent implements Observer {
 	
 	public void actionCreateARandomNode() {
 		Workspace w = getWorkspace();
-		ApplicationManager.createARandomNode(w);
+		if(ApplicationManager.createARandomNode(w))
+			actSave.setEnabled(true);
 	}
 	
 	public void actionDeleteAllNodes() {
 		Workspace w = getWorkspace();
-		ApplicationManager.deleteAllNodes(w);
+		if(ApplicationManager.deleteAllNodes(w))
+			actSave.setEnabled(true);
 	}
 	
 	public void actionShowRange() {
@@ -1354,29 +1567,45 @@ public class Editor extends MainContent implements Observer {
 	 * Run NS2
 	 * @author trongnguyen
 	 */
-	public void actionRunNS2() {
-		saveScript();		
+	public void actionRunNS2() {		
 		if (Configure.getNS2Path() == null)	ns2Config();	
   		
-		try 
-		{			
-			Process p = Runtime.getRuntime().exec(Configure.getNS2Path() + "/bin/ns " + Configure.getTclFile());
-			p.waitFor();
+		final Shell shell = getShell();
+		final Display display = Display.getCurrent();
+		styledTextConsole.append("\nRunning ... \n");
 		
-			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));			
-			String line;
-		
-			while ((line = input.readLine()) != null) 
-			{				
-				styledTextConsole.append(line + "\n");
+		new Thread(new Runnable() {			
+			@Override
+			public void run() {		
+				try 
+				{		
+					Process p = null;
+					File pathToExecutable = new File(Configure.getNS2Path() + "/bin/ns");
+					ProcessBuilder pb = new ProcessBuilder(pathToExecutable.getAbsolutePath(),Configure.getTclFile());					
+					pb.directory(new File(Configure.getDirectory()).getAbsoluteFile());
+					pb.redirectErrorStream(true);
+					p = pb.start();				
+					
+					BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));			
+					String line;
+				
+					while ((line = input.readLine()) != null) 
+					{						
+						final String s = line;
+						display.asyncExec(new Runnable() {
+							@Override
+							public void run() {																				
+								styledTextConsole.append(s + "\n");									
+							}
+						});
+					}					
+				}
+				catch (IOException err) 
+				{					
+					MessageDialog.openError(shell, "NS2 runtime error", err.getMessage());
+				}		
 			}
-		
-			input.close();			
-		}
-		catch (Exception err) 
-		{
-			MessageDialog.openError(getShell(), "NS2 runtime error", err.getMessage());
-		}
+		}).start();		
 	}
 	
 	public void actionImport() {
@@ -1610,18 +1839,6 @@ public class Editor extends MainContent implements Observer {
 		return actToImage;
 	}
 
-//	public Action getActToPDF() {
-//		return actToPDF;
-//	}
-
-	public Action getActUndo() {
-		return actUndo;
-	}
-
-	public Action getActRedo() {
-		return actRedo;
-	}
-
 	public Action getActViewNetworkInfo() {
 		return actViewNetworkInfo;
 	}
@@ -1670,10 +1887,6 @@ public class Editor extends MainContent implements Observer {
 		return actPrint;
 	}
 
-	public Action getActSaveAll() {
-		return actSaveAll;
-	}
-
 	public Action getActZoomIn() {
 		return actZoomIn;
 	}
@@ -1714,7 +1927,15 @@ public class Editor extends MainContent implements Observer {
 		return actRunNS2;
 	}
 	
-	public StyledText getStyledTextConsole() {
+	public Action getActDefaultConfiguration() {
+		return actDefaultConfiguration;
+	}
+	
+	public Action getActVisualizeSettings() {
+		return actVisualizeSettings;
+	}
+	
+	public Text getStyledTextConsole() {
 		return styledTextConsole;
 	}
 	
@@ -1738,8 +1959,7 @@ public class Editor extends MainContent implements Observer {
 	private MenuManager menuManager_Edit;
 	private MenuManager menuManager_View;
 	private MenuManager menuManager_Feature;
-	private MenuManager menuManager_Manage;
-	private MenuManager menuManager_Generate;
+	private MenuManager menuManager_Manage;	
 	private MenuManager menuMenager_Setting;
 	private MenuManager menuManager_Help;
 	
@@ -1751,8 +1971,6 @@ public class Editor extends MainContent implements Observer {
 	private Action actToImage;
 	private Action actClose;
 	private Action actExit;
-	private Action actUndo;
-	private Action actRedo;
 	private Action actConfigureNodes;
 	private Action actCreateASingleNode;
 	private Action actCreateASetOfNodes;
@@ -1782,7 +2000,6 @@ public class Editor extends MainContent implements Observer {
 	private Action actDemos;
 	private Action actAbout;
 	private Action actPrint;
-	private Action actSaveAll;
 	private Action actZoomIn;
 	private Action actZoomOut;
 	private Action actCreateARandomNode;
@@ -1802,8 +2019,8 @@ public class Editor extends MainContent implements Observer {
 	private Action actScriptReferenceRemain;
 	private Action actNetworkReferenceRemain;
 		
-	private Text text;
-	private StyledText styledTextConsole;	
+	private StyledText text;
+	private Text styledTextConsole;	
 	
 //	private RulerScrolledComposite scrolledComposite;
 	
@@ -1812,11 +2029,11 @@ public class Editor extends MainContent implements Observer {
 	private Label lblNewLabel_1;
 	private Label lblNewLabel_2;
 	private final FormToolkit formToolkit = new FormToolkit(Display.getDefault());
+	private ProgressBar progressBar;
 	
 	
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
 		Workspace workspace = getWorkspace();
 		if (arg0 instanceof WorkspacePropertyManager) {
 			String desc = (String) arg1;
