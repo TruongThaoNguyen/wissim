@@ -938,7 +938,6 @@ public class Editor extends MainContent implements Observer {
 		
 		actRunNS2 = new Action("Run NS2"){
 			public void run() {
-				styledTextConsole.setText("Running ... \n");
 				actionRunNS2();
 			}
 		};
