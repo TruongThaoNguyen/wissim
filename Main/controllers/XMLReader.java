@@ -1,4 +1,4 @@
-package controllers.managers;
+package controllers;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,7 +20,7 @@ import nu.xom.ValidityException;
  * @Author Duc-Trong Nguyen
  * @Version 2.0
  */
-public class Parser {	
+public class XMLReader {	
 	
 	/**
 	 * Parse xml file to Document Object
@@ -30,7 +30,7 @@ public class Parser {
 	 * @throws ParsingException
 	 * @throws IOException
 	 */
-	static public Document parse(String path) throws ValidityException, ParsingException, IOException {
+	static public Document open(String path) throws ValidityException, ParsingException, IOException {
 		InputStream input;
 		Document doc = null;
 		
@@ -48,7 +48,7 @@ public class Parser {
 	 * @return
 	 * @throws IOException
 	 */
-	static public boolean saveXml(Document doc, String path) throws IOException {
+	static public boolean save(Document doc, String path) throws IOException {
 		File f = new File(path);
 		if (!f.exists())
 		{

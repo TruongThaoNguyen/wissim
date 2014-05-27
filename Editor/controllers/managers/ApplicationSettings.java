@@ -7,6 +7,7 @@ import java.util.HashMap;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
+import controllers.XMLReader;
 import controllers.helpers.Helper;
 import controllers.helpers.Validator;
 import models.Project;
@@ -171,7 +172,7 @@ public class ApplicationSettings {
 		setDefaultProtocol(root, "antenna", 			antennas,				defaultAntenna);
 		setDefaultProtocol(root, "interface-queue", 	interfaceQueues,		defaultInterfaceQueue);
 		
-		Parser.saveXml(settingsDoc, SETTINGS_PATH);
+		XMLReader.save(settingsDoc, SETTINGS_PATH);
 	}
 
 	public static void saveGraphicConfig() throws Exception {
@@ -223,7 +224,7 @@ public class ApplicationSettings {
 		
 		eGraphicSettings.appendChild(ePaths);
 		
-		Parser.saveXml(doc, GRAPHICS_SETTINGS_PATH);
+		XMLReader.save(doc, GRAPHICS_SETTINGS_PATH);
 	}
 
 	
@@ -232,7 +233,7 @@ public class ApplicationSettings {
 		
 		try 
 		{
-			doc = Parser.parse(GRAPHICS_SETTINGS_PATH);		
+			doc = XMLReader.open(GRAPHICS_SETTINGS_PATH);		
 		}
 		catch (Exception e) 
 		{
@@ -287,7 +288,7 @@ public class ApplicationSettings {
 		Document doc = null;
 		
 		try {
-			doc = Parser.parse(SETTINGS_PATH);
+			doc = XMLReader.open(SETTINGS_PATH);
 		} catch (Exception e) {
 			saveNetworkConfig();
 			return;
