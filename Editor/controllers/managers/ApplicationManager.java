@@ -43,7 +43,6 @@ import controllers.graphicscomponents.GSelectableObject;
 import controllers.graphicscomponents.GWirelessNode;
 import controllers.graphicscomponents.GraphicPath;
 import controllers.helpers.Helper;
-import controllers.helpers.Validator;
 import views.Editor;
 import views.SearchNodeDialog;
 import views.Workspace;
@@ -82,7 +81,7 @@ public class ApplicationManager {
 		File dir = new File(result.path);
 		if (!dir.exists()) dir.mkdir();		
 		
-		String path = Validator.getFilePath(result.path, Helper.getFileNameWithExt(result.name, "tcl"));
+		String path = Configure.getFilePath(result.path, Helper.getFileNameWithExt(result.name, "tcl"));
 		File f = new File(path);
 		
 		boolean confirmed = true;
@@ -113,7 +112,7 @@ public class ApplicationManager {
 		// open Open Dialog
 		FileDialog openDialog = new FileDialog(mainWindow.getShell(), SWT.OPEN);
 		openDialog.setText("Open");
-		openDialog.setFilterPath(Validator.getHomePath());
+		openDialog.setFilterPath(Configure.getHomePath());
 		String[] filterExt = { "*.tcl" };
 		openDialog.setFilterExtensions(filterExt);
 		openDialog.setFilterNames(new String[] { "Tcl Scripts" });

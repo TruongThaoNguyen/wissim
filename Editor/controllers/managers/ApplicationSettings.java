@@ -7,9 +7,9 @@ import java.util.HashMap;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
+import controllers.Configure;
 import controllers.XMLReader;
 import controllers.helpers.Helper;
-import controllers.helpers.Validator;
 import models.Project;
 import nu.xom.Attribute;
 import nu.xom.Document;
@@ -30,8 +30,8 @@ public class ApplicationSettings {
 	public static final int CIRCLE = 0, SQUARE = 1;
 	public static final boolean RULER_SHOW = true, RULER_HIDE = false;
 	
-	private static String SETTINGS_PATH 			= Validator.getHomePath() + "/.wissim/editor/settings.xml";	
-	private static String GRAPHICS_SETTINGS_PATH 	= Validator.getHomePath() + "/.wissim/editor/graphics-settings.xml";
+	private static String SETTINGS_PATH 			= Configure.getHomePath() + "/.wissim/editor/settings.xml";		
+	private static String GRAPHICS_SETTINGS_PATH 	= Configure.getHomePath() + "/.wissim/editor/graphics-settings.xml";
 		
 	// region application variables for settings
 	

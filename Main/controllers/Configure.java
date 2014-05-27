@@ -2,20 +2,23 @@ package controllers;
 
 import java.io.IOException;
 
-import controllers.helpers.Validator;
 import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.ParsingException;
 
 public final class Configure {
-	static private String CONFIGURE = Validator.getHomePath() + "/.wissim/configure.xml";
+	static private String CONFIGURE = getHomePath() + "/.wissim/configure.xml";
 	
 	static String directory;
 	static String traceFile;
 	static String namTraceFile;	
 	static String ns2Path;	// = "/home/trongnguyen/NS2/";
 	static String tclFile;
+	
+	public static String getHomePath() {
+		return System.getProperty("user.home");
+	}
 	
 	/**
 	 * @return the tclFile name
@@ -66,8 +69,8 @@ public final class Configure {
 	 * @return the namTraceFile
 	 */
 	public static String getNamTraceFile() {
-		if (namTraceFile.contains("/")) return namTraceFile;
-		return directory + namTraceFile;
+		if (namTraceFile.contains("/")) return namTraceFile;		
+		return getFilePath(directory, namTraceFile);
 	}
 
 	/**
@@ -92,7 +95,7 @@ public final class Configure {
 	 */
 	public static String setDirectory(String dir) {
 		if (dir.endsWith(".tcl")) dir = dir.substring(0, dir.lastIndexOf("/"));
-		return directory = dir + "/";
+		return directory = dir + "/";	
 	}
 
 	/**
@@ -137,5 +140,14 @@ public final class Configure {
 		}
 		
 		return ns2Path;
+	}
+	
+	public static String getFilePath(String directory, String fileName) {
+		String slash = "/";		
+		
+		if (directory.substring(directory.length() - 1).equals(slash))
+			return directory + fileName;		
+		else
+			return directory + slash + fileName;
 	}
 }

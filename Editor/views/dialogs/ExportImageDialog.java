@@ -22,8 +22,8 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
+import controllers.Configure;
 import controllers.helpers.Helper;
-import controllers.helpers.Validator;
 import controllers.managers.ApplicationManager;
 import controllers.managers.ProjectManager;
 import views.Workspace;
@@ -70,6 +70,7 @@ public class ExportImageDialog extends Dialog {
 	/**
 	 * Create contents of the dialog.
 	 */
+	@SuppressWarnings("static-access")
 	private void createContents() {
 		shlExportImage = new Shell(getParent(), getStyle());
 		shlExportImage.setSize(531, 300);
@@ -163,7 +164,7 @@ public class ExportImageDialog extends Dialog {
 				
 				BufferedImage img = ApplicationManager.exportToImage(workspace, size);
 				
-				File file = new File(Validator.getFilePath(txtDirectory.getText(), Helper.getFileNameWithExt(txtFileName.getText(), "png")));
+				File file = new File(Configure.getFilePath(txtDirectory.getText(), Helper.getFileNameWithExt(txtFileName.getText(), "png")));
 				try {
 					ImageIO.write(img, "png", file);
 					MessageDialog.openInformation(shlExportImage, "Image Saved", "Image is generated successfully.");
