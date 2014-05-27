@@ -215,8 +215,7 @@ public class Editor extends MainContent implements Observer {
 			
 			@Override
 			public void controlMoved(ControlEvent arg0) {
-				// TODO Auto-generated method stub
-				
+				// Do nothing				
 			}
 		});
 		
@@ -320,8 +319,6 @@ public class Editor extends MainContent implements Observer {
 			
 			@Override
 			public void controlMoved(ControlEvent arg0) {
-				// TODO Auto-generated method stub
-				
 			}
 		});
 		
