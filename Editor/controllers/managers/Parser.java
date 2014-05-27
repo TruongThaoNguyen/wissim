@@ -1,5 +1,6 @@
 package controllers.managers;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -117,7 +118,13 @@ public class Parser {
 	 * @return
 	 * @throws IOException
 	 */
-	static public boolean saveXml(Document doc, String path) throws IOException {		
+	static public boolean saveXml(Document doc, String path) throws IOException {
+		File f = new File(path);
+		if (!f.exists())
+		{
+			f.getParentFile().mkdirs();
+			f.createNewFile();
+		}
 		OutputStream output = new FileOutputStream(path);
         Serializer serializer = new Serializer(output, "ISO-8859-1");
         serializer.setIndent(4);

@@ -72,7 +72,7 @@ public class SProject  extends Project implements TclObject
 		{			
 			List<String> command = scanner.scanCommand();
 			
-			System.out.print((scanner.getLine() + 1) + ":\t");
+//			System.out.print((scanner.getLine() + 1) + ":\t");
 			for (String word : command) System.out.print(" " + word);			
 			
 			try 

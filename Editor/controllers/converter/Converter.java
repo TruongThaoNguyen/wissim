@@ -75,7 +75,7 @@ public class Converter
 		// generate code		
 		for (Entry e : generateEntry) 
 		{
-			String value = e.toString();			System.out.print(value);
+			String value = e.toString();	//		System.out.print(value);
 			sb.append(value);
 		}
 		

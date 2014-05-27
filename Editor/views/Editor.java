@@ -279,15 +279,7 @@ public class Editor extends MainContent implements Observer {
 		styledTextConsole = new Text(bottomComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
 		GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd_styledText.heightHint = 91;
-		styledTextConsole.setLayoutData(gd_styledText);	
-								
-		styledTextConsole.addModifyListener(new ModifyListener() {
-			
-			@Override
-			public void modifyText(ModifyEvent arg0) {
-				System.out.println(styledTextConsole.getText());
-			}
-		});
+		styledTextConsole.setLayoutData(gd_styledText);									
 
 		// endregion console composite
 		
