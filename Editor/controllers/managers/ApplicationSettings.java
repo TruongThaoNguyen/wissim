@@ -59,7 +59,7 @@ public class ApplicationSettings {
 	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> linkLayers 			= new HashMap<String, HashMap<String, String>>() {{ put("LL", 						new HashMap<String, String>()); }};
 	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> macs 				= new HashMap<String, HashMap<String, String>>() {{ put("Mac/802_11",				new HashMap<String, String>()); }};
 	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> channels 			= new HashMap<String, HashMap<String, String>>() {{ put("Channel/WirelessChannel",	new HashMap<String, String>()); }};
-	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> propagationModels 	= new HashMap<String, HashMap<String, String>>() {{ put("Propagation/TowRayGround", new HashMap<String, String>()); }};
+	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> propagationModels 	= new HashMap<String, HashMap<String, String>>() {{ put("Propagation/TwoRayGround", new HashMap<String, String>()); }};
 	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> networkInterfaces 	= new HashMap<String, HashMap<String, String>>() {{ put("Phy/WirelessPhy", 			new HashMap<String, String>()); }};
 	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> antennas 			= new HashMap<String, HashMap<String, String>>() {{ put("Antenna/OmniAntenna", 		new HashMap<String, String>()); }};
 	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> interfaceQueues 		= new HashMap<String, HashMap<String, String>>() {{ put("Queue/DropTail/PriQueue", 	new HashMap<String, String>()); }};
