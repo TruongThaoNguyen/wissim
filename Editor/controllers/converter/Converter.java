@@ -260,7 +260,7 @@ public class Converter
 		sb.append("	$ns_ flush-trace\n");
 		sb.append("	close $tracefd\n");
 		sb.append("\n");
-		sb.append("	puts sb.append(\"end simulation\"\n");
+		sb.append("	puts \"end simulation\"\n");
 		sb.append("\n");
 		sb.append("	set runTime [clock second]\n");
 		sb.append("	set runTime [expr $runTime - $startTime]\n");

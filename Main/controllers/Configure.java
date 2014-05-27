@@ -9,7 +9,7 @@ import nu.xom.Element;
 import nu.xom.ParsingException;
 
 public final class Configure {
-	static private String CONFIGURE = Validator.getHomePath() + "/.wissim/editor/configure.xml";
+	static private String CONFIGURE = Validator.getHomePath() + "/.wissim/configure.xml";
 	
 	static String directory;
 	static String traceFile;
