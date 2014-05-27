@@ -53,17 +53,6 @@ public class ApplicationSettings {
 	public static StringBuilder defaultAntenna 				= new StringBuilder("Antenna/OmniAntenna");	
 	public static StringBuilder defaultInterfaceQueue 		= new StringBuilder("Queue/DropTail/PriQueue");
 	
-//	public static String defaultRoutingProtocol 	= "Agent/GPSR";	
-//	public static String defaultTransportProtocol 	= "UDP";	
-//	public static String defaultApplicationProtocol = "CBR";		
-//	public static String defaultLinkLayer 			= "LL";	
-//	public static String defaultMac 				= "Mac/802_11";	
-//	public static String defaultChannel 			= "Channel/WirelessChannel";	
-//	public static String defaultPropagationModel 	= "Propagation/TwoRayGround";	
-//	public static String defaultNetworkInterface 	= "Phy/WirelessPhy";	
-//	public static String defaultAntenna 			= "Antenna/OmniAntenna";	
-//	public static String defaultInterfaceQueue 		= "Queue/DropTail/PriQueue";
-	
 	@SuppressWarnings("serial") public static HashMap<String, HashMap<String, String>> routingProtocols 	= new HashMap<String, HashMap<String, String>>() {{ put("Agent/GPSR",				new HashMap<String, String>()); }};
 	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> transportProtocols	= new HashMap<String, HashMap<String, String>>() {{ put("UDP", 						new HashMap<String, String>()); }};
 	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> applicationProtocols = new HashMap<String, HashMap<String, String>>() {{ put("CBR", 						new HashMap<String, String>()); }};
