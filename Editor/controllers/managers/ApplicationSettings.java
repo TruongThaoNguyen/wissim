@@ -53,6 +53,17 @@ public class ApplicationSettings {
 	public static StringBuilder defaultAntenna 				= new StringBuilder("Antenna/OmniAntenna");	
 	public static StringBuilder defaultInterfaceQueue 		= new StringBuilder("Queue/DropTail/PriQueue");
 	
+//	public static String defaultRoutingProtocol 	= "Agent/GPSR";	
+//	public static String defaultTransportProtocol 	= "UDP";	
+//	public static String defaultApplicationProtocol = "CBR";		
+//	public static String defaultLinkLayer 			= "LL";	
+//	public static String defaultMac 				= "Mac/802_11";	
+//	public static String defaultChannel 			= "Channel/WirelessChannel";	
+//	public static String defaultPropagationModel 	= "Propagation/TwoRayGround";	
+//	public static String defaultNetworkInterface 	= "Phy/WirelessPhy";	
+//	public static String defaultAntenna 			= "Antenna/OmniAntenna";	
+//	public static String defaultInterfaceQueue 		= "Queue/DropTail/PriQueue";
+	
 	@SuppressWarnings("serial") public static HashMap<String, HashMap<String, String>> routingProtocols 	= new HashMap<String, HashMap<String, String>>() {{ put("Agent/GPSR",				new HashMap<String, String>()); }};
 	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> transportProtocols	= new HashMap<String, HashMap<String, String>>() {{ put("UDP", 						new HashMap<String, String>()); }};
 	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> applicationProtocols = new HashMap<String, HashMap<String, String>>() {{ put("CBR", 						new HashMap<String, String>()); }};
@@ -82,19 +93,19 @@ public class ApplicationSettings {
 	public static Color 	obstacleBackgroundColor 	= Helper.hex2Rgb("#cc9999");	
 	public static boolean 	isRulerShown 				= ApplicationSettings.RULER_SHOW;
 	
-	private static final int 	defaultNodeSize 				= 10;
-	private static final int 	defaultNodeBorderType 			= ApplicationSettings.CIRCLE;
-	private static final int 	defaultGreedyPathThickness 		= 2;
-	private static final int 	defaultShortestPathThickness 	= 2;
-	private static final int 	defaultUserDefinedPathThickness	= 2;
-	private static final int 	defaultObstacleBorderThickness 	= 1;
-	private static final Color 	defaultBackgroundColor 			= Helper.hex2Rgb("#ffffff");
-	private static final Color 	defaultNodeColor 				= Helper.hex2Rgb("#dcdcdc");	
-	private static final Color 	defaultGreedyPathColor 			= Helper.hex2Rgb("#660033");	
-	private static final Color 	defaultShortestPathColor 		= Helper.hex2Rgb("#330066");	
-	private static final Color 	defaultUserDefinedPathColor 	= Helper.hex2Rgb("#ff3d3d");	
-	private static final Color 	defaultObstacleBackgroundColor 	= Helper.hex2Rgb("#cc9999");	
-	private static final boolean defaultIsRulerShown 			= ApplicationSettings.RULER_SHOW;
+	private static final int 		defaultNodeSize 				= 10;
+	private static final int 		defaultNodeBorderType 			= ApplicationSettings.CIRCLE;
+	private static final int 		defaultGreedyPathThickness 		= 2;
+	private static final int 		defaultShortestPathThickness 	= 2;
+	private static final int 		defaultUserDefinedPathThickness	= 2;
+	private static final int 		defaultObstacleBorderThickness 	= 1;
+	private static final Color 		defaultBackgroundColor 			= Helper.hex2Rgb("#ffffff");
+	private static final Color 		defaultNodeColor 				= Helper.hex2Rgb("#dcdcdc");	
+	private static final Color 		defaultGreedyPathColor 			= Helper.hex2Rgb("#660033");	
+	private static final Color 		defaultShortestPathColor 		= Helper.hex2Rgb("#330066");	
+	private static final Color 		defaultUserDefinedPathColor 	= Helper.hex2Rgb("#ff3d3d");	
+	private static final Color 		defaultObstacleBackgroundColor 	= Helper.hex2Rgb("#cc9999");	
+	private static final boolean	defaultIsRulerShown 			= ApplicationSettings.RULER_SHOW;
 
 	// endregion application variables for graphics settings
 	
@@ -227,7 +238,6 @@ public class ApplicationSettings {
 	}
 
 	
-	
 	private static void loadGraphicConfig() throws Exception {
 		Document doc = null;
 		
@@ -341,7 +351,10 @@ public class ApplicationSettings {
 			
 			String pType = p.getAttributeValue("type");
 			if (p.getAttributeValue("default") != null && p.getAttributeValue("default").equals("true"))
+			{				
+				defaultProtocol.delete(0, defaultProtocol.length());
 				defaultProtocol.append(pType);
+			}
 			
 			HashMap<String, String> paramMap = new HashMap<String, String>();
 			Element param = p.getFirstChildElement("params");

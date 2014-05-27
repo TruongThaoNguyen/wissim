@@ -19,6 +19,7 @@ import models.DialogResult.CreateSingleNodeResult;
 import models.DialogResult.EditNetworkSizeResult;
 import models.DialogResult.ImportLocationDataResult;
 import models.DialogResult.NodeLocationResult;
+import models.converter.ParseException;
 import models.networkcomponents.Node;
 import models.networkcomponents.WirelessNode;
 import models.networkcomponents.features.Area;
@@ -46,7 +47,6 @@ import controllers.helpers.Validator;
 import views.Editor;
 import views.SearchNodeDialog;
 import views.Workspace;
-import views.dialogs.ConfigNodeDialog;
 import views.dialogs.CreateNodeDialog;
 import views.dialogs.CreateNodeSetDialog;
 import views.dialogs.CreateProjectDialog;
@@ -61,6 +61,14 @@ import views.dialogs.TrafficFlowManagerDialog;
 import views.dialogs.ViewPathInfo;
 import views.helpers.PrintHelper;
 
+/**
+ * ApplicationManager.java
+ * 
+ * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and
+ *            Technology
+ * @Author Duc-Trong Nguyen
+ * @Version 2.0
+ */
 public class ApplicationManager {
 	private static int newProjectCount = 1;
 	
@@ -84,7 +92,15 @@ public class ApplicationManager {
 		if (confirmed == true) 
 		{
 			Configure.setTclFile(path);												
-			Project project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "tcl"), result.width, result.height, result.time);
+			Project project = null;
+			try 
+			{
+				project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "tcl"), result.width, result.height, result.time);
+			}
+			catch (ParseException e) 
+			{
+				MessageDialog.openError(editor.getShell(), "line " + e.getLine(), e.getMessage());				
+			}
 			ApplicationSettings.applyDefaultSettingsToProject(project);
 			newProjectCount++;			
 			return project;
