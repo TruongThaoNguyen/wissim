@@ -121,7 +121,8 @@ public final class Configure {
 	}
 	
 	public static String setNS2Path(String path) {
-		ns2Path = path;
+		if (!path.endsWith("/")) 	ns2Path = path + "/";		
+		else						ns2Path = path;
 		
 		Element eGraphicSettings = new Element("configure");
 		Document doc = new Document(eGraphicSettings);
