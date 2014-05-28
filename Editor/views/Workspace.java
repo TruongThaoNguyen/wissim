@@ -179,7 +179,7 @@ public class Workspace extends Composite {
 		for (GWirelessNode gn : getGraphicNodes()) 
 		{						
 			if (gn.getWirelessNode() == null)	gn.dispose();		// dispose if isn't represented any node						
-			else 								gn.updateBounds();	// update position 			
+			else 								gn.refresh();		// update position 			
 		}		
 		
 		boolean isExisted;
@@ -200,8 +200,7 @@ public class Workspace extends Composite {
 			if (!isExisted) 
 			{				
 				GWirelessNode gnode = new GWirelessNode(this, SWT.NONE, (WirelessNode) n);		
-				gnode.moveAbove(null);	
-//				System.out.println(this.getChildren().length);				
+				gnode.moveAbove(null);					
 			}
 		}	
 		
