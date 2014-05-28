@@ -179,7 +179,7 @@ public class MainWindow extends ApplicationWindow {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(720, 490);
+		return new Point(1014, 520);
 	}
 	
 	public Editor getEditor() {
