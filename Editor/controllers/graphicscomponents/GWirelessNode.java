@@ -133,7 +133,7 @@ public class GWirelessNode extends GSelectableObject {
 						if (a.contains(x, y))
 							return;
 
-					WirelessNode node = wirelessNode();
+					WirelessNode node = getWirelessNode();
 					node.setPosition(x, y);
 
 					String str = "Node " + node.getId() + "\n" + "(" + node.getX() + ", " + node.getY() + ")";
@@ -145,10 +145,6 @@ public class GWirelessNode extends GSelectableObject {
 		this.setToolTipText("Node " + node.getId() + "\n" + "(" + node.getX() + ", " + node.getY() + ")");		
 	}
 
-	private WirelessNode wirelessNode() {
-		return (WirelessNode) GNetwork.getNetwork().getNodeById(nodeID);
-	}
-	
 	protected void updateMenu() {
 		if (menu != null) menu.dispose();
 
@@ -202,7 +198,7 @@ public class GWirelessNode extends GSelectableObject {
 		mntmNodeEvents.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				new NodeEventsDialog(getShell(), SWT.SHEET, wirelessNode()).open();
+				new NodeEventsDialog(getShell(), SWT.SHEET, getWirelessNode()).open();
 			}
 		});
 
@@ -222,7 +218,7 @@ public class GWirelessNode extends GSelectableObject {
 
 			MenuItem mntmLabel;
 			for (final Label l : Project.getLabelList()) {
-				if (!l.getNodeList().contains(wirelessNode())) {
+				if (!l.getNodeList().contains(getWirelessNode())) {
 					mntmLabel = new MenuItem(labelsMenu, SWT.NONE);
 					mntmLabel.setText(l.getName());
 
@@ -241,7 +237,7 @@ public class GWirelessNode extends GSelectableObject {
 					mntmLabel.addSelectionListener(new SelectionAdapter() {				
 						@Override
 						public void widgetSelected(SelectionEvent arg0) {
-							l.add(wirelessNode());
+							l.add(getWirelessNode());
 						}
 					});
 				} else {
@@ -263,7 +259,7 @@ public class GWirelessNode extends GSelectableObject {
 					mntmLabel.addSelectionListener(new SelectionAdapter() {				
 						@Override
 						public void widgetSelected(SelectionEvent arg0) {
-							l.remove(wirelessNode());
+							l.remove(getWirelessNode());
 						}
 					});					
 				}
@@ -288,7 +284,7 @@ public class GWirelessNode extends GSelectableObject {
 
 	@Override
 	public void updateBounds() {				
-		WirelessNode node = wirelessNode();
+		WirelessNode node = getWirelessNode();
 				
 		int gx = (int)(node.getX() * gnetwork.getRatio() + gnetwork.getLocation().x - size / 2);
 		int gy = (int)(node.getY() * gnetwork.getRatio() + gnetwork.getLocation().y - size / 2);
@@ -305,7 +301,7 @@ public class GWirelessNode extends GSelectableObject {
 	}
 
 	public WirelessNode getWirelessNode() {
-		return wirelessNode();
+		return (WirelessNode) GNetwork.getNetwork().getNodeById(nodeID);
 	}
 	
 	public List<Label> getShownLabels() {
@@ -313,7 +309,7 @@ public class GWirelessNode extends GSelectableObject {
 		List<Label> list = new LinkedList<Label>();
 		
 		for (Label l : w.getShownLabels()) {
-			if (l.hasNode(wirelessNode()))
+			if (l.hasNode(getWirelessNode()))
 				list.add(l);
 		}
 		
@@ -321,7 +317,7 @@ public class GWirelessNode extends GSelectableObject {
 	}
 
 	public void refresh() {
-		WirelessNode node = wirelessNode();
+		WirelessNode node = getWirelessNode();
 		
 		node.addObserver(new Observer() {			
 			@Override

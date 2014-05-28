@@ -451,34 +451,25 @@ public class ApplicationManager {
 		}
 	}
 
-	public static void moveNodeTo(GWirelessNode gWirelessNode) {
-		System.out.println("move to");
-		NodeLocationResult result = (NodeLocationResult) new NodeLocationDialog(
-				gWirelessNode.getShell(), SWT.SHEET, gWirelessNode.getWirelessNode()).open();
+	public static void moveNodeTo(GWirelessNode gWirelessNode) {		
+		NodeLocationResult result = (NodeLocationResult) new NodeLocationDialog(gWirelessNode.getShell(), SWT.SHEET, gWirelessNode.getWirelessNode()).open();
 
-		if (result != null) {
-			try {
-				Workspace workspace = (Workspace) gWirelessNode.getParent();
-				Workspace.getProject();
-				if(Project.getObstacleList() != null) {
-					Workspace.getProject();
-					for (Area a : Project.getObstacleList())
-						if (a.contains(result.x, result.y)) {
-							MessageDialog.openInformation(workspace.getShell(), "Cannot move node",
-									"Cannot move node to the new location because it is inside the obstacle");
-							return;
-						}
-				}						
-//				System.out.println(gWirelessNode.getWirelessNode().getX());
-				WirelessNode wn = (WirelessNode)ProjectManager.getProject().getNetwork().getNodeById(gWirelessNode.getWirelessNode().getId());
-				wn.setPosition(result.x, result.y);
-//				gWirelessNode.getWirelessNode().setPosition(result.x, result.y);
-//				System.out.println(gWirelessNode.getWirelessNode().getX());
-				// save state
-//				workspace.getCareTaker().save(workspace.getProject(), "Move node");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		if (result != null) 
+		{			
+			Workspace workspace = (Workspace) gWirelessNode.getParent();				
+			if (Project.getObstacleList() != null) 
+			{					
+				for (Area a : Project.getObstacleList())
+				{
+					if (a.contains(result.x, result.y)) 
+					{
+						MessageDialog.openInformation(workspace.getShell(), "Cannot move node",	"Cannot move node to the new location because it is inside the obstacle");
+						return;
+					}
+				}
+			}						
+											
+			gWirelessNode.getWirelessNode().setPosition(result.x, result.y); 			
 		}
 	}
 
