@@ -1,13 +1,24 @@
 package controllers;
 
+import java.io.IOException;
+
+import nu.xom.Attribute;
+import nu.xom.Document;
+import nu.xom.Element;
+import nu.xom.ParsingException;
 
 public final class Configure {
+	static private String CONFIGURE = getHomePath() + "/.wissim/configure.xml";
+	
 	static String directory;
 	static String traceFile;
-	static String namTraceFile;
-	//static String ns2Path = "/home/khaclinh/ns-allinone-2.34/";
-	static String ns2Path = "/home/trongnguyen/NS2/";
+	static String namTraceFile;	
+	static String ns2Path;	// = "/home/trongnguyen/NS2/";
 	static String tclFile;
+	
+	public static String getHomePath() {
+		return System.getProperty("user.home");
+	}
 	
 	/**
 	 * @return the tclFile name
@@ -58,8 +69,8 @@ public final class Configure {
 	 * @return the namTraceFile
 	 */
 	public static String getNamTraceFile() {
-		if (namTraceFile.contains("/")) return namTraceFile;
-		return directory + namTraceFile;
+		if (namTraceFile.contains("/")) return namTraceFile;		
+		return getFilePath(directory, namTraceFile);
 	}
 
 	/**
@@ -84,7 +95,7 @@ public final class Configure {
 	 */
 	public static String setDirectory(String dir) {
 		if (dir.endsWith(".tcl")) dir = dir.substring(0, dir.lastIndexOf("/"));
-		return directory = dir + "/";
+		return directory = dir + "/";	
 	}
 
 	/**
@@ -94,30 +105,50 @@ public final class Configure {
 	public static String getNS2Path() {
 		if (ns2Path == null)
 		{
-			//	TODO:
+			try 
+			{
+				Document doc = XMLReader.open(CONFIGURE);				
+				Element root = doc.getRootElement();				
+				Element e = root.getFirstChildElement("NS2Path");
+				ns2Path = e.getAttributeValue("value");								
+			}
+			catch (ParsingException | IOException e) 
+			{
+				return null;
+			}
 		}
 		return ns2Path;
 	}
 	
 	public static String setNS2Path(String path) {
-		// TODO
+		if (!path.endsWith("/")) 	ns2Path = path + "/";		
+		else						ns2Path = path;
 		
-//	    try {	    	
-//	    	String filePathString = "NS2_path_store";
-//			File file = new File(filePathString);	
-//	    if (!file.exists()) {
-//			
-//				file.createNewFile();
-//		}
-//	    FileWriter fw = new FileWriter(file.getAbsoluteFile());
-//		BufferedWriter bw = new BufferedWriter(fw);
-//		bw.write(nsFilePath);
-//		bw.close();
-//	    } catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		Element eGraphicSettings = new Element("configure");
+		Document doc = new Document(eGraphicSettings);
 		
-		return ns2Path = path;
+		Element e = new Element("NS2Path");
+		e.addAttribute(new Attribute("value", path));
+		eGraphicSettings.appendChild(e);
+		
+		try 
+		{
+			XMLReader.save(doc, CONFIGURE);
+		}
+		catch (IOException e1) 
+		{
+			e1.printStackTrace();
+		}
+		
+		return ns2Path;
+	}
+	
+	public static String getFilePath(String directory, String fileName) {
+		String slash = "/";		
+		
+		if (directory.substring(directory.length() - 1).equals(slash))
+			return directory + fileName;		
+		else
+			return directory + slash + fileName;
 	}
 }

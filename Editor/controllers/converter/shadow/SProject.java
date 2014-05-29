@@ -437,27 +437,6 @@ public class SProject  extends Project implements TclObject
 				return "# source " + command.get(0);
 			}
 		};
-	
-//		new InsProc(this, "nametrace-all-wireless") {
-//
-//			@Override
-//			protected String run(List<String> arg) throws Exception {
-//				if (arg.size() != 3) throw new ParseException(ParseException.InvalidArgument);				
-//				getNetwork().setWidth(Integer.parseInt(Converter.parseIdentify(arg.get(1))));
-//				getNetwork().setLength(Integer.parseInt(Converter.parseIdentify(arg.get(2))));
-//				return Configure.setNamTraceFile(Converter.parseIdentify(arg.get(0)));
-//			}
-//			
-//		};
-//	
-//		new InsProc(this, "trace-all") {
-//
-//			@Override
-//			protected String run(List<String> arg) throws Exception {
-//				if (arg.size() != 1 ) throw new ParseException(ParseException.InvalidArgument);														
-//				return Configure.setTraceFile(Converter.parseIdentify(arg.get(0)));
-//			}						
-//		};
 	}
 
 	private int checkOperator(String s)	{

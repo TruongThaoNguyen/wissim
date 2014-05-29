@@ -33,7 +33,7 @@ public class GHorizontalRuler extends Canvas {
 			
 			@Override
 			public void paintControl(PaintEvent arg0) {
-				WirelessNetwork network = workspace.getProject().getNetwork();		
+				WirelessNetwork network = Workspace.getProject().getNetwork();		
 				GNetwork gnetwork = workspace.getGraphicNetwork();
 				
 				// paint the border		

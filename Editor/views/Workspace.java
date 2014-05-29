@@ -99,15 +99,15 @@ public class Workspace extends Composite {
 		
 		this.addMouseMoveListener(new MouseMoveListener() {			
 			@Override
-			public void mouseMove(MouseEvent arg0) {
-				if (isLeftMouseDown == true && propertyManager.getMouseMode() == WorkspacePropertyManager.HAND) {
+			public void mouseMove(MouseEvent arg0) 
+			{
+				if (isLeftMouseDown == true && propertyManager.getMouseMode() == WorkspacePropertyManager.HAND) 
+				{
 					RulerScrolledComposite sc = (RulerScrolledComposite) Workspace.this.getParent();
 					sc.setOrigin(sc.getOrigin().x - (arg0.x - mouseLeftTempPoint.x) / 2, sc.getOrigin().y - (arg0.y - mouseLeftTempPoint.y) / 2);
 					mouseLeftTempPoint = new Point(arg0.x, arg0.y);
 					
-					sc.updateRulers();
-					
-					
+					sc.updateRulers();								
 				}
 			}
 		});
@@ -179,7 +179,7 @@ public class Workspace extends Composite {
 		for (GWirelessNode gn : getGraphicNodes()) 
 		{						
 			if (gn.getWirelessNode() == null)	gn.dispose();		// dispose if isn't represented any node						
-			else 								gn.updateBounds();	// update position 			
+			else 								gn.refresh();		// update position 			
 		}		
 		
 		boolean isExisted;
@@ -200,8 +200,7 @@ public class Workspace extends Composite {
 			if (!isExisted) 
 			{				
 				GWirelessNode gnode = new GWirelessNode(this, SWT.NONE, (WirelessNode) n);		
-				gnode.moveAbove(null);	
-//				System.out.println(this.getChildren().length);				
+				gnode.moveAbove(null);					
 			}
 		}	
 		

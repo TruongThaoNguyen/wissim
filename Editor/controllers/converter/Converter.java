@@ -2,8 +2,6 @@ package controllers.converter;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -75,7 +73,7 @@ public class Converter
 		// generate code		
 		for (Entry e : generateEntry) 
 		{
-			String value = e.toString();			System.out.print(value);
+			String value = e.toString();	//		System.out.print(value);
 			sb.append(value);
 		}
 		
@@ -206,30 +204,81 @@ public class Converter
 		return result.substring(0, result.length() - 1);
 	}
 	
-	public static List<String> DefaultScript() {
-		List<String> script = new ArrayList<String>();
-		BufferedReader br;
-		try {
-			String fileName = URLDecoder.decode(Converter.class.getResource("defaultscript.tcl").getPath(), "UTF-8");
-			br = new BufferedReader(new FileReader(fileName));
-		} catch (Exception e1) {
-			return script;
-		}
-				
-		try {		    
-		    String line = br.readLine();
+	public static String DefaultScript() {		
+		StringBuilder sb = new StringBuilder();		
+		sb.append("#\n");
+		sb.append("# Initialize Global Variable\n");
+		sb.append("#\n");
+		sb.append("\n");
+		sb.append("# set start time\n");
+		sb.append("set startTime [clock seconds]\n");
+		sb.append("\n");
+		sb.append("# set up ns simulator and nam trace\n");
+		sb.append("set ns_		[new Simulator]\n");
+		sb.append("set chan	[new Channel/WirelessChannel]\n");
+		sb.append("set prop	[new Propagation/TwoRayGround]\n");
+		sb.append("set topo	[new Topography]\n");
+		sb.append("\n");
+		sb.append("# run the simulator\n");
+		sb.append("set tracefd	[open Trace.tr w]\n");
+		sb.append("$ns_ trace-all $tracefd\n");
+		sb.append("\n");
+		sb.append("$topo load_flatgrid 1000 1000\n");
+		sb.append("$prop topography $topo\n");
+		sb.append("\n");
+		sb.append("set god_ [create-god 0]\n");
+		sb.append("\n");
+		sb.append("# configure the nodes\n");
+		sb.append("$ns_ node-config -adhocRouting GPSR \\\n");
+		sb.append("		 -llType LL \\\n");
+		sb.append("		 -macType Mac/802_11 \\\n");
+		sb.append("		 -ifqType Queue/DropTail/PriQueue \\\n");
+		sb.append("		 -ifqLen 50 \\\n");
+		sb.append("		 -antType Antenna/OmniAntenna \\\n");
+		sb.append("		 -propType Propagation/TwoRayGround \\\n");
+		sb.append("		 -phyType Phy/WirelessPhy \\\n");
+		sb.append("		 -channel [new Channel/WirelessChannel] \\\n");
+		sb.append("		 -topoInstance $topo \\\n");
+		sb.append("		 -agentTrace ON \\\n");
+		sb.append("		 -routerTrace ON \\\n");
+		sb.append("		 -macTrace OFF \\\n");
+		sb.append("		 -movementTrace OFF \\\n");
+		sb.append("		 -energyModel EnergyModel \\\n");
+		sb.append("		 -idlePower 0.0096 \\\n");
+		sb.append("		 -rxPower 0.021 \\\n");
+		sb.append("		 -txPower 0.0255 \\\n");
+		sb.append("		 -sleepPower 0.000648 \\\n");
+		sb.append("		 -transitionPower 0.024 \\\n");
+		sb.append("		 -transitionTime 0.0129 \\\n");
+		sb.append("		 -initialEnergy 1000\n");
+		sb.append("\n");
+		sb.append("# ending the simulation\n"); 
+		sb.append("$ns_ at 200 \"stop\"\n");
+		sb.append("\n");
+		sb.append("proc stop {} {\n");
+		sb.append("	global ns_ tracefd startTime\n");
+		sb.append("	$ns_ flush-trace\n");
+		sb.append("	close $tracefd\n");
+		sb.append("\n");
+		sb.append("	puts \"end simulation\"\n");
+		sb.append("\n");
+		sb.append("	set runTime [clock second]\n");
+		sb.append("	set runTime [expr $runTime - $startTime]\n");
+		sb.append("\n");
+		sb.append("	set s [expr $runTime % 60];	set runTime [expr $runTime / 60];\n");
+		sb.append("	set m [expr $runTime % 60];	set runTime [expr $runTime / 60];\n");
+		sb.append("\n");
+		sb.append("	puts \"Runtime: $runTime hours, $m minutes, $s seconds\"\n");
+		sb.append("\n");
+		sb.append("	$ns_ halt\n");
+		sb.append("	exit 0\n");
+		sb.append("}\n");
+		sb.append("\n");
+		sb.append("$ns_ run\n");
+		sb.append("\n");
+		sb.append("##################### end script #####################\n");
 		
-		    while (line != null) {
-		        script.add(line);
-		        script.add(System.lineSeparator());
-		        line = br.readLine();
-		    }		    
-		    br.close();
-		} catch (IOException e) {
-			return script;
-		}
-		
-		return script;	
+		return sb.toString();
 	}
 	
 	public static void main(String[] args)  throws Exception {		

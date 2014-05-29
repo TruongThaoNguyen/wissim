@@ -19,6 +19,7 @@ import models.DialogResult.CreateSingleNodeResult;
 import models.DialogResult.EditNetworkSizeResult;
 import models.DialogResult.ImportLocationDataResult;
 import models.DialogResult.NodeLocationResult;
+import models.converter.ParseException;
 import models.networkcomponents.Node;
 import models.networkcomponents.WirelessNode;
 import models.networkcomponents.features.Area;
@@ -42,11 +43,9 @@ import controllers.graphicscomponents.GSelectableObject;
 import controllers.graphicscomponents.GWirelessNode;
 import controllers.graphicscomponents.GraphicPath;
 import controllers.helpers.Helper;
-import controllers.helpers.Validator;
 import views.Editor;
 import views.SearchNodeDialog;
 import views.Workspace;
-import views.dialogs.ConfigNodeDialog;
 import views.dialogs.CreateNodeDialog;
 import views.dialogs.CreateNodeSetDialog;
 import views.dialogs.CreateProjectDialog;
@@ -61,6 +60,14 @@ import views.dialogs.TrafficFlowManagerDialog;
 import views.dialogs.ViewPathInfo;
 import views.helpers.PrintHelper;
 
+/**
+ * ApplicationManager.java
+ * 
+ * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and
+ *            Technology
+ * @Author Duc-Trong Nguyen
+ * @Version 2.0
+ */
 public class ApplicationManager {
 	private static int newProjectCount = 1;
 	
@@ -74,7 +81,7 @@ public class ApplicationManager {
 		File dir = new File(result.path);
 		if (!dir.exists()) dir.mkdir();		
 		
-		String path = Validator.getFilePath(result.path, Helper.getFileNameWithExt(result.name, "tcl"));
+		String path = Configure.getFilePath(result.path, Helper.getFileNameWithExt(result.name, "tcl"));
 		File f = new File(path);
 		
 		boolean confirmed = true;
@@ -84,7 +91,15 @@ public class ApplicationManager {
 		if (confirmed == true) 
 		{
 			Configure.setTclFile(path);												
-			Project project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "tcl"), result.width, result.height, result.time);
+			Project project = null;
+			try 
+			{
+				project = ProjectManager.createProject(path, Helper.getFileNameWithoutExt(result.name, "tcl"), result.width, result.height, result.time);
+			}
+			catch (ParseException e) 
+			{
+				MessageDialog.openError(editor.getShell(), "line " + e.getLine(), e.getMessage());				
+			}
 			ApplicationSettings.applyDefaultSettingsToProject(project);
 			newProjectCount++;			
 			return project;
@@ -97,7 +112,7 @@ public class ApplicationManager {
 		// open Open Dialog
 		FileDialog openDialog = new FileDialog(mainWindow.getShell(), SWT.OPEN);
 		openDialog.setText("Open");
-		openDialog.setFilterPath(Validator.getHomePath());
+		openDialog.setFilterPath(Configure.getHomePath());
 		String[] filterExt = { "*.tcl" };
 		openDialog.setFilterExtensions(filterExt);
 		openDialog.setFilterNames(new String[] { "Tcl Scripts" });
@@ -436,34 +451,25 @@ public class ApplicationManager {
 		}
 	}
 
-	public static void moveNodeTo(GWirelessNode gWirelessNode) {
-		System.out.println("move to");
-		NodeLocationResult result = (NodeLocationResult) new NodeLocationDialog(
-				gWirelessNode.getShell(), SWT.SHEET, gWirelessNode.getWirelessNode()).open();
+	public static void moveNodeTo(GWirelessNode gWirelessNode) {		
+		NodeLocationResult result = (NodeLocationResult) new NodeLocationDialog(gWirelessNode.getShell(), SWT.SHEET, gWirelessNode.getWirelessNode()).open();
 
-		if (result != null) {
-			try {
-				Workspace workspace = (Workspace) gWirelessNode.getParent();
-				Workspace.getProject();
-				if(Project.getObstacleList() != null) {
-					Workspace.getProject();
-					for (Area a : Project.getObstacleList())
-						if (a.contains(result.x, result.y)) {
-							MessageDialog.openInformation(workspace.getShell(), "Cannot move node",
-									"Cannot move node to the new location because it is inside the obstacle");
-							return;
-						}
-				}						
-//				System.out.println(gWirelessNode.getWirelessNode().getX());
-				WirelessNode wn = (WirelessNode)ProjectManager.getProject().getNetwork().getNodeById(gWirelessNode.getWirelessNode().getId());
-				wn.setPosition(result.x, result.y);
-//				gWirelessNode.getWirelessNode().setPosition(result.x, result.y);
-//				System.out.println(gWirelessNode.getWirelessNode().getX());
-				// save state
-//				workspace.getCareTaker().save(workspace.getProject(), "Move node");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		if (result != null) 
+		{			
+			Workspace workspace = (Workspace) gWirelessNode.getParent();				
+			if (Project.getObstacleList() != null) 
+			{					
+				for (Area a : Project.getObstacleList())
+				{
+					if (a.contains(result.x, result.y)) 
+					{
+						MessageDialog.openInformation(workspace.getShell(), "Cannot move node",	"Cannot move node to the new location because it is inside the obstacle");
+						return;
+					}
+				}
+			}						
+											
+			gWirelessNode.getWirelessNode().setPosition(result.x, result.y); 			
 		}
 	}
 

@@ -16,7 +16,6 @@ import controllers.Configure;
 import controllers.converter.Converter;
 import models.Project;
 import models.converter.ParseException;
-import models.converter.Token;
 import models.networkcomponents.Node;
 import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.WirelessNode;
@@ -54,24 +53,13 @@ public class ProjectManager {
 	 * @param length ySize of network
 	 * @param time Simulation time
 	 * @return new project	
+	 * @throws ParseException 
 	 */
-	public static Project createProject(String path, String name, int width, int length, int time) {
+	public static Project createProject(String path, String name, int width, int length, int time) throws ParseException {
 		// checks input validity
-		if (width <= 0 || length <= 0 || time <= 0) return null;
+		if (width <= 0 || length <= 0 || time <= 0) return null;		 			
 		
-		// create default script
-		List<String> defaulscript = Converter.DefaultScript();
-		StringBuilder script = new StringBuilder();
-		for (String s : defaulscript) {
-			script.append(s);
-		}
-		
-		Project project;		
-		try {
-			project = Converter.CTD(script.toString());
-		} catch (ParseException e) {			
-			return null;
-		}
+		Project project = Converter.CTD(Converter.DefaultScript());		
 				
 		Project.setPath(path);		
 		

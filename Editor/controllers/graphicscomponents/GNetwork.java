@@ -123,7 +123,7 @@ public class GNetwork extends Canvas {
 							if (y < 4) y = 4;
 							if (y > getNetwork().getLength() - 4) y = getNetwork().getLength()- 4;
 														
-							WirelessNode node = ProjectManager.createSingleNode(x, y);
+							ProjectManager.createSingleNode(x, y);
 							workspace.updateLayout();
 							workspace.deselectGraphicObjects();
 //							workspace.getGraphicNodeByNode(node).setSelect(true);														
@@ -591,7 +591,7 @@ public class GNetwork extends Canvas {
 
 	private void updateMenuForMultipleNodesSelected() {
     	final Workspace workspace = (Workspace) getParent();
-    	Project project = Workspace.getProject();
+    	Workspace.getProject();
     	final List<GSelectableObject> selectedObject = workspace.getSelectedObject();
     	
     	if (Project.getLabelList() != null) {		
@@ -905,7 +905,6 @@ public class GNetwork extends Canvas {
         // retrieves the extensions for Greeting extension point
         List<Greeting> greetings = pluginManager.getExtensions(Greeting.class);
         System.out.println(String.format("Found %d extensions for extension point '%s'", greetings.size(), Greeting.class.getName()));
-        int pluginNumber = 1;
         for (Greeting greeting : greetings) {
         	MenuItem pluginItem1 = new MenuItem(pluginSubmn, SWT.CHECK);
     		pluginItem1.setText(greeting.getGreeting());

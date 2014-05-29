@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Composite;
 
+import controllers.Configure;
 import controllers.helpers.Helper;
-import controllers.helpers.Validator;
 import controllers.managers.ApplicationSettings;
 
 public class CreateProjectDialog extends Dialog {
@@ -86,7 +86,7 @@ public class CreateProjectDialog extends Dialog {
 		composite.setBounds(0, 59, 446, 261);
 		
 		txtDirectory = new Text(composite, SWT.BORDER);
-		txtDirectory.setText(Validator.getHomePath());
+		txtDirectory.setText(Configure.getHomePath());
 		txtDirectory.setEnabled(false);
 		txtDirectory.setBounds(93, 60, 224, 21);
 		
