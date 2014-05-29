@@ -35,9 +35,9 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -215,8 +215,7 @@ public class Editor extends MainContent implements Observer {
 			
 			@Override
 			public void controlMoved(ControlEvent arg0) {
-				// TODO Auto-generated method stub
-				
+				// Do nothing				
 			}
 		});
 		
@@ -279,15 +278,7 @@ public class Editor extends MainContent implements Observer {
 		styledTextConsole = new Text(bottomComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
 		GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd_styledText.heightHint = 91;
-		styledTextConsole.setLayoutData(gd_styledText);	
-								
-		styledTextConsole.addModifyListener(new ModifyListener() {
-			
-			@Override
-			public void modifyText(ModifyEvent arg0) {
-				System.out.println(styledTextConsole.getText());
-			}
-		});
+		styledTextConsole.setLayoutData(gd_styledText);									
 
 		// endregion console composite
 		
@@ -328,8 +319,6 @@ public class Editor extends MainContent implements Observer {
 			
 			@Override
 			public void controlMoved(ControlEvent arg0) {
-				// TODO Auto-generated method stub
-				
 			}
 		});
 		
@@ -946,7 +935,6 @@ public class Editor extends MainContent implements Observer {
 		
 		actRunNS2 = new Action("Run NS2"){
 			public void run() {
-				styledTextConsole.setText("Running ... \n");
 				actionRunNS2();
 			}
 		};
@@ -1153,11 +1141,9 @@ public class Editor extends MainContent implements Observer {
 	 * Set ns2 directory path
 	 * @author trongnguyen
 	 */
-	public void ns2Config() {				
-	    String path = (new FileDialog(getShell(), SWT.MULTI)).open();	    
-	    if (path == null) return;
-	    
-	    Configure.setNS2Path(path);
+	public void ns2Config() {	
+		String path = (new DirectoryDialog(getShell())).open();	    	   	    
+		if (path != null) Configure.setNS2Path(path);
 	}
 	
 	public void actionOpen(Editor editor) {	
@@ -1569,7 +1555,6 @@ public class Editor extends MainContent implements Observer {
 	 */
 	public void actionRunNS2() {		
 		if (Configure.getNS2Path() == null)	ns2Config();	
-  		
 		final Shell shell = getShell();
 		final Display display = Display.getCurrent();
 		styledTextConsole.append("\nRunning ... \n");
@@ -1602,7 +1587,15 @@ public class Editor extends MainContent implements Observer {
 				}
 				catch (IOException err) 
 				{					
-					MessageDialog.openError(shell, "NS2 runtime error", err.getMessage());
+					final String e = err.getMessage();
+					
+					display.asyncExec(new Runnable() {						
+						@Override
+						public void run() {
+							if (MessageDialog.openConfirm(shell, e, "Do you want to re-confiture NS2?"))
+							ns2Config();		
+						}
+					});					
 				}		
 			}
 		}).start();		
