@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import controllers.Configure;
 import controllers.converter.shadow.SProject;
 import models.Project;
@@ -36,18 +38,19 @@ public class Converter
 	 * @throws ParseException 
 	 */
 	public static Project CTD(String text) throws ParseException {
+		int line = StringUtils.countMatches(text, "\n");		
 		Date st = new Date();
-		
+				
 		generateEntry.clear();
 		global = new SProject();
 		global.parse(text);
 		
-		long t = new Date().getTime() - st.getTime(); 
+		long time = new Date().getTime() - st.getTime(); 
 		
 		FileWriter out;
 		try {
 			out = new FileWriter("synchronization.log", true);						
-			out.write("CTD_core:\t" + t + "\n");
+			out.write("CTD_core:\t" + line + "\t" + time + "\n");
 			out.close();
 		}
 		catch (IOException e) 
@@ -66,14 +69,16 @@ public class Converter
 	 */
 	public static String DTC() throws ParseException {
 		Date st = new Date();		
-		
+		int line = 0;
 		StringBuilder sb = new StringBuilder();
 		
-		// configure
-		for (String k : Project.configure.keySet()) {
+		// configure		
+		for (String k : Project.configure.keySet()) 
+		{
 			HashMap<String, String> h = Project.getConfig(k).get(global.getSelectedConfig(k));
 			if (h != null)
 			{
+				line += h.size() + 1;
 				for (String key : h.keySet()) 
 				{										
 					sb.append(global.getSelectedConfig(k));
@@ -91,19 +96,20 @@ public class Converter
 		// remove raw space line
 		while (generateEntry.get(0).toString().trim().isEmpty()) generateEntry.remove(0);
 		
-		// generate code		
+		// generate code
+		line += generateEntry.size();
 		for (Entry e : generateEntry) 
 		{
 			String value = e.toString();	//		System.out.print(value);
 			sb.append(value);
 		}
 				
-		long t = new Date().getTime() - st.getTime(); 
+		long time = new Date().getTime() - st.getTime(); 
 		
 		FileWriter out;
 		try {
 			out = new FileWriter("synchronization.log", true);						
-			out.write("DTC_core:\t" + t + "\n");
+			out.write("DTC_core:\t" + line + "\t" + time + "\n");
 			out.close();
 		}
 		catch (IOException e) 

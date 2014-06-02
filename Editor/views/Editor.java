@@ -18,6 +18,7 @@ import models.converter.Token;
 import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.WirelessNode;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -350,6 +351,7 @@ public class Editor extends MainContent implements Observer {
 					statesHandler.activeProject();
 					if(text.getText() != "") 
 					{
+						int line = StringUtils.countMatches(text.getText(), "\n");		
 						try 
 						{	
 							Date st = new Date();
@@ -359,12 +361,12 @@ public class Editor extends MainContent implements Observer {
 								{
 									getWorkspace().updateLayout();
 									
-									long t = new Date().getTime() - st.getTime(); 
+									long time = new Date().getTime() - st.getTime(); 
 									
 									FileWriter out;
 									try {
 										out = new FileWriter("synchronization.log", true);						
-										out.write("CTD:\t" + t + "\n");
+										out.write("CTD:\t" + line + "\t" + time + "\n");
 										out.close();
 									}
 									catch (IOException e) 
@@ -1221,6 +1223,8 @@ public class Editor extends MainContent implements Observer {
 		// set text
 		text.setText(Converter.DTC());
 		
+		final int line = StringUtils.countMatches(text.getText(), "\n");		
+		
 		// set style
 		final List<Token> tokenList = Converter.DTC_token();
 		final Display display = Display.getCurrent();
@@ -1273,12 +1277,12 @@ public class Editor extends MainContent implements Observer {
 					});			
 				}				
 				
-				long t = new Date().getTime() - st.getTime(); 
+				long time = new Date().getTime() - st.getTime(); 
 				
 				FileWriter out;
 				try {
 					out = new FileWriter("synchronization.log", true);						
-					out.write("DTC:\t" + t + "\n");
+					out.write("DTC:\t" + line + "\t" + time + "\n");
 					out.close();
 				}
 				catch (IOException e) 
