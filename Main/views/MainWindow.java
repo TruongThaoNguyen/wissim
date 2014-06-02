@@ -28,11 +28,6 @@ public class MainWindow extends ApplicationWindow {
 	/**
 	 * button to switch to Editor.
 	 */
-//	private Button btnEditor;
-//	
-//	/**
-//	 * 
-//	 */
 	private Editor editor;
 	private static Analyzer analyzer;
 	private Visualizer visualizer;
@@ -179,7 +174,7 @@ public class MainWindow extends ApplicationWindow {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(1014, 520);
+		return new Point(720, 490);
 	}
 	
 	public Editor getEditor() {

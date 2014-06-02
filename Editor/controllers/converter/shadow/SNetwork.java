@@ -394,6 +394,11 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		Converter.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
+		// $ns_ at [expr $opt(stop) - 5] "[$mnode_($i) set ragent_] dump"
+		en = new Entry(this.label + " at [expr " + getTime() + " - 5] \" [" + newNode.getLabel() + " set ragent_] dump\"\n");
+		Converter.generateEntry.add(index++, en);
+		newNode.addEntry(en);
+		
 		// $ns_ at $opt(stop) "$mnode($i) reset" 
 		en = new Entry(this.label + " at " + getTime() + ".0001 \"" + newNode.getLabel() + " reset\"\n");
 		Converter.generateEntry.add(index++, en);
