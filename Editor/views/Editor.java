@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Date;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -350,11 +351,27 @@ public class Editor extends MainContent implements Observer {
 					if(text.getText() != "") 
 					{
 						try 
-						{							
+						{	
+							Date st = new Date();
 							if (Converter.CTD(text.getText()) != null) 	
 							{						
 								if(getWorkspace() != null)
+								{
 									getWorkspace().updateLayout();
+									
+									long t = new Date().getTime() - st.getTime(); 
+									
+									FileWriter out;
+									try {
+										out = new FileWriter("synchronization.log", true);						
+										out.write("CTD:\t" + t + "\n");
+										out.close();
+									}
+									catch (IOException e) 
+									{ 
+										e.printStackTrace();
+									}		
+								}
 							}
 						}
 						catch (ParseException e) 
@@ -1199,6 +1216,7 @@ public class Editor extends MainContent implements Observer {
 	 * @throws ParseException 
 	 */
 	public void updateDesign() throws ParseException {				
+		final Date st = new Date();
 		
 		// set text
 		text.setText(Converter.DTC());
@@ -1254,6 +1272,19 @@ public class Editor extends MainContent implements Observer {
 						}					
 					});			
 				}				
+				
+				long t = new Date().getTime() - st.getTime(); 
+				
+				FileWriter out;
+				try {
+					out = new FileWriter("synchronization.log", true);						
+					out.write("DTC:\t" + t + "\n");
+					out.close();
+				}
+				catch (IOException e) 
+				{ 
+					e.printStackTrace();
+				}		
 			}
 		}).start();
 		

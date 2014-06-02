@@ -573,7 +573,7 @@ public class SProject  extends Project implements TclObject
 			HashMap<String, String> netinte = getNetworkInterfaces().get(getSelectedNetworkInterface());
 			HashMap<String, String> antenna = getAntennas().get(getSelectedAntenna());			
 			
-			System.out.print("Set node range\nRun threshold\n");
+			//System.out.print("Set node range\nRun threshold\n");
 			
 			Process p = Runtime.getRuntime().exec(
 					Configure.getNS2Path() + "ns-2.35/indep-utils/propagation/threshold -m " +
@@ -582,19 +582,19 @@ public class SProject  extends Project implements TclObject
 			
 			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));			
 			String line;
-			System.out.println(line = br.readLine());													// distance =		
-			System.out.println(line = br.readLine());													// propagation model:
-			System.out.println(line = br.readLine());													// 
-			System.out.println(line = br.readLine());													// Selected parameters:
-			System.out.println(line = br.readLine());	netinte.put("Pt_", 		line.substring(16));	// transmit power:		    	
-			System.out.println(line = br.readLine());	netinte.put("freq_", 	line.substring(11));	// frequency:
-			System.out.println(line = br.readLine());	antenna.put("Gt_",		line.substring(23));	// transmit antenna gain:
-			System.out.println(line = br.readLine());	antenna.put("Gr_",		line.substring(22));	// receive antenna gain:
-			System.out.println(line = br.readLine());	netinte.put("L_",		line.substring(13));	// system loss:
-			System.out.println(line = br.readLine());	antenna.put("Z_",		line.substring(25));	// transmit antenna height:
-			System.out.println(line = br.readLine());													// receive antenna height:
-			System.out.println(line = br.readLine());													// 
-			System.out.println(line = br.readLine());	netinte.put("RXThresh_",line.substring(34));	// Receiving threshold RXThresh_ is:
+			line = br.readLine();  												// System.out.println(line);	// distance =		
+			line = br.readLine();  												// System.out.println(line);	// propagation model:
+			line = br.readLine();  												// System.out.println(line);	// 
+			line = br.readLine(); 												// System.out.println(line);	// Selected parameters:
+			line = br.readLine(); netinte.put("Pt_", 	line.substring(16));	// System.out.println(line);	// transmit power:		    	
+			line = br.readLine(); netinte.put("freq_", 	line.substring(11));	// System.out.println(line);	// frequency:
+			line = br.readLine(); antenna.put("Gt_",	line.substring(23));	// System.out.println(line);	// transmit antenna gain:
+			line = br.readLine(); antenna.put("Gr_",	line.substring(22));	// System.out.println(line);	// receive antenna gain:
+			line = br.readLine(); netinte.put("L_",		line.substring(13));	// System.out.println(line);	// system loss:
+			line = br.readLine(); antenna.put("Z_",		line.substring(25)); 	// System.out.println(line);	// transmit antenna height:
+			line = br.readLine();  												// System.out.println(line);	// receive antenna height:
+			line = br.readLine();  												// System.out.println(line);	// 
+			line = br.readLine(); netinte.put("RXThresh_",line.substring(34));	// System.out.println(line);	// Receiving threshold RXThresh_ is:
 		    
 			br.close();			
 		} catch (Exception e) {

@@ -2,6 +2,8 @@ package controllers.converter;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,8 +41,20 @@ public class Converter
 		generateEntry.clear();
 		global = new SProject();
 		global.parse(text);
-				
-		System.out.print("CTD - console: " + (new Date().getTime() - st.getTime())); 
+		
+		long t = new Date().getTime() - st.getTime(); 
+		
+		FileWriter out;
+		try {
+			out = new FileWriter("synchronization.log", true);						
+			out.write("CTD_core:\t" + t + "\n");
+			out.close();
+		}
+		catch (IOException e) 
+		{ 
+			e.printStackTrace();
+		}		
+		
 		return global;
 	}
 
@@ -84,7 +98,18 @@ public class Converter
 			sb.append(value);
 		}
 				
-		System.out.print("CTD - console: " + (new Date().getTime() - st.getTime()));
+		long t = new Date().getTime() - st.getTime(); 
+		
+		FileWriter out;
+		try {
+			out = new FileWriter("synchronization.log", true);						
+			out.write("DTC_core:\t" + t + "\n");
+			out.close();
+		}
+		catch (IOException e) 
+		{ 
+			e.printStackTrace();
+		}		
 		
 		return sb.toString();
 	}
@@ -120,7 +145,7 @@ public class Converter
 		// generate code		
 		for (Entry e : generateEntry) 
 		{
-			String value = e.toString();			System.out.print(value);
+			String value = e.toString();		//	System.out.print(value);
 			Scanner scanner = new Scanner(value);
 			token.addAll(scanner.scan());
 		}
