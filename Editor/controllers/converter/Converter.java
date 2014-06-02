@@ -1,8 +1,10 @@
 package controllers.converter;
 
 import java.io.BufferedReader;
+import java.io.Console;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,9 +35,13 @@ public class Converter
 	 * @throws ParseException 
 	 */
 	public static Project CTD(String text) throws ParseException {
+		Date st = new Date();
+		
 		generateEntry.clear();
 		global = new SProject();
 		global.parse(text);
+				
+		System.out.print("CTD - console: " + (new Date().getTime() - st.getTime())); 
 		return global;
 	}
 
@@ -46,6 +52,8 @@ public class Converter
 	 * @throws ParseException 
 	 */
 	public static String DTC() throws ParseException {
+		Date st = new Date();		
+		
 		StringBuilder sb = new StringBuilder();
 		
 		// configure
@@ -76,6 +84,8 @@ public class Converter
 			String value = e.toString();	//		System.out.print(value);
 			sb.append(value);
 		}
+				
+		System.out.print("CTD - console: " + (new Date().getTime() - st.getTime()));
 		
 		return sb.toString();
 	}
@@ -282,11 +292,8 @@ public class Converter
 	}
 	
 	public static void main(String[] args)  throws Exception {		
-		if (System.getProperty("os.name").toLowerCase().indexOf("win") > 0)
-			Configure.setTclFile("D:\\Work\\scripts\\30\\gpsr\\");
-		else
-			Configure.setTclFile("/home/trongnguyen/scripts/30/gpsr/");
-		String fileName = Configure.getDirectory() + "simulate.tcl";
+		Configure.setTclFile("/home/trongnguyen/");
+		String fileName = Configure.getDirectory() + "Untitled1.tcl";
 		BufferedReader br = new BufferedReader(new FileReader(fileName));
 		StringBuilder sb = new StringBuilder();
 	    
