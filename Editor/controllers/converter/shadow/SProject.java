@@ -312,7 +312,10 @@ public class SProject  extends Project implements TclObject
 				switch (command.size()) 
 				{
 					case 0 : throw new ParseException(ParseException.MissArgument);
-					case 1 : return getInsVar(Converter.parseIdentify(command.get(0))).getValue();
+					case 1 : 
+						InsVar i = getInsVar(Converter.parseIdentify(command.get(0)));
+						if (i != null)	return i.getValue();
+						return null;
 					case 2 : //return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).getValue();
 						String arg0 = Converter.parseIdentify(command.get(0));
 						String arg1 = Converter.parseIdentify(command.get(1));
