@@ -359,7 +359,7 @@ public class Editor extends MainContent implements Observer {
 						}
 						catch (ParseException e) 
 						{
-							e.printStackTrace();
+							MessageDialog.openError(getShell(), "Something wrong", e.getMessage());
 						}				  
 					}
 				}

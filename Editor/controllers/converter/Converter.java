@@ -1,7 +1,6 @@
 package controllers.converter;
 
 import java.io.BufferedReader;
-import java.io.Console;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Date;
