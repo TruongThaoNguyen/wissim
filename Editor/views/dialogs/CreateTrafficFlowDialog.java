@@ -95,18 +95,18 @@ public class CreateTrafficFlowDialog extends Dialog {
 		composite_1.setBounds(0, 0, 391, 297);
 		
 		Label lblSourceNode = new Label(composite_1, SWT.NONE);
-		lblSourceNode.setBounds(31, 34, 80, 15);
+		lblSourceNode.setBounds(31, 34, 87, 15);
 		lblSourceNode.setText("Source Node");
 		
 		final Combo cbSourceNode = new Combo(composite_1, SWT.NONE);
-		cbSourceNode.setBounds(117, 30, 47, 23);
+		cbSourceNode.setBounds(124, 30, 66, 29);
 		
 		Label lblDestinationNode = new Label(composite_1, SWT.NONE);
-		lblDestinationNode.setBounds(196, 34, 100, 15);
+		lblDestinationNode.setBounds(196, 34, 120, 15);
 		lblDestinationNode.setText("Destination Node");
 		
 		final Combo cbDestNode = new Combo(composite_1, SWT.NONE);
-		cbDestNode.setBounds(304, 30, 47, 23);
+		cbDestNode.setBounds(322, 30, 59, 29);
 		
 		final WirelessNetwork wirelessNetwork = Workspace.getProject().getNetwork();
 		
@@ -116,26 +116,26 @@ public class CreateTrafficFlowDialog extends Dialog {
 		}
 		
 		Group grpInternetProtocol = new Group(composite_1, SWT.NONE);
-		grpInternetProtocol.setBounds(31, 59, 322, 228);
+		grpInternetProtocol.setBounds(31, 59, 339, 228);
 		grpInternetProtocol.setText("Transport Protocol");
 		
 		Label lblType = new Label(grpInternetProtocol, SWT.NONE);
-		lblType.setBounds(50, 33, 108, 15);
+		lblType.setBounds(50, 33, 130, 26);
 		lblType.setText("Transport Protocol");
 		
 		final Combo cbTransportProtocol = new Combo(grpInternetProtocol, SWT.NONE);
-		cbTransportProtocol.setBounds(176, 30, 91, 23);
+		cbTransportProtocol.setBounds(186, 30, 98, 29);
 		cbTransportProtocol.select(0);
 		loadComboContent(cbTransportProtocol, ApplicationSettings.transportProtocols, ApplicationSettings.defaultTransportProtocol);
 		
 		
 		final Combo cbApplication = new Combo(grpInternetProtocol, SWT.NONE);
-		cbApplication.setBounds(176, 59, 91, 23);
+		cbApplication.setBounds(186, 59, 98, 29);
 		cbApplication.select(0);
 		loadComboContent(cbApplication, ApplicationSettings.applicationProtocols, ApplicationSettings.defaultApplicationProtocol);
 		
 		Label lblApplication = new Label(grpInternetProtocol, SWT.NONE);
-		lblApplication.setBounds(50, 62, 114, 15);
+		lblApplication.setBounds(40, 62, 140, 26);
 		lblApplication.setText("Application Protocol");
 		
 		Label lblEvents = new Label(grpInternetProtocol, SWT.NONE);

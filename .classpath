@@ -24,11 +24,6 @@
 	<classpathentry kind="lib" path="lib/editor/org.eclipse.jface-3.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/editor/org.eclipse.jface.text_3.8.101.v20130802-1147.jar"/>
 	<classpathentry kind="lib" path="lib/editor/org.eclipse.osgi_3.9.1.v20130814-1242.jar"/>
-	<classpathentry kind="lib" path="lib/editor/org.eclipse.swt.gtk.linux.x86_64_3.102.1.v20130827-2048.jar" sourcepath="lib/editor/org.eclipse.swt.gtk.linux.x86_64.source_3.102.1.v20130827-2048.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="https://www.eclipse.org/swt/javadoc.php"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="lib/editor/org.eclipse.text_3.5.300.v20130515-1451.jar"/>
 	<classpathentry kind="lib" path="lib/editor/org.eclipse.ui.forms_3.6.1.v20130822-1117.jar"/>
 	<classpathentry kind="lib" path="lib/editor/org.eclipse.ui.workbench_3.105.1.v20130821-1411.jar"/>
@@ -36,10 +31,10 @@
 	<classpathentry kind="lib" path="lib/editor/org.osgi.core-4.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/editor/slf4j-api-1.6.4.jar"/>
 	<classpathentry kind="lib" path="lib/editor/slf4j-log4j12-1.6.4.jar"/>
-	<classpathentry kind="lib" path="lib/editor/swt.jar"/>
 	<classpathentry kind="lib" path="lib/editor/xom-1.2.10.jar"/>
 	<classpathentry kind="lib" path="lib/visualyzer/gs-algo-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/visualyzer/gs-core-1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/visualyzer/gs-ui-1.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/editor/swt-4.3-gtk-linux-x86/swt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

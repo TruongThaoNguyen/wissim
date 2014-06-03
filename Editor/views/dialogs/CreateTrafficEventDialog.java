@@ -63,11 +63,11 @@ public class CreateTrafficEventDialog extends Dialog {
 		shlCreateTrafficEvent.setText("Create Traffic Event");
 		
 		Label lblType = new Label(shlCreateTrafficEvent, SWT.NONE);
-		lblType.setBounds(22, 79, 48, 15);
+		lblType.setBounds(22, 79, 48, 26);
 		lblType.setText("Type");
 		
 		final Scale scale = new Scale(shlCreateTrafficEvent, SWT.NONE);
-		scale.setBounds(103, 22, 189, 42);
+		scale.setBounds(115, 22, 195, 42);
 		
 		if (eventList.size() > 0)
 			scale.setMinimum(eventList.get(eventList.size() - 1).time + 1);
@@ -83,7 +83,7 @@ public class CreateTrafficEventDialog extends Dialog {
 		
 		Label lblRaisedTime = new Label(shlCreateTrafficEvent, SWT.NONE);
 		lblRaisedTime.setText("Raised Time");
-		lblRaisedTime.setBounds(22, 38, 75, 15);
+		lblRaisedTime.setBounds(22, 38, 87, 25);
 		
 		final Combo combo = new Combo(shlCreateTrafficEvent, SWT.NONE);
 		combo.setItems(new String[] {"START", "STOP"});
