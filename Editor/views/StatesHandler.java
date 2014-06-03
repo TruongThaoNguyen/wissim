@@ -30,7 +30,7 @@ public class StatesHandler {
 		window.getActMouseCursor().setEnabled(false);
 		window.getActMouseHand().setEnabled(false);
 		window.getActPrint().setEnabled(false);		
-		window.getActSave().setEnabled(false);
+//		window.getActSave().setEnabled(false);
 		window.getActSaveAs().setEnabled(false);
 		window.getActSearchNode().setEnabled(false);
 		window.getActShowConnection().setEnabled(false);
@@ -50,8 +50,8 @@ public class StatesHandler {
 		window.getActViewVoronoiDiagram().setEnabled(false);
 		window.getActZoomIn().setEnabled(false);
 		window.getActZoomOut().setEnabled(false);
-		window.getActConfigNS2().setEnabled(false);
-		window.getActRunNS2().setEnabled(false);
+//		window.getActConfigNS2().setEnabled(false);
+//		window.getActRunNS2().setEnabled(false);
 		window.getActNetworkReferenceRemain().setEnabled(false);
 		window.getActScriptReferenceRemain().setEnabled(false);
 		window.getActDefaultConfiguration().setEnabled(false);
