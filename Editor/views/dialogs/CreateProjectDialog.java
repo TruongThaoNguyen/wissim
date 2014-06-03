@@ -136,9 +136,10 @@ public class CreateProjectDialog extends Dialog {
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog browseDialog = new DirectoryDialog(shlCreateNewProject, SWT.NONE);
 				browseDialog.setText("Browse");
-				browseDialog.setFilterPath("C:/");
-				if(browseDialog.open() != null)
-					txtDirectory.setText(browseDialog.open());
+				browseDialog.setFilterPath(System.getProperty("user.home"));
+				String str = browseDialog.open();
+				if(str != null)
+					txtDirectory.setText(str);
 			}
 		});
 		btnBrowse.setBounds(340, 59, 75, 25);
