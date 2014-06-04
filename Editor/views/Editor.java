@@ -1185,7 +1185,8 @@ public class Editor extends MainContent implements Observer {
 	
 	public void actionOpen(Editor editor) {	
 		tabFolder.setSelection(1);
-		if (ApplicationManager.openProject(editor) == null) return;		
+		if (ApplicationManager.openProject(editor) == null) return;
+		getShell().setText(Configure.getTclFile());
 		showProject();		
 		System.setProperty("user.dir", Configure.getDirectory());
 		getWorkspace().getSelectableObject().get(getWorkspace().getSelectableObject().size() - 1).moveAbove(null);
@@ -1369,6 +1370,7 @@ public class Editor extends MainContent implements Observer {
 		tabFolder.setSelection(1);		
 		if (ApplicationManager.newProject(Editor.this) == null) return;
 		actionDefaultConfiguration();
+		getShell().setText(Configure.getTclFile());
 		showProject();
 		updateNetworkInfoLabel();
 		//updateDesign();		
