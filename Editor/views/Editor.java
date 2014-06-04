@@ -1376,8 +1376,29 @@ public class Editor extends MainContent implements Observer {
 		//updateDesign();		
 	}
 	
-	public void actionSave() {
-		ApplicationManager.saveWorkspace(Editor.this);
+	/**
+	 * save tcl file
+	 * @author trongnguyen
+	 */
+	public void actionSave() {		
+		try 
+		{
+			if (tabFolder.getSelectionIndex() == 0) // edit
+			{		
+				String fileName = Configure.getTclFile();
+				BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));		
+				bw.write(text.getText());
+				bw.close();
+			}
+			else									// design
+			{
+				ApplicationManager.saveWorkspace(Editor.this);
+			}
+		}
+		catch (Exception e) 
+		{
+			MessageDialog.openError(getShell(), "Error", "Some errors happened. Can not save file. Please try again later");
+		}
 	}
 	
 	public void actionToImage() {

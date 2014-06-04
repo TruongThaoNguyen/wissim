@@ -130,24 +130,8 @@ public class ApplicationManager {
 		return null;
 	}
 
-	public static void saveWorkspace(Editor mainWindow) {	
-		Workspace workspace = mainWindow.getWorkspace();
-		
-		if (workspace == null) return;
-		try {					
-			ProjectManager.saveProject();
-			
-//			workspace.setSavedStateIndex(workspace.getCareTaker().getCurrentStateIndex());
-			
-//			mainWindow.getActSave().setEnabled(false);
-//			CTabFolder cTabFolder = (CTabFolder) workspace.getParent().getParent();
-//			cTabFolder.getSelection().setText(workspace.getProject().getNetwork().getName());
-		} catch (IOException e) {
-			MessageDialog.openError(workspace.getShell(), "Error", "The file is currently in use");
-		} 
-		catch (Exception e) {
-			MessageDialog.openError(workspace.getShell(), "Error", "Some errors happened. Can not save file. Please try again later");
-		}
+	public static void saveWorkspace(Editor mainWindow) throws IOException, ParseException {		
+		ProjectManager.saveProject();			
 	}
 
 	public static void saveWorkspaceAs(Workspace workspace) {	
