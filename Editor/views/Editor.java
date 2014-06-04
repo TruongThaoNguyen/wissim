@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
 import java.util.Observable;
@@ -25,8 +26,10 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.Bullet;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ST;
@@ -64,6 +67,7 @@ import views.RulerScrolledComposite;
 import views.Workspace;
 import views.dialogs.ConfigNodeDialog;
 import views.dialogs.PreferencesDialog;
+import views.dialogs.StopRunNS2Dialog;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
@@ -74,6 +78,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Point;
@@ -561,8 +566,12 @@ public class Editor extends MainContent implements Observer {
 
 
 		actSave = new Action("Save") {
-			public void run() {						
-				actionSave();
+			public void run() {
+						Cursor cursor = new Cursor(getDisplay(), SWT.CURSOR_WAIT);
+						setCursor(cursor);
+						actionSave();
+						cursor = new Cursor(getDisplay(), SWT.CURSOR_ARROW);
+						setCursor(cursor);
 			}
 		};
 		actSave.setToolTipText("Save current project (CTRL + S)");
@@ -625,7 +634,11 @@ public class Editor extends MainContent implements Observer {
 
 		actCreateASetOfNodes = new Action("A Set of Nodes") {
 			public void run() {
+				Cursor cursor = new Cursor(getDisplay(), SWT.CURSOR_WAIT);
+				setCursor(cursor);
 				actionCreateASetOfNode();
+				cursor = new Cursor(getDisplay(), SWT.CURSOR_ARROW);
+				setCursor(cursor);
 			}
 		};
 		actCreateASetOfNodes.setToolTipText("Create a set of Nodes (SHIFT + M)");
@@ -954,7 +967,11 @@ public class Editor extends MainContent implements Observer {
 		
 		actRunNS2 = new Action("Run NS2"){
 			public void run() {
+				Cursor cursor = new Cursor(getDisplay(), SWT.CURSOR_WAIT);
+				setCursor(cursor);
 				actionRunNS2();
+//				cursor = new Cursor(getDisplay(), SWT.CURSOR_ARROW);
+//				setCursor(cursor);
 			}
 		};
 		actRunNS2.setToolTipText("Run with NS2 (CTRL + F11)");
@@ -1588,7 +1605,7 @@ public class Editor extends MainContent implements Observer {
 	 * Run NS2
 	 * @author trongnguyen
 	 */
-	public void actionRunNS2() {		
+	public void actionRunNS2() {	
 		if (Configure.getNS2Path() == null)	ns2Config();	
 		final Shell shell = getShell();
 		final Display display = Display.getCurrent();
@@ -1598,7 +1615,7 @@ public class Editor extends MainContent implements Observer {
 			@Override
 			public void run() {		
 				try 
-				{		
+				{
 					Process p = null;
 					File pathToExecutable = new File(Configure.getNS2Path() + "/bin/ns");
 					ProcessBuilder pb = new ProcessBuilder(pathToExecutable.getAbsolutePath(),Configure.getTclFile());					
@@ -1608,17 +1625,19 @@ public class Editor extends MainContent implements Observer {
 					
 					BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));			
 					String line;
-				
 					while ((line = input.readLine()) != null) 
 					{						
 						final String s = line;
+						
 						display.asyncExec(new Runnable() {
 							@Override
 							public void run() {																				
-								styledTextConsole.append(s + "\n");									
+								styledTextConsole.append(s + "\n");
 							}
 						});
-					}					
+						
+					}
+					styledTextConsole.append("Run finished");
 				}
 				catch (IOException err) 
 				{					
@@ -1633,7 +1652,8 @@ public class Editor extends MainContent implements Observer {
 					});					
 				}		
 			}
-		}).start();		
+		}).start();	
+		
 	}
 	
 	public void actionImport() {

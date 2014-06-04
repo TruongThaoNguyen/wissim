@@ -59,12 +59,15 @@ public class CreateTrafficEventDialog extends Dialog {
 	 */
 	private void createContents() {
 		shlCreateTrafficEvent = new Shell(getParent(), getStyle());
-		shlCreateTrafficEvent.setSize(322, 189);
+		shlCreateTrafficEvent.setSize(384, 181);
 		shlCreateTrafficEvent.setText("Create Traffic Event");
 		
 		Label lblType = new Label(shlCreateTrafficEvent, SWT.NONE);
 		lblType.setBounds(22, 79, 48, 26);
 		lblType.setText("Type");
+		final Label lblNewLabel = new Label(shlCreateTrafficEvent, SWT.NONE);
+		lblNewLabel.setBounds(316, 33, 48, 17);
+		lblNewLabel.setText("1");
 		
 		final Scale scale = new Scale(shlCreateTrafficEvent, SWT.NONE);
 		scale.setBounds(115, 22, 195, 42);
@@ -77,7 +80,9 @@ public class CreateTrafficEventDialog extends Dialog {
 		scale.setPageIncrement((scale.getMaximum() - scale.getMinimum())/ 10);
 		scale.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				int valueRaised = scale.getSelection();
 				scale.setToolTipText(scale.getSelection() + "");
+				lblNewLabel.setText(Integer.toString(valueRaised));
 			}
 		});
 		
@@ -115,5 +120,7 @@ public class CreateTrafficEventDialog extends Dialog {
 		btnCancel.setText("Cancel");		
 		
 		shlCreateTrafficEvent.setDefaultButton(btnCreate);
+		
+		
 	}
 }
