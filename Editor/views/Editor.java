@@ -1646,6 +1646,15 @@ public class Editor extends MainContent implements Observer {
 					
 					BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));			
 					String line;
+					display.asyncExec(new Runnable() {
+						
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							statesHandler.initialize();
+							setCursor(new Cursor(getDisplay(), SWT.CURSOR_WAIT));
+						}
+					});
 					while ((line = input.readLine()) != null) 
 					{						
 						final String s = line;
@@ -1658,7 +1667,17 @@ public class Editor extends MainContent implements Observer {
 						});
 						
 					}
-					styledTextConsole.append("Run finished");
+					display.asyncExec(new Runnable() {
+						
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							statesHandler.activeProject();
+							setCursor(new Cursor(getDisplay(), SWT.CURSOR_ARROW));
+							styledTextConsole.append("Run finished");
+						}
+					});
+					
 				}
 				catch (IOException err) 
 				{					
