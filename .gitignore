@@ -15,5 +15,6 @@ tmp/**
 test_store/**
 *.dll
 *tr
+*.log
 /bin/
 synchronization.log
