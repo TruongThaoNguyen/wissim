@@ -335,7 +335,7 @@ public class Editor extends MainContent implements Observer {
 		{
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) 
 			{
-				if(tabFolder.getSelectionIndex() == 0)		// Edit
+				if(tabFolder.getSelectionIndex() == 0)		// Design -> Edit
 				{
 					statesHandler.initialize();
 					try 
@@ -347,7 +347,7 @@ public class Editor extends MainContent implements Observer {
 						MessageDialog.openError(getShell(), "Something wrong", e.getMessage());
 					}					  
 				}
-				else										// Design
+				else										// Edit -> Design
 				{
 					statesHandler.activeProject();
 					if(text.getText() != "") 
@@ -358,6 +358,7 @@ public class Editor extends MainContent implements Observer {
 							Date st = new Date();
 							if (Converter.CTD(text.getText()) != null) 	
 							{						
+								Workspace.getProject().getNetwork().updateNeighbors();
 								if(getWorkspace() != null)
 								{
 									getWorkspace().updateLayout();
