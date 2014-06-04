@@ -162,7 +162,7 @@ public class CreateTrafficFlowDialog extends Dialog {
 		tblclmnRaisedTime.setText("Raised Time");
 		
 		Button btnAdd = new Button(grpInternetProtocol, SWT.NONE);
-		btnAdd.setBounds(230, 108, 75, 25);
+		btnAdd.setBounds(230, 108, 99, 25);
 		btnAdd.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -173,10 +173,14 @@ public class CreateTrafficFlowDialog extends Dialog {
 		btnAdd.setText("Add");
 		
 		Button btnRemoveAll = new Button(grpInternetProtocol, SWT.NONE);
-		btnRemoveAll.setBounds(230, 170, 75, 25);
+		btnRemoveAll.setBounds(230, 170, 99, 25);
 		btnRemoveAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if(table.getItemCount() == 0) {
+					MessageDialog.openWarning(getParent(), "Warning", "No data to remove");
+					return;
+				}
 				while (eventList.size() > 0)
 					eventList.remove(0);
 				
@@ -186,10 +190,14 @@ public class CreateTrafficFlowDialog extends Dialog {
 		btnRemoveAll.setText("Remove All");
 		
 		Button btnRemove = new Button(grpInternetProtocol, SWT.NONE);
-		btnRemove.setBounds(230, 139, 75, 25);
+		btnRemove.setBounds(230, 139, 99, 25);
 		btnRemove.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if(table.getSelectionCount() == 0) {
+					MessageDialog.openWarning(getParent(), "Warning", "No item is selected!");
+					return;
+				}
 				if (eventList.size() > 0) {
 					eventList.remove(eventList.size() - 1);
 					updateEventTable();

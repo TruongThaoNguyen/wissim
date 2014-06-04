@@ -965,11 +965,7 @@ public class Editor extends MainContent implements Observer {
 		actRunNS2 = new Action("Run NS2"){
 			public void run() {
 				actionSave();
-				Cursor cursor = new Cursor(getDisplay(), SWT.CURSOR_WAIT);
-				setCursor(cursor);
 				actionRunNS2();
-				cursor = new Cursor(getDisplay(), SWT.CURSOR_ARROW);
-				setCursor(cursor);
 			}
 		};
 		actRunNS2.setToolTipText("Run with NS2 (CTRL + F11)");
@@ -992,7 +988,7 @@ public class Editor extends MainContent implements Observer {
 				final Menu menu = new Menu(getShell(), SWT.POP_UP);
 				
 			      MenuItem managerTrafficFlowItem = new MenuItem(menu, SWT.PUSH);
-			      managerTrafficFlowItem.setText("Manager Traffic Flow ");
+			      managerTrafficFlowItem.setText("Traffic Flow Management");
 			      managerTrafficFlowItem.addSelectionListener(new SelectionListener() {
 					
 					@Override
@@ -1007,7 +1003,7 @@ public class Editor extends MainContent implements Observer {
 				});
 			      
 			      MenuItem managerPathsItem = new MenuItem(menu, SWT.PUSH);
-			      managerPathsItem.setText("Manager Paths ");
+			      managerPathsItem.setText("Paths Management");
 			      managerPathsItem.addSelectionListener(new SelectionListener() {
 					
 					@Override
@@ -1022,7 +1018,7 @@ public class Editor extends MainContent implements Observer {
 				});
 			      
 			      MenuItem managerLabelsItem = new MenuItem(menu, SWT.PUSH);
-			      managerLabelsItem.setText("Manager Labels");
+			      managerLabelsItem.setText("Labels Management");
 			      managerLabelsItem.addSelectionListener(new SelectionListener() {
 					
 					@Override
@@ -1060,7 +1056,7 @@ public class Editor extends MainContent implements Observer {
 		        menu.setVisible(true);
 			}
 		};
-		actNetworkReferenceRemain.setToolTipText("External tools");
+		actNetworkReferenceRemain.setToolTipText(" Management");
 		actNetworkReferenceRemain.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/transmit.png"));
 		
 		actScriptReferenceRemain = new Action() {

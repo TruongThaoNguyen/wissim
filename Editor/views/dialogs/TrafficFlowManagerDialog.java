@@ -5,6 +5,7 @@ import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.protocols.ApplicationProtocol;
 import models.networkcomponents.protocols.TransportProtocol;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -28,6 +29,8 @@ public class TrafficFlowManagerDialog extends Dialog {
 	protected Shell shlTrafficFlowGenerator;
 	private Table table;
 	private Label lblCount;
+	private Button btnRemove;
+	private Button btnRemoveAll;
 
 	/**
 	 * Create the dialog.
@@ -88,11 +91,6 @@ public class TrafficFlowManagerDialog extends Dialog {
 		table.setBounds(20, 26, 341, 235);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		table.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				System.out.println("ok");
-			}
-		});
 		
 		TableColumn tblclmnSource = new TableColumn(table, SWT.NONE);
 		tblclmnSource.setWidth(92);
@@ -114,28 +112,40 @@ public class TrafficFlowManagerDialog extends Dialog {
 				updateContent();
 			}
 		});
-		btnAdd.setBounds(397, 26, 75, 25);
+		btnAdd.setBounds(384, 26, 107, 25);
 		btnAdd.setText("Add");
 		
-		Button btnRemove = new Button(composite_2, SWT.NONE);
+		btnRemove = new Button(composite_2, SWT.NONE);
 		btnRemove.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				removeItems();
+				if(table.getSelectionCount() == 0) {
+					MessageDialog.openWarning(getParent(), "Warning", "No item is selected!");
+					return;
+				}
+					removeItems();
 			}
 		});
-		btnRemove.setBounds(397, 88, 75, 25);
+		btnRemove.setBounds(384, 57, 107, 25);
 		btnRemove.setText("Remove");
 		
-		Button btnRemoveAll = new Button(composite_2, SWT.NONE);
+		btnRemoveAll = new Button(composite_2, SWT.NONE);
 		btnRemoveAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				removeAllItems();
+				if(table.getItemCount() == 0) {
+					MessageDialog.openWarning(getParent(), "Warning", "No data to remove");
+					return;
+				}
+					removeAllItems();
 			}
 		});
-		btnRemoveAll.setBounds(397, 119, 75, 25);
+		btnRemoveAll.setBounds(384, 88, 107, 25);
 		btnRemoveAll.setText("Remove All");
+		table.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+			}
+		});
 		
 		Button btnClose = new Button(composite_2, SWT.NONE);
 		btnClose.addSelectionListener(new SelectionAdapter() {
@@ -148,15 +158,6 @@ public class TrafficFlowManagerDialog extends Dialog {
 		btnClose.setText("Close");
 
 		shlTrafficFlowGenerator.setDefaultButton(btnClose);
-		
-		Button btnEdit = new Button(composite_2, SWT.NONE);
-		btnEdit.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-			}
-		});
-		btnEdit.setBounds(397, 57, 75, 25);
-		btnEdit.setText("Edit");
 		
 		WirelessNetwork wirelessNetwork = Workspace.getProject().getNetwork();
 		
