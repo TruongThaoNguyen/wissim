@@ -967,11 +967,12 @@ public class Editor extends MainContent implements Observer {
 		
 		actRunNS2 = new Action("Run NS2"){
 			public void run() {
+				actionSave();
 				Cursor cursor = new Cursor(getDisplay(), SWT.CURSOR_WAIT);
 				setCursor(cursor);
 				actionRunNS2();
-//				cursor = new Cursor(getDisplay(), SWT.CURSOR_ARROW);
-//				setCursor(cursor);
+				cursor = new Cursor(getDisplay(), SWT.CURSOR_ARROW);
+				setCursor(cursor);
 			}
 		};
 		actRunNS2.setToolTipText("Run with NS2 (CTRL + F11)");
@@ -1613,7 +1614,7 @@ public class Editor extends MainContent implements Observer {
 		
 		new Thread(new Runnable() {			
 			@Override
-			public void run() {		
+			public void run() {	
 				try 
 				{
 					Process p = null;
@@ -1650,7 +1651,7 @@ public class Editor extends MainContent implements Observer {
 							ns2Config();		
 						}
 					});					
-				}		
+				}	
 			}
 		}).start();	
 		

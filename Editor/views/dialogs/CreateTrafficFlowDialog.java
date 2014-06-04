@@ -1,5 +1,6 @@
 package views.dialogs;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -101,6 +102,8 @@ public class CreateTrafficFlowDialog extends Dialog {
 		
 		final Combo cbSourceNode = new Combo(composite_1, SWT.NONE);
 		cbSourceNode.setBounds(124, 30, 66, 29);
+//		List multiSourceNode = new List(composite_1, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
+//		multiSourceNode.setBounds(124, 30, 66, 29);
 		
 		Label lblDestinationNode = new Label(composite_1, SWT.NONE);
 		lblDestinationNode.setBounds(196, 34, 120, 15);
@@ -108,6 +111,8 @@ public class CreateTrafficFlowDialog extends Dialog {
 		
 		final Combo cbDestNode = new Combo(composite_1, SWT.NONE);
 		cbDestNode.setBounds(322, 30, 59, 29);
+//		List multiDestNode = new List(composite_1, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
+//		multiDestNode.setBounds(322, 30, 59, 29);
 		
 		final WirelessNetwork wirelessNetwork = Workspace.getProject().getNetwork();
 		

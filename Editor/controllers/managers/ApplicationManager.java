@@ -433,7 +433,18 @@ public class ApplicationManager {
 	
 	public static void showNeighbors(Workspace workspace) {
 		if (workspace == null) return;
-		
+		if(workspace.getSelectedObject().size() == 0) {
+			MessageDialog.openWarning(workspace.getShell(), "Warning", "No node is selected!");
+			return;
+		}
+//		Control c;
+//		for (GSelectableObject o : workspace.getSelectedObject()) {
+//
+//			if (o instanceof GWirelessNode) {
+//				workspace.getPropertyManager().setNodeIdShowedNeighbors(((GWirelessNode) o).getWirelessNode().getId());
+//				workspace.getGraphicNetwork().redraw();
+//			}
+//		}
 		Control c;
 		if (workspace.getSelectedObject().size() == 1) {
 			c = (Control) workspace.getSelectedObject().get(0);
@@ -591,15 +602,26 @@ public class ApplicationManager {
 
 	public static void showRange(Workspace workspace) {
 		Control c;
+		if(workspace.getSelectedObject().size() == 0) {
+			MessageDialog.openWarning(workspace.getShell(), "Error", "No node is selected!");
+			return;
+		} 
+		for (GSelectableObject o : workspace.getSelectedObject()) {
 
-		if (workspace.getSelectedObject().size() == 1) {
-			c = (Control) workspace.getSelectedObject().get(0);
-
-			if (c instanceof GWirelessNode) {
-				workspace.getPropertyManager().setNodeIdShowedRange(((GWirelessNode) c).getWirelessNode().getId());
+			if (o instanceof GWirelessNode) {
+				workspace.getPropertyManager().setNodeIdShowedRange(((GWirelessNode) o).getWirelessNode().getId());
 				workspace.getGraphicNetwork().redraw();
 			}
 		}
+		
+//		if (workspace.getSelectedObject().size() == 1) {
+//			c = (Control) workspace.getSelectedObject().get(0);
+//
+//			if (c instanceof GWirelessNode) {
+//				workspace.getPropertyManager().setNodeIdShowedRange(((GWirelessNode) c).getWirelessNode().getId());
+//				workspace.getGraphicNetwork().redraw();
+//			}
+//		}
 	}
 
 	public static void showConnection(Workspace workspace, boolean isShow) {
