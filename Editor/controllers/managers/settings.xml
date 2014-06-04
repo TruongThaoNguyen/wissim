@@ -6,20 +6,74 @@
         <queue-length>50</queue-length>
     </node-settings>
     <energy-model>
-    	<energyModel>EnergyModel</energyModel>
         <iddle>0.0096</iddle>
         <reception>0.021</reception>
         <transmission>0.0255</transmission>
-        <sleep>0.000648</sleep>
-        <transitionPower>0.024</transitionPower>
-		<transitionTime>0.0129</transitionTime>
-		<initialEnergy>1000</initialEnergy>
+        <sleep>6.48E-4</sleep>
     </energy-model>
     <routing-protocols>
-        <!-- Routing protocols -->
+        <routing-protocol type="Agent/ELBAR">
+            <params>
+                <param property="max_angle_" value="2.35619449019"/>
+                <param property="hello_period_" value="5"/>
+                <param property="storage_opt_" value="0"/>
+                <param property="min_angle_" value="1.0471975512"/>
+                <param property="range_" value="40"/>
+            </params>
+        </routing-protocol>
         <routing-protocol type="Agent/AODV">
             <params>
                 <param property="" value=""/>
+            </params>
+        </routing-protocol>
+        <routing-protocol type="Agent/GOAL">
+            <params>
+                <param property="limit_boundhole_hop_" value="80"/>
+                <param property="energy_checkpoint_" value="995"/>
+                <param property="hello_period_" value="0"/>
+                <param property="broadcast_hop_" value="10"/>
+                <param property="storage_opt_" value="1"/>
+                <param property="limit_" value="0"/>
+                <param property="range_" value="40"/>
+            </params>
+        </routing-protocol>
+        <routing-protocol type="Agent/SCALEHEXAGON">
+            <params>
+                <param property="limit_boundhole_hop_" value="80"/>
+                <param property="energy_checkpoint_" value="995"/>
+                <param property="hello_period_" value="0"/>
+                <param property="storage_opt_" value="1"/>
+                <param property="range_" value="40"/>
+            </params>
+        </routing-protocol>
+        <routing-protocol type="Agent/GRIDOFFLINE">
+            <params>
+                <param property="limit_boundhole_hop_" value="80"/>
+                <param property="r_" value="100"/>
+                <param property="energy_checkpoint_" value="995"/>
+                <param property="hello_period_" value="0"/>
+                <param property="range_" value="40"/>
+                <param property="limit_" value="0"/>
+            </params>
+        </routing-protocol>
+        <routing-protocol type="Agent/SCALEGOAL">
+            <params>
+                <param property="limit_boundhole_hop_" value="80"/>
+                <param property="energy_checkpoint_" value="995"/>
+                <param property="hello_period_" value="0"/>
+                <param property="broadcast_hop_" value="10"/>
+                <param property="storage_opt_" value="1"/>
+                <param property="range_" value="40"/>
+            </params>
+        </routing-protocol>
+        <routing-protocol type="Agent/GRIDONLINE">
+            <params>
+                <param property="limit_boundhole_hop_" value="80"/>
+                <param property="r_" value="100"/>
+                <param property="energy_checkpoint_" value="995"/>
+                <param property="hello_period_" value="0"/>
+                <param property="range_" value="40"/>
+                <param property="limit_" value="0"/>
             </params>
         </routing-protocol>
         <routing-protocol type="Agent/DSR">
@@ -27,148 +81,74 @@
                 <param property="" value=""/>
             </params>
         </routing-protocol>
+        <routing-protocol type="Agent/EHDS">
+            <params>
+                <param property="limit_boundhole_hop_" value="80"/>
+                <param property="energy_checkpoint_" value="995"/>
+                <param property="hello_period_" value="0"/>
+                <param property="storage_opt_" value="1"/>
+                <param property="range_" value="40"/>
+            </params>
+        </routing-protocol>
+        <routing-protocol type="Agent/HEXAGON">
+            <params>
+                <param property="limit_boundhole_hop_" value="80"/>
+                <param property="energy_checkpoint_" value="995"/>
+                <param property="hello_period_" value="0"/>
+                <param property="storage_opt_" value="1"/>
+                <param property="range_" value="40"/>
+            </params>
+        </routing-protocol>
+        <routing-protocol type="Agent/CONVEXONLINE">
+            <params>
+                <param property="limit_boundhole_hop_" value="80"/>
+                <param property="r_" value="100"/>
+                <param property="energy_checkpoint_" value="995"/>
+                <param property="hello_period_" value="0"/>
+                <param property="range_" value="40"/>
+                <param property="limit_" value="0"/>
+            </params>
+        </routing-protocol>
+        <routing-protocol type="Agent/GPSR" default="true">
+            <params>
+                <param property="energy_checkpoint_" value="995"/>
+                <param property="hello_period_" value="5"/>
+            </params>
+        </routing-protocol>
         <routing-protocol type="Agent/DSDV">
             <params>
                 <param property="" value=""/>
             </params>
         </routing-protocol>
-        <routing-protocol type="Agent/GPSR">
-            <params>
-                <param property="hello_period_" value="5"/>
-                <param property="energy_checkpoint_" value="995"/>
-            </params>
-        </routing-protocol>
-        <routing-protocol type="Agent/GOAL">
-            <params>
-                <param property="hello_period_" value="0"/>
-                <param property="energy_checkpoint_" value="995"/>
-                <param property="range_" value="40"/>
-                <param property="broadcast_hop_" value="10"/>
-                <param property="storage_opt_" value="1"/>
-                <param property="limit_boundhole_hop_" value="80"/>
-                <param property="limit_" value="0"/>
-            </params>
-        </routing-protocol>
-        <routing-protocol type="Agent/SCALEGOAL">
-            <params>
-                <param property="hello_period_" value="0"/>
-                <param property="energy_checkpoint_" value="995"/>
-                <param property="range_" value="40"/>
-                <param property="broadcast_hop_" value="10"/>
-                <param property="storage_opt_" value="1"/>
-                <param property="limit_boundhole_hop_" value="80"/>
-            </params>
-        </routing-protocol>
-        <routing-protocol type="Agent/HEXAGON">
-            <params>
-                <param property="hello_period_" value="0"/>
-                <param property="energy_checkpoint_" value="995"/>
-                <param property="range_" value="40"/>
-                <param property="storage_opt_" value="1"/>
-                <param property="limit_boundhole_hop_" value="80"/>
-            </params>
-        </routing-protocol>
-        <routing-protocol type="Agent/SCALEHEXAGON">
-            <params>
-                <param property="hello_period_" value="0"/>
-                <param property="energy_checkpoint_" value="995"/>
-                <param property="range_" value="40"/>
-                <param property="storage_opt_" value="1"/>
-                <param property="limit_boundhole_hop_" value="80"/>
-            </params>
-        </routing-protocol>
-        <routing-protocol type="Agent/EHDS">
-            <params>
-                <param property="hello_period_" value="0"/>
-                <param property="energy_checkpoint_" value="995"/>
-                <param property="range_" value="40"/>
-                <param property="storage_opt_" value="1"/>
-                <param property="limit_boundhole_hop_" value="80"/>
-            </params>
-        </routing-protocol>
         <routing-protocol type="Agent/ELLIPSE">
             <params>
-                <param property="hello_period_" value="0"/>
-                <param property="energy_checkpoint_" value="995"/>
-                <param property="range_" value="40"/>
+                <param property="limit_boundhole_hop_" value="80"/>
                 <param property="alpha_" value="0.8"/>
+                <param property="energy_checkpoint_" value="995"/>
+                <param property="hello_period_" value="0"/>
                 <param property="storage_opt_" value="1"/>
-                <param property="limit_boundhole_hop_" value="80"/>
-            </params>
-        </routing-protocol>
-        <routing-protocol type="Agent/GRIDOFFLINE" default="true">
-            <params>
-                <param property="hello_period_" value="0"/>
-                <param property="energy_checkpoint_" value="995"/>
-                <param property="limit_" value="0"/>
                 <param property="range_" value="40"/>
-                <param property="r_" value="100"/>
-                <param property="limit_boundhole_hop_" value="80"/>
-            </params>
-        </routing-protocol>
-        <routing-protocol type="Agent/GRIDONLINE">
-            <params>
-                <param property="hello_period_" value="0"/>
-                <param property="energy_checkpoint_" value="995"/>
-                <param property="limit_" value="0"/>
-                <param property="range_" value="40"/>
-                <param property="r_" value="100"/>
-                <param property="limit_boundhole_hop_" value="80"/>
-            </params>
-        </routing-protocol>
-        <routing-protocol type="Agent/CONVEXONLINE">
-            <params>
-                <param property="hello_period_" value="0"/>
-                <param property="energy_checkpoint_" value="995"/>
-                <param property="limit_" value="0"/>
-                <param property="range_" value="40"/>
-                <param property="r_" value="100"/>
-                <param property="limit_boundhole_hop_" value="80"/>
-            </params>
-        </routing-protocol>
-        <routing-protocol type="Agent/ELBAR">
-            <params>
-                <param property="hello_period_" value="5"/>
-                <param property="range_" value="40"/>
-                <param property="storage_opt_" value="0"/>
-                <param property="min_angle_" value="1.0471975512"/>
-                <param property="max_angle_" value="2.35619449019"/>
             </params>
         </routing-protocol>
     </routing-protocols>
     <transport-protocols>
-        <!-- Transport protocols -->
-        <protocol type="TCP" default="true">
-            <params>
-                <param property="sport_" value="0"/>
-                <param property="dport_" value="0"/>
-                <param property="packetSize_" value="1460"/>
-            </params>
-        </protocol>
-        <protocol type="UDP">
+        <transport-protocol type="UDP">
             <params>
                 <param property="fid_" value="2"/>
             </params>
-        </protocol>
+        </transport-protocol>
+        <transport-protocol type="TCP" default="true">
+            <params>
+                <param property="packetSize_" value="1460"/>
+                <param property="dport_" value="0"/>
+                <param property="sport_" value="0"/>
+            </params>
+        </transport-protocol>
     </transport-protocols>
     <apps>
-        <!-- Application protocols -->
-        <app type="CBR" default="true">
-            <params>                
-            	<param property="type_" 		value="CBR"/>                
-                <param property="packetSize_" 	value="50"/>
-                <param property="interval_" 	value="1"/>
-                <param property="rate_" 		value="0.1Mb"/>
-                <param property="sport_"		value="0"/>
-                <param property="dport_"		value="0"/>
-            </params>
-        </app>
-        <app type="VBR">
+        <app type="Telnet">
             <params>
-                <param property="packetSize_" value="0"/>
-                <param property="rate_" value="1"/>
-                <param property="burstTime_" value="500ms"/>
-                <param property="iddleTime_" value="500ms"/>
+                <param property="interval_" value="1"/>
             </params>
         </app>
         <app type="FTP">
@@ -176,18 +156,31 @@
                 <param property="maxPackets_" value=""/>
             </params>
         </app>
-        <app type="Pareto">
+        <app type="VBR">
             <params>
                 <param property="packetSize_" value="0"/>
                 <param property="rate_" value="1"/>
-                <param property="burstTime_" value="1"/>
-                <param property="iddleTime_" value="1"/>
-                <param property="shape_" value=""/>
+                <param property="iddleTime_" value="500ms"/>
+                <param property="burstTime_" value="500ms"/>
             </params>
         </app>
-        <app type="Telnet">
+        <app type="CBR" default="true">
             <params>
+                <param property="packetSize_" value="50"/>
+                <param property="type_" value="CBR"/>
+                <param property="dport_" value="0"/>
                 <param property="interval_" value="1"/>
+                <param property="rate_" value="0.1Mb"/>
+                <param property="sport_" value="0"/>
+            </params>
+        </app>
+        <app type="Pareto">
+            <params>
+                <param property="packetSize_" value="0"/>
+                <param property="shape_" value=""/>
+                <param property="rate_" value="1"/>
+                <param property="iddleTime_" value="1"/>
+                <param property="burstTime_" value="1"/>
             </params>
         </app>
     </apps>
@@ -201,27 +194,24 @@
         </link-layer>
     </link-layers>
     <macs>
-        <mac type="Mac/802_11" default="true">
-        </mac>
+        <mac type="Mac/802_11" default="true"/>
     </macs>
     <channels>
-        <channel type="Channel/WirelessChannel" default="true">
-        </channel>
+        <channel type="Channel/WirelessChannel" default="true"/>
     </channels>
     <propagation-models>
-        <propagation-model type="Propagation/TwoRayGround" default="true">
-        </propagation-model>
+        <propagation-model type="Propagation/TwoRayGround" default="true"/>
     </propagation-models>
     <network-interfaces>
         <network-interface type="Phy/WirelessPhy" default="true">
             <params>
-                <param property="CPThresh_" value="10.0"/>
-                <param property="CSThresh_" value="1.559e-11"/>
                 <param property="RXThresh_" value="1.20174e-07"/>
-                <param property="Rb_" value="2*1e6"/>
-                <param property="freq_" value="914e+08"/>
-                <param property="L_" value="1.0"/>
+                <param property="CSThresh_" value="1.559e-11"/>
+                <param property="freq_" value="9.14e+08"/>
+                <param property="CPThresh_" value="10.0"/>
                 <param property="Pt_" value="0.281838"/>
+                <param property="L_" value="1"/>
+                <param property="Rb_" value="2*1e6"/>
             </params>
         </network-interface>
     </network-interfaces>
@@ -231,8 +221,8 @@
                 <param property="X_" value="0"/>
                 <param property="Y_" value="0"/>
                 <param property="Z_" value="1.5"/>
-                <param property="Gt_" value="1.0"/>
-                <param property="Gr_" value="1.0"/>
+                <param property="Gt_" value="1"/>
+                <param property="Gr_" value="1"/>
             </params>
         </antenna>
     </antennas>

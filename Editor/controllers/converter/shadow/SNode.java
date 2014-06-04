@@ -23,15 +23,15 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 	
 	public SNode(SNetwork network) {
 		super(network);
-		setInsVar("X_", "0");
-		setInsVar("Y_", "0");
+		setx(0);
+		sety(0);
 		addInsProc();		
 	}
 	
 	public SNode(SNetwork network, int x, int y) {
 		super(network);
-		setInsVar("X_", x + "");
-		setInsVar("Y_", y + "");
+		setx(x);
+		sety(y);
 		network.updateNeighbors(this);
 		addInsProc();
 	}
