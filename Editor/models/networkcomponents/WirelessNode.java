@@ -23,8 +23,7 @@ public abstract class WirelessNode extends Node {
 	
 	protected WirelessNode(WirelessNetwork network)
 	{
-		super(network);		
-		network.updateNeighbors(this);
+		super(network);				
 	}
 	
 	public List<WirelessNode> 	getNeighborList() 	{ return neighborList; }
