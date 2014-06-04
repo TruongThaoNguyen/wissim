@@ -322,8 +322,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	private String insprocNode(List<String> command) throws Exception {
 		if (command.size() != 0) throw new ParseException(ParseException.InvalidArgument);
 		SNode newNode = new SNode(this);
-		newNode.addEntry(Converter.generateEntry.get(Converter.generateEntry.size() - 1));
-		nodeList.add(newNode);		
+		newNode.addEntry(Converter.generateEntry.get(Converter.generateEntry.size() - 1));			
 		return Converter.global.addObject(newNode);								
 	}
 	
@@ -408,7 +407,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		
 		// endregion generate auto tcl code
 		
-		getNodeList().add(newNode);		
+		//getNodeList().add(newNode);		
 		return newNode;
 	}
 

@@ -33,7 +33,9 @@ public abstract class Node extends Observable {
 		this.id = this.network.generateId();
 		
 		// node name is set as id as default
-		this.name = id + "";		 
+		this.name = id + "";
+		
+		network.getNodeList().add(this);
 	}
 	
 	public int 		getId() 			{ return id;	}

@@ -43,31 +43,13 @@ public abstract class WirelessNode extends Node {
 	 * set X position with update neighbor 
 	 * @param x
 	 */
-	protected final void setX(int x) {
-		setx(x);
-		((WirelessNetwork)network).updateNeighbors(this);
-	}
+	protected abstract void setX(int x);
 	
 	/**
 	 * set Y position with update neighbor
 	 * @param y
 	 */
-	protected final void setY(int y) {
-		sety(y);
-		((WirelessNetwork)network).updateNeighbors(this);
-	}
-	
-	/**
-	 * set X position without update neighbor
-	 * @param x
-	 */
-	protected abstract void setx(int x);
-	
-	/**
-	 * set Y position without update neighbor
-	 * @param y
-	 */
-	protected abstract void sety(int y);
+	protected abstract void setY(int y);
 	
 	/**
 	 * Set position for node. If new position is set successfully, the neighbor list is also updated

@@ -23,15 +23,15 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 	
 	public SNode(SNetwork network) {
 		super(network);
-		setx(0);
-		sety(0);
+		setInsVar("X_", "0");
+		setInsVar("Y_", "0");		
 		addInsProc();		
 	}
 	
 	public SNode(SNetwork network, int x, int y) {
 		super(network);
-		setx(x);
-		sety(y);
+		setInsVar("X_", x + "");
+		setInsVar("Y_", y + "");
 		network.updateNeighbors(this);
 		addInsProc();
 	}
@@ -194,9 +194,13 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 	}
 
 	@Override
-	public void setx(int x) {
+	public void setX(int x) {
 		setInsVar("X_", x + "");
-		((WirelessNetwork)network).updateNeighbors(this);
+		
+		if (getInsVar("Y_") != null)
+		{
+			((WirelessNetwork)network).updateNeighbors(this);
+		}
 	}
 
 	@Override
@@ -205,8 +209,13 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 	}
 
 	@Override
-	public void sety(int y) {
+	public void setY(int y) {
 		setInsVar("Y_", y + "");
+		
+		if (getInsVar("X_") != null)
+		{
+			((WirelessNetwork)network).updateNeighbors(this);
+		}
 	}
 	
 	public void addTransportProtocol(STransportProtocol agent) {
