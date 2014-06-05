@@ -23,11 +23,14 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
@@ -49,9 +52,11 @@ public class Analyzer extends MainContent {
 public static AbstractParser mParser;
 public TabFolder tabFolder;
 public static boolean checkFileFormat = false;
+public static Composite composite;
 public Analyzer(Composite parent, MenuManager menuManager, StatusLineManager statusLineManager) {
 	super(parent, menuManager, statusLineManager);
 	//createContents();
+	composite = parent;
 	initAnalyzer();
 }
 
@@ -114,8 +119,14 @@ public static void onFileOpen(String filePathNode, String filePathEvent) throws 
 		else{
 			mParser = new EventParser();	
 		}
+		composite.getShell().setCursor(new Cursor(composite.getDisplay(), SWT.CURSOR_WAIT));
 		mParser.ConvertTraceFile(filePathNode, filePathEvent);
 		System.out.println("Trace completed");
+		composite.getShell().setCursor(new Cursor(composite.getDisplay(), SWT.CURSOR_ARROW));
+		MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_WORKING | SWT.OK);
+		dialog.setText("");
+		dialog.setMessage("Trace completed!");
+	    dialog.open();
 	}
 
 public void createContents() {
