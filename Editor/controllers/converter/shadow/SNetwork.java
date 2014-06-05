@@ -61,7 +61,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	@Override
 	public double getEvent(String arg) {
 		return event.get(arg);
-	}
+	} 
 	
 	@Override
 	public HashMap<String, Double> getEvent() {
