@@ -20,13 +20,16 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -47,6 +50,8 @@ public class CreateTrafficFlowDialog extends Dialog {
 	protected Shell shlCreateTrafficFlow;
 	
 	private Table table;
+	private Table cbDestNode;
+	private Table cbSourceNode;
 	
 	private List<EventEntry> eventList = new LinkedList<EventEntry>();
 	int trafficFlowCount = 0;
@@ -91,42 +96,27 @@ public class CreateTrafficFlowDialog extends Dialog {
 	 */
 	private void createContents() {
 		shlCreateTrafficFlow = new Shell(getParent(), getStyle());
-		shlCreateTrafficFlow.setSize(397, 382);
+		shlCreateTrafficFlow.setSize(495, 387);
 		shlCreateTrafficFlow.setText("Create Traffic Flow");
 		
 		Composite composite = new Composite(shlCreateTrafficFlow, SWT.BORDER);
-		composite.setBounds(0, 303, 391, 61);
+		composite.setBounds(0, 303, 489, 61);
 		
-		Composite composite_1 = new Composite(shlCreateTrafficFlow, SWT.NONE);
-		composite_1.setBounds(0, 0, 391, 297);
+		final Composite composite_1 = new Composite(shlCreateTrafficFlow, SWT.NONE);
+		composite_1.setBounds(0, 0, 489, 297);
 		
 		Label lblSourceNode = new Label(composite_1, SWT.NONE);
-		lblSourceNode.setBounds(31, 34, 87, 15);
-		lblSourceNode.setText("Source Node");
-		
-		final Combo cbSourceNode = new Combo(composite_1, SWT.NONE);
-		cbSourceNode.setBounds(124, 30, 66, 29);
-//		List multiSourceNode = new List(composite_1, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
-//		multiSourceNode.setBounds(124, 30, 66, 29);
+		lblSourceNode.setBounds(54, 34, 108, 15);
+		lblSourceNode.setText("<-- Source Node");
 		
 		Label lblDestinationNode = new Label(composite_1, SWT.NONE);
-		lblDestinationNode.setBounds(196, 34, 120, 15);
-		lblDestinationNode.setText("Destination Node");
-		
-		final Combo cbDestNode = new Combo(composite_1, SWT.NONE);
-		cbDestNode.setBounds(322, 30, 59, 29);
-//		List multiDestNode = new List(composite_1, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
-//		multiDestNode.setBounds(322, 30, 59, 29);
+		lblDestinationNode.setBounds(296, 34, 137, 15);
+		lblDestinationNode.setText("Destination Node -->");
 		
 		final WirelessNetwork wirelessNetwork = Workspace.getProject().getNetwork();
 		
-		for (Node n : wirelessNetwork.getNodeList()) {
-			cbSourceNode.add(n.getId() + "");
-			cbDestNode.add(n.getId() + "");
-		}
-		
 		Group grpInternetProtocol = new Group(composite_1, SWT.NONE);
-		grpInternetProtocol.setBounds(31, 59, 339, 228);
+		grpInternetProtocol.setBounds(72, 57, 339, 228);
 		grpInternetProtocol.setText("Transport Protocol");
 		
 		Label lblType = new Label(grpInternetProtocol, SWT.NONE);
@@ -166,7 +156,7 @@ public class CreateTrafficFlowDialog extends Dialog {
 		tblclmnRaisedTime.setText("Raised Time");
 		
 		Button btnAdd = new Button(grpInternetProtocol, SWT.NONE);
-		btnAdd.setBounds(230, 108, 99, 25);
+		btnAdd.setBounds(230, 108, 75, 25);
 		btnAdd.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -177,7 +167,7 @@ public class CreateTrafficFlowDialog extends Dialog {
 		btnAdd.setText("Add");
 		
 		Button btnRemoveAll = new Button(grpInternetProtocol, SWT.NONE);
-		btnRemoveAll.setBounds(230, 170, 99, 25);
+		btnRemoveAll.setBounds(230, 170, 75, 25);
 		btnRemoveAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -194,7 +184,7 @@ public class CreateTrafficFlowDialog extends Dialog {
 		btnRemoveAll.setText("Remove All");
 		
 		Button btnRemove = new Button(grpInternetProtocol, SWT.NONE);
-		btnRemove.setBounds(230, 139, 99, 25);
+		btnRemove.setBounds(230, 139, 75, 25);
 		btnRemove.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -214,44 +204,55 @@ public class CreateTrafficFlowDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Node s = null, d = null;
-				
-				try {
-					int sid = Integer.parseInt(cbSourceNode.getText());
-					int did = Integer.parseInt(cbDestNode.getText());
-					s = wirelessNetwork.getNodeById(sid);
-					d = wirelessNetwork.getNodeById(did);
-				} catch (NumberFormatException exc) {
-					MessageDialog.openError(shlCreateTrafficFlow, "Error", "Node id is not invalid");
-					return;
-				}				
-				
-				if (s == null || d == null) {
-					MessageDialog.openError(shlCreateTrafficFlow, "Error", "Cannot find nodes with specified ids");
+				if(cbSourceNode.getSelectionCount() == 0){
+					MessageDialog.openWarning(getParent(), "Warning", "No source node is selected!");
 					return;
 				}
-				
-				// create transport protocol for source node
-				TransportProtocolType transType = TransportProtocolType.valueOf(cbTransportProtocol.getText());					
-				TransportProtocol transProtocol = s.addTransportProtocol(transType, trafficFlowCount + "");
-				
-				HashMap<String, String> transProtocolParams = ApplicationSettings.transportProtocols.get(transType.toString());
-				Set<Entry<String, String>> set = transProtocolParams.entrySet();
-				Iterator<Entry<String, String>> i = set.iterator();
-				while (i.hasNext()) {
-					Entry<String, String> me = i.next();
-					transProtocol.addParameter(me.getKey(), me.getValue());
+				if(cbDestNode.getSelectionCount() == 0){
+					MessageDialog.openWarning(getParent(), "Warning", "No destination node is selected!");
+					return;
 				}
+				for(TableItem tiSource : cbSourceNode.getSelection()) {
+					for(TableItem tiDest : cbDestNode.getSelection()) {
+						try {
+							int sid = Integer.parseInt(tiSource.getText());
+							int did = Integer.parseInt(tiDest.getText());
+							s = wirelessNetwork.getNodeById(sid);
+							d = wirelessNetwork.getNodeById(did);
+						} catch (NumberFormatException exc) {
+							MessageDialog.openError(shlCreateTrafficFlow, "Error", "Node id is not invalid");
+							return;
+						}				
+						
+						if (s == null || d == null) {
+							MessageDialog.openError(shlCreateTrafficFlow, "Error", "Cannot find nodes with specified ids");
+							return;
+						}
+						
+						// create transport protocol for source node
+						TransportProtocolType transType = TransportProtocolType.valueOf(cbTransportProtocol.getText());					
+						TransportProtocol transProtocol = s.addTransportProtocol(transType, trafficFlowCount + "");
+						
+						HashMap<String, String> transProtocolParams = ApplicationSettings.transportProtocols.get(transType.toString());
+						Set<Entry<String, String>> set = transProtocolParams.entrySet();
+						Iterator<Entry<String, String>> i = set.iterator();
+						while (i.hasNext()) {
+							Entry<String, String> me = i.next();
+							transProtocol.addParameter(me.getKey(), me.getValue());
+						}
+						
+						// create app protocol that use that transport protocol
+						ApplicationProtocolType appType = ApplicationProtocolType.valueOf(cbApplication.getText());												
+						ApplicationProtocol appProtocol = transProtocol.addApp(appType, trafficFlowCount + "", d);
+						
+						HashMap<String, String> appProtocolParams = ApplicationSettings.applicationProtocols.get(appType.toString());
+						
+						appProtocol.setParameters(appProtocolParams);							
+						
+						for (TableItem item : table.getItems())	appProtocol.addEvent(EventType.valueOf(item.getText(0)), Integer.parseInt(item.getText(1)));					
 				
-				// create app protocol that use that transport protocol
-				ApplicationProtocolType appType = ApplicationProtocolType.valueOf(cbApplication.getText());												
-				ApplicationProtocol appProtocol = transProtocol.addApp(appType, trafficFlowCount + "", d);
-				
-				HashMap<String, String> appProtocolParams = ApplicationSettings.applicationProtocols.get(appType.toString());
-				
-				appProtocol.setParameters(appProtocolParams);							
-				
-				for (TableItem item : table.getItems())	appProtocol.addEvent(EventType.valueOf(item.getText(0)), Integer.parseInt(item.getText(1)));					
-				
+					}
+				}
 				shlCreateTrafficFlow.close();
 			}
 		});
@@ -267,6 +268,88 @@ public class CreateTrafficFlowDialog extends Dialog {
 		});
 		btnCancel.setBounds(283, 10, 75, 25);
 		btnCancel.setText("Cancel");
+
+		final Button btnNewButton = new Button(composite_1, SWT.FLAT|SWT.ARROW|SWT.DOWN);
+		btnNewButton.setBounds(10, 30, 38, 29);
+		btnNewButton.addSelectionListener(new SelectionAdapter() {
+	          @Override
+	          public void widgetSelected(SelectionEvent e) {
+	              super.widgetSelected(e);
+	              if(cbSourceNode != null) {
+	            	  if(cbSourceNode.getItemCount() != 0) {
+	            		  cbSourceNode = null;
+	            		  return;
+	            	  }
+	              }
+	              cbSourceNode = new Table(composite_1, SWT.MULTI);
+	              cbSourceNode.setSize(35,220);
+	              cbSourceNode.addListener(SWT.MeasureItem, new Listener() {
+
+	                  @Override
+	                  public void handleEvent(Event event) {
+	                      event.height = 20; //TODO: determine later
+	                  }
+	              });
+
+	              cbSourceNode.addListener(SWT.PaintItem, new Listener() {
+
+	                  @Override
+	                  public void handleEvent(Event event) {
+	                      Rectangle bounds = event.getBounds();
+	                      event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_BLUE));
+	                      event.gc.drawLine(bounds.x, bounds.y+bounds.height-1, bounds.x+bounds.width, bounds.y+bounds.height-1);
+	                  }
+	              });
+	              for (Node n : wirelessNetwork.getNodeList()) {
+	            	  TableItem tableItem = new TableItem(cbSourceNode, SWT.NONE);
+	            	  tableItem.setText(n.getId()+"");
+	      			}	
+
+	              cbSourceNode.setLocation(12,65);
+
+	          }
+	      });
+		
+		final Button btnNewButton_1 = new Button(composite_1, SWT.FLAT|SWT.ARROW|SWT.DOWN);
+		btnNewButton_1.setBounds(439, 34, 38, 29);
+		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
+	          @Override
+	          public void widgetSelected(SelectionEvent e) {
+	              super.widgetSelected(e);
+	              if(cbDestNode != null) {
+	            	  if(cbDestNode.getItemCount() != 0) {
+	            		  cbDestNode = null;
+	            		  return;
+	            	  }
+	              }
+	              cbDestNode = new Table(composite_1, SWT.BORDER|SWT.MULTI);
+	              cbDestNode.setSize(35, 220);
+	              cbDestNode.addListener(SWT.MeasureItem, new Listener() {
+
+	                  @Override
+	                  public void handleEvent(Event event) {
+	                      event.height = 20; //TODO: determine later
+	                  }
+	              });
+
+	              cbDestNode.addListener(SWT.PaintItem, new Listener() {
+
+	                  @Override
+	                  public void handleEvent(Event event) {
+	                      Rectangle bounds = event.getBounds();
+	                      event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_BLUE));
+	                      event.gc.drawLine(bounds.x, bounds.y+bounds.height-1, bounds.x+bounds.width, bounds.y+bounds.height-1);
+	                  }
+	              });
+	              for (Node n : wirelessNetwork.getNodeList()) {
+	            	  TableItem tableItem = new TableItem(cbDestNode, SWT.NONE);
+	            	  tableItem.setText(n.getId()+"");
+	      			}
+	              
+	              cbDestNode.setLocation(443,65);
+
+	          }
+	      });
 
 		shlCreateTrafficFlow.setDefaultButton(btnCreate);
 	}
