@@ -59,6 +59,8 @@ public Analyzer(Composite parent, MenuManager menuManager, StatusLineManager sta
 	super(parent, menuManager, statusLineManager);
 	//createContents();
 	composite = parent;
+	composite.getShell().setCursor(new Cursor(composite.getDisplay(), SWT.CURSOR_WAIT));
+	composite.getShell().setCursor(new Cursor(composite.getDisplay(), SWT.CURSOR_ARROW));
 	initAnalyzer();
 }
 
@@ -70,10 +72,7 @@ public void initAnalyzer(){
 	if(mParser == null){
 		  /*Gọi hàm khởi tạo các đối tượng Node và Packet*/
 			    try {
-			    	MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_WORKING | SWT.OK);
-					dialog.setText("");
-					dialog.setMessage("Let choose file! First, let choose neighbors file to get position of nodes. ");
-				    dialog.open();
+			    	JOptionPane.showMessageDialog(null, "Let choose file! First, let choose neighbors file to get position of nodes.");
 			    	try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } 
 			    	catch (ClassNotFoundException | InstantiationException | IllegalAccessException 
 			    			| UnsupportedLookAndFeelException ex) { }
@@ -83,18 +82,18 @@ public void initAnalyzer(){
 			
 					chooser.showOpenDialog(null);
 					File file = chooser.getSelectedFile();
-					filePathNode = file.getAbsolutePath();
-					
-					dialog = new MessageBox(new Shell(), SWT.ICON_WORKING | SWT.OK);
-					dialog.setText("");
-					dialog.setMessage("Second, let choose trace file to get information of events. ");
-				    dialog.open();
-					chooserTrace.showOpenDialog(null);
-				    file = chooserTrace.getSelectedFile();
-				    filePathEvent = file.getAbsolutePath();
-				    
-				    onFileOpen(filePathNode, filePathEvent);
-				    checkFileFormat = true;
+					if(file != null){
+						filePathNode = file.getAbsolutePath();				
+						JOptionPane.showMessageDialog(null, "Second, let choose trace file to get information of events.");	
+						chooserTrace.showOpenDialog(null);
+					    file = chooserTrace.getSelectedFile();
+					    if(file != null)
+					    	filePathEvent = file.getAbsolutePath();
+					}
+				    if(filePathEvent != "" && filePathNode != ""){
+					    onFileOpen(filePathNode, filePathEvent);
+					    checkFileFormat = true;
+				    }
 //					if (files.length != 2) {
 //						JOptionPane.showMessageDialog(null, "Need import 2 files");		
 //						MainWindow.setAnalyzer();
@@ -138,6 +137,7 @@ public static void onFileOpen(String filePathNode, String filePathEvent) throws 
 		else{
 			mParser = new EventParser();	
 		}
+
 		composite.getShell().setCursor(new Cursor(composite.getDisplay(), SWT.CURSOR_WAIT));
 		mParser.ConvertTraceFile(filePathNode, filePathEvent);
 		System.out.println("Trace completed");

@@ -348,10 +348,14 @@ public abstract class Tab {
     layoutGroup = new Group(sash, SWT.NONE);
     layoutGroup.setText(Analyzer.getResourceString("Chart"));
     layoutGroup.setLayout(new GridLayout());
-
+    
     Button loadFile = new Button(layoutGroup, SWT.PUSH);
-    loadFile.setText(Analyzer.getResourceString("Load new trace file"));
+    loadFile.setText(Analyzer.getResourceString("Load new neighbors and trace file"));
     loadFile.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
+    
+    Button loadTraceFile = new Button(layoutGroup, SWT.PUSH);
+    loadTraceFile.setText(Analyzer.getResourceString("Load new trace file"));
+    loadTraceFile.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
     
     Button loadNeighborFile = new Button(layoutGroup, SWT.PUSH);
     loadNeighborFile.setText(Analyzer.getResourceString("Load new neighbors file"));
@@ -359,6 +363,40 @@ public abstract class Tab {
     
     /* Add listener to button load trace file */
     loadFile.addSelectionListener(new SelectionAdapter() {
+    	String filePathNode=""; 
+    	String filePathEvent="";
+      public void widgetSelected(SelectionEvent e) {
+    	  try {
+    		    JOptionPane.showMessageDialog(null, "Let choose file! First, let choose neighbors file to get position of nodes.");
+		    	try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } 
+		    	catch (ClassNotFoundException | InstantiationException | IllegalAccessException 
+		    			| UnsupportedLookAndFeelException ex) { }
+		    	JFileChooser chooser = new JFileChooser();
+		    	JFileChooser chooserTrace = new JFileChooser();
+//				chooser.setMultiSelectionEnabled(true);
+		
+				chooser.showOpenDialog(null);
+				File file = chooser.getSelectedFile();
+				if(file != null){
+					filePathNode = file.getAbsolutePath();				
+					JOptionPane.showMessageDialog(null, "Second, let choose trace file to get information of events.");	
+					chooserTrace.showOpenDialog(null);
+				    file = chooserTrace.getSelectedFile();
+				    if(file != null)
+				    	filePathEvent = file.getAbsolutePath();
+				}
+			    if(filePathEvent != "" && filePathNode != ""){
+			    	Analyzer.onFileOpen(filePathNode, filePathEvent);
+			    	SleepPeriodTab.initSleepTime();
+			    }
+		    } catch (IOException e1) {
+				e1.printStackTrace();
+				}
+      }
+    });
+    
+    /* Add listener to button load trace file */
+    loadTraceFile.addSelectionListener(new SelectionAdapter() {
     	String filePathNode=""; 
     	String filePathEvent="";
       public void widgetSelected(SelectionEvent e) {
@@ -371,11 +409,14 @@ public abstract class Tab {
 		
 				chooserTrace.showOpenDialog(null);
 			    File file = chooserTrace.getSelectedFile();
-			    filePathEvent = file.getAbsolutePath();
-			    filePathNode = Analyzer.filePathNode;
-			    
-			    Analyzer.onFileOpen(filePathNode, filePathEvent);
-			    SleepPeriodTab.initSleepTime();
+			    if(file != null){
+				    filePathEvent = file.getAbsolutePath();
+				    filePathNode = Analyzer.filePathNode;
+			    }
+			    if(filePathEvent != "" && filePathNode != ""){
+				    Analyzer.onFileOpen(filePathNode, filePathEvent);
+				    SleepPeriodTab.initSleepTime();
+			    }
 		    } catch (IOException e1) {
 				e1.printStackTrace();
 				}
@@ -395,11 +436,14 @@ public abstract class Tab {
 		
 		    	chooserNeighbor.showOpenDialog(null);
 			    File file = chooserNeighbor.getSelectedFile();
-			    filePathNode = file.getAbsolutePath();
-			    filePathEvent = Analyzer.filePathEvent;
-			    
-			    Analyzer.onFileOpen(filePathNode, filePathEvent);
-			    SleepPeriodTab.initSleepTime();
+			    if(file != null){
+				    filePathNode = file.getAbsolutePath();
+				    filePathEvent = Analyzer.filePathEvent;
+			    }
+			    if(filePathEvent != "" && filePathNode != ""){
+				    Analyzer.onFileOpen(filePathNode, filePathEvent);
+				    SleepPeriodTab.initSleepTime();
+			    }
 		    } catch (IOException e1) {
 				e1.printStackTrace();
 				}
