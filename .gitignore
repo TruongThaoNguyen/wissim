@@ -8,8 +8,7 @@ tmp/**
 *.bak
 *.wsp
 .project
-.metadata
-.classpath
+.metadatas
 .settings/
 .checkstyle
 test_store/**
@@ -18,3 +17,5 @@ test_store/**
 *.log
 /bin/
 synchronization.log
+/bin/
+
