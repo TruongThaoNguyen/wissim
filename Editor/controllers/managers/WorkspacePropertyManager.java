@@ -20,8 +20,10 @@ public class WorkspacePropertyManager extends Observable {
 	private boolean shiftKeyPressed = false;
 	
 	// visualization
-	private int nodeIdShowedNeighbors = -1;
-	private int nodeIdShowedRange = -1;
+	private int neighborsLen = 0;
+	private int[] nodeIdShowedNeighbors = null;
+	private int rangeLen = 0;
+	private int[] nodeIdShowedRange = null;
 	private boolean showConnection = false;
 	private boolean showVoronoiDiagram = false;
 	private boolean showDelaunayTriangulation = false;
@@ -37,8 +39,10 @@ public class WorkspacePropertyManager extends Observable {
 	public void turnVisualizeOff() {
 		visualizeMode = VISUAL_OFF;
 	
-		nodeIdShowedNeighbors = -1;
-		nodeIdShowedRange = -1;
+		neighborsLen = 0;
+		rangeLen = 0;
+		nodeIdShowedNeighbors = null;
+		nodeIdShowedRange = null;
 		showConnection = false;
 		showVoronoiDiagram = false;
 		showDelaunayTriangulation = false;
@@ -58,8 +62,10 @@ public class WorkspacePropertyManager extends Observable {
 	public void showVoronoiDiagram() {
 		visualizeMode = VISUAL_ON;
 		
-		nodeIdShowedNeighbors = -1;
-		nodeIdShowedRange = -1;
+		neighborsLen = 0;
+		rangeLen = 0;
+		nodeIdShowedNeighbors = null;
+		nodeIdShowedRange = null;
 		showConnection = false;
 		showVoronoiDiagram = true;
 		showDelaunayTriangulation = false;
@@ -79,8 +85,10 @@ public class WorkspacePropertyManager extends Observable {
 	public void showDelaunayTriangulation() {
 		visualizeMode = VISUAL_ON;
 		
-		nodeIdShowedNeighbors = -1;
-		nodeIdShowedRange = -1;
+		neighborsLen = 0;
+		rangeLen = 0;
+		nodeIdShowedNeighbors = null;
+		nodeIdShowedRange = null;
 		showConnection = false;
 		showVoronoiDiagram = false;
 		showDelaunayTriangulation = true;
@@ -100,8 +108,10 @@ public class WorkspacePropertyManager extends Observable {
 	public void showRNG() {
 		visualizeMode = VISUAL_ON;
 		
-		nodeIdShowedNeighbors = -1;
-		nodeIdShowedRange = -1;
+		neighborsLen = 0;
+		rangeLen = 0;
+		nodeIdShowedNeighbors = null;
+		nodeIdShowedRange = null;
 		showConnection = false;
 		showVoronoiDiagram = false;
 		showDelaunayTriangulation = false;
@@ -121,8 +131,10 @@ public class WorkspacePropertyManager extends Observable {
 	public void showGG() {
 		visualizeMode = VISUAL_ON;
 		
-		nodeIdShowedNeighbors = -1;
-		nodeIdShowedRange = -1;
+		neighborsLen = 0;
+		rangeLen = 0;
+		nodeIdShowedNeighbors = null;
+		nodeIdShowedRange = null;
 		showConnection = false;
 		showVoronoiDiagram = false;
 		showDelaunayTriangulation = false;
@@ -142,8 +154,10 @@ public class WorkspacePropertyManager extends Observable {
 	public void showGreedyPath() {
 		visualizeMode = VISUAL_ON;
 		
-		nodeIdShowedNeighbors = -1;
-		nodeIdShowedRange = -1;
+		neighborsLen = 0;
+		rangeLen = 0;
+		nodeIdShowedNeighbors = null;
+		nodeIdShowedRange = null;
 		showConnection = false;
 		showVoronoiDiagram = false;
 		showDelaunayTriangulation = false;
@@ -163,8 +177,10 @@ public class WorkspacePropertyManager extends Observable {
 	public void showShortestPath() {
 		visualizeMode = VISUAL_ON;
 		
-		nodeIdShowedNeighbors = -1;
-		nodeIdShowedRange = -1;
+		neighborsLen = 0;
+		rangeLen = 0;
+		nodeIdShowedNeighbors = null;
+		nodeIdShowedRange = null;
 		showConnection = false;
 		showVoronoiDiagram = false;
 		showDelaunayTriangulation = false;
@@ -240,22 +256,44 @@ public class WorkspacePropertyManager extends Observable {
 		notifyObservers("SetShiftKeyPressed");
 	}
 
-	public int getNodeIdShowedNeighbors() {
+	public int getNeighborLen() {
+		return neighborsLen;
+	}
+	
+	public int getRangeLen() {
+		return rangeLen;
+	}
+	
+	public void setNeighborLen(int neighborsLen) {
+		this.neighborsLen = neighborsLen;
+		
+		setChanged();
+		notifyObservers("NeighborLength");
+	}
+	
+	public void setRangeLen(int rangeLen) {
+		this.rangeLen = rangeLen;
+		
+		setChanged();
+		notifyObservers("RangeLength");
+	}
+	
+	public int[] getNodeIdShowedNeighbors() {
 		return nodeIdShowedNeighbors;
 	}
 
-	public void setNodeIdShowedNeighbors(int nodeIdShowedNeighbors) {
+	public void setNodeIdShowedNeighbors(int[] nodeIdShowedNeighbors) {
 		this.nodeIdShowedNeighbors = nodeIdShowedNeighbors;
 		
 		setChanged();
 		notifyObservers("NodeIdShowedNeighbors");
 	}
 
-	public int getNodeIdShowedRange() {
+	public int[] getNodeIdShowedRange() {
 		return nodeIdShowedRange;
 	}
 
-	public void setNodeIdShowedRange(int nodeIdShowedRange) {
+	public void setNodeIdShowedRange(int[] nodeIdShowedRange) {
 		this.nodeIdShowedRange = nodeIdShowedRange;
 		
 		setChanged();

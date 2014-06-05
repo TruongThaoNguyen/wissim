@@ -97,13 +97,13 @@ public class GNetwork extends Canvas {
 				
 				switch (workspacePropertyManager.getMouseMode()) {
 				case WorkspacePropertyManager.CURSOR:					
-					if (workspacePropertyManager.getNodeIdShowedNeighbors() != -1) {
-						workspacePropertyManager.setNodeIdShowedNeighbors(-1);
+					if (workspacePropertyManager.getNeighborLen() != 0) {
+						workspacePropertyManager.setNeighborLen(0);
 						redraw();
 					}
 					
-					if (workspacePropertyManager.getNodeIdShowedRange() != -1) {
-						workspacePropertyManager.setNodeIdShowedRange(-1);
+					if (workspacePropertyManager.getRangeLen() != 0) {
+						workspacePropertyManager.setRangeLen(0);
 						redraw();
 					}				
 					
@@ -277,11 +277,11 @@ public class GNetwork extends Canvas {
 				}
 				
 				// draw visualization for showing neighbors
-				if (workspace.getPropertyManager().getNodeIdShowedNeighbors() != -1)
+				if (workspace.getPropertyManager().getNeighborLen() != 0)
 					showNeighbors();
 				
 				// draw visualization for showing range
-				if (workspace.getPropertyManager().getNodeIdShowedRange() != -1)
+				if (workspace.getPropertyManager().getRangeLen() != 0)
 					showRange();					
 				
 				// draw visualization for showing connection
@@ -376,43 +376,50 @@ public class GNetwork extends Canvas {
 
 	protected void showNeighbors() {
 		Workspace workspace = (Workspace) getParent();
-		
-		GWirelessNode targetGNode = workspace.getGraphicNodeById(workspace.getPropertyManager().getNodeIdShowedNeighbors());					
-		if (targetGNode == null) return;
-
-		WirelessNode wnode = targetGNode.getWirelessNode();
-		List<WirelessNode> neighborsList = wnode.getNeighborList();
-		
-		GWirelessNode gneighbor;
-		int x1, y1, x2, y2;
-		x1 = targetGNode.getLocation().x - getLocation().x + targetGNode.getSize().x / 2;
-		y1 = targetGNode.getLocation().y - getLocation().y + targetGNode.getSize().y / 2;
-		for (WirelessNode neighbor : neighborsList) {
-			gneighbor = workspace.getGraphicNodeById(neighbor.getId());
-			x2 = gneighbor.getLocation().x - getLocation().x + gneighbor.getSize().x / 2;
-			y2 = gneighbor.getLocation().y - getLocation().y + gneighbor.getSize().y / 2;
-			gc.drawLine(x1, y1, x2, y2);
+		int len = workspace.getPropertyManager().getNeighborLen();
+		int[] n = workspace.getPropertyManager().getNodeIdShowedNeighbors();
+		for(int i = 0; i< len; i++) {
+			GWirelessNode targetGNode = workspace.getGraphicNodeById(n[i]);					
+			if (targetGNode == null) return;
+	
+			WirelessNode wnode = targetGNode.getWirelessNode();
+			List<WirelessNode> neighborsList = wnode.getNeighborList();
+			
+			GWirelessNode gneighbor;
+			int x1, y1, x2, y2;
+			x1 = targetGNode.getLocation().x - getLocation().x + targetGNode.getSize().x / 2;
+			y1 = targetGNode.getLocation().y - getLocation().y + targetGNode.getSize().y / 2;
+			for (WirelessNode neighbor : neighborsList) {
+				gneighbor = workspace.getGraphicNodeById(neighbor.getId());
+				x2 = gneighbor.getLocation().x - getLocation().x + gneighbor.getSize().x / 2;
+				y2 = gneighbor.getLocation().y - getLocation().y + gneighbor.getSize().y / 2;
+				gc.drawLine(x1, y1, x2, y2);
+			}
 		}
 	}
 
 	protected void showRange() {
 		Workspace workspace = (Workspace) getParent();
+		int len = workspace.getPropertyManager().getRangeLen();
+		int[] n = workspace.getPropertyManager().getNodeIdShowedRange();
 		
-		GWirelessNode targetGNode = workspace.getGraphicNodeById(workspace.getPropertyManager().getNodeIdShowedRange());
-		if (targetGNode == null) return;
-		
-		
-		//int radius = (int) (targetGNode.getWirelessNode().getRange() * getRatio());	
-		int radius = (int) (ApplicationSettings.nodeRange * getRatio());
-		int x = targetGNode.getLocation().x - getLocation().x + targetGNode.getSize().x / 2 - radius;
-		int y = targetGNode.getLocation().y - getLocation().y + targetGNode.getSize().y / 2 - radius;
-		
-		gc.setBackground(new Color(Display.getCurrent(), 0, 0, 255));
-		gc.setAlpha(20);
-		gc.fillOval(x, y, radius + radius, radius + radius);
-		
-		gc.setAlpha(200);
-		gc.drawOval(x, y, radius + radius, radius + radius);	
+		for(int i = 0; i<len;i++) {
+			GWirelessNode targetGNode = workspace.getGraphicNodeById(n[i]);
+			if (targetGNode == null) return;
+			
+			
+			//int radius = (int) (targetGNode.getWirelessNode().getRange() * getRatio());	
+			int radius = (int) (ApplicationSettings.nodeRange * getRatio());
+			int x = targetGNode.getLocation().x - getLocation().x + targetGNode.getSize().x / 2 - radius;
+			int y = targetGNode.getLocation().y - getLocation().y + targetGNode.getSize().y / 2 - radius;
+			
+			gc.setBackground(new Color(Display.getCurrent(), 0, 0, 255));
+			gc.setAlpha(20);
+			gc.fillOval(x, y, radius + radius, radius + radius);
+			
+			gc.setAlpha(200);
+			gc.drawOval(x, y, radius + radius, radius + radius);
+		}	
 	}
 
 	public Point getInitSize() {

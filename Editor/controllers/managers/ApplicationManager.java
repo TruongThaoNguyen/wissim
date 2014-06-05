@@ -421,23 +421,19 @@ public class ApplicationManager {
 			MessageDialog.openWarning(workspace.getShell(), "Warning", "No node is selected!");
 			return;
 		}
-//		Control c;
-//		for (GSelectableObject o : workspace.getSelectedObject()) {
-//
-//			if (o instanceof GWirelessNode) {
-//				workspace.getPropertyManager().setNodeIdShowedNeighbors(((GWirelessNode) o).getWirelessNode().getId());
-//				workspace.getGraphicNetwork().redraw();
-//			}
-//		}
 		Control c;
-		if (workspace.getSelectedObject().size() == 1) {
-			c = (Control) workspace.getSelectedObject().get(0);
-
+		int len = 0;
+		int[] n = new int[3000];
+		for (int i = 0; i< workspace.getSelectedObject().size(); i++) {
+			c = (Control) workspace.getSelectedObject().get(i);
 			if (c instanceof GWirelessNode) {
-				workspace.getPropertyManager().setNodeIdShowedNeighbors(((GWirelessNode) c).getWirelessNode().getId());
-				workspace.getGraphicNetwork().redraw();
+				n[len] = ((GWirelessNode) c).getWirelessNode().getId();
+				len++;
 			}
 		}
+		workspace.getPropertyManager().setNeighborLen(len);
+		workspace.getPropertyManager().setNodeIdShowedNeighbors(n);
+		workspace.getGraphicNetwork().redraw();
 	}
 
 	public static void searchNodes(Workspace workspace) {
@@ -590,13 +586,18 @@ public class ApplicationManager {
 			MessageDialog.openWarning(workspace.getShell(), "Error", "No node is selected!");
 			return;
 		} 
-		for (GSelectableObject o : workspace.getSelectedObject()) {
-
-			if (o instanceof GWirelessNode) {
-				workspace.getPropertyManager().setNodeIdShowedRange(((GWirelessNode) o).getWirelessNode().getId());
-				workspace.getGraphicNetwork().redraw();
+		int len = 0;
+		int[] n = new int[3000];
+		for (int i = 0; i< workspace.getSelectedObject().size(); i++) {
+			c = (Control) workspace.getSelectedObject().get(i);
+			if (c instanceof GWirelessNode) {
+				n[len] = ((GWirelessNode) c).getWirelessNode().getId();
+				len++;
 			}
 		}
+		workspace.getPropertyManager().setRangeLen(len);
+		workspace.getPropertyManager().setNodeIdShowedRange(n);
+		workspace.getGraphicNetwork().redraw();
 		
 //		if (workspace.getSelectedObject().size() == 1) {
 //			c = (Control) workspace.getSelectedObject().get(0);

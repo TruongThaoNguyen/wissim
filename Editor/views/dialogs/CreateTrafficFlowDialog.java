@@ -196,7 +196,6 @@ public class CreateTrafficFlowDialog extends Dialog {
 			public void widgetSelected(SelectionEvent e) {
 				if(table.getSelectionCount() == 0) {
 					MessageDialog.openWarning(getParent(), "Warning", "No item is selected!");
-					return;
 				}
 				if (eventList.size() > 0) {
 					eventList.remove(eventList.size() - 1);
