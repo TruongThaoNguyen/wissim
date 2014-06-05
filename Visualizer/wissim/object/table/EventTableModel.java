@@ -6,6 +6,9 @@ import java.util.Set;
 
 import javax.swing.table.AbstractTableModel;
 
+import TraceFileParser.wissim.AbstractParser;
+import TraceFileParser.wissim.Event;
+
 public class EventTableModel extends AbstractTableModel{
 
 	/**
@@ -29,40 +32,43 @@ public class EventTableModel extends AbstractTableModel{
 	};
 	
 	private static final Class<?> columnTypes[] = {
-		Float.class,String.class,Integer.class,
+		Double.class,String.class,Integer.class,
 		Integer.class,Integer.class,Integer.class,Integer.class,
 		String.class
 	};
 	
-	private static int expectedColumns = 8;
-	private ArrayList<EventData> data;
-	private Set<EventData> modifiedEventData = new HashSet<EventData>();
+	private static int expectedColumns = 7;
+	private ArrayList<Event> data;
+	private Set<Event> modifiedEventData = new HashSet<Event>();
 	private int columnsOrder[];
 	
 	public static void setModelWidth(int w){
 		expectedColumns = w;
 	}
 	
-	public static EventTableModel createEventTableModel(){
-		return new EventTableModel(getEventData());
+	public static EventTableModel createEventTableModel(AbstractParser mParser){
+		return new EventTableModel(getEventData(mParser));
 	}
 	
-	public static ArrayList<EventData> getEventData() {
-		return EventData.getEventData();
+	public static ArrayList<Event> getEventData(AbstractParser mParser) {
+		if(mParser != null)
+			return mParser.getListEvents();
+		else
+			return new ArrayList<Event>();
 	}
 	
-	public EventTableModel(ArrayList<EventData> data){
+	public EventTableModel(ArrayList<Event> data){
 		this.data = data;
 		columnsOrder = new int []{0,1,2,3,4,5,6,7};
 	}
 	
-	public void addEventData(EventData data){
+	public void addEventData(Event data){
 		this.data.add(0, data);
 		fireTableRowsInserted(0, 0);
 	}
 	
-	public EventData removeEventData() {
-		EventData ret = null;
+	public Event removeEventData() {
+		Event ret = null;
 		if(data.size()>0){
 			ret = data.remove(0);
 			fireTableRowsDeleted(0, 0);
@@ -71,8 +77,8 @@ public class EventTableModel extends AbstractTableModel{
 		return ret;
 	}
 	
-	public EventData updateEventData(){
-		EventData ret = null;
+	public Event updateEventData(){
+		Event ret = null;
 		if(data.size() >0){
 			ret = data.get(0);
 			fireTableRowsUpdated(0, 0);
@@ -80,7 +86,7 @@ public class EventTableModel extends AbstractTableModel{
 		return ret;
 	}
 	
-	public EventData getRow(int row){
+	public Event getRow(int row){
 		return data.get(row);
 	}
 	
@@ -94,8 +100,8 @@ public class EventTableModel extends AbstractTableModel{
 		return -1;
 	}
 	
-	public boolean isModified(PacketData pd){
-		return modifiedEventData.contains(pd);
+	public boolean isModified(Event ed){
+		return modifiedEventData.contains(ed);
 	}
 	
 	
@@ -114,26 +120,26 @@ public class EventTableModel extends AbstractTableModel{
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		// TODO Auto-generated method stub
-		EventData ed = data.get(rowIndex);
+		Event ed = data.get(rowIndex);
 		
 		switch (columnsOrder[columnIndex]){
 		
 		case 0:
-			return ed.time;
+			return Double.parseDouble(ed.time);
 		case 1:
 			return ed.type;
 		case 2:
-			return ed.sourceId;
+			return Integer.valueOf(ed.sourceId);
 		case 3:
-			return ed.sourcePort;
+			return Integer.valueOf(ed.sourcePort);
 		case 4:
-			return ed.packetId;
+			return Integer.valueOf(ed.packetId);
 		case 5:
-			return ed.destId;
+			return Integer.valueOf(ed.destId);
 		case 6:
-			return ed.destPort;
+			return ed.destPort.length()>0 ? Integer.valueOf(ed.destPort): 0;
 		case 7:
-			return ed.view;
+			return "View";
 		}
 		
 		return null;
@@ -160,7 +166,4 @@ public class EventTableModel extends AbstractTableModel{
 		else
 			return false;
 	}
-	
-	
-
 }

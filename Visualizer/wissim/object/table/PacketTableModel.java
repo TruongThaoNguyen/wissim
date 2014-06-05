@@ -8,6 +8,8 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import TraceFileParser.wissim.AbstractParser;
+import TraceFileParser.wissim.NodeTrace;
+import TraceFileParser.wissim.Packet;
 
 
 public class PacketTableModel extends AbstractTableModel {
@@ -22,8 +24,8 @@ public class PacketTableModel extends AbstractTableModel {
 	public static final String SOURCE = "Source Node";
 	public static final String DESTINATION = "Destination node";
 	public static final String HOPCOUNT = "Hops-count";
-	public static final String TIMESENT = "Time sent";
-	public static final String TIMERECEIVED = "Time received";
+	public static final String TIMESENT = "Sent time";
+	public static final String TIMERECEIVED = "Received time";
 //	public static final String DELAY = "Delay(ms)";
 	public static final String PATH = "Path";
 //	public static final String DROP = "Drop";
@@ -37,15 +39,15 @@ public class PacketTableModel extends AbstractTableModel {
 	
 	private static final Class<?> columnTypes[] = {
 		Integer.class,String.class,Integer.class,Integer.class,String.class,
-		Float.class,Float.class,String.class,Integer.class
+		Double.class,Double.class,String.class,Integer.class
 	};
 	
 	private static final int BASIC_MODEL_COLUMNS = 9;
 	private static final int FULL_MODEL_COLUMNS = 12;
 	
 	private static int expectedColumns = BASIC_MODEL_COLUMNS;
-	private ArrayList<PacketData> data ;
-	private Set<PacketData> modifiedPacketData = new HashSet<PacketData>();
+	private ArrayList<Packet> data ;
+	private Set<Packet> modifiedPacketData = new HashSet<Packet>();
 	private int columnsOrder[];
 	
 	public static void setFullModel(){
@@ -60,23 +62,24 @@ public class PacketTableModel extends AbstractTableModel {
 		return new PacketTableModel(getPacketData(mParser));
 	}
 	
-	private static ArrayList<PacketData> getPacketData(AbstractParser mParser){
-		
-		return PacketData.getPacketData(mParser);
+	private static ArrayList<Packet> getPacketData(AbstractParser mParser){
+		if(mParser != null)
+			return mParser.getListPacket();
+		else return new ArrayList<Packet>();
 	}
 	
-	public PacketTableModel(ArrayList<PacketData> data){
+	public PacketTableModel(ArrayList<Packet> data){
 		this.data = data;
 		columnsOrder = new int[]{0,1,2,3,4,5,6,7,8};
 	}
 	
-	public void addPacketData(PacketData data){
+	public void addPacketData(Packet data){
 		this.data.add(0,data);
 		fireTableRowsInserted(0, 0);
 	}
 	
-	public PacketData removePacketData(){
-		PacketData ret = null;
+	public Packet removePacketData(){
+		Packet ret = null;
 		if(data.size() > 0) {
 			ret = data.remove(0);
 			fireTableRowsDeleted(0, 0);
@@ -85,8 +88,8 @@ public class PacketTableModel extends AbstractTableModel {
 		return ret;
 	}
 	
-	public PacketData updatePacketData(){
-		PacketData ret = null;
+	public Packet updatePacketData(){
+		Packet ret = null;
 		if(data.size() > 0){
 			ret = data.get(0);
 			fireTableRowsUpdated(0, 0);
@@ -99,7 +102,7 @@ public class PacketTableModel extends AbstractTableModel {
 		
 	}
 	
-	public PacketData getRow(int row){
+	public Packet getRow(int row){
 		return data.get(row);
 	}
 	
@@ -118,7 +121,7 @@ public class PacketTableModel extends AbstractTableModel {
 		return -1;
 	}
 	
-	public boolean isModified(PacketData pd){
+	public boolean isModified(Packet pd){
 		return modifiedPacketData.contains(pd);
 	}
 	
@@ -137,28 +140,38 @@ public class PacketTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		// TODO Auto-generated method stub
-		PacketData pd = data.get(rowIndex);
+		Packet pd = data.get(rowIndex);
 		
 		switch (columnsOrder[columnIndex]){
 		
 		case 0:
-			return pd.id;
+			return Integer.valueOf(pd.id);
 		case 1:
 			return pd.type;
 		case 2:
-			return pd.source;
+			return Integer.valueOf(pd.sourceID);
 		case 3:
-			return pd.destination;
+			return Integer.valueOf(pd.destID);
 		case 4:
-			return pd.hopCount;
+				return String.valueOf(pd.listNode.size());
 		case 5:
-			return pd.timeSent;
+			return Double.parseDouble(pd.startTime);
 		case 6:
-			return pd.timeReceived;
+			return Double.parseDouble(pd.endTime);
 		case 7:
-			return pd.path;
+			if (pd.listNode.isEmpty()) {
+				return "";
+			} else {
+				StringBuilder path = new StringBuilder();
+				path.append(",");
+				for (NodeTrace n : pd.listNode) {
+					path.append(n.id);
+					path.append(",");
+				}
+				return path.toString();
+			}
 		case 8:
-			return pd.view;
+			return "";
 		}
 		
 		return null;
@@ -179,7 +192,7 @@ public class PacketTableModel extends AbstractTableModel {
 	@Override
 	public boolean isCellEditable(int row, int column) {
 		// TODO Auto-generated method stub
-		if(column == 8)
+		if(column == 8||column == 7)
 			return true;
 		else
 			return false;

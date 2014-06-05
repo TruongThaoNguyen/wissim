@@ -2,6 +2,7 @@ package views.dialogs;
 
 import models.DialogResult;
 import models.DialogResult.EditNetworkSizeResult;
+import models.Project;
 import models.networkcomponents.WirelessNetwork;
 
 import org.eclipse.swt.SWT;
@@ -14,6 +15,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import controllers.managers.ProjectManager;
+
 import views.Workspace;
 
 
@@ -25,6 +28,7 @@ public class EditNetworkSizeDialog extends Dialog {
 	
 	private int widthType = WirelessNetwork.RIGHT, lengthType = WirelessNetwork.BOTTOM;
 	private Workspace workspace;
+	private Text text;
 
 	/**
 	 * Create the dialog.
@@ -61,7 +65,7 @@ public class EditNetworkSizeDialog extends Dialog {
 	 */
 	private void createContents() {
 		shlEditNetworkSize = new Shell(getParent(), getStyle());
-		shlEditNetworkSize.setSize(446, 179);
+		shlEditNetworkSize.setSize(446, 187);
 		shlEditNetworkSize.setText("Edit Network Size");
 		
 		Button btnApply = new Button(shlEditNetworkSize, SWT.NONE);
@@ -71,6 +75,7 @@ public class EditNetworkSizeDialog extends Dialog {
 				EditNetworkSizeResult r = new DialogResult().new EditNetworkSizeResult();
 				r.width = Integer.parseInt(txtWidth.getText());
 				r.height = Integer.parseInt(txtHeight.getText());
+				r.time = Integer.parseInt(text.getText());
 				r.wType = widthType;
 				r.lType = lengthType;
 				
@@ -78,7 +83,7 @@ public class EditNetworkSizeDialog extends Dialog {
 				shlEditNetworkSize.dispose();
 			}
 		});
-		btnApply.setBounds(37, 108, 75, 25);
+		btnApply.setBounds(37, 118, 75, 25);
 		btnApply.setText("Apply");
 		btnApply.setFocus();
 		
@@ -89,24 +94,24 @@ public class EditNetworkSizeDialog extends Dialog {
 				shlEditNetworkSize.dispose();
 			}
 		});
-		btnCancel.setBounds(118, 108, 75, 25);
+		btnCancel.setBounds(118, 118, 75, 25);
 		btnCancel.setText("Cancel");
 		
 		Label lblWidth = new Label(shlEditNetworkSize, SWT.NONE);
-		lblWidth.setBounds(37, 37, 55, 15);
+		lblWidth.setBounds(37, 13, 55, 25);
 		lblWidth.setText("Width");
 		
 		txtWidth = new Text(shlEditNetworkSize, SWT.BORDER);
 		txtWidth.setText(workspace.getProject().getNetwork().getWidth() + "");
-		txtWidth.setBounds(98, 34, 96, 21);
+		txtWidth.setBounds(98, 10, 96, 21);
 		
 		Label lblHeight = new Label(shlEditNetworkSize, SWT.NONE);
 		lblHeight.setText("Length");
-		lblHeight.setBounds(37, 71, 55, 15);
+		lblHeight.setBounds(37, 47, 55, 25);
 		
 		txtHeight = new Text(shlEditNetworkSize, SWT.BORDER);
 		txtHeight.setText(workspace.getProject().getNetwork().getLength() + "");
-		txtHeight.setBounds(98, 68, 96, 21);
+		txtHeight.setBounds(98, 44, 96, 21);
 		
 		final Button btnCenter = new Button(shlEditNetworkSize, SWT.NONE);
 		btnCenter.addSelectionListener(new SelectionAdapter() {
@@ -196,6 +201,13 @@ public class EditNetworkSizeDialog extends Dialog {
 		});
 		btnBl.setText("BL");
 		btnBl.setBounds(239, 108, 42, 25);
+		
+		Label label = new Label(shlEditNetworkSize, SWT.NONE);
+		label.setText("Time ");
+		label.setBounds(37, 84, 55, 21);
+		
+		text = new Text(shlEditNetworkSize, SWT.BORDER);
+		text.setBounds(98, 81, 96, 21);
 
 	}
 	

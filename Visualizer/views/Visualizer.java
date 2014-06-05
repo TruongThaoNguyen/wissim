@@ -37,7 +37,7 @@ public class Visualizer extends MainContent {
 		java.awt.Frame frame = SWT_AWT.new_Frame(compos);
 		panel = new MainViewPanel();
 		frame.add(panel);
-		frame.setSize(panel.getWidth(), panel.getHeight());
+		//frame.setSize(panel.getWidth(), panel.getHeight());
 		// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		frame.setVisible(true);

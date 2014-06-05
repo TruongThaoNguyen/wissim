@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.RowFilter;
 import javax.swing.table.TableModel;
 
 import wissim.controller.filters.IFilter;
@@ -29,6 +30,8 @@ public interface IFilterEditor {
      * history choices.
      */
     void resetFilter();
+    
+    void directFilter(RowFilter filter);
 
     /** Sets the content, adapted to the editors' type. */
     void setContent(Object content);

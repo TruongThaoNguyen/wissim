@@ -34,7 +34,7 @@ public class EventAnimation extends abstractWissimAnimation {
 	public void setmCurrentParser(AbstractParser mCurrentParser) {
 		this.mCurrentParser = mCurrentParser;
 	}
-
+	
 	public void animationEvent(String fromTime, String toTime,
 			final Graph mGraph) {
 		// TODO Auto-generated method stub
@@ -48,6 +48,7 @@ public class EventAnimation extends abstractWissimAnimation {
 			 */
 			mFromTime = fromTime;
 			mToTime = toTime;
+			
 			listEventsInInterval = getEventsinInterval(fromTime, toTime);
 			if (listEventsInInterval != null) {
 				new Thread(new Runnable() {
@@ -62,7 +63,12 @@ public class EventAnimation extends abstractWissimAnimation {
 
 			} else
 				return;
+			
 		}
+	}
+	
+	public WissimDrawer getDrawer(){
+		return this.wsd;
 	}
 
 	@Override
@@ -86,9 +92,7 @@ public class EventAnimation extends abstractWissimAnimation {
 			mCurrentParser = parser;
 			listEventsInInterval = filterEventsbygroupID(groupID1, groupID2,
 					listEventsInInterval, mCurrentParser);
-			for (TraceFileParser.wissim.Event e : listEventsInInterval) {
-				System.out.println("event filter " + e.summaryInfor());
-			}
+			
 			if (listEventsInInterval != null) {
 				new Thread(new Runnable() {
 
@@ -150,6 +154,7 @@ public class EventAnimation extends abstractWissimAnimation {
 			String fromTime, String toTime) {
 		listEventsInInterval = new ArrayList<TraceFileParser.wissim.Event>();
 		mConsolelogInfor = "";
+		
 		for (TraceFileParser.wissim.Event event : listEvents) {
 			if (Double.parseDouble(event.time) >= Double.parseDouble(fromTime)
 					&& Double.parseDouble(event.time) <= Double
@@ -233,6 +238,13 @@ public class EventAnimation extends abstractWissimAnimation {
 			wsd.onDrawEnergy(listNe,mGraph,mCurrentParser,percentage);
 		}
 		
+	}
+
+	@Override
+	public void reset(Graph mGraph) {
+		// TODO Auto-generated method stub
+		if(wsd != null && mGraph != null)
+			wsd.onResetDraw(mGraph);
 	}
 
 }

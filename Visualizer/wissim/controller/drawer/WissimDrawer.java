@@ -144,9 +144,30 @@ public class WissimDrawer extends abstractWissimDrawer {
 	}
 
 	@Override
-	public void onResetDraw(ArrayList<Event> listEventinTerval, Graph mGraph) {
+	public void onResetDraw(Graph mGraph) {
 		// TODO Auto-generated method stub
+		if (mGraph != null && mGraph.getNodeCount() > 0) {
+			/**
+			 * Clear previous drawer
+			 */
+			for (int i = 0; i < mGraph.getNodeCount(); i++) {
+				mGraph.getNode(i).removeAttribute("ui.class");
+			}
+			if (mSpriteManager != null) {
 
+				for (int i = 0; i < mGraph.getEdgeCount(); i++) {
+					Edge e = mGraph.getEdge(i);
+					Sprite s = mSpriteManager.getSprite(e.getId());
+					if (s != null) {
+						s.removeAttribute("ui.class");
+						mSpriteManager.removeSprite(s.getId());
+					}
+
+				}
+			}
+			while (mGraph.getEdgeCount() > 0)
+				mGraph.removeEdge(0);
+		}
 	}
 
 	public HashMap<String, ArrayList<Event>> getmHashSpriteEvent() {
@@ -155,7 +176,7 @@ public class WissimDrawer extends abstractWissimDrawer {
 
 	@Override
 	public void onDrawOnePacketPath(Packet packet, Graph mGraph) {
-		if (mGraph == null) {
+		if (mGraph == null || packet == null) {
 			return;
 		} else {
 			if (packet.listNode.size() >= 2) {
@@ -163,6 +184,7 @@ public class WissimDrawer extends abstractWissimDrawer {
 						+ packet.listNode.get(1).getId()) != null) {
 					Edge e = mGraph.getEdge(packet.listNode.get(0).getId()
 							+ "TO" + packet.listNode.get(1).getId());
+					
 					e.setAttribute("ui.class", "focus");
 				} else if (packet.listNode.get(0).getId() != packet.listNode
 						.get(1).getId()) {
@@ -206,7 +228,6 @@ public class WissimDrawer extends abstractWissimDrawer {
 						+ packet.listNode.get(1).getId()) != null) {
 					Edge e = mGraph.getEdge(packet.listNode.get(0).getId()
 							+ "TO" + packet.listNode.get(1).getId());
-					System.out.println("Reset Edge " + e.getId());
 					e.setAttribute("ui.class", "light");
 				} else {
 
@@ -399,7 +420,12 @@ public class WissimDrawer extends abstractWissimDrawer {
 					mGraph.getNode(ne.getNodeID()).setAttribute("ui.label",
 							ne.getNodeID());
 			}
-			else {
+			else if (Double.parseDouble(ne.getEnergy())
+					/ Double.parseDouble(mParser.getmaxEnergyFromNodeID(ne
+							.getNodeID())) <= 0.15
+					&& Double.parseDouble(ne.getEnergy())
+							/ Double.parseDouble(mParser
+									.getmaxEnergyFromNodeID(ne.getNodeID())) > 0.01){
 
 				mGraph.getNode(ne.getNodeID()).addAttribute("ui.class",
 						"lowenergy");
@@ -410,9 +436,81 @@ public class WissimDrawer extends abstractWissimDrawer {
 					mGraph.getNode(ne.getNodeID()).setAttribute("ui.label",
 							ne.getNodeID());
 			}
+			else{
+				mGraph.getNode(ne.getNodeID()).addAttribute("ui.class",
+						"emptyenergy");
+				if (percentage)
+					mGraph.getNode(ne.getNodeID()).setAttribute("ui.label",
+							percentagevalue + "%");
+				else
+					mGraph.getNode(ne.getNodeID()).setAttribute("ui.label",
+							ne.getNodeID());
+			}
 			cnt++;
 		}
 
+	}
+
+	@Override
+	public void onDrawPacketPath(Packet packet, Graph mGraph) {
+		// TODO Auto-generated method stub
+		
+		if (mGraph == null) {
+			return;
+		} else {
+			if (packet.listNode.size() >= 2) {
+//				System.err.println(packet.listNode.get(0).getId());
+				if(!packet.listNode.get(0).isStartPath()&&!packet.listNode.get(0).isEndPath()&&!packet.listNode.get(0).isMediatePath()){
+					mGraph.getNode(String.valueOf(packet.listNode.get(0).getId())).addAttribute("ui.class","startpath" );
+					packet.listNode.get(0).setStartPath(true);
+				}else{
+					mGraph.getNode(String.valueOf(packet.listNode.get(0).getId())).addAttribute("ui.class","intermediate" );
+					packet.listNode.get(0).setMediatePath(true);
+					packet.listNode.get(0).setStartPath(false);
+					packet.listNode.get(0).setEndPath(false);
+				}
+				if(!packet.listNode.get(packet.listNode.size()-1).isEndPath()&&!packet.listNode.get(packet.listNode.size()-1).isStartPath()&&!packet.listNode.get(packet.listNode.size()-1).isMediatePath()){
+					mGraph.getNode(String.valueOf(packet.listNode.get(packet.listNode.size()-1).getId())).addAttribute("ui.class","endpath" );
+					packet.listNode.get(packet.listNode.size()-1).setEndPath(true);
+				}else{
+					mGraph.getNode(String.valueOf(packet.listNode.get(packet.listNode.size()-1).getId())).addAttribute("ui.class","intermediate" );
+					packet.listNode.get(packet.listNode.size()-1).setMediatePath(true);
+					packet.listNode.get(0).setStartPath(false);
+					packet.listNode.get(0).setEndPath(false);
+				}
+				if (mGraph.getEdge(packet.listNode.get(0).getId() + "TO"
+						+ packet.listNode.get(1).getId()) != null) {
+					Edge e = mGraph.getEdge(packet.listNode.get(0).getId()
+							+ "TO" + packet.listNode.get(1).getId());
+					
+					e.setAttribute("ui.class", "focus");
+				} else if (packet.listNode.get(0).getId() != packet.listNode
+						.get(1).getId()) {
+					Edge e = mGraph.addEdge(packet.listNode.get(0).getId()
+							+ "TO" + packet.listNode.get(1).getId(),
+							packet.listNode.get(0).getId(), packet.listNode
+									.get(1).getId(), true);
+					e.setAttribute("ui.class", "focus");
+
+				}
+				for (int i = 1; i < packet.listNode.size() - 1; i++) {
+					NodeTrace startNode = packet.listNode.get(i);
+					NodeTrace desNode = packet.listNode.get(i + 1);
+					if (mGraph.getEdge(startNode.getId() + "TO"
+							+ desNode.getId()) != null
+							&& startNode.getId() != desNode.getId()) {
+						Edge e = mGraph.getEdge(startNode.getId() + "TO"
+								+ desNode.getId());
+						e.setAttribute("ui.class", "focus");
+					} else if (startNode.getId() != desNode.getId()) {
+						Edge e = mGraph.addEdge(startNode.getId() + "TO"
+								+ desNode.getId(), startNode.getId(),
+								desNode.getId(),true);
+						e.setAttribute("ui.class", "focus");
+					}
+				}
+			}
+		}
 	}
 
 }

@@ -21,6 +21,7 @@ public class DialogResult {
 	public class EditNetworkSizeResult {
 		public int width;
 		public int height;
+		public int time;
 		public int lType;
 		public int wType;
 	}

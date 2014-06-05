@@ -336,6 +336,28 @@ public class ViewMouseManager implements MouseWheelListener, ViewContainer {
 			}
 		});
 	}
+	
+	public void moveGraph(Point curr_point) {
+		// System.out.println("onMove");
+		if(view!= null){
+		Point3 currP = view.getCamera().transformPxToGu(curr_point.x,
+				curr_point.y);
+		Point3 lastP = view.getCamera().transformPxToGu(curr_point_x,
+				curr_point_y);
+
+		current_center_x = view.getCamera().getViewCenter().x;
+		current_center_y = view.getCamera().getViewCenter().y;
+		double off_x = lastP.x - currP.x;
+		double off_y = lastP.y - currP.y;
+		view.getCamera().setViewCenter(current_center_x + off_x,
+				current_center_y + off_y, 0);
+
+		current_center_x = view.getCamera().getViewCenter().x;
+		current_center_y = view.getCamera().getViewCenter().y;
+		curr_point_x = curr_point.getX();
+		curr_point_y = curr_point.getY();
+		}
+	}
 
 	public AreaState getmCurrentAreastate() {
 		return mCurrentAreastate;

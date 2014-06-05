@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 import TraceFileParser.wissim.AbstractParser;
+import TraceFileParser.wissim.NodeTrace;
 
 public class NodeTableModel extends AbstractTableModel {
 
@@ -24,11 +25,11 @@ public class NodeTableModel extends AbstractTableModel {
 	};
 	
 	private static final Class<?> columnTypes[] = {
-		Integer.class,Integer.class,Integer.class,String.class
+		Integer.class,Double.class,Double.class,String.class
 	};
 	
-	private static int expectedColumns = 4;
-	private ArrayList<NodeData> data;
+	private static int expectedColumns = 3;
+	private ArrayList<NodeTrace> data;
 	private int columnsOrder[];
 	
 	public static void setModelWidth(int w){
@@ -39,16 +40,19 @@ public class NodeTableModel extends AbstractTableModel {
 		return new NodeTableModel(getNodeData(mParser));
 	}
 	
-	private static ArrayList<NodeData> getNodeData(AbstractParser mParser){
-		return NodeData.getNodeData(mParser);
+	private static ArrayList<NodeTrace> getNodeData(AbstractParser mParser){
+		if(mParser != null)
+			return mParser.getListNodes();
+		else
+			return new ArrayList<NodeTrace>();
 	}
 	
-	public NodeTableModel(ArrayList<NodeData> data){
+	public NodeTableModel(ArrayList<NodeTrace> data){
 		this.data = data;
 		columnsOrder = new int[]{0,1,2,3};
 	}
 	
-	public NodeData getRow(int rowIndex){
+	public NodeTrace getRow(int rowIndex){
 		return data.get(rowIndex);
 	}
 	
@@ -67,15 +71,17 @@ public class NodeTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		// TODO Auto-generated method stub
-		NodeData nd = data.get(rowIndex);
+		NodeTrace nd = data.get(rowIndex);
 		
 		switch(columnIndex){
 		case 0:
 			return nd.id;
 		case 1:
-			return nd.x;
+			return Double.parseDouble(String.valueOf(nd.x));
 		case 2:
-			return nd.y;
+			return Double.parseDouble(String.valueOf(nd.y));
+		case 3:
+			return "View";
 		}
 		return null;
 	}
@@ -92,4 +98,11 @@ public class NodeTableModel extends AbstractTableModel {
 		return columnNames[columnsOrder[columnIndex]];
 	}
 
+	@Override
+	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		if(columnIndex == 4)
+			return true;
+		else return false;
+	}
+	
 }

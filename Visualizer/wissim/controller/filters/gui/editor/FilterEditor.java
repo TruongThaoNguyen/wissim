@@ -918,4 +918,10 @@ public class FilterEditor extends JComponent implements IFilterEditor{
             return new Insets(0, 1, 1, 1);
         }
     }
+
+	@Override
+	public void directFilter(RowFilter filter) {
+		// TODO Auto-generated method stub
+		this.editor.setFilter(filter);
+	}
 }

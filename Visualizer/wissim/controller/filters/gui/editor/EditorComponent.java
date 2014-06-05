@@ -82,6 +82,10 @@ class EditorComponent extends JTextField{
     public RowFilter getFilter() {
         return controller.getFilter();
     }
+    
+    public void setFilter(RowFilter rf){
+    	controller.setFilter(rf);
+    }
 
     /** Returns the definition associated to the current editor. */
     public Object getContent() {
@@ -241,6 +245,8 @@ class EditorComponent extends JTextField{
 
         /** @see  EditorComponent#getFilter() */
         RowFilter getFilter();
+        
+        void setFilter(RowFilter rf);
 
         /** @see  EditorComponent#consolidateFilter() */
         void consolidateFilter();
@@ -333,6 +339,12 @@ class EditorComponent extends JTextField{
                 filterEditor.triggerPopup(filterEditor);
             }
         }
+
+		@Override
+		public void setFilter(RowFilter rf) {
+			// TODO Auto-generated method stub
+			
+		}
 
     }
 
@@ -526,7 +538,17 @@ class EditorComponent extends JTextField{
             updateFilter(null, null, false);
         }
 
-        /**
+        @Override
+		public void setFilter(RowFilter rf) {
+			// TODO Auto-generated method stub
+			updateFilter();
+			ChoiceMatch match = new ChoiceMatch();
+			match.exact = true;
+			match.content = rf;
+			updateFilter(null,match,true);	
+		}
+
+		/**
          * Updates the filter and content variables, propagating the filter.
          *
          * @param  text        the current content; if null, is retrieved from
@@ -541,7 +563,7 @@ class EditorComponent extends JTextField{
             RowFilter currentFilter = filter;
             boolean error = false;
             if (text == null) {
-                match = null;
+//                match = null;
                 text = getText();
             }
 
@@ -555,6 +577,8 @@ class EditorComponent extends JTextField{
                     if (match.content instanceof CustomChoice) {
                         CustomChoice cc = (CustomChoice) content;
                         filter = cc.getFilter(filterEditor);
+                    } else if(match.content instanceof RowFilter){
+                    	filter = (RowFilter)match.content;
                     } else {
                         filter = textParser.parseText(parseEscape(text));
                     }

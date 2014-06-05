@@ -18,10 +18,11 @@ public abstract class abstractWissimDrawer {
 			Graph mGraph);
 
 	public abstract void onDrawOnePacketPath(Packet packet, Graph mGraph);
+	public abstract void onDrawPacketPath(Packet packet, Graph mGraph);
 
 	public abstract void onResetDrawOnePacketPath(Packet packet, Graph mGraph);
 
-	public abstract void onResetDraw(ArrayList<Event> listEventinTerval,
+	public abstract void onResetDraw(
 			Graph mGraph);
 	public abstract void onDrawEnergy(ArrayList<NodeEnergy> listNodeEnergy,Graph mGraph,AbstractParser mParser,boolean percentage);
 }
