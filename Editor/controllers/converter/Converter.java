@@ -29,7 +29,7 @@ public class Converter
 {		
 	public static SProject global;	
 	public static List<Entry> generateEntry = new ArrayList<Entry>();
-	
+	  
 	/**
 	 * CTD - Code to Design
 	 * Parser Tcl code to a Project model 
