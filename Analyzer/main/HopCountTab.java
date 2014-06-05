@@ -356,7 +356,7 @@ public class HopCountTab extends Tab implements Observer {
 			if(No==1){
 				MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
 				dialog.setText("Error");
-				dialog.setMessage("Không có packet nào đi từ group1 -> group2");
+				dialog.setMessage("No packet from group1 -> group2");
 			    dialog.open(); 
 			    avgText.setText("0");
 				variantText.setText("0");
