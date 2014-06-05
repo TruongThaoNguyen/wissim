@@ -227,7 +227,7 @@
         </antenna>
     </antennas>
     <interface-queues>
-        <interface-queue type="Queue/DropTail/PriQueue" default="true">
+        <interface-queue type="Queue/DropTail/PriQueue"  default="true">
             <params>
                 <param property="Prefer_Routing_Protocols" value="1"/>
             </params>

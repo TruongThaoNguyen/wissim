@@ -3,6 +3,7 @@ package controllers.converter.shadow;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import controllers.converter.Converter;
@@ -58,7 +59,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	private String label;
 	private List<Entry> entryList = new ArrayList<Entry>();
 	private HashMap<String, InsProc> insProc = new HashMap<String, InsProc>();
-	private HashMap<String, InsVar>  insVar = new HashMap<String, InsVar>();
+	private HashMap<String, InsVar>  insVar = new LinkedHashMap<String, InsVar>();
 	
 	@Override
 	public String parse(List<String> command, boolean isRecord) throws Exception {
