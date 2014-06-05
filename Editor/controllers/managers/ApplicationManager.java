@@ -677,7 +677,7 @@ public class ApplicationManager {
 
 		if (result == null) return;			
 		
-		ProjectManager.changeNetworkSize(result.width, result.height, result.wType, result.lType);
+		ProjectManager.changeNetworkSize(result.width, result.height,result.time, result.wType, result.lType);
 		workspace.updateLayout();
 		workspace.getGraphicNetwork().redraw();
 	}

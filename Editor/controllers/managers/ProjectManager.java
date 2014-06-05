@@ -416,10 +416,11 @@ public class ProjectManager {
 	 * @param lType Options for length changing: extend(trin) to top, center or bottom
 	 * @return
 	 */
-	public static boolean changeNetworkSize(int width, int length, int wType, int lType) {
+	public static boolean changeNetworkSize(int width, int length,int time, int wType, int lType) {
 		WirelessNetwork network = getNetwork();
 		
 		// changing network size
+		network.setTime(time);
 		return network.setSize(width, length, wType, lType);
 	}
 	

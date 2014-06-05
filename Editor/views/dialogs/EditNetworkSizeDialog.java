@@ -208,6 +208,7 @@ public class EditNetworkSizeDialog extends Dialog {
 		
 		text = new Text(shlEditNetworkSize, SWT.BORDER);
 		text.setBounds(98, 81, 96, 21);
+		text.setText(workspace.getProject().getNetwork().getTime() +"");
 
 	}
 	
