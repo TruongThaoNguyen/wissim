@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import wissim.ui.MainViewPanel;
 
@@ -111,7 +112,8 @@ public class EventParser extends AbstractParser {
 		if(mainPanel != null)
 			mainPanel.onNotifyLoading(true);
 		while ((sCurrentLine = br.readLine()) != null) {
-			sCurrentLine = sCurrentLine.trim().replaceAll(" +", " ");
+			//sCurrentLine = sCurrentLine.trim().replaceAll(" +", " ");
+			sCurrentLine= Pattern.compile(" +").matcher(sCurrentLine.trim()).replaceAll(" ");
 			retval = sCurrentLine.split(" ");
 			if(retval[0].equals("M") == false && !retval[6].equals("HELLO") && !retval[6].equals("CONVEXHULL") && retval[14].substring(0, 2).equals("-1") == false){
 			switch (retval[0]) {
@@ -120,22 +122,26 @@ public class EventParser extends AbstractParser {
 					/**
 					 * read packet , checking if packet is broadcast or single path
 					 */
-					Packet newPacket = new Packet(retval[5], retval[3],
+					Packet newPacket = new Packet(retval[5], retval[6],
 							retval[2].substring(1, retval[2].length() - 1),
 							"255", retval[16].substring(0,
 									retval[16].length() - 1), "255", retval[7],
 							retval[1], retval[1]);
 					newPacket.listNode = new ArrayList<NodeTrace>();
+					newPacket.listNode.add(new NodeTrace(Integer
+							.parseInt(retval[2].substring(1,
+									retval[2].length() - 1)),
+							retval[1]));
 					newPacket.isSuccess = true;
 					listPacket.add(newPacket);
 					/**
 					 * read event data
 					 */
 					Event event = new Event(convertType(retval[0]), retval[1],
-							"", "255", retval[2].substring(1,
-									retval[2].length() - 1), "", retval[5], "",
+							"0", "255", retval[2].substring(1,
+									retval[2].length() - 1), "0", retval[5], "0",
 							retval[16].substring(0, retval[16].length() - 1),
-							"", "", retval[2].substring(1,
+							"0", "0", retval[2].substring(1,
 									retval[2].length() - 1));
 					listEvents.add(event);
 
@@ -159,10 +165,10 @@ public class EventParser extends AbstractParser {
 
 					}
 					Event event = new Event(convertType(retval[0]), retval[1],
-							"", "255", retval[2].substring(1,
-									retval[2].length() - 1), "", retval[5], "",
+							"0", "255", retval[2].substring(1,
+									retval[2].length() - 1), "0", retval[5], "0",
 							retval[16].substring(0, retval[16].length() - 1),
-							"", "", retval[2].substring(1,
+							"0", "0", retval[2].substring(1,
 									retval[2].length() - 1));
 					listEvents.add(event);
 
@@ -176,10 +182,10 @@ public class EventParser extends AbstractParser {
 				/**
 				 * read event data
 				 */
-				Event event = new Event(convertType(retval[0]), retval[1], "",
+				Event event = new Event(convertType(retval[0]), retval[1], "0",
 						"255", retval[2].substring(1, retval[2].length() - 1),
-						"", retval[5], "", retval[16].substring(0,
-								retval[16].length() - 1), "", "",
+						"0", retval[5], "", retval[16].substring(0,
+								retval[16].length() - 1), "0", "0",
 						retval[2].substring(1, retval[2].length() - 1));
 				listEvents.add(event);
 				break;
@@ -196,6 +202,7 @@ public class EventParser extends AbstractParser {
 						listPacket.get(i).endTime = retval[1];
 						listPacket.get(i).destID = retval[16].substring(0,
 								retval[16].length() - 1);
+						
 						listPacket.get(i).isSuccess = false;
 						break;
 					}
@@ -203,10 +210,10 @@ public class EventParser extends AbstractParser {
 				/**
 				 * read event data
 				 */
-				Event e = new Event(convertType(retval[0]), retval[1], "",
+				Event e = new Event(convertType(retval[0]), retval[1], "0",
 						"255", retval[2].substring(1, retval[2].length() - 1),
-						"", retval[5], "", retval[16].substring(0,
-								retval[16].length() - 1), "", "",
+						"0", retval[5], "0", retval[16].substring(0,
+								retval[16].length() - 1), "0", "0",
 						retval[2].substring(1, retval[2].length() - 1));
 				listEvents.add(e);
 				break;

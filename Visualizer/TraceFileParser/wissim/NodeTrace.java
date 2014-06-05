@@ -14,6 +14,9 @@ public class NodeTrace {
 		public String maxEnergy;
 		public String listIDNeighbors;
 		public int groupID;
+		public boolean isStartPath = false;
+		public boolean isEndPath = false;
+		public boolean isMediatePath = false;
 		//public String firstAction;
 		//public String secondAction;
 		
@@ -77,9 +80,35 @@ public class NodeTrace {
 		public int getPacketId(){
 			return this.packetId;
 		}
+		
+		public boolean isStartPath() {
+			return isStartPath;
+		}
+
+		public void setStartPath(boolean isStartPath) {
+			this.isStartPath = isStartPath;
+		}
+
+		public boolean isEndPath() {
+			return isEndPath;
+		}
+
+		public void setEndPath(boolean isEndPath) {
+			this.isEndPath = isEndPath;
+		}
+
+		public boolean isMediatePath() {
+			return isMediatePath;
+		}
+
+		public void setMediatePath(boolean isMediatePath) {
+			this.isMediatePath = isMediatePath;
+		}
+
 		public void setPacketId(int packetId){
 			this.packetId=packetId;
 		}
+		
 		@Override
 		public String toString() {
 			return "NodeTrace [id=" + id + ", x=" + x + ", y=" + y + ", z=" + z

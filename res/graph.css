@@ -20,7 +20,7 @@ graph.C2
 
 node
 {
-	size: 6px;
+	size: 7px;
 	text-alignment: under;
 	stroke-mode: none;
 	fill-color : blue;
@@ -48,6 +48,22 @@ node
 	shape
 */
 }
+node.fullenergy{
+	fill-color : #25d632;
+	size : 7px;
+}
+node.mendiumenergy{
+	fill-color : #acb8ad;
+	size : 6px;
+}
+node.lowenergy{
+fill-color: #ee1818;
+	size : 4px;
+}
+node.emptyenergy{
+	fill-color: #f7f7f7;
+	size : 4px;
+}
 node.send{
 	/*stroke-mode: none;
 	size : 10px;
@@ -57,6 +73,7 @@ node.send{
 	shadow-offset: 0px;
 	shadow-width: 6px;*/
 	fill-color: red;
+	size : 8px;
 }
 node.init
  { 
@@ -81,7 +98,7 @@ node.broadcast
 }
 node.default
 {
-	size:8px;
+	size:6px;
 	fill-mode: image-scaled;
 	stroke-mode:none;
 	fill-color : blue;
@@ -95,6 +112,78 @@ node.sleep
 {
 	stroke-mode: plain;
 	fill-color: black;
+}
+node.group1
+{
+	stroke-mode: plain;
+	fill-color: #4c0000;
+}
+node.group2{
+	stroke-mode: plain;
+	fill-color:#00feff;
+	
+}
+node.fullenergy{
+	stroke-mode: plain;
+	fill-color:#00feff;
+	
+}
+node.nineper{
+	stroke-mode: plain;
+	fill-color:#08c4cc;
+}
+node.eightper{
+stroke-mode: plain;
+	fill-color:#0c9ea5;
+}
+node.sevenper{
+stroke-mode: plain;
+	fill-color:#0b7c81;
+}
+node.sixper{
+stroke-mode: plain;
+	fill-color:#0b7176;
+}
+node.fiveper{
+stroke-mode: plain;
+	fill-color:#377c76;
+}
+
+node.search{
+	fill-color:red;
+}
+
+node.startpath{
+	fill-color:green;
+}
+
+node.endpath{
+	fill-color:red;
+}
+
+node.intermediate{
+	fill-color:orange;
+}
+
+node.fourper{
+stroke-mode: plain;
+	fill-color:#0b676b;
+}
+node.threeper{
+stroke-mode: plain;
+	fill-color:#0a5154;
+}
+node.twoper{
+stroke-mode: plain;
+	fill-color:#053f42;
+}
+node.lowenergy{
+fill-color: #f41c2f;
+	size : 4px;
+}
+node.emptyenergy{
+	fill-color: #111111;
+	size : 4px;
 }
 node.receive{
 	/*stroke-mode: none;
@@ -135,26 +224,44 @@ edge
 edge.visible{
 	fill-color: #CCC;
 }
-edge.invisible{
-	fill-mode:none;
+edge.focus{
+	fill-mode:plain;
+	fill-color:#ab3e3e;
+	size:2px;
 }
 edge.light
 {
-	fill-color: black; size: 2px;
+	fill-color: #308014; 
+	size: 1px;
 }
 edge.dark
 {
 	//fill-color: #CCC;
-	size: 2px;
+	size: 1px;
 	shape: line;
     fill-color: #222;
+    arrow-size: 4px, 3px;
+}
+edge.forward
+{
+	size: 1px;
+	shape: line;
+    fill-color: green;
+    arrow-size: 3px, 2px;
+}
+edge.drop{
+	size: 1px;
+	shape: line;
+    fill-color: black;
     arrow-size: 3px, 2px;
 }
 sprite
 {
-	shape: box;
-	size: 10px, 6px;
-	fill-mode:none;
+	shape: arrow;
+	size: 5px;
+	fill-mode: plain;
+	fill-color:#da6666;
+	sprite-orientation: to;
 /*
 	z-index
 	shadow-mode

@@ -20,5 +20,5 @@ public abstract class abstractWissimAnimation {
 	public abstract void animationPacket(Packet packet, Graph mGraph);
 
 	public abstract void resetanimationPacket(Packet packet, Graph mGraph);
-
+	public abstract void reset(Graph mGraph);
 }

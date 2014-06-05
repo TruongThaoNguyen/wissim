@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import wissim.ui.MainViewPanel;
 
@@ -152,8 +153,9 @@ public class FullParser extends AbstractParser{
 		if(mainPanel!=null)
 		mainPanel.onNotifyLoading(true);
 		while ((sCurrentLine = br.readLine()) != null) {
-
-			retval = sCurrentLine.trim().replaceAll(" +", " ").split(" ");
+			sCurrentLine= Pattern.compile(" +").matcher(sCurrentLine.trim()).replaceAll(" ");
+			//retval = sCurrentLine.trim().replaceAll(" +", " ").split(" ");
+			retval = sCurrentLine.split(" ");
 			/**
 			 * Replace double space by one space
 			 */
@@ -199,6 +201,10 @@ public class FullParser extends AbstractParser{
 										retval[26].length() - 1).replaceAll("[^\\d.]", ""), retval[7],
 								retval[7], retval[1], retval[1]);
 						newpacket.listNode = new ArrayList<NodeTrace>();
+						newpacket.listNode.add(new NodeTrace(
+								Integer.parseInt(retval[2].substring(1,
+										retval[2].length() - 1)),
+								retval[1]));
 						newpacket.isSuccess = true;
 						listPacket.add(newpacket);
 					}
