@@ -353,38 +353,53 @@ public abstract class Tab {
     loadFile.setText(Analyzer.getResourceString("Load new trace file"));
     loadFile.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
     
-    /* Add listener to button loadFile */
+    Button loadNeighborFile = new Button(layoutGroup, SWT.PUSH);
+    loadNeighborFile.setText(Analyzer.getResourceString("Load new neighbors file"));
+    loadNeighborFile.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
+    
+    /* Add listener to button load trace file */
     loadFile.addSelectionListener(new SelectionAdapter() {
+    	String filePathNode=""; 
+    	String filePathEvent="";
       public void widgetSelected(SelectionEvent e) {
     	  try {
-    		  	try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } 
+    		   	try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } 
 		    	catch (ClassNotFoundException | InstantiationException | IllegalAccessException 
 		    			| UnsupportedLookAndFeelException ex) { }
-		    	JFileChooser chooser = new JFileChooser();
-				chooser.setMultiSelectionEnabled(true);
+		    	JFileChooser chooserTrace = new JFileChooser();
+//				chooser.setMultiSelectionEnabled(true);
 		
-				chooser.showOpenDialog(null);
-				File[] files = chooser.getSelectedFiles();
-				if (files.length != 2) {
-					JOptionPane.showMessageDialog(null, "Need import 2 files");		
-				} else {
-		
-					if (files[0].getName().equals("Neighbors.txt")
-							|| files[0].getName().equals("Neighbors.tr")) {
-		
-						Analyzer.onFileOpen(files[0].getAbsolutePath(),
-								files[1].getAbsolutePath());
-						SleepPeriodTab.initSleepTime();
-					} else if (files[1].getName().equals("Neighbors.txt")
-							|| files[1].getName().equals("Neighbors.tr")) {
-		
-						Analyzer.onFileOpen(files[1].getAbsolutePath(),
-								files[0].getAbsolutePath());
-						SleepPeriodTab.initSleepTime();
-					} else
-						JOptionPane.showMessageDialog(null,
-								"Invalid file format");
+				chooserTrace.showOpenDialog(null);
+			    File file = chooserTrace.getSelectedFile();
+			    filePathEvent = file.getAbsolutePath();
+			    filePathNode = Analyzer.filePathNode;
+			    
+			    Analyzer.onFileOpen(filePathNode, filePathEvent);
+			    SleepPeriodTab.initSleepTime();
+		    } catch (IOException e1) {
+				e1.printStackTrace();
 				}
+      }
+    });
+    /* Add listener to button load neighbor file */
+    loadNeighborFile.addSelectionListener(new SelectionAdapter() {
+    	String filePathNode=""; 
+    	String filePathEvent="";
+      public void widgetSelected(SelectionEvent e) {
+    	  try {
+    		   	try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } 
+		    	catch (ClassNotFoundException | InstantiationException | IllegalAccessException 
+		    			| UnsupportedLookAndFeelException ex) { }
+		    	JFileChooser chooserNeighbor = new JFileChooser();
+//				chooser.setMultiSelectionEnabled(true);
+		
+		    	chooserNeighbor.showOpenDialog(null);
+			    File file = chooserNeighbor.getSelectedFile();
+			    filePathNode = file.getAbsolutePath();
+			    filePathEvent = Analyzer.filePathEvent;
+			    
+			    Analyzer.onFileOpen(filePathNode, filePathEvent);
+			    SleepPeriodTab.initSleepTime();
 		    } catch (IOException e1) {
 				e1.printStackTrace();
 				}
