@@ -1,8 +1,8 @@
 package views.dialogs;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -31,6 +31,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+
+
+
+
 
 
 import views.Workspace;
@@ -276,13 +280,13 @@ public class CreateTrafficFlowDialog extends Dialog {
 		}
 	}
 	
-	private void loadComboContent(Combo combo, HashMap<String, HashMap<String, String>> items, StringBuilder defaultItem) {
+	private void loadComboContent(Combo combo, HashMap<String, LinkedHashMap<String, String>> transportProtocols, StringBuilder defaultItem) {
 		combo.removeAll();
-		Set<Entry<String, HashMap<String, String>>> set = items.entrySet();
-		Iterator<Entry<String, HashMap<String, String>>> iterator = set.iterator();
+		Set<Entry<String, LinkedHashMap<String, String>>> set = transportProtocols.entrySet();
+		Iterator<Entry<String, LinkedHashMap<String, String>>> iterator = set.iterator();
 		int i = 0;
 		while (iterator.hasNext()) {
-			Entry<String, HashMap<String, String>> e = iterator.next();
+			Entry<String, LinkedHashMap<String, String>> e = iterator.next();
 			combo.add(e.getKey());
 			if (e.getKey().equals(defaultItem.toString()))
 				combo.select(i);

@@ -64,7 +64,6 @@ import views.RulerScrolledComposite;
 import views.Workspace;
 import views.dialogs.ConfigNodeDialog;
 import views.dialogs.PreferencesDialog;
-import views.dialogs.StopRunNS2Dialog;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
@@ -1413,7 +1412,7 @@ public class Editor extends MainContent implements Observer {
 		Workspace workspace = getWorkspace();
 		
 		if (workspace != null)
-			new ConfigNodeDialog(getShell(), SWT.SHEET, ConfigNodeDialog.PROJECT_CONFIG, workspace,Editor.this).open();
+			new ConfigNodeDialog(getShell(), SWT.SHEET, ConfigNodeDialog.PROJECT_CONFIG, Editor.this).open();
 	}
 	
 	public void actionCreateASingleNode() {
@@ -1499,7 +1498,7 @@ public class Editor extends MainContent implements Observer {
 	}
 	
 	public void actionDefaultConfiguration() {
-		new ConfigNodeDialog(getShell(), SWT.SHEET, ConfigNodeDialog.APP_CONFIG, null,Editor.this).open();
+		new ConfigNodeDialog(getShell(), SWT.SHEET, ConfigNodeDialog.APP_CONFIG, Editor.this).open();
 	}
 	
 	public void actionDocumentation() {

@@ -3,6 +3,7 @@ package controllers.managers;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
@@ -54,16 +55,16 @@ public class ApplicationSettings {
 	public static StringBuilder defaultAntenna 				= new StringBuilder("Antenna/OmniAntenna");	
 	public static StringBuilder defaultInterfaceQueue 		= new StringBuilder("Queue/DropTail/PriQueue");
 	
-	@SuppressWarnings("serial") public static HashMap<String, HashMap<String, String>> routingProtocols 	= new HashMap<String, HashMap<String, String>>() {{ put("Agent/GPSR",				new HashMap<String, String>()); }};
-	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> transportProtocols	= new HashMap<String, HashMap<String, String>>() {{ put("UDP", 						new HashMap<String, String>()); }};
-	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> applicationProtocols = new HashMap<String, HashMap<String, String>>() {{ put("CBR", 						new HashMap<String, String>()); }};
-	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> linkLayers 			= new HashMap<String, HashMap<String, String>>() {{ put("LL", 						new HashMap<String, String>()); }};
-	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> macs 				= new HashMap<String, HashMap<String, String>>() {{ put("Mac/802_11",				new HashMap<String, String>()); }};
-	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> channels 			= new HashMap<String, HashMap<String, String>>() {{ put("Channel/WirelessChannel",	new HashMap<String, String>()); }};
-	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> propagationModels 	= new HashMap<String, HashMap<String, String>>() {{ put("Propagation/TwoRayGround", new HashMap<String, String>()); }};
-	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> networkInterfaces 	= new HashMap<String, HashMap<String, String>>() {{ put("Phy/WirelessPhy", 			new HashMap<String, String>()); }};
-	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> antennas 			= new HashMap<String, HashMap<String, String>>() {{ put("Antenna/OmniAntenna", 		new HashMap<String, String>()); }};
-	@SuppressWarnings("serial")	public static HashMap<String, HashMap<String, String>> interfaceQueues 		= new HashMap<String, HashMap<String, String>>() {{ put("Queue/DropTail/PriQueue", 	new HashMap<String, String>()); }};
+	@SuppressWarnings("serial") public static HashMap<String, LinkedHashMap<String, String>> routingProtocols 		= new HashMap<String, LinkedHashMap<String, String>>() {{ put("Agent/GPSR",				new LinkedHashMap<String, String>()); }};
+	@SuppressWarnings("serial")	public static HashMap<String, LinkedHashMap<String, String>> transportProtocols		= new HashMap<String, LinkedHashMap<String, String>>() {{ put("UDP", 						new LinkedHashMap<String, String>()); }};
+	@SuppressWarnings("serial")	public static HashMap<String, LinkedHashMap<String, String>> applicationProtocols 	= new HashMap<String, LinkedHashMap<String, String>>() {{ put("CBR", 						new LinkedHashMap<String, String>()); }};
+	@SuppressWarnings("serial")	public static HashMap<String, LinkedHashMap<String, String>> linkLayers 			= new HashMap<String, LinkedHashMap<String, String>>() {{ put("LL", 						new LinkedHashMap<String, String>()); }};
+	@SuppressWarnings("serial")	public static HashMap<String, LinkedHashMap<String, String>> macs 					= new HashMap<String, LinkedHashMap<String, String>>() {{ put("Mac/802_11",				new LinkedHashMap<String, String>()); }};
+	@SuppressWarnings("serial")	public static HashMap<String, LinkedHashMap<String, String>> channels 				= new HashMap<String, LinkedHashMap<String, String>>() {{ put("Channel/WirelessChannel",	new LinkedHashMap<String, String>()); }};
+	@SuppressWarnings("serial")	public static HashMap<String, LinkedHashMap<String, String>> propagationModels 		= new HashMap<String, LinkedHashMap<String, String>>() {{ put("Propagation/TwoRayGround", new LinkedHashMap<String, String>()); }};
+	@SuppressWarnings("serial")	public static HashMap<String, LinkedHashMap<String, String>> networkInterfaces 		= new HashMap<String, LinkedHashMap<String, String>>() {{ put("Phy/WirelessPhy", 			new LinkedHashMap<String, String>()); }};
+	@SuppressWarnings("serial")	public static HashMap<String, LinkedHashMap<String, String>> antennas 				= new HashMap<String, LinkedHashMap<String, String>>() {{ put("Antenna/OmniAntenna", 		new LinkedHashMap<String, String>()); }};
+	@SuppressWarnings("serial")	public static HashMap<String, LinkedHashMap<String, String>> interfaceQueues 		= new HashMap<String, LinkedHashMap<String, String>>() {{ put("Queue/DropTail/PriQueue", 	new LinkedHashMap<String, String>()); }};
 	
 	// endregion application variables for settings
 	
@@ -98,6 +99,7 @@ public class ApplicationSettings {
 	private static final boolean	defaultIsRulerShown 			= ApplicationSettings.RULER_SHOW;
 
 	// endregion application variables for graphics settings
+
 	
 	/**
 	 * Load application configuration
@@ -332,7 +334,7 @@ public class ApplicationSettings {
 	}
 
 	
-	private static void getProtocols(Element root, String type, HashMap<String, HashMap<String, String>> protocols, StringBuilder defaultProtocol) {		
+	private static void getProtocols(Element root, String type, HashMap<String, LinkedHashMap<String, String>> routingProtocols2, StringBuilder defaultProtocol) {		
 		Element eProtocols = root.getFirstChildElement(type);
 		Elements ps = eProtocols.getChildElements();
 		for (int i = 0; i < ps.size(); i++) 
@@ -346,7 +348,7 @@ public class ApplicationSettings {
 				defaultProtocol.append(pType);
 			}
 			
-			HashMap<String, String> paramMap = new HashMap<String, String>();
+			LinkedHashMap<String, String> paramMap = new LinkedHashMap<String, String>();
 			Element param = p.getFirstChildElement("params");
 			if (param != null)
 			{
@@ -357,20 +359,20 @@ public class ApplicationSettings {
 				}
 			}
 			
-			protocols.put(pType, paramMap);
+			routingProtocols2.put(pType, paramMap);
 		}
 	}
 	
-	public static void setDefaultProtocol(Element root, String type, HashMap<String, HashMap<String, String>> protocols, StringBuilder defaultProtocol) {
+	public static void setDefaultProtocol(Element root, String type, HashMap<String, LinkedHashMap<String, String>> routingProtocols2, StringBuilder defaultProtocol) {
 		Element eProtocols = new Element(type + "s");
 		
-		for (String key : protocols.keySet()) 
+		for (String key : routingProtocols2.keySet()) 
 		{			
 			Element e = new Element(type);
 			e.addAttribute(new Attribute("type", key));
 			if (defaultProtocol.toString().equals(key)) e.addAttribute(new Attribute("default", "true"));
 			
-			HashMap<String, String> h = protocols.get(key);
+			HashMap<String, String> h = routingProtocols2.get(key);
 			if (h.size() > 0)
 			{
 				Element params = new Element("params");			

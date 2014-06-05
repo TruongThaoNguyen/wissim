@@ -2,8 +2,11 @@ package views.dialogs;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import models.Project;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -24,8 +27,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import views.Editor;
-
-import controllers.managers.ProjectManager;
 
 public class ParameterConfigDialog extends Dialog {
 
@@ -169,7 +170,7 @@ public class ParameterConfigDialog extends Dialog {
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				HashMap<String,String> routingProtocolMaps = new HashMap<String,String>();
+				LinkedHashMap<String, String> routingProtocolMaps = new LinkedHashMap<String,String>();
 				int index = table.getTopIndex();
 				int flag = 0;
 				while (index < table.getItemCount()) {
@@ -189,8 +190,8 @@ public class ParameterConfigDialog extends Dialog {
 					index++;
 				}
 				if(flag == 0) {
-					if(routingProtocolMaps != null) {
-						ProjectManager.getProject().getRoutingProtocols().put(protocolName, routingProtocolMaps);
+					if(routingProtocolMaps != null) {						
+						Project.getRoutingProtocols().put(protocolName, routingProtocolMaps);
 						boolean b = MessageDialog.openConfirm(getParent(), "Confirm", "Update successfull! Do you want to quit?");
 						if(b == true) {
 							editorP.getActSave().setEnabled(true);

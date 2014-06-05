@@ -2,6 +2,7 @@ package views.dialogs;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -55,7 +56,6 @@ public class ConfigNodeDialog extends Dialog {
 	Spinner spnQueueLength;
 	
 	private int type;
-	private Workspace workspace;
 	private Editor editor;
 
 	/**
@@ -64,12 +64,11 @@ public class ConfigNodeDialog extends Dialog {
 	 * @param style
 	 * @param workspace 
 	 */
-	public ConfigNodeDialog(Shell parent, int style, int type, Workspace workspace,Editor editor) {
+	public ConfigNodeDialog(Shell parent, int style, int type, Editor editor) {
 		super(parent, style);
 		setText("SWT Dialog");
 		
 		this.type = type;
-		this.workspace = workspace;
 		this.editor = editor;
 	}
 
@@ -101,22 +100,22 @@ public class ConfigNodeDialog extends Dialog {
 	}
 
 	private void loadContentsForProjectConfig() {
-		Project project = workspace.getProject();
+		Project project = Workspace.getProject();
 		
 		setText("Node Configuration");
 		
 		txtRange.setText(project.getNodeRange() + "");
 		
-		loadComboContent(cbTransportProtocol, project.getTransportProtocols(), new StringBuilder(project.getSelectedTransportProtocol()));
-		loadComboContent(cbAppProtocol, project.getApplicationProtocols(), new StringBuilder(project.getSelectedApplicationProtocol()));
-		loadComboContent(cbRoutingProtocol, project.getRoutingProtocols(), new StringBuilder(project.getSelectedRoutingProtocol()));
-		loadComboContent(cbLinkLayer, project.getLinkLayers(), new StringBuilder(project.getSelectedLinkLayer()));
-		loadComboContent(cbMac, project.getMacs(), new StringBuilder(project.getSelectedMac()));
-		loadComboContent(cbPropagationModel, project.getPropagationModels(), new StringBuilder(project.getSelectedPropagationModel()));
-		loadComboContent(cbChannel, project.getChannels(), new StringBuilder(project.getSelectedChannel()));
-		loadComboContent(cbInterfaceQueue, project.getInterfaceQueues(), new StringBuilder(project.getSelectedInterfaceQueue()));
-		loadComboContent(cbNetworkInterface, project.getNetworkInterfaces(), new StringBuilder(project.getSelectedNetworkInterface()));
-		loadComboContent(cbAntenna, project.getAntennas(), new StringBuilder(project.getSelectedAntenna()));
+		loadComboContent(cbTransportProtocol, Project.getTransportProtocols(), new StringBuilder(Project.getSelectedTransportProtocol()));
+		loadComboContent(cbAppProtocol, Project.getApplicationProtocols(), new StringBuilder(Project.getSelectedApplicationProtocol()));
+		loadComboContent(cbRoutingProtocol, Project.getRoutingProtocols(), new StringBuilder(project.getSelectedRoutingProtocol()));
+		loadComboContent(cbLinkLayer, Project.getLinkLayers(), new StringBuilder(project.getSelectedLinkLayer()));
+		loadComboContent(cbMac, Project.getMacs(), new StringBuilder(project.getSelectedMac()));
+		loadComboContent(cbPropagationModel, Project.getPropagationModels(), new StringBuilder(project.getSelectedPropagationModel()));
+		loadComboContent(cbChannel, Project.getChannels(), new StringBuilder(project.getSelectedChannel()));
+		loadComboContent(cbInterfaceQueue, Project.getInterfaceQueues(), new StringBuilder(project.getSelectedInterfaceQueue()));
+		loadComboContent(cbNetworkInterface, Project.getNetworkInterfaces(), new StringBuilder(project.getSelectedNetworkInterface()));
+		loadComboContent(cbAntenna, Project.getAntennas(), new StringBuilder(project.getSelectedAntenna()));
 		
 		spnQueueLength.setSelection(project.getQueueLength());
 		
@@ -150,13 +149,13 @@ public class ConfigNodeDialog extends Dialog {
 		txtSleep.setText(ApplicationSettings.sleepEnergy + "");
 	}
 	
-	private void loadComboContent(Combo combo, HashMap<String, HashMap<String, String>> items, StringBuilder defaultItem) {
+	private void loadComboContent(Combo combo, HashMap<String, LinkedHashMap<String, String>> hashMap, StringBuilder defaultItem) {
 		combo.removeAll();
-		Set<Entry<String, HashMap<String, String>>> set = items.entrySet();
-		Iterator<Entry<String, HashMap<String, String>>> iterator = set.iterator();
+		Set<Entry<String, LinkedHashMap<String, String>>> set = hashMap.entrySet();
+		Iterator<Entry<String, LinkedHashMap<String, String>>> iterator = set.iterator();
 		int i = 0;
 		while (iterator.hasNext()) {
-			Entry<String, HashMap<String, String>> e = iterator.next();
+			Entry<String, LinkedHashMap<String, String>> e = iterator.next();
 			combo.add(e.getKey());
 			if (e.getKey().equals(defaultItem.toString()))
 				combo.select(i);
@@ -236,7 +235,8 @@ public class ConfigNodeDialog extends Dialog {
 				switch (type) {
 				case APP_CONFIG:
 					try {
-						if(ProjectManager.getProject().getRoutingProtocols().get(cbRoutingProtocol.getText()) == null) {
+						ProjectManager.getProject();
+						if(Project.getRoutingProtocols().get(cbRoutingProtocol.getText()) == null) {
 							MessageDialog.openError(getParent(), "Error", "Selected Routing protocol incorrect!");
 							bApply = false;
 						} else { 
@@ -274,16 +274,17 @@ public class ConfigNodeDialog extends Dialog {
 					break;
 				case PROJECT_CONFIG:
 					try {
-						if(ProjectManager.getProject().getRoutingProtocols().get(cbRoutingProtocol.getText()) == null) {
+						ProjectManager.getProject();
+						if(Project.getRoutingProtocols().get(cbRoutingProtocol.getText()) == null) {
 							MessageDialog.openError(getParent(), "Error", "Selected Routing protocol incorrect!");
 							bApply = false;
 						} else { 
-							Project project = workspace.getProject();
+							Project project = Workspace.getProject();
 							
 							project.setNodeRange(Integer.parseInt(txtRange.getText()));
 							
-							project.setSelectedTransportProtocol(cbTransportProtocol.getText());
-							project.setSelectedApplicationProtocol(cbAppProtocol.getText());
+							Project.setSelectedTransportProtocol(cbTransportProtocol.getText());
+							Project.setSelectedApplicationProtocol(cbAppProtocol.getText());
 							
 							project.setSelectedRoutingProtocol(cbRoutingProtocol.getText());
 							project.setSelectedLinkLayer(cbLinkLayer.getText());
@@ -453,7 +454,8 @@ public class ConfigNodeDialog extends Dialog {
 				// TODO Auto-generated method stub
 				String currentSelectedRouting = cbRoutingProtocol.getText();
 				System.out.println(currentSelectedRouting);
-				HashMap<String,HashMap <String,String>> input = ProjectManager.getProject().getRoutingProtocols();
+				ProjectManager.getProject();
+				HashMap<String, LinkedHashMap<String, String>> input = Project.getRoutingProtocols();
 				if(input.get(currentSelectedRouting) != null) {
 					HashMap<String,String> value = input.get(currentSelectedRouting);
 					new ParameterConfigDialog(shlNodeConfiguration,SWT.SHEET, currentSelectedRouting,value,editor).open();

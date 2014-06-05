@@ -3,7 +3,9 @@ package models;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.features.Area;
@@ -76,31 +78,31 @@ public abstract class Project {
 
 	// region ------------------- Configure properties ------------------- //
 
-	public static HashMap<String, HashMap<String, HashMap<String, String>>> configure = new HashMap<String, HashMap<String, HashMap<String, String>>>(); 
+	public static Map<String, HashMap<String, LinkedHashMap<String, String>>> configure = new HashMap<String, HashMap<String, LinkedHashMap<String, String>>>(); 
 		
-	public static void setRoutingProtocols		(HashMap<String, HashMap<String, String>> ps) { configure.put("-adhocRouting", 			ps); }		
-	public static void setLinkLayers			(HashMap<String, HashMap<String, String>> ps) { configure.put("-llType", 				ps); }	
-	public static void setMacs					(HashMap<String, HashMap<String, String>> ps) { configure.put("-macType",				ps); }
-	public static void setPropagationModels		(HashMap<String, HashMap<String, String>> ps) { configure.put("-propType",				ps); }
-	public static void setNetworkInterfaces		(HashMap<String, HashMap<String, String>> ps) { configure.put("-phyType",				ps); }
-	public static void setAntennas				(HashMap<String, HashMap<String, String>> ps) { configure.put("-antType",				ps); }
-	public static void setInterfaceQueues		(HashMap<String, HashMap<String, String>> ps) { configure.put("-ifqType",				ps); }
-	public static void setChannels				(HashMap<String, HashMap<String, String>> ps) { configure.put("-channel",				ps); }
-	public static void setTransportProtocols	(HashMap<String, HashMap<String, String>> ps) { configure.put("transportProtocols", 	ps); }
-	public static void setApplicationProtocols	(HashMap<String, HashMap<String, String>> ps) { configure.put("applicationProtocols",	ps); }
+	public static void setRoutingProtocols		(HashMap<String, LinkedHashMap<String, String>> ps) { configure.put("-adhocRouting", 		ps); }		
+	public static void setLinkLayers			(HashMap<String, LinkedHashMap<String, String>> ps) { configure.put("-llType", 				ps); }	
+	public static void setMacs					(HashMap<String, LinkedHashMap<String, String>> ps) { configure.put("-macType",				ps); }
+	public static void setPropagationModels		(HashMap<String, LinkedHashMap<String, String>> ps) { configure.put("-propType",			ps); }
+	public static void setNetworkInterfaces		(HashMap<String, LinkedHashMap<String, String>> ps) { configure.put("-phyType",				ps); }
+	public static void setAntennas				(HashMap<String, LinkedHashMap<String, String>> ps) { configure.put("-antType",				ps); }
+	public static void setInterfaceQueues		(HashMap<String, LinkedHashMap<String, String>> ps) { configure.put("-ifqType",				ps); }
+	public static void setChannels				(HashMap<String, LinkedHashMap<String, String>> ps) { configure.put("-channel",				ps); }
+	public static void setTransportProtocols	(HashMap<String, LinkedHashMap<String, String>> ps) { configure.put("transportProtocols", 	ps); }
+	public static void setApplicationProtocols	(HashMap<String, LinkedHashMap<String, String>> ps) { configure.put("applicationProtocols",	ps); }
 		
-	public static HashMap<String, HashMap<String, String>> getConfig(String label) 	{ return configure.get(label); }
+	public static HashMap<String, LinkedHashMap<String, String>> getConfig(String label) 	{ return configure.get(label); }
 	
-	public static HashMap<String, HashMap<String, String>> getRoutingProtocols() 	{ return configure.get("-adhocRouting");		}//
-	public static HashMap<String, HashMap<String, String>> getLinkLayers() 			{ return configure.get("-llType");				}//
-	public static HashMap<String, HashMap<String, String>> getMacs() 				{ return configure.get("-macType"); 			}//
-	public static HashMap<String, HashMap<String, String>> getPropagationModels() 	{ return configure.get("-propType");			}//
-	public static HashMap<String, HashMap<String, String>> getNetworkInterfaces() 	{ return configure.get("-phyType");				}//
-	public static HashMap<String, HashMap<String, String>> getAntennas() 			{ return configure.get("-antType");				}//
-	public static HashMap<String, HashMap<String, String>> getInterfaceQueues() 	{ return configure.get("-ifqType");				}//
-	public static HashMap<String, HashMap<String, String>> getChannels()			{ return configure.get("-channel"); 			}//
-	public static HashMap<String, HashMap<String, String>> getTransportProtocols()	{ return configure.get("transportProtocols");	}//
-	public static HashMap<String, HashMap<String, String>> getApplicationProtocols(){ return configure.get("applicationProtocols");	}//
+	public static HashMap<String, LinkedHashMap<String, String>> getRoutingProtocols() 		{ return configure.get("-adhocRouting");		}//
+	public static HashMap<String, LinkedHashMap<String, String>> getLinkLayers() 			{ return configure.get("-llType");				}//
+	public static HashMap<String, LinkedHashMap<String, String>> getMacs() 					{ return configure.get("-macType"); 			}//
+	public static HashMap<String, LinkedHashMap<String, String>> getPropagationModels() 	{ return configure.get("-propType");			}//
+	public static HashMap<String, LinkedHashMap<String, String>> getNetworkInterfaces() 	{ return configure.get("-phyType");				}//
+	public static HashMap<String, LinkedHashMap<String, String>> getAntennas() 				{ return configure.get("-antType");				}//
+	public static HashMap<String, LinkedHashMap<String, String>> getInterfaceQueues() 		{ return configure.get("-ifqType");				}//
+	public static HashMap<String, LinkedHashMap<String, String>> getChannels()				{ return configure.get("-channel"); 			}//
+	public static HashMap<String, LinkedHashMap<String, String>> getTransportProtocols()	{ return configure.get("transportProtocols");	}//
+	public static HashMap<String, LinkedHashMap<String, String>> getApplicationProtocols()	{ return configure.get("applicationProtocols");	}//
 	
 	// endregion Configure properties
 	
