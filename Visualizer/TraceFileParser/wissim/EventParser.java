@@ -78,12 +78,18 @@ public class EventParser extends AbstractParser {
 			while ((currentLine = br.readLine()) != null) {
 				String[] retval = currentLine.split("\\s+");
 
-				String[] neighborsData = retval[3].split(",");
-
+				
 				listNeighbors = "";
-				for (int i = 0; i < neighborsData.length; i++) {
-					listNeighbors += neighborsData[i] + " ";
+				if(retval.length > 3){
+					String[] neighborsData = retval[3].split(",");
+					for (int i = 0; i < neighborsData.length; i++) {
+						listNeighbors += neighborsData[i] + " ";
+					}
 				}
+				
+			else{
+				
+			}
 
 				NodeTrace nodeElement = new NodeTrace(
 						Integer.parseInt(retval[0]),
