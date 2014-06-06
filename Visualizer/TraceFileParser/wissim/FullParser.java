@@ -12,12 +12,12 @@ import java.util.regex.Pattern;
 
 import wissim.ui.MainViewPanel;
 
-public class FullParser extends AbstractParser{
+public class FullParser extends AbstractParser {
 	public static FileOutputStream fout;
 	public static OutputStreamWriter out;
 	public static String sCurrentLine;
-	public  ArrayList<Packet> listPacket = new ArrayList<Packet>();
-	public  ArrayList<NodeTrace> listNodesWithNeighbors;
+	public ArrayList<Packet> listPacket = new ArrayList<Packet>();
+	public ArrayList<NodeTrace> listNodesWithNeighbors;
 	public static ArrayList<Event> listEvents = new ArrayList<Event>();
 	public static String listNeighbors;
 	public static Event mEvent;
@@ -30,36 +30,40 @@ public class FullParser extends AbstractParser{
 	public int numberNodeDead;
 	public double energyNodeDead;
 	public String lifeTime;
-	public LinkedHashMap<Integer,Double> listNodeDead;
+	public LinkedHashMap<Integer, Double> listNodeDead;
 	public static int[] countEnergy;
 	public MainViewPanel mainPanel;
-	
+
 	public void setMainPanel(MainViewPanel mainPanel) {
 		this.mainPanel = mainPanel;
 	}
-	public int getNumberNodeDead(){
+
+	public int getNumberNodeDead() {
 		return this.numberNodeDead;
 	}
-	public void setNumberNodeDead(int n){
+
+	public void setNumberNodeDead(int n) {
 		this.numberNodeDead = n;
 	}
-	
-	public double getEnergyNodeDead(){
+
+	public double getEnergyNodeDead() {
 		return this.energyNodeDead;
 	}
-	public void setEnergyNodeDead(double e){
+
+	public void setEnergyNodeDead(double e) {
 		this.energyNodeDead = e;
 	}
-	
-	public String getLifeTime(){
+
+	public String getLifeTime() {
 		return this.lifeTime;
 	}
-	public LinkedHashMap<Integer,Double> getListNodeDead(){
+
+	public LinkedHashMap<Integer, Double> getListNodeDead() {
 		return this.listNodeDead;
 	}
-	
-	public void ConvertTraceFile(String filePathNodes,
-			String filePathEvent) throws IOException {
+
+	public void ConvertTraceFile(String filePathNodes, String filePathEvent)
+			throws IOException {
 
 		/**
 		 * 
@@ -68,10 +72,10 @@ public class FullParser extends AbstractParser{
 		 */
 
 		listPacket = new ArrayList<Packet>();
-//		mFilePathNodes = "D://GR/GR3Material/Neighbors.txt";
-//		mFilePathEvent = "D://GR/GR3Material/Trace_Energy.tr";
+		// mFilePathNodes = "D://GR/GR3Material/Neighbors.txt";
+		// mFilePathEvent = "D://GR/GR3Material/Trace_Energy.tr";
 		listNodesWithNeighbors = new ArrayList<NodeTrace>();
-	
+
 		listEnergy = new ArrayList<ArrayList<NodeEnergy>>();
 
 		mEvent = new Event();
@@ -118,14 +122,20 @@ public class FullParser extends AbstractParser{
 
 			while ((currentLine = br.readLine()) != null) {
 				String[] retval = currentLine.split("\\s+");
-
-				String[] neighborsData = retval[3].split(",");
-
 				listNeighbors = "";
-				for (int i = 0; i < neighborsData.length; i++) {
-					listNeighbors += neighborsData[i] + " ";
+				if(retval.length > 3){
+					String[] neighborsData = retval[3].split(",");
+					for (int i = 0; i < neighborsData.length; i++) {
+						listNeighbors += neighborsData[i] + " ";
+					}
 				}
-
+				
+			else{
+				
+			}
+				
+				
+				
 				NodeTrace nodeElement = new NodeTrace(
 						Integer.parseInt(retval[0]),
 						Float.parseFloat(retval[1]),
@@ -139,7 +149,7 @@ public class FullParser extends AbstractParser{
 			}
 			br.close();
 		} catch (Exception e) {
-			System.out.println("catch Exception :(( Message=" + e.getMessage());
+			
 			e.printStackTrace();
 		}
 
@@ -150,16 +160,17 @@ public class FullParser extends AbstractParser{
 		String retval[];
 		// int line = 0;
 		System.out.println("Running...");
-		if(mainPanel!=null)
-		mainPanel.onNotifyLoading(true);
+		if (mainPanel != null)
+			mainPanel.onNotifyLoading(true);
 		while ((sCurrentLine = br.readLine()) != null) {
-			sCurrentLine= Pattern.compile(" +").matcher(sCurrentLine.trim()).replaceAll(" ");
-			//retval = sCurrentLine.trim().replaceAll(" +", " ").split(" ");
+			sCurrentLine = Pattern.compile(" +").matcher(sCurrentLine.trim())
+					.replaceAll(" ");
+			// retval = sCurrentLine.trim().replaceAll(" +", " ").split(" ");
 			retval = sCurrentLine.split(" ");
 			/**
 			 * Replace double space by one space
 			 */
-			
+
 			// line++;
 			if (retval[0].equals("N")) {
 				setEnergyOfNode(retval[4], retval[2], retval[6]);
@@ -175,15 +186,18 @@ public class FullParser extends AbstractParser{
 								retval[2].substring(1, retval[2].length() - 1),
 								retval[1], retval[13]);
 						// setLifeTime(retval[1], retval[13]);
-					} 
+					}
 				}
 
 				/**
 				 * parse event
 				 */
-				
-				if (retval[6].length() > 0 && retval[6].equals("HELLO") == false && !retval[6].equals("CONVEXHULL") && retval.length > 10) {
-					
+
+				if (retval[6].length() > 0
+						&& !retval[6].equals("HELLO")
+						&& !retval[6].equals("CONVEXHULL")
+						&& retval.length > 10) {
+
 					Event event = null;
 
 					event = new Event(convertType(retval[0]), retval[1], "",
@@ -192,19 +206,20 @@ public class FullParser extends AbstractParser{
 							retval[13], retval[5], "0", retval[26].substring(0,
 									retval[26].length() - 1), "", "", "");
 					event.packetType = retval[3];
+					
 					listEvents.add(event);
 					setEnergyOfNode(event.sourceId, event.time, retval[13]);
 					if (retval[0].equals("s") && !retval[3].equals("AGT")) {
 						Packet newpacket = new Packet(retval[5], retval[6],
 								retval[2].substring(1, retval[2].length() - 1),
 								"0", retval[26].substring(0,
-										retval[26].length() - 1).replaceAll("[^\\d.]", ""), retval[7],
-								retval[7], retval[1], retval[1]);
+										retval[26].length() - 1).replaceAll(
+										"[^\\d.]", ""), retval[7], retval[7],
+								retval[1], retval[1]);
 						newpacket.listNode = new ArrayList<NodeTrace>();
-						newpacket.listNode.add(new NodeTrace(
-								Integer.parseInt(retval[2].substring(1,
-										retval[2].length() - 1)),
-								retval[1]));
+						newpacket.listNode.add(new NodeTrace(Integer
+								.parseInt(retval[2].substring(1,
+										retval[2].length() - 1)), retval[1]));
 						newpacket.isSuccess = true;
 						listPacket.add(newpacket);
 					}
@@ -217,7 +232,8 @@ public class FullParser extends AbstractParser{
 										retval[1]));
 								listPacket.get(i).endTime = retval[1];
 								listPacket.get(i).destID = retval[26]
-										.substring(0, retval[26].length() - 1).replaceAll("[^\\d.]", "");
+										.substring(0, retval[26].length() - 1)
+										.replaceAll("[^\\d.]", "");
 								break;
 							}
 
@@ -233,7 +249,8 @@ public class FullParser extends AbstractParser{
 										retval[1]));
 								listPacket.get(i).endTime = retval[1];
 								listPacket.get(i).destID = retval[26]
-										.substring(0, retval[26].length() - 1).replaceAll("[^\\d.]", "");
+										.substring(0, retval[26].length() - 1)
+										.replaceAll("[^\\d.]", "");
 								listPacket.get(i).isSuccess = false;
 								break;
 							}
@@ -249,15 +266,14 @@ public class FullParser extends AbstractParser{
 										retval[1]));
 								listPacket.get(i).endTime = retval[1];
 								listPacket.get(i).destID = retval[26]
-										.substring(0, retval[26].length() - 1).replaceAll("[^\\d.]", "");
+										.substring(0, retval[26].length() - 1)
+										.replaceAll("[^\\d.]", "");
 								listPacket.get(i).isSuccess = true;
 							}
 						}
 					}
 
 				}
-
-				
 
 			}
 
@@ -277,21 +293,23 @@ public class FullParser extends AbstractParser{
 			String time) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(mFilePathEvent));
 		String retval[];
-		NodeEnergy nE = new NodeEnergy("","", "0");
+		NodeEnergy nE = new NodeEnergy("", "", "0");
 		ArrayList<NodeEnergy> listNE = new ArrayList<>();
 		while ((sCurrentLine = br.readLine()) != null) {
 			retval = sCurrentLine.split(" ");
 			if (retval[4].equals(node.id + "")) {
-				nE = new NodeEnergy(retval[4],retval[2], retval[6]);
+				nE = new NodeEnergy(retval[4], retval[2], retval[6]);
 				listNE.add(nE);
 			}
 			if (retval[2].substring(1, retval[2].length() - 1).equals(
 					node.id + "")
 					&& !retval[0].equals("M")) {
 				if (!retval[13].equals("[energy"))
-					nE = new NodeEnergy(retval[2].substring(1, retval[2].length() - 1),retval[1], retval[13]);
+					nE = new NodeEnergy(retval[2].substring(1,
+							retval[2].length() - 1), retval[1], retval[13]);
 				else
-					nE = new NodeEnergy(retval[2].substring(1, retval[2].length() - 1),retval[1], retval[14]);
+					nE = new NodeEnergy(retval[2].substring(1,
+							retval[2].length() - 1), retval[1], retval[14]);
 				listNE.add(nE);
 			}
 
@@ -310,55 +328,57 @@ public class FullParser extends AbstractParser{
 
 	public void setEnergyOfNode(String nodeID, String time, String energy)
 			throws IOException {
-		if(countEnergy[Integer.parseInt(nodeID)] == 0){
+		if (countEnergy[Integer.parseInt(nodeID)] == 0) {
 			listNodesWithNeighbors.get(Integer.parseInt(nodeID)).maxEnergy = energy;
 		}
 		if (++countEnergy[Integer.parseInt(nodeID)] % 50 == 1) {
-			NodeEnergy nE = new NodeEnergy(nodeID,time, energy);
+			NodeEnergy nE = new NodeEnergy(nodeID, time, energy);
 			listEnergy.get(Integer.parseInt(nodeID)).add(nE);
 		}
 
-		
 	}
 
 	public ArrayList<ArrayList<NodeEnergy>> getListEnergy() {
 		return listEnergy;
 	}
 
-
-	/*Sort map by value*/
-	public  Map<Integer,Double> sortByValue(Map<Integer,Double> map) {
-		List<Map.Entry<Integer,Double>> entries = new ArrayList<Map.Entry<Integer,Double>>(map.entrySet());
-		Collections.sort(entries, new Comparator<Map.Entry<Integer , Double>>() {
-				  public int compare(Map.Entry<Integer,Double> a, Map.Entry<Integer,Double> b){
-				    return a.getValue().compareTo(b.getValue());
-				  }
-		});
-		Map<Integer,Double> sortedMap = new LinkedHashMap<Integer,Double>();
-			for (Map.Entry<Integer,Double> entry : entries) {
-				  sortedMap.put(entry.getKey(), entry.getValue());
+	/* Sort map by value */
+	public Map<Integer, Double> sortByValue(Map<Integer, Double> map) {
+		List<Map.Entry<Integer, Double>> entries = new ArrayList<Map.Entry<Integer, Double>>(
+				map.entrySet());
+		Collections.sort(entries, new Comparator<Map.Entry<Integer, Double>>() {
+			public int compare(Map.Entry<Integer, Double> a,
+					Map.Entry<Integer, Double> b) {
+				return a.getValue().compareTo(b.getValue());
 			}
-		return 	sortedMap;	
-	} 
+		});
+		Map<Integer, Double> sortedMap = new LinkedHashMap<Integer, Double>();
+		for (Map.Entry<Integer, Double> entry : entries) {
+			sortedMap.put(entry.getKey(), entry.getValue());
+		}
+		return sortedMap;
+	}
+
 	public void setNetworkLifeTime() {
-		listNodeDead = new LinkedHashMap<Integer,Double>();
-		ArrayList<NodeEnergy> listNodeEnergy= new ArrayList<NodeEnergy>();
-		
-		for(int i = 0 ;i < listEnergy.size(); i++) {
+		listNodeDead = new LinkedHashMap<Integer, Double>();
+		ArrayList<NodeEnergy> listNodeEnergy = new ArrayList<NodeEnergy>();
+
+		for (int i = 0; i < listEnergy.size(); i++) {
 			listNodeEnergy = listEnergy.get(i);
-			
-			for(int j = 0;j < listNodeEnergy.size(); j++ ) {
-				NodeEnergy node=listNodeEnergy.get(j);
-				if(Double.parseDouble(node.getEnergy()) <= energyNodeDead) {
-					listNodeDead.put(i,Double.parseDouble(node.getTime()));
+
+			for (int j = 0; j < listNodeEnergy.size(); j++) {
+				NodeEnergy node = listNodeEnergy.get(j);
+				if (Double.parseDouble(node.getEnergy()) <= energyNodeDead) {
+					listNodeDead.put(i, Double.parseDouble(node.getTime()));
 					break;
 				}
-			}  
-			
+			}
+
 		}
-		listNodeDead =(LinkedHashMap<Integer, Double>) sortByValue(listNodeDead);
-		
+		listNodeDead = (LinkedHashMap<Integer, Double>) sortByValue(listNodeDead);
+
 	}
+
 	/*
 	 * public static void setLifeTime(String time,String energy){
 	 * 
@@ -379,7 +399,7 @@ public class FullParser extends AbstractParser{
 		}
 	}
 
-	public  ArrayList<Packet> getListPacket() {
+	public ArrayList<Packet> getListPacket() {
 		return listPacket;
 	}
 
@@ -387,11 +407,11 @@ public class FullParser extends AbstractParser{
 		this.listPacket = listPacket;
 	}
 
-	public  ArrayList<NodeTrace> getListNodes() {
+	public ArrayList<NodeTrace> getListNodes() {
 		return listNodesWithNeighbors;
 	}
 
-	public  void setListNodes(ArrayList<NodeTrace> listNodesWithNeighbors) {
+	public void setListNodes(ArrayList<NodeTrace> listNodesWithNeighbors) {
 		this.listNodesWithNeighbors = listNodesWithNeighbors;
 	}
 
@@ -422,20 +442,24 @@ public class FullParser extends AbstractParser{
 
 		return null;
 	}
-	public String getmaxEnergyFromNodeID(String nodeID){
-		if(listNodesWithNeighbors.size() > 0){
-			for(int i = 0 ;i< listNodesWithNeighbors.size(); i++){
-				if(listNodesWithNeighbors.get(i).id == Integer.parseInt(nodeID))
+
+	public String getmaxEnergyFromNodeID(String nodeID) {
+		if (listNodesWithNeighbors.size() > 0) {
+			for (int i = 0; i < listNodesWithNeighbors.size(); i++) {
+				if (listNodesWithNeighbors.get(i).id == Integer
+						.parseInt(nodeID))
 					return listNodesWithNeighbors.get(i).maxEnergy;
-				
+
 			}
 		}
 		return "";
 	}
-	public void onNotifyLoadingProcess(MainViewPanel mainPanel,boolean isLoading){
-		if(mainPanel != null){
+
+	public void onNotifyLoadingProcess(MainViewPanel mainPanel,
+			boolean isLoading) {
+		if (mainPanel != null) {
 			mainPanel.onNotifyLoading(isLoading);
 		}
 	}
-	
+
 }
