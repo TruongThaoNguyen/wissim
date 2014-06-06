@@ -320,7 +320,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 		popupDisplayModeMenu.add(ict2);
 		popupDisplayModeMenu.add(ict3);
 		mTextEventSliderInfor = new JTextArea(logEvenSlider);
-		mTextEventSliderInfor.setBounds(10, 430, 700, 20);
+		mTextEventSliderInfor.setBounds(10, 350, 700, 25);
 		GraphViewPanel.add(mTextEventSliderInfor);
 		mTextEventSliderInfor.setFont(new Font("Monospaced", Font.PLAIN, 11));
 		GraphViewPanel.setFocusable(true);
