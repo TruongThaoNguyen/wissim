@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.awt.LayoutManager;
 import java.awt.MenuItem;
 import java.awt.Point;
 import java.awt.PopupMenu;
@@ -138,7 +139,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 	public static DisplayMode mCurrentDisplayMode;
 
 	public MainViewPanel() {
-
+		System.out.println("Create main Panel Visualizer");
 		observerList = new Vector();
 		mLoadingInfor = new JTextArea("Loading trace file");
 		setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
@@ -163,7 +164,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBackground(Color.WHITE);
-		tabbedPane.setBounds(145, 11, 800, 700);
+		tabbedPane.setBounds(145, 11, 800, 720);
 		add(tabbedPane);
 		JPanel topologyPanel = new JPanel();
 		tabbedPane.addTab("Topology", null, topologyPanel, null);
@@ -192,7 +193,6 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 		tabbedPane.addTab("Visualizer", null, visualizerPanel, null);
 		tabbedPane.setBackgroundAt(4, Color.WHITE);
 		visualizerPanel.setLayout(null);
-		
 //		RulesPanel rulesPanel = new RulesPanel(nodePanel.getFilterHeader(),packetPanel.getFilterHeader(),eventPanel.getFilterHeader());
 //		tabbedPane.addTab("Rules", null,rulesPanel,null);
 
@@ -256,7 +256,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 		consolePanel = new JPanel();
 		consolePanel.setBorder(new TitledBorder(null, "Console",
 				TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-		consolePanel.setBounds(10, 540, 400, 130);
+		consolePanel.setBounds(10, 500, 400, 150);
 
 		visualizerPanel.add(consolePanel);
 		mConsoleInfor = new JTextArea();
@@ -281,7 +281,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 		mPropertiesPanel.setBackground(new Color(192, 192, 192));
 		mPropertiesPanel.setBorder(new TitledBorder(null, "Properties",
 				TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-		mPropertiesPanel.setBounds(410, 540, 400, 130);
+		mPropertiesPanel.setBounds(410, 500, 400, 150);
 		visualizerPanel.add(mPropertiesPanel);
 		mPropertiesPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
 		
@@ -293,7 +293,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 		mPropertiesPanel.add(mPacketFocusInfor);
 		GraphViewPanel = new JPanel();
 		GraphViewPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
-		GraphViewPanel.setBounds(10, 102, 800, 450);
+		GraphViewPanel.setBounds(10, 102, 800, 400);
 		visualizerPanel.add(GraphViewPanel);
 
 		view.setSize(GraphViewPanel.getWidth(), GraphViewPanel.getHeight());
@@ -375,7 +375,10 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 				mSliderPanel.remove(mTimeslider);
 				mTimeslider = null;
 			}
-			mTimeslider = new RangeSlider(0, sizeListEvent - 1);
+			
+			mTimeslider = new RangeSlider(0, sizeListEvent - 1 > 0 ? sizeListEvent -1 : 1);
+			if(sizeListEvent <1)
+				JOptionPane.showMessageDialog(null, "No events can be visualized");
 			mTimeslider.setValue(0);
 			mTimeslider.setUpperValue(0);
 			mTimeslider.setMinorTickSpacing(500);
