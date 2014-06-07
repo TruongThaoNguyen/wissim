@@ -142,6 +142,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 		System.out.println("Create main Panel Visualizer");
 		observerList = new Vector();
 		mLoadingInfor = new JTextArea("Loading trace file");
+		
 		setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		setLayout(null);
 		mCurrentDisplayMode = DisplayMode.NORMALMODE;
@@ -164,7 +165,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBackground(Color.WHITE);
-		tabbedPane.setBounds(145, 11, 800, 720);
+		tabbedPane.setBounds(145, 10, 820, 800);
 		add(tabbedPane);
 		JPanel topologyPanel = new JPanel();
 		tabbedPane.addTab("Topology", null, topologyPanel, null);
@@ -219,12 +220,14 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 
 					if (files[0].getName().equals("Neighbors.txt")
 							|| files[0].getName().equals("Neighbors.tr")) {
-
+						
+						
 						onFileOpen(files[0].getAbsolutePath(),
 								files[1].getAbsolutePath());
 					} else if (files[1].getName().equals("Neighbors.txt")
 							|| files[1].getName().equals("Neighbors.tr")) {
-
+						
+						
 						onFileOpen(files[1].getAbsolutePath(),
 								files[0].getAbsolutePath());
 
@@ -367,7 +370,6 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 			}
 
 			notifyObservers();
-
 			int sizeListEvent = mParser.getListEvents().size();
 			drawNodes(mParser.getListNodes(), false);
 			if (mTimeslider != null) {
@@ -992,12 +994,20 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 	}
 
 	public void onNotifyLoading(boolean isLoading) {
-		System.out.println("Loading");
+		
 		if(isLoading){
+			Thread loadingTheard = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					mTextEventSliderInfor.setText("Waiting...");
+				}
+			});
 			
 		}
 		else{
-			
+			mTextEventSliderInfor.setText("parsed...");
 		}
 	}
 
