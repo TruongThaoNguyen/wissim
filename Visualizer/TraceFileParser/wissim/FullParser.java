@@ -70,7 +70,7 @@ public class FullParser extends AbstractParser {
 		 * Input : trace file path, xml file path Output : write data into xml
 		 * file
 		 */
-
+		
 		listPacket = new ArrayList<Packet>();
 		// mFilePathNodes = "D://GR/GR3Material/Neighbors.txt";
 		// mFilePathEvent = "D://GR/GR3Material/Trace_Energy.tr";
@@ -86,6 +86,7 @@ public class FullParser extends AbstractParser {
 
 		countEnergy = new int[getListNodes().size()];
 		parseEvents(filePathEvent);
+		mainPanel.onNotifyLoading(false);
 	}
 
 	/**
@@ -119,7 +120,7 @@ public class FullParser extends AbstractParser {
 					mNodesTraceFile));
 			// String dataPar[];
 			System.out.println("Parsing nodes...");
-
+			mainPanel.onNotifyLoading(true);
 			while ((currentLine = br.readLine()) != null) {
 				String[] retval = currentLine.split("\\s+");
 				listNeighbors = "";
@@ -160,8 +161,7 @@ public class FullParser extends AbstractParser {
 		String retval[];
 		// int line = 0;
 		System.out.println("Running...");
-		if (mainPanel != null)
-			mainPanel.onNotifyLoading(true);
+		
 		while ((sCurrentLine = br.readLine()) != null) {
 			sCurrentLine = Pattern.compile(" +").matcher(sCurrentLine.trim())
 					.replaceAll(" ");
@@ -279,7 +279,7 @@ public class FullParser extends AbstractParser {
 
 		}
 		br.close();
-		mainPanel.onNotifyLoading(false);
+		
 	}
 
 	/**
