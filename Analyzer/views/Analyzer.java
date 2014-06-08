@@ -53,10 +53,14 @@ public static AbstractParser mParser;
 public TabFolder tabFolder;
 public static boolean checkFileFormat = false;
 public static Composite composite;
+public static String filePathNode=""; 
+public static String filePathEvent="";
 public Analyzer(Composite parent, MenuManager menuManager, StatusLineManager statusLineManager) {
 	super(parent, menuManager, statusLineManager);
 	//createContents();
 	composite = parent;
+	composite.getShell().setCursor(new Cursor(composite.getDisplay(), SWT.CURSOR_WAIT));
+	composite.getShell().setCursor(new Cursor(composite.getDisplay(), SWT.CURSOR_ARROW));
 	initAnalyzer();
 }
 
@@ -68,37 +72,51 @@ public void initAnalyzer(){
 	if(mParser == null){
 		  /*Gọi hàm khởi tạo các đối tượng Node và Packet*/
 			    try {
+			    	JOptionPane.showMessageDialog(null, "Let choose file! First, let choose neighbors file to get position of nodes.");
 			    	try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } 
 			    	catch (ClassNotFoundException | InstantiationException | IllegalAccessException 
 			    			| UnsupportedLookAndFeelException ex) { }
 			    	JFileChooser chooser = new JFileChooser();
-					chooser.setMultiSelectionEnabled(true);
+			    	JFileChooser chooserTrace = new JFileChooser();
+//					chooser.setMultiSelectionEnabled(true);
 			
 					chooser.showOpenDialog(null);
-					File[] files = chooser.getSelectedFiles();
-					if (files.length != 2) {
-						JOptionPane.showMessageDialog(null, "Need import 2 files");		
-						MainWindow.setAnalyzer();
-					} else {
-			
-						if (files[0].getName().equals("Neighbors.txt")
-								|| files[0].getName().equals("Neighbors.tr")) {
-			
-							onFileOpen(files[0].getAbsolutePath(),
-									files[1].getAbsolutePath());
-							checkFileFormat = true;
-						} else if (files[1].getName().equals("Neighbors.txt")
-								|| files[1].getName().equals("Neighbors.tr")) {
-			
-							onFileOpen(files[1].getAbsolutePath(),
-									files[0].getAbsolutePath());
-							checkFileFormat = true;	
-						} else{
-							JOptionPane.showMessageDialog(null,
-									"Invalid file format");
-							MainWindow.setAnalyzer();
-						}
+					File file = chooser.getSelectedFile();
+					if(file != null){
+						filePathNode = file.getAbsolutePath();				
+						JOptionPane.showMessageDialog(null, "Second, let choose trace file to get information of events.");	
+						chooserTrace.showOpenDialog(null);
+					    file = chooserTrace.getSelectedFile();
+					    if(file != null)
+					    	filePathEvent = file.getAbsolutePath();
 					}
+				    if(filePathEvent != "" && filePathNode != ""){
+					    onFileOpen(filePathNode, filePathEvent);
+					    checkFileFormat = true;
+				    }
+//					if (files.length != 2) {
+//						JOptionPane.showMessageDialog(null, "Need import 2 files");		
+//						MainWindow.setAnalyzer();
+//					} else {
+			
+//						if (files[0].getName().equals("Neighbors.txt")
+//								|| files[0].getName().equals("Neighbors.tr")) {
+//			
+//							onFileOpen(files[0].getAbsolutePath(),
+//									files[1].getAbsolutePath());
+//							checkFileFormat = true;
+//						} else if (files[1].getName().equals("Neighbors.txt")
+//								|| files[1].getName().equals("Neighbors.tr")) {
+//			
+//							onFileOpen(files[1].getAbsolutePath(),
+//									files[0].getAbsolutePath());
+//							checkFileFormat = true;	
+//						} else{
+//							JOptionPane.showMessageDialog(null,
+//									"Invalid file format");
+//							MainWindow.setAnalyzer();
+//						}
+//					}
 			    } catch (IOException e1) {
 					e1.printStackTrace();
 					}
@@ -119,6 +137,7 @@ public static void onFileOpen(String filePathNode, String filePathEvent) throws 
 		else{
 			mParser = new EventParser();	
 		}
+
 		composite.getShell().setCursor(new Cursor(composite.getDisplay(), SWT.CURSOR_WAIT));
 		mParser.ConvertTraceFile(filePathNode, filePathEvent);
 		System.out.println("Trace completed");
