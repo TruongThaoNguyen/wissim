@@ -214,6 +214,7 @@ public class CreateTrafficFlowDialog extends Dialog {
 				}
 				for(TableItem tiSource : cbSourceNode.getSelection()) {
 					for(TableItem tiDest : cbDestNode.getSelection()) {
+						if(!tiSource.getText().equals(tiDest.getText())) {
 						try {
 							int sid = Integer.parseInt(tiSource.getText());
 							int did = Integer.parseInt(tiDest.getText());
@@ -250,7 +251,7 @@ public class CreateTrafficFlowDialog extends Dialog {
 						appProtocol.setParameters(appProtocolParams);							
 						
 						for (TableItem item : table.getItems())	appProtocol.addEvent(EventType.valueOf(item.getText(0)), Integer.parseInt(item.getText(1)));					
-				
+						}
 					}
 				}
 				shlCreateTrafficFlow.close();
