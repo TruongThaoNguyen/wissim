@@ -1,7 +1,5 @@
 package views.dialogs;
 
-import java.io.IOException;
-
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Control;

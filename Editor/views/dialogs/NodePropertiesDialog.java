@@ -21,7 +21,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 import controllers.graphicscomponents.GWirelessNode;
-import views.Workspace;
 
 public class NodePropertiesDialog extends Dialog {
 
@@ -29,20 +28,18 @@ public class NodePropertiesDialog extends Dialog {
 	protected Shell shlNodeProperties;
 	private Table table;
 
-	private GWirelessNode gnode;
-	private Workspace workspace;
+	private GWirelessNode gnode;	
 
 	/**
 	 * Create the dialog.
 	 * @param parent
 	 * @param style
 	 */
-	public NodePropertiesDialog(Shell parent, int style, Workspace workspace, GWirelessNode gnode) {
+	public NodePropertiesDialog(Shell parent, int style, GWirelessNode gnode) {
 		super(parent, style);
 		setText("SWT Dialog");
 
 		this.gnode = gnode;
-		this.workspace = workspace;
 	}
 
 	/**

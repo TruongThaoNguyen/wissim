@@ -358,7 +358,7 @@ public class Editor extends MainContent implements Observer {
 							Date st = new Date();
 							if (Converter.CTD(text.getText()) != null) 	
 							{						
-								Workspace.getProject().getNetwork().updateNeighbors();
+								// Workspace.getProject().getNetwork().updateNeighbors();
 								if(getWorkspace() != null)
 								{
 									getWorkspace().updateLayout();

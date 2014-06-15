@@ -1,20 +1,14 @@
 package views.dialogs;
 
-import javax.xml.ws.soap.Addressing;
-
 import models.DialogResult;
 import models.DialogResult.CreateNodeSetResult;
 import models.networkcomponents.features.Area;
 
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
@@ -146,7 +140,6 @@ public class CreateNodeSetDialog extends Dialog {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
 				if(combo.getSelectionIndex() == 1) {
 					text_1.setEnabled(true);
 					text_2.setEnabled(true);
@@ -162,7 +155,6 @@ public class CreateNodeSetDialog extends Dialog {
 			
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
 				if(combo.getSelectionIndex() == 1) {
 					text_1.setEnabled(true);
 					text_2.setEnabled(true);

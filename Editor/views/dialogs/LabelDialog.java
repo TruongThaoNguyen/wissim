@@ -1,5 +1,6 @@
 package views.dialogs;
 
+import models.Project;
 import models.networkcomponents.Node;
 import models.networkcomponents.features.GraphicLabel;
 import models.networkcomponents.features.Label;
@@ -18,26 +19,22 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import views.Workspace;
 import controllers.managers.ProjectManager;
 
 public class LabelDialog extends Dialog {
 
 	protected Object result;
 	protected Shell shlLabels;
-	private Table table;
-	
-	private Workspace workspace;
+	private Table table;	
 
 	/**
 	 * Create the dialog.
 	 * @param parent
 	 * @param style
 	 */
-	public LabelDialog(Shell parent, int style, Workspace workspace) {
+	public LabelDialog(Shell parent, int style) {
 		super(parent, style);
 		setText("SWT Dialog");
-		this.workspace = workspace;
 	}
 
 	/**
@@ -140,8 +137,8 @@ public class LabelDialog extends Dialog {
 	}
 	
 	private void updateTable() {
-		table.removeAll();
-		for (Label l : workspace.getProject().getLabelList()) {						
+		table.removeAll();		
+		for (Label l : Project.getLabelList()) {						
 			TableItem item = new TableItem(table, SWT.NONE);
 			
 			String str = "";

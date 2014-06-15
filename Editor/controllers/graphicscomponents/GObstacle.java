@@ -1,5 +1,6 @@
 package controllers.graphicscomponents;
 
+import models.Project;
 import models.networkcomponents.features.Area;
 
 import org.eclipse.swt.SWT;
@@ -61,9 +62,8 @@ public class GObstacle extends GSelectableObject {
 		mntmRemoveObstacle.setText("Remove");
 		mntmRemoveObstacle.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Workspace w = (Workspace) getParent();
-				w.getProject().getObstacleList().remove(getArea());				
+			public void widgetSelected(SelectionEvent e) {				
+				Project.getObstacleList().remove(getArea());				
 				GObstacle.this.dispose();
 			}
 		});

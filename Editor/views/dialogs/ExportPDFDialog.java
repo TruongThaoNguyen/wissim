@@ -20,20 +20,16 @@ public class ExportPDFDialog extends Dialog {
 	protected Object result;
 	protected Shell shlExport;
 	private Text txtDirectory;
-	private Text txtFileName;
-	
-	private Workspace workspace;
+	private Text txtFileName;	
 
 	/**
 	 * Create the dialog.
 	 * @param parent
 	 * @param style
 	 */
-	public ExportPDFDialog(Shell parent, int style, Workspace workspace) {
+	public ExportPDFDialog(Shell parent, int style) {
 		super(parent, style);
-		setText("SWT Dialog");
-		
-		this.workspace = workspace;
+		setText("SWT Dialog");		
 	}
 
 	/**
@@ -102,7 +98,7 @@ public class ExportPDFDialog extends Dialog {
 		
 		txtFileName = new Text(composite_1, SWT.BORDER);
 		txtFileName.setBounds(117, 44, 105, 21);
-		txtFileName.setText(workspace.getProject().getNetwork().getName());
+		txtFileName.setText(Workspace.getProject().getNetwork().getName());
 		
 		Composite composite_2 = new Composite(shlExport, SWT.NONE);
 		composite_2.setBounds(0, 218, 444, 53);

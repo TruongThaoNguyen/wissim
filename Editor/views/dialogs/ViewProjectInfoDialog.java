@@ -21,8 +21,6 @@ public class ViewProjectInfoDialog extends Dialog {
 	protected Object result;
 	protected Shell shlProjectInformation;
 	private Table table;
-	private Workspace workspace;
-
 	/**
 	 * Create the dialog.
 	 * @param parent
@@ -31,8 +29,6 @@ public class ViewProjectInfoDialog extends Dialog {
 	public ViewProjectInfoDialog(Shell parent, int style, Workspace workspace) {
 		super(parent, style);
 		setText("SWT Dialog");
-		
-		this.workspace = workspace;
 	}
 
 	/**
@@ -86,13 +82,11 @@ public class ViewProjectInfoDialog extends Dialog {
 		btnNewButton.setText("Ok");
 	}
 	
-	private void initialize() {
-		Project project = workspace.getProject();
-		
+	private void initialize() {				
 		TableItem item = new TableItem(table, SWT.NONE);
-		item.setText(new String[] { "Absolute Path", project.getPath() });
+		item.setText(new String[] { "Absolute Path", Project.getPath() });
 		
 		TableItem item1 = new TableItem(table, SWT.NONE);
-		item1.setText(new String[] { "Created Date", project.getCreatedDate().toString() });
+		item1.setText(new String[] { "Created Date", Project.getCreatedDate().toString() });
 	}
 }

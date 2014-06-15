@@ -165,6 +165,11 @@ public class ImageConverter {
 			}
 		});
 		Frame frame = new Frame() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			public void paint(Graphics g) {
 				Insets insets = getInsets();
 				if (awtImage != null) {

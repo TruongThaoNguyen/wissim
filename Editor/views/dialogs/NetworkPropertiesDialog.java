@@ -26,7 +26,6 @@ public class NetworkPropertiesDialog extends Dialog {
 
 	protected Object result;
 	protected Shell shlNetworkInformation;
-	private Workspace workspace;
 	private Table table;
 	private Button btnOk;
 
@@ -35,11 +34,9 @@ public class NetworkPropertiesDialog extends Dialog {
 	 * @param parent
 	 * @param style
 	 */
-	public NetworkPropertiesDialog(Shell parent, int style, Workspace workspace) {
+	public NetworkPropertiesDialog(Shell parent, int style) {
 		super(parent, style);
-		setText("SWT Dialog");
-		
-		this.workspace = workspace;
+		setText("SWT Dialog");		
 	}
 
 	/**
@@ -62,7 +59,7 @@ public class NetworkPropertiesDialog extends Dialog {
 	}
 
 	private void initialize() {	
-		final WirelessNetwork network = workspace.getProject().getNetwork();
+		final WirelessNetwork network = Workspace.getProject().getNetwork();
 		
 		TableItem tbltmName;		
 		tbltmName = new TableItem(table, SWT.NONE);

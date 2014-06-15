@@ -56,9 +56,7 @@ public class VisualizeManager {
         dt = new Triangulation(initialTriangle);
     }
     
-    public void calculateVoronoiDiagram() {
-    	Workspace workspace = (Workspace) gnetwork.getParent();
-    	
+    public void calculateVoronoiDiagram() {    	    	
         initialTriangle = new Triangle(
                 new Pnt(-initialSize, -initialSize),
                 new Pnt( initialSize, -initialSize),
@@ -66,7 +64,7 @@ public class VisualizeManager {
         dt = new Triangulation(initialTriangle);
         colorTable = new HashMap<Object, Color>();
         
-        for (Node node : workspace.getProject().getNetwork().getNodeList()) {
+        for (Node node : Workspace.getProject().getNetwork().getNodeList()) {
         	WirelessNode wnode = (WirelessNode) node;
         	Point p = new Point(
         			(int)(wnode.getX() * gnetwork.getRatio()), 
@@ -77,7 +75,7 @@ public class VisualizeManager {
     
 	public void calculateRNGGraph() {
 		if (ProjectManager.checkConnectivity()) {
-	    	PlanarGraphAlgorithm algorithm = new PlanarGraphAlgorithm(gnetwork.getNetwork());
+	    	PlanarGraphAlgorithm algorithm = new PlanarGraphAlgorithm(GNetwork.getNetwork());
 	    	algorithm.setType(PlanarGraphAlgorithm.RNG);
 	    	rngGraph = (Graph) algorithm.doAlgorithm();
 		} else
@@ -86,7 +84,7 @@ public class VisualizeManager {
     
 	public void calculateGGGraph() {
 		if (ProjectManager.checkConnectivity()) {		
-	    	PlanarGraphAlgorithm algorithm = new PlanarGraphAlgorithm(gnetwork.getNetwork());
+	    	PlanarGraphAlgorithm algorithm = new PlanarGraphAlgorithm(GNetwork.getNetwork());
 	    	algorithm.setType(PlanarGraphAlgorithm.GG);
 	    	ggGraph = (Graph) algorithm.doAlgorithm();    	
 		} else

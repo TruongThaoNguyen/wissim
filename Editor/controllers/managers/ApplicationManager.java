@@ -392,11 +392,11 @@ public class ApplicationManager {
 	}
 
 	public static void viewNetworkInfo(Workspace workspace) {
-		new NetworkPropertiesDialog(workspace.getShell(), SWT.SHEET, workspace).open();
+		new NetworkPropertiesDialog(workspace.getShell(), SWT.SHEET).open();
 	}
 
 	public static void viewNodeInfo(Workspace workspace, GWirelessNode wnode) {
-		new NodePropertiesDialog(workspace.getShell(), SWT.SHEET, workspace, wnode).open();		
+		new NodePropertiesDialog(workspace.getShell(), SWT.SHEET, wnode).open();		
 	}
 
 	public static void showObstacles(Workspace workspace) {	
@@ -633,7 +633,7 @@ public class ApplicationManager {
 
 	public static void manageLabels(Workspace workspace) {
 		if (workspace != null)
-			new LabelDialog(workspace.getShell(), SWT.SHEET, workspace).open();		
+			new LabelDialog(workspace.getShell(), SWT.SHEET).open();		
 	}
 
 	public static void managePaths(Workspace workspace) {
@@ -673,7 +673,7 @@ public class ApplicationManager {
 	public static void changeNetworkSize(Workspace workspace) {
 		if (workspace == null) return;
 		
-		EditNetworkSizeResult result = (EditNetworkSizeResult)new EditNetworkSizeDialog(workspace.getShell(), SWT.SHEET, workspace).open();
+		EditNetworkSizeResult result = (EditNetworkSizeResult)new EditNetworkSizeDialog(workspace.getShell(), SWT.SHEET).open();
 
 		if (result == null) return;			
 		

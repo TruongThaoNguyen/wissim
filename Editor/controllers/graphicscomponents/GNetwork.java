@@ -742,7 +742,7 @@ public class GNetwork extends Canvas {
 		mntmInfo.addSelectionListener(new SelectionAdapter() {			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				new NetworkPropertiesDialog(getShell(), SWT.SHEET, workspace).open();
+				new NetworkPropertiesDialog(getShell(), SWT.SHEET).open();
 			}
 		});
 		
@@ -959,7 +959,7 @@ public class GNetwork extends Canvas {
 		mntmInfo.addSelectionListener(new SelectionAdapter() {			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				new NetworkPropertiesDialog(getShell(), SWT.SHEET, workspace).open();
+				new NetworkPropertiesDialog(getShell(), SWT.SHEET).open();
 			}
 		});
 		

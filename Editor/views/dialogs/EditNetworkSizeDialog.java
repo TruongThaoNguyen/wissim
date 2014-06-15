@@ -2,7 +2,6 @@ package views.dialogs;
 
 import models.DialogResult;
 import models.DialogResult.EditNetworkSizeResult;
-import models.Project;
 import models.networkcomponents.WirelessNetwork;
 
 import org.eclipse.swt.SWT;
@@ -15,8 +14,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import controllers.managers.ProjectManager;
-
 import views.Workspace;
 
 
@@ -27,7 +24,6 @@ public class EditNetworkSizeDialog extends Dialog {
 	private Text txtHeight;
 	
 	private int widthType = WirelessNetwork.RIGHT, lengthType = WirelessNetwork.BOTTOM;
-	private Workspace workspace;
 	private Text text;
 
 	/**
@@ -36,11 +32,9 @@ public class EditNetworkSizeDialog extends Dialog {
 	 * @param style
 	 * @param workspace 
 	 */
-	public EditNetworkSizeDialog(Shell parent, int style, Workspace workspace) {
+	public EditNetworkSizeDialog(Shell parent, int style) {
 		super(parent, style);
 		setText("SWT Dialog");
-		
-		this.workspace = workspace;
 	}
 
 	/**
@@ -102,7 +96,7 @@ public class EditNetworkSizeDialog extends Dialog {
 		lblWidth.setText("Width");
 		
 		txtWidth = new Text(shlEditNetworkSize, SWT.BORDER);
-		txtWidth.setText(workspace.getProject().getNetwork().getWidth() + "");
+		txtWidth.setText(Workspace.getProject().getNetwork().getWidth() + "");
 		txtWidth.setBounds(98, 10, 96, 21);
 		
 		Label lblHeight = new Label(shlEditNetworkSize, SWT.NONE);
@@ -110,7 +104,7 @@ public class EditNetworkSizeDialog extends Dialog {
 		lblHeight.setBounds(37, 47, 55, 25);
 		
 		txtHeight = new Text(shlEditNetworkSize, SWT.BORDER);
-		txtHeight.setText(workspace.getProject().getNetwork().getLength() + "");
+		txtHeight.setText(Workspace.getProject().getNetwork().getLength() + "");
 		txtHeight.setBounds(98, 44, 96, 21);
 		
 		final Button btnCenter = new Button(shlEditNetworkSize, SWT.NONE);
@@ -208,7 +202,7 @@ public class EditNetworkSizeDialog extends Dialog {
 		
 		text = new Text(shlEditNetworkSize, SWT.BORDER);
 		text.setBounds(98, 81, 96, 21);
-		text.setText(workspace.getProject().getNetwork().getTime() +"");
+		text.setText(Workspace.getProject().getNetwork().getTime() +"");
 
 	}
 	

@@ -97,8 +97,9 @@ public abstract class WirelessNetwork extends Network {
 
 	/**
 	 * Update neighbors of all nodes in the networks.
-	 * Complexity O(n^2)
+	 * @deprecated Complexity O(n^2)
 	 */
+	@Deprecated
 	public void updateNeighbors() {
 		// remove all neighbors lists of nodes in the network
 		for (int i = 0; i < getNodeList().size(); i++)
