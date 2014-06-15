@@ -34,7 +34,7 @@ package models.networkcomponents.algorithms.delaunay;
  * @author Alan Schwartz
  */
 
-public class Line implements Comparable {
+public class Line implements Comparable<Object> {
     public Pnt a;
     public Pnt b;
 

@@ -35,6 +35,8 @@ public abstract class WirelessNetwork extends Network {
 	 * @param lType
 	 */
 	public boolean setSize(int width, int length, int wType, int lType) {
+		System.out.println("set Size");
+		
 		int ew = width - xSize;
 		int el = length - ySize;
 		
@@ -95,36 +97,39 @@ public abstract class WirelessNetwork extends Network {
 
 	// region ------------------- update Neighbors ------------------- //
 
-	/**
-	 * Update neighbors of all nodes in the networks.
-	 * @deprecated Complexity O(n^2)
-	 */
-	@Deprecated
-	public void updateNeighbors() {
-		// remove all neighbors lists of nodes in the network
-		for (int i = 0; i < getNodeList().size(); i++)
-			((WirelessNode)getNodeList().get(i)).getNeighborList().clear();
-		
-		for (int i = 0; i < getNodeList().size(); i++) {			
-			for (int j = i + 1; j < getNodeList().size(); j++) {	
-				WirelessNode nodei = (WirelessNode)getNodeList().get(i);
-				WirelessNode nodej = (WirelessNode)getNodeList().get(j);
-				
-				int dist2 = (nodei.getX() - nodej.getX())*(nodei.getX() - nodej.getX()) + (nodei.getY() - nodej.getY())*(nodei.getY() - nodej.getY());
-				
-				if (dist2 <= nodei.getRange() * nodei.getRange())
-					nodej.addNeighbor(nodei);
-				if (dist2 <= nodej.getRange() * nodej.getRange())
-					nodei.addNeighbor(nodej);
-			}
-		}
-	}
+//	/**
+//	 * Update neighbors of all nodes in the networks.
+//	 * @deprecated Complexity O(n^2)
+//	 */
+//	@Deprecated
+//	private void updateNeighbors() {
+//		// remove all neighbors lists of nodes in the network
+//		for (int i = 0; i < getNodeList().size(); i++)
+//			((WirelessNode)getNodeList().get(i)).getNeighborList().clear();
+//		
+//		for (int i = 0; i < getNodeList().size(); i++) {			
+//			for (int j = i + 1; j < getNodeList().size(); j++) {	
+//				WirelessNode nodei = (WirelessNode)getNodeList().get(i);
+//				WirelessNode nodej = (WirelessNode)getNodeList().get(j);
+//				
+//				int dist2 = (nodei.getX() - nodej.getX())*(nodei.getX() - nodej.getX()) + (nodei.getY() - nodej.getY())*(nodei.getY() - nodej.getY());
+//				
+//				if (dist2 <= nodei.getRange() * nodei.getRange())
+//					nodej.addNeighbor(nodei);
+//				if (dist2 <= nodej.getRange() * nodej.getRange())
+//					nodei.addNeighbor(nodej);
+//			}
+//		}
+//	}
+//	
 	
 	/**
 	 * Update neighbors when a node n is added or changed.
 	 * @param n
 	 */
-	public void updateNeighbors(WirelessNode n) {
+	@Deprecated
+	public void updateNeighbors(WirelessNode n) 
+	{
 		if (getNodeList().contains(n))	// clear neighbor
 		{			
 			// first remove this node in neighbor lists of other nodes
@@ -178,8 +183,7 @@ public abstract class WirelessNetwork extends Network {
 		
 	@Override
 	public final Node addNode(int x, int y) {
-		WirelessNode node = addnode(x, y);
-		updateNeighbors(node);
+		WirelessNode node = addnode(x, y);		
 		return node;
 	}
 		
@@ -187,7 +191,7 @@ public abstract class WirelessNetwork extends Network {
 	 * Remove node out of network, including update neighbor list
 	 */
 	@Override
-	public final boolean removeNode(Node n) {
+	public final boolean removeNode(Node n) {		
 		if (n == null) return false;
 		removeNeighbor((WirelessNode) n);
 		return removenode(n);			
@@ -196,7 +200,7 @@ public abstract class WirelessNetwork extends Network {
 	protected abstract WirelessNode addnode(int x, int y);
 	protected abstract boolean removenode(Node n);
 
-	private WirelessNode getNodeByPosition(int x, int y) {
+	private WirelessNode getNodeByPosition(int x, int y) {		
 		for (Node n : getNodeList()) {
 			WirelessNode wn  = (WirelessNode) n;
 			

@@ -63,7 +63,7 @@ public class Triangulation extends AbstractSet<Triangle> {
 
     private boolean ggDebug = false;         // Debug output for Gabriel graphs
     private boolean rngDebug = true;         // Debug output for RNGs
-    private boolean emstDebug = true;        // Debug output for EMSTs
+   // private boolean emstDebug = true;        // Debug output for EMSTs
     private Triangle mostRecent = null;      // Most recently "active" triangle
     private Graph<Triangle> triGraph;        // Holds triangles for navigation
     private Set<Line> emstLineSet;           // Holds candidate lines for EMST
@@ -422,7 +422,7 @@ public class Triangulation extends AbstractSet<Triangle> {
                 if (visited.contains(neighbor)) continue;
                 toBeChecked.add(neighbor);
 
-                Pnt c = point.midpoint(neighbor);
+                // Pnt c = point.midpoint(neighbor);
                 double distance = point.distance(neighbor);
                 if (site.inCircle(neighbor, distance) &&
                     site.inCircle(point, distance)) {

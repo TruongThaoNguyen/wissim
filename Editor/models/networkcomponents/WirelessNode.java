@@ -68,7 +68,7 @@ public abstract class WirelessNode extends Node {
 			setX(x);
 			setY(y);
 
-			wn.updateNeighbors(this);
+			//wn.updateNeighbors(this);
 			
 			setChanged();
 			notifyObservers("Position");

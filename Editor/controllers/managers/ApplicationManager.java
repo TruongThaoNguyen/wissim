@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import models.Project;
@@ -274,6 +275,8 @@ public class ApplicationManager {
 	}
 
 	public static void createASetOfNodes(Workspace workspace,Editor editor) {
+		Date s = new Date();
+		
 		if (workspace == null) return;
 		
 		CreateNodeSetResult result = (CreateNodeSetResult) new CreateNodeSetDialog(workspace.getShell(), SWT.SHEET, null).open();
@@ -294,6 +297,8 @@ public class ApplicationManager {
 				editor.getActSave().setEnabled(true);
 			}
 		}
+		
+		System.out.println(new Date().getTime() - s.getTime());
 	}
 
 	public static void manageTrafficFlow(Workspace workspace) {

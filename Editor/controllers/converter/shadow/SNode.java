@@ -12,7 +12,6 @@ import models.converter.InsProc;
 import models.converter.InsVar;
 import models.converter.ParseException;
 import models.networkcomponents.Node;
-import models.networkcomponents.WirelessNetwork;
 import models.networkcomponents.WirelessNode;
 import models.networkcomponents.events.Event;
 import models.networkcomponents.events.Event.EventType;
@@ -32,7 +31,6 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 		super(network);
 		setInsVar("X_", x + "");
 		setInsVar("Y_", y + "");
-		network.updateNeighbors(this);
 		addInsProc();
 	}
 
@@ -196,11 +194,6 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 	@Override
 	public void setX(int x) {
 		setInsVar("X_", x + "");
-		
-		if (getInsVar("Y_") != null)
-		{
-			((WirelessNetwork)network).updateNeighbors(this);
-		}
 	}
 
 	@Override
@@ -211,11 +204,6 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 	@Override
 	public void setY(int y) {
 		setInsVar("Y_", y + "");
-		
-		if (getInsVar("X_") != null)
-		{
-			((WirelessNetwork)network).updateNeighbors(this);
-		}
 	}
 	
 	public void addTransportProtocol(STransportProtocol agent) {
