@@ -7,20 +7,52 @@ import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.ParsingException;
 
+/**
+ * General configure
+ * @author Trongnguyen
+ *
+ */
 public final class Configure {
+	/**
+	 * Path to configure storage file
+	 */
 	static private String CONFIGURE = getHomePath() + "/.wissim/configure.xml";
 	
+	/**
+	 * Path to current directory
+	 */
 	static String directory;
+	
+	/**
+	 * Path to default trace file
+	 */
 	static String traceFile;
+	
+	/**
+	 * Path to default nam trace file
+	 */
 	static String namTraceFile;	
+	
+	/**
+	 * Path to ns2 installed directory
+	 */
 	static String ns2Path;	// = "/home/trongnguyen/NS2/";
+	
+	/**
+	 * Path to current tcl file
+	 */
 	static String tclFile;
 	
+	/**
+	 * return user's home path
+	 * @return a string that is user's home path
+	 */
 	public static String getHomePath() {
 		return System.getProperty("user.home");
 	}
 	
 	/**
+	 * get current Tcl file
 	 * @return the tclFile name
 	 */
 	public static String getTclFile() {
@@ -29,7 +61,7 @@ public final class Configure {
 	}
 	
 	/**
-	 * set tclFile name
+	 * set tclFile name.
 	 * @param tclFile new file name
 	 */
 	public static String setTclFile(String value) {
@@ -120,6 +152,11 @@ public final class Configure {
 		return ns2Path;
 	}
 	
+	/**
+	 * 
+	 * @param path
+	 * @return
+	 */
 	public static String setNS2Path(String path) {
 		if (!path.endsWith("/")) 	ns2Path = path + "/";		
 		else						ns2Path = path;
@@ -143,6 +180,12 @@ public final class Configure {
 		return ns2Path;
 	}
 	
+	/**
+	 * Merge directory and file name to create full path.
+	 * @param directory path to directory
+	 * @param fileName file name
+	 * @return full path to file
+	 */
 	public static String getFilePath(String directory, String fileName) {
 		String slash = "/";		
 		
