@@ -24,7 +24,7 @@ public class XMLReader {
 	
 	/**
 	 * Parse xml file to Document Object
-	 * @param path
+	 * @param path path to document's directory
 	 * @return
 	 * @throws ValidityException
 	 * @throws ParsingException

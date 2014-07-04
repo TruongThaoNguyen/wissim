@@ -1170,11 +1170,10 @@ public class GNetwork extends Canvas {
         }
         
     }
-
+    
     /**
      * Draw all the Voronoi cells.
-     * @param monocolor true iff drawing Voronoi cells with fill colors
-     * @param withSites true iff drawing the site for each Voronoi cell
+     * @param fillType
      */
     public void drawAllVoronoi(int fillType) {
         // Keep track of sites done; no drawing for initial triangles sites

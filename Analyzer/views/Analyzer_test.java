@@ -113,7 +113,7 @@
 //public static void main(String[] args) {
 //    
 //    boolean checkFileFormat = false;
-//    /*Gọi hàm khởi tạo các đối tượng Node và Packet*/
+//    /**/
 //    while(!checkFileFormat){
 //	    try {
 //	    	JFileChooser chooser = new JFileChooser();

@@ -374,9 +374,9 @@ public class DelayTab extends Tab implements Observer{
 		//		resetEditors(); 		
   }		
 	public double variancesDelay(LinkedHashMap<Packet,Double> listDelayPacket,Double totalDelay){
-		double variances=0; // phương sai E(X*X)-E(X)*E(X)
-		double expectedValue1=0; //Giá trị kì vọng E(X*X)=x*x*p+....
-		double expectedValue2=0; // E(X)=x*p+....
+		double variances=0; // 
+		double expectedValue1=0; //
+		double expectedValue2=0; // 
 		for (Packet i : listDelayPacket.keySet()) {
 	          //  System.out.println( i.id +" : " + listThroughputPacket.get(i));
 			expectedValue1 += listDelayPacket.get(i)*listDelayPacket.get(i)*

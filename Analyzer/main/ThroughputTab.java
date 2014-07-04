@@ -391,8 +391,8 @@ public class ThroughputTab extends Tab implements Observer{
 	} 
 	
 	public double variancesThroughput(LinkedHashMap<Packet,Double> listThroughputPacket,Double totalTime){
-		double variances=0; // phương sai E(X*X)-E(X)*E(X)
-		double expectedValue1=0; //Giá trị kì vọng E(X*X)=x*x*p+....
+		double variances=0; // E(X*X)-E(X)*E(X)
+		double expectedValue1=0; // E(X*X)=x*x*p+....
 		double expectedValue2=0; // E(X)=x*p+....
 		for (Packet i : listThroughputPacket.keySet()) {
 	          //  System.out.println( i.id +" : " + listThroughputPacket.get(i));

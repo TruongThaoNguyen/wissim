@@ -70,7 +70,7 @@ protected void updateMenu() {
 }
 public void initAnalyzer(){
 	if(mParser == null){
-		  /*Gọi hàm khởi tạo các đối tượng Node và Packet*/
+		  /**/
 			    try {
 			    	JOptionPane.showMessageDialog(null, "Let choose file! First, let choose neighbors file to get position of nodes.");
 			    	try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } 

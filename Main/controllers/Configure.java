@@ -153,9 +153,9 @@ public final class Configure {
 	}
 	
 	/**
-	 * 
-	 * @param path
-	 * @return
+	 * set current NS2 directory.
+	 * @param path path to ns2 installed directory.
+	 * @return path to ns2 installed directory
 	 */
 	public static String setNS2Path(String path) {
 		if (!path.endsWith("/")) 	ns2Path = path + "/";		

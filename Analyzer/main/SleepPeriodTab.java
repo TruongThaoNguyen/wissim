@@ -84,9 +84,9 @@ public class SleepPeriodTab extends Tab implements Observer{
 			sleepTime[i] = STOP_TIME;
 		for(int i = 0; i < Analyzer.mParser.getListPacket().size(); i++){
 			Packet packet = Analyzer.mParser.getListPacket().get(i);
-			// node nguồn của packet 
+			// node  packet 
 			sleepTime[Integer.parseInt(packet.sourceID)] -= TRANSITION_TIME;								
-			// các node tiếp theo trên đường truyền packet						 								
+			// 						 								
 			for(int j = 0; j < packet.listNode.size(); j++){	
 				NodeTrace node = packet.listNode.get(j);
 //				if(packet.isSuccess){

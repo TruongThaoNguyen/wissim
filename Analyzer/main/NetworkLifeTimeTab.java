@@ -184,7 +184,7 @@ public class NetworkLifeTimeTab extends Tab implements Observer {
 				   	    		  if(listNodeAreas.size() == 0){
 				   	    			  MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
 				   						dialog.setText("Error");
-				   						dialog.setMessage("Chưa chọn vùng!");
+				   						dialog.setMessage("some thing wrong!");
 				   					    dialog.open(); 
 				   	    		  }
 				   	    		  else{				   	    			 

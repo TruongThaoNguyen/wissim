@@ -381,8 +381,8 @@ public class HopCountTab extends Tab implements Observer {
 
 		
 	public double variancesHopCount(LinkedHashMap<Packet,Integer> listHopCountPacket,Double totalTime){
-		double variances=0; // phương sai E(X*X)-E(X)*E(X)
-		double expectedValue1=0; //Giá trị kì vọng E(X*X)=x*x*p+....
+		double variances=0; //  E(X*X)-E(X)*E(X)
+		double expectedValue1=0; // E(X*X)=x*x*p+....
 		double expectedValue2=0; // E(X)=x*p+....
 		for (Packet i : listHopCountPacket.keySet()) {
 	          //  System.out.println( i.id +" : " + listThroughputPacket.get(i));
