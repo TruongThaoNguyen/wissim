@@ -200,6 +200,12 @@ public abstract class WirelessNetwork extends Network {
 	protected abstract WirelessNode addnode(int x, int y);
 	protected abstract boolean removenode(Node n);
 
+	/**
+	 * Get location position of node 
+	 * @param x
+	 * @param y
+	 * @return wireless node
+	 */
 	private WirelessNode getNodeByPosition(int x, int y) {		
 		for (Node n : getNodeList()) {
 			WirelessNode wn  = (WirelessNode) n;
@@ -211,6 +217,11 @@ public abstract class WirelessNetwork extends Network {
 		return null;
 	}
 
+	/**
+	 * Remove a node by id out of network
+	 * @param id
+	 * @return
+	 */
 	public final boolean removeNode(int id) {		
 		return removeNode(getNodeList().get(id));
 	}

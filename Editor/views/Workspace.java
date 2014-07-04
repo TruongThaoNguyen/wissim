@@ -51,6 +51,13 @@ public class Workspace extends Composite {
 	
 	WorkspacePropertyManager propertyManager;
 
+	/**
+	 * Contructor
+	 * 
+	 * Build a workspace for scenarito.
+	 * @param parent
+	 * @param style
+	 */
 	public Workspace(Composite parent, int style) {
 		super(parent, style);
 		
@@ -141,6 +148,9 @@ public class Workspace extends Composite {
 	
 	public static Project getProject() { return ProjectManager.getProject(); }
 	
+	/**
+	 * Update menu on current workspace
+	 */
 	private void updateMenu() {
 		Menu menu = new Menu(this);
 		setMenu(menu);
@@ -244,7 +254,9 @@ public class Workspace extends Composite {
 		}
 	}
 	
-	// calculate scale layout every time when workspace is resized
+	/**
+	 * calculate scale layout every time when workspace is resized
+	 */
 	private void calculateLayoutForScale() {
 		GNetwork gnetwork = getGraphicNetwork();		
 		if (gnetwork == null) return;		
@@ -276,6 +288,11 @@ public class Workspace extends Composite {
 		return null;
 	}
 	
+	/**
+	 * Get graphic node immediately
+	 * @param node
+	 * @return
+	 */
 	public GWirelessNode getGraphicNodeByNode(Node node) {
 		for (Control c : getChildren())
 			if (c instanceof GWirelessNode && ((GWirelessNode) c).getWirelessNode().getId() == node.getId())
@@ -304,6 +321,10 @@ public class Workspace extends Composite {
 			obj.setSelect(false);
 	}
 	
+	/**
+	 * Retrieve network belong to workspace
+	 * @return
+	 */
 	public GNetwork getGraphicNetwork() {
 		for (Control c : getChildren())
 			if (c instanceof GNetwork)
@@ -312,6 +333,10 @@ public class Workspace extends Composite {
 		return null;
 	}
 		
+	/**
+	 * Get all node that selected
+	 * @return list of selected node
+	 */
 	public List<GSelectableObject> getSelectedObject() {
 		List<GSelectableObject> selectedList = new ArrayList<GSelectableObject>();
 		for (Control c : getChildren())
@@ -323,6 +348,10 @@ public class Workspace extends Composite {
 		return selectedList;
 	}
 	
+	/**
+	 * Get list of posible selected node
+	 * @return
+	 */
 	public List<GSelectableObject> getSelectableObject() {
 		List<GSelectableObject> selectableList = new ArrayList<GSelectableObject>();		
 		for (Control c : getChildren())
@@ -332,6 +361,10 @@ public class Workspace extends Composite {
 		return selectableList;
 	}
 	
+	/**
+	 * Get all node on workspace
+	 * @return
+	 */
 	public List<GWirelessNode> getGraphicNodes() {
 		List<GWirelessNode> nodeList = new LinkedList<GWirelessNode>();
 		for (Control c : getChildren()) {

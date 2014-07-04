@@ -15,7 +15,13 @@ public class Event extends Observable {
 	
 	// type of event
 	EventType type;
-	
+	/**
+	 * Contructor
+	 * 
+	 * Create Event 
+	 * @param type
+	 * @param raisedTime : time when event raise
+	 */
 	public Event(EventType type, double raisedTime)
 	{
 		setRaisedTime((int) raisedTime);
