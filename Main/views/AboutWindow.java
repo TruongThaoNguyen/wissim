@@ -20,12 +20,8 @@ public class AboutWindow extends TitleAreaDialog {
 		super(parentShell);
 	}
 
-	/**
-	 * Create contents of the dialog.
-	 * @param parent
-	 */
 	@Override
-	protected Control createDialogArea(Composite parent) {		
+	protected final Control createDialogArea(final Composite parent) {		
 		setTitle("WiSSim Editor");
 		Composite area = (Composite) super.createDialogArea(parent);
 		Composite container = new Composite(area, SWT.NONE);
@@ -36,7 +32,7 @@ public class AboutWindow extends TitleAreaDialog {
 		Label lblCopyrightBy = new Label(container, SWT.NONE);
 		lblCopyrightBy.setAlignment(SWT.CENTER);
 		lblCopyrightBy.setBounds(10, 30, 430, 20);
-		lblCopyrightBy.setText("© 2014 SEDIC Laboratory, All Rights Reserved.");		
+		lblCopyrightBy.setText("© 2014 SEDIC Laboratory, All Rights Reserved.");
 		Label lblLab = new Label(container, SWT.NONE);
 		lblLab.setAlignment(SWT.CENTER);
 		lblLab.setBounds(10, 60, 430, 20);
@@ -52,7 +48,6 @@ public class AboutWindow extends TitleAreaDialog {
 		lblAddressLabel.setText("http://sedic.soict.hust.edu.vn");
 		lblAddressLabel.setBounds(10, 100, 430, 20);
 		
-
 		return area;
 	}
 
@@ -61,7 +56,7 @@ public class AboutWindow extends TitleAreaDialog {
 	 * @param parent
 	 */
 	@Override
-	protected void createButtonsForButtonBar(Composite parent) {
+	protected final void createButtonsForButtonBar(final Composite parent) {
 		parent.setTouchEnabled(true);
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
 				true);
@@ -71,8 +66,7 @@ public class AboutWindow extends TitleAreaDialog {
 	 * Return the initial size of the dialog.
 	 */
 	@Override
-	protected Point getInitialSize() {
+	protected final Point getInitialSize() {
 		return new Point(450, 300);
 	}
-
 }

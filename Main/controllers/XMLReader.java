@@ -10,27 +10,20 @@ import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.Serializer;
-import nu.xom.ValidityException;
 
 /**
- * Parser.java
- * 
- * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and
- *            Technology
- * @Author Duc-Trong Nguyen
- * @Version 2.0
+ * Read Xml file.
  */
-public class XMLReader {	
+public class XMLReader {
 	
 	/**
-	 * Parse xml file to Document Object
+	 * Parse xml file to Document Object.
 	 * @param path path to document's directory
-	 * @return
-	 * @throws ValidityException
-	 * @throws ParsingException
-	 * @throws IOException
+	 * @return Document parsed from xml file
+	 * @throws ParsingException exception from parsing task
+	 * @throws IOException exception from reading file
 	 */
-	static public Document open(String path) throws ValidityException, ParsingException, IOException {
+	public static Document open(final String path) throws ParsingException, IOException {
 		InputStream input;
 		Document doc = null;
 		
@@ -42,13 +35,13 @@ public class XMLReader {
 	}
 	
 	/**
-	 * Save Document Object to xml file
-	 * @param doc
-	 * @param path
-	 * @return
-	 * @throws IOException
+	 * Save Document Object to xml file.
+	 * @param doc Document to save
+	 * @param path path to save
+	 * @return whether saving success or not
+	 * @throws IOException exception while writing file
 	 */
-	static public boolean save(Document doc, String path) throws IOException {
+	public static boolean save(final Document doc, final String path) throws IOException {
 		File f = new File(path);
 		if (!f.exists())
 		{

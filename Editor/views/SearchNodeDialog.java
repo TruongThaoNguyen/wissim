@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Text;
 import controllers.graphicscomponents.GWirelessNode;
 import controllers.managers.ProjectManager;
 
-
 public class SearchNodeDialog extends Dialog {
 
 	protected Object result;
@@ -28,9 +27,10 @@ public class SearchNodeDialog extends Dialog {
 	private Workspace workspace;
 
 	/**
-	 * Create the dialog.
+	 * Search Node dialog.
 	 * @param parent
 	 * @param style
+	 * @param workspace
 	 */
 	public SearchNodeDialog(Shell parent, int style, Workspace workspace) {
 		super(parent, style);

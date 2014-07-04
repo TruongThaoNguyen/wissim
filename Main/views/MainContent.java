@@ -5,11 +5,10 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-/*
- * Author: Trong Nguyen
- * 
+/**
+ * MainContent is parent class for Editor, Visualizer, Analyzer.
+ * @author Trongnguyen
  */
-
 public class MainContent extends Composite {
 
 	protected MenuManager menuManager;
