@@ -19,14 +19,30 @@ import models.networkcomponents.events.Event.EventType;
 import models.networkcomponents.protocols.ApplicationProtocol;
 import models.networkcomponents.protocols.TransportProtocol.TransportProtocolType;
 
+/**
+ * Shadow Object class of ApplicationProtocol class. 
+ * @author Trongnguyen
+ *
+ */
 public class SApplicationProtocol extends ApplicationProtocol implements TclObject, Scheduler {
 	
+	/**
+	 * Create new Shadow Application Protocol.
+	 * @param label label for new object.
+	 */
 	public SApplicationProtocol(String label) {
 		super(ApplicationProtocolType.valueOf(label));
 		this.label = label;
 		addInsProc();
 	}
 	
+	/**
+	 * Create new Shadow Application Protocol.
+	 * @param type type of Application
+	 * @param name name of Application
+	 * @param tp Transport protocol
+	 * @param destNode destination node
+	 */
 	public SApplicationProtocol(ApplicationProtocolType type, String name, STransportProtocol tp, Node destNode) {
 		super(type);		
 		setDestNode(destNode);
@@ -35,20 +51,23 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	
 	// region ------------------- Scheduler ------------------- //
 	
+	/**
+	 * event table.
+	 */
 	private HashMap<String, Double> event = new HashMap<String, Double>();
 	
 	@Override
-	public void addEvent(double time, String arg) {
+	public final void addEvent(final double time, String arg) {
 		event.put(arg, time);		
 	}
 
 	@Override
-	public double getEvent(String arg) {
+	public final double getEvent(final String arg) {
 		return event.get(arg);
 	}
 	
 	@Override
-	public HashMap<String, Double> getEvent() {
+	public final HashMap<String, Double> getEvent() {
 		return event;
 	}
 	
@@ -56,13 +75,28 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	
 	// region ------------------- TCL properties ------------------- //	
 	
+	/**
+	 * label to show in tcl code
+	 */
 	private String label;
-	private List<Entry> entryList = new ArrayList<Entry>();
-	private HashMap<String, InsProc> insProc = new HashMap<String, InsProc>();
-	private HashMap<String, InsVar>  insVar = new LinkedHashMap<String, InsVar>();
 	
+	/**
+	 * list of entry element in tcl code that have concern with this.
+	 */
+	private List<Entry> entryList = new ArrayList<Entry>();
+	
+	/**
+	 * table of insProc.
+	 */
+	private HashMap<String, InsProc> insProc = new HashMap<String, InsProc>();
+	
+	/**
+	 * table of insVar.
+	 */
+	private HashMap<String, InsVar>  insVar = new LinkedHashMap<String, InsVar>();
+		
 	@Override
-	public String parse(List<String> command, boolean isRecord) throws Exception {
+	public final String parse(List<String> command, boolean isRecord) throws Exception {
 		if (command.isEmpty()) throw new ParseException(ParseException.MissArgument);
 		
 		InsProc proc = insProc.get(Converter.parseIdentify(command.get(0)));
@@ -70,42 +104,44 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 		{
 			command.remove(0);
 			return proc.Run(command, isRecord);
-		}
-		else 		
+		} 
+		else 
+		{
 			return insProc.get(null).Run(command, isRecord);
+		}
 	}
 
 	@Override
-	public void addEntry(Entry e) {
+	public final void addEntry(final Entry e) {
 		entryList.add(e);	
 		if (transportProtocol != null) transportProtocol.addEntry(e);
 	}
 	
 	@Override
-	public void addEntry(int index, Entry e) {
+	public final void addEntry(final int index, Entry e) {
 		entryList.add(index, e);
 		if (transportProtocol != null) transportProtocol.addEntry(e);
 	}
 	
 	@Override
-	public List<Entry> getEntry() {
+	public final List<Entry> getEntry() {
 		return entryList;
 	}
 	
 	@Override
-	public String getLabel() {
+	public final String getLabel() {
 		return label;
 	}
 
 	@Override
-	public void setLabel(String label) {
+	public final void setLabel(final String label) {
 		this.label = label;	
 	}
 	
 	// region ------------------- InsVar ------------------- //
 	
 	@Override
-	public HashMap<String, InsVar> getInsVar() {
+	public final HashMap<String, InsVar> getInsVar() {
 		return insVar;
 	}
 	
@@ -150,10 +186,13 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 		insProc.put(p.insprocName, p);
 	}
 	
-	protected void addInsProc()	{		
-		new InsProc(this, null) {
-			@Override
-			protected String run(List<String> command) throws Exception {				
+	/**
+	 * create and add default InsProc.
+	 */
+	protected void addInsProc()	{
+		new InsProc(this, null) {			
+			@Override			
+			protected String run(List<String> command) throws Exception {
 				return null;
 			}
 		};
@@ -188,6 +227,11 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 		};
 	}
 	
+	/**
+	 * Implement of "AttachAgent" insProc
+	 * @param command command of task
+	 * @throws Exception Parse Tcl command exception
+	 */
 	private void insProcAttachAgent(List<String> command) throws Exception
 	{
 		if (command.size() != 1) throw new ParseException(ParseException.InvalidArgument);

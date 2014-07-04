@@ -16,28 +16,41 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.custom.StackLayout;
 
-import views.Analyzer;
-import views.Editor;
-
 /**
+ * Main window of Wissim.
  * Author: Trong Nguyen
- * 
  */
-
 public class MainWindow extends ApplicationWindow {
 	/**
-	 * button to switch to Editor.
+	 * Editor component.
 	 */
 	private Editor editor;
+	
+	/**
+	 * Analyzer component.
+	 */
 	private static Analyzer analyzer;
+	
+	/**
+	 * Visualizer component.
+	 */
 	private Visualizer visualizer;
+	
+	/**
+	 * Main menu manager.
+	 */
 	private MenuManager menuManager;
+	
+	/**
+	 * Main status line manager.
+	 */
 	private StatusLineManager statusLineManager;
 
 	/**
 	 * Create the application window.
+	 * @param shell Shell to display
 	 */
-	public MainWindow(Shell shell) {
+	public MainWindow(final Shell shell) {
 		super(shell);
 		createActions();
 		addMenuBar();
@@ -46,10 +59,11 @@ public class MainWindow extends ApplicationWindow {
 
 	/**
 	 * Create contents of the application window.
-	 * @param parent
+	 * @param parent parent composite
+	 * @return Control new control
 	 */
 	@Override
-	protected Control createContents(Composite parent) {
+	protected final Control createContents(final Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(2, false));
 		
@@ -62,7 +76,7 @@ public class MainWindow extends ApplicationWindow {
 		mainComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 	
 		
-		editor   = new Editor(mainComposite, menuManager, statusLineManager);		
+		editor   = new Editor(mainComposite, menuManager, statusLineManager);
 //		analyzer = new Analyzer(mainComposite, menuManager, statusLineManager);
 		visualizer = new Visualizer(mainComposite, menuManager, statusLineManager);
 		
@@ -125,7 +139,7 @@ public class MainWindow extends ApplicationWindow {
 	 * @return the menu manager
 	 */
 	@Override
-	protected MenuManager createMenuManager() {
+	protected final MenuManager createMenuManager() {
 		menuManager = new MenuManager("menu");		
 		return menuManager;
 	}
@@ -135,16 +149,17 @@ public class MainWindow extends ApplicationWindow {
 	 * @return the status line manager
 	 */
 	@Override
-	protected StatusLineManager createStatusLineManager() {
+	protected final StatusLineManager createStatusLineManager() {
 		statusLineManager = new StatusLineManager();
 		return statusLineManager;
 	}
 
 	/**
 	 * Launch the application.
-	 * @param args
+	 * @param args arguments
 	 */
-	public static void main(String args[]) {
+	public static void main(final String[] args) {
+	// public static void main(String args[]) {
 		try {
 			Display display = new Display();
 			Shell shell = new Shell(display);
@@ -161,30 +176,20 @@ public class MainWindow extends ApplicationWindow {
 
 	/**
 	 * Configure the shell.
-	 * @param newShell
+	 * @param newShell shell to display
 	 */
 	@Override
-	protected void configureShell(Shell newShell) {
+	protected final void configureShell(final Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Wissim");
 	}
 	
 	/**
 	 * Return the initial size of the window.
+	 * @return the initial size of the window
 	 */
 	@Override
-	protected Point getInitialSize() {
+	protected final Point getInitialSize() {
 		return new Point(720, 490);
-	}
-	
-	public Editor getEditor() {
-		return editor;
-	}
-	
-	public static Analyzer getAnalyzer() {
-		return analyzer;
-	}
-	public static void setAnalyzer() {
-//		reset(analyzer);
 	}
 }

@@ -7,16 +7,24 @@ import java.util.Observable;
 import models.networkcomponents.protocols.TransportProtocol;
 import models.networkcomponents.protocols.TransportProtocol.TransportProtocolType;
 
-public abstract class Node extends Observable {
-	// id of node (assign one time, never change)
-	private int id;
-	
+/**
+ * a network node.
+ * @author Trongnguyen
+ */
+public abstract class Node extends Observable {	
+	/**
+	 * name of node
+	 */
 	private String name;
 	
-	// the network this node is included in (assign one time, never change)
+	/**
+	 * the network this node is included in (assign one time, never change)
+	 */
 	protected Network network;
 	
-	// list of applications directly attached to this node
+	/**
+	 * list of applications directly attached to this node
+	 */
 	protected List<TransportProtocol> transportProtocolList = new ArrayList<TransportProtocol>();	
 	
 	/**
@@ -27,21 +35,24 @@ public abstract class Node extends Observable {
 	protected Node(Network network) {
 		if (network == null) throw new NullPointerException("Network must be not null");
 		
-		this.network = network;
-		
-		// call the network to generate an unique id for this node
-		this.id = this.network.generateId();
+		this.network = network;		
 		
 		// node name is set as id as default
-		this.name = id + "";
+		this.name = getId() + "";
 		
 		network.getNodeList().add(this);
 	}
-	
-	public int 		getId() 			{ return id;	}
+		
 	public Network	getNetwork()		{ return network; }
 	public String 	getName() 			{ return name; }
 	public void 	setName(String name){ this.name = name; }
+	
+	/**
+	 * get current node's id.
+	 * id of node is its index in nodes list of network.
+	 * @return node's id
+	 */
+	public int getId() { return network.getNodeList().indexOf(this); }
 	
 	public List<TransportProtocol>	getTransportPrototolList()	{ return transportProtocolList; }
 	
