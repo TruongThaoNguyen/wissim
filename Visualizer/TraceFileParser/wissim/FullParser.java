@@ -31,7 +31,7 @@ public class FullParser extends AbstractParser {
 	public double energyNodeDead;
 	public String lifeTime;
 	public LinkedHashMap<Integer, Double> listNodeDead;
-	public static int[] countEnergy;
+	public int[] countEnergy;
 	public MainViewPanel mainPanel;
 
 	public void setMainPanel(MainViewPanel mainPanel) {
@@ -159,7 +159,7 @@ public class FullParser extends AbstractParser {
 	public void parseEvents(String mFileTraceEvent) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(mFileTraceEvent));
 		String retval[];
-		// int line = 0;
+		 int line = 0;
 		System.out.println("Running...");
 
 		while ((sCurrentLine = br.readLine()) != null) {
@@ -171,7 +171,6 @@ public class FullParser extends AbstractParser {
 			 * Replace double space by one space
 			 */
 
-			// line++;
 			if (retval[0].equals("N")) {
 				setEnergyOfNode(retval[4], retval[2], retval[6]);
 				// setLifeTime(retval[2], retval[6]);
@@ -182,6 +181,8 @@ public class FullParser extends AbstractParser {
 
 				if (!retval[0].equals("M")) {
 					if (!retval[13].equals("[energy")) {
+						System.out.println("setEnergy of node "+retval[2].substring(1, retval[2].length() - 1)+" "+retval[1]+""+retval[13]);
+						
 						setEnergyOfNode(
 								retval[2].substring(1, retval[2].length() - 1),
 								retval[1], retval[13]);
@@ -328,7 +329,9 @@ public class FullParser extends AbstractParser {
 
 	public void setEnergyOfNode(String nodeID, String time, String energy)
 			throws IOException {
+		
 		if (countEnergy[Integer.parseInt(nodeID)] == 0) {
+			System.out.println("==0");
 			listNodesWithNeighbors.get(Integer.parseInt(nodeID)).maxEnergy = energy;
 		}
 		if (++countEnergy[Integer.parseInt(nodeID)] % 50 == 1) {

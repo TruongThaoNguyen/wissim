@@ -86,6 +86,10 @@ public class WissimPlayer implements MediaContainer {
 			
 		});
 	}
+	/**
+	 * 
+	 * @param ae
+	 */
 	private void onChangeSpeed(int ae) {
 		// TODO Auto-generated method stub
 		
@@ -117,6 +121,10 @@ public class WissimPlayer implements MediaContainer {
 			break;
 		}
 	}
+	/**
+	 * 
+	 * @param graph
+	 */
 	private void initGraph(Graph graph) {
 		// TODO Auto-generated method stub
 		/**
@@ -140,7 +148,9 @@ public class WissimPlayer implements MediaContainer {
 
 		}
 	}
-
+	/**
+	 * 
+	 */
 	public void control() {
 		/**
 		 * 
@@ -296,7 +306,9 @@ public class WissimPlayer implements MediaContainer {
 		}
 
 	}
-
+	/**
+	 * 
+	 */
 	public void visualize() {
 
 		JFrame playerFrame = new JFrame();
@@ -378,7 +390,9 @@ public class WissimPlayer implements MediaContainer {
 		});
 
 	}
-
+	/**
+	 * 
+	 */
 	protected void initGraph() {
 		mGraph = new MultiGraph("g");
 		mGraph.addAttribute("ui.antialias");

@@ -46,7 +46,7 @@ public class EventParser extends AbstractParser {
 	public static void setListEvents(ArrayList<Event> listEvents) {
 		EventParser.listEvents = listEvents;
 	}
-
+	
 	@Override
 	public void ConvertTraceFile(String filePathNodes, String filePathEvent)
 			throws IOException {

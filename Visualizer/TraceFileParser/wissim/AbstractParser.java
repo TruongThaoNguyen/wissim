@@ -15,6 +15,12 @@ import wissim.ui.MainViewPanel;
 public abstract class AbstractParser implements IFileParser {
 		
 	public static String resultofheader = "";
+	/**
+	 * 
+	 * @param mFilePathEvents
+	 * @return 
+	 * @throws IOException
+	 */
 	public static String getHeaderFileParser(String mFilePathEvents) throws IOException {
 		/**
 		 * get the header of trace file to know if file contains energy or not
