@@ -8,43 +8,43 @@ import nu.xom.Element;
 import nu.xom.ParsingException;
 
 /**
- * General configure
+ * General configure.
  * @author Trongnguyen
  *
  */
 public final class Configure {
 	/**
-	 * Path to configure storage file
+	 * Path to configure storage file.
 	 */
-	static private String CONFIGURE = getHomePath() + "/.wissim/configure.xml";
+	private static String CONFIGURE = getHomePath() + "/.wissim/configure.xml";
 	
 	/**
-	 * Path to current directory
+	 * Path to current directory.
 	 */
 	static String directory;
 	
 	/**
-	 * Path to default trace file
+	 * Path to default trace file.
 	 */
 	static String traceFile;
 	
 	/**
-	 * Path to default nam trace file
+	 * Path to default nam trace file.
 	 */
 	static String namTraceFile;	
 	
 	/**
-	 * Path to ns2 installed directory
+	 * Path to ns2 installed directory.
 	 */
 	static String ns2Path;	// = "/home/trongnguyen/NS2/";
 	
 	/**
-	 * Path to current tcl file
+	 * Path to current tcl file.
 	 */
 	static String tclFile;
 	
 	/**
-	 * return user's home path
+	 * return user's home path.
 	 * @return a string that is user's home path
 	 */
 	public static String getHomePath() {
@@ -52,7 +52,7 @@ public final class Configure {
 	}
 	
 	/**
-	 * get current Tcl file
+	 * get current Tcl file.
 	 * @return the tclFile name
 	 */
 	public static String getTclFile() {
@@ -61,8 +61,9 @@ public final class Configure {
 	}
 	
 	/**
-	 * set tclFile name.
-	 * @param tclFile new file name
+	 * set current Tcl file.
+	 * @param value new file name.
+	 * @return new file name.
 	 */
 	public static String setTclFile(String value) {
 		int i = value.lastIndexOf("/");
@@ -76,15 +77,16 @@ public final class Configure {
 	}
 	
 	/**
-	 * @return the traceFile name
+	 * @return the traceFile name.
 	 */
 	public static String getTraceFile() {		
 		return traceFile;
 	}
 
 	/**
-	 * set traceFile name
-	 * @param traceFile new file name
+	 * set default Trace file.
+	 * @param value new file name
+	 * @return file name
 	 */
 	public static String setTraceFile(String value) {
 		int i = value.lastIndexOf("/");
@@ -137,12 +139,11 @@ public final class Configure {
 	public static String getNS2Path() {
 		if (ns2Path == null)
 		{
-			try 
-			{
+			try {
 				Document doc = XMLReader.open(CONFIGURE);				
 				Element root = doc.getRootElement();				
 				Element e = root.getFirstChildElement("NS2Path");
-				ns2Path = e.getAttributeValue("value");								
+				ns2Path = e.getAttributeValue("value");
 			}
 			catch (ParsingException | IOException e) 
 			{
