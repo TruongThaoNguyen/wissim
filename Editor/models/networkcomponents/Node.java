@@ -40,7 +40,8 @@ public abstract class Node extends Observable {
 		// node name is set as id as default
 		this.name = getId() + "";
 		
-		network.getNodeList().add(this);
+	//	network.getNodeList().add(this);
+		network.getNodeList().add(0, this);
 	}
 		
 	public Network	getNetwork()		{ return network; }
@@ -52,7 +53,7 @@ public abstract class Node extends Observable {
 	 * id of node is its index in nodes list of network.
 	 * @return node's id
 	 */
-	public int getId() { return network.getNodeList().indexOf(this); }
+	public int getId() { return network.getNodeList().indexOf(this) + 1; }
 	
 	public List<TransportProtocol>	getTransportPrototolList()	{ return transportProtocolList; }
 	
