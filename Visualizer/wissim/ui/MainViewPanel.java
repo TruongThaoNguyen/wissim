@@ -69,9 +69,9 @@ import TraceFileParser.wissim.NodeEnergy;
 import TraceFileParser.wissim.NodeTrace;
 import TraceFileParser.wissim.Packet;
 import TraceFileParser.wissim.FullParser;
-import wissim.comtroller.player.WissimPlayer;
 import wissim.controller.animation.EventAnimation;
 import wissim.controller.filters.gui.TableFilterHeader;
+import wissim.comtroller.player.WissimPlayer;
 import wissim.object.WiGraph;
 import wissim.object.wiEdge;
 import wissim.object.wiNode;
@@ -85,6 +85,7 @@ import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JScrollBar;
 import java.awt.Button;
+import javax.swing.ImageIcon;
 
 public class MainViewPanel extends JPanel implements ViewContainer,
 		ActionListener, IObservable {
@@ -129,6 +130,8 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 	protected JTextArea mFilePathInfor;
 	protected JTextArea mDisplayModeInfor;
 	protected JTextArea mPacketFocusInfor;
+	int valuedown;
+	int valueup;
 	protected String styleSheet = "node.mark {" + "       fill-color: black;"
 			+ "};";
 
@@ -142,7 +145,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 		System.out.println("Create main Panel Visualizer");
 		observerList = new Vector();
 		mLoadingInfor = new JTextArea("Loading trace file");
-		
+
 		setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		setLayout(null);
 		mCurrentDisplayMode = DisplayMode.NORMALMODE;
@@ -161,14 +164,12 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 		mEventPanelInfor.setBounds(10, 276, 135, 400);
 		add(mEventPanelInfor);
 		mEventPanelInfor.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
+
 
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBackground(Color.WHITE);
-		tabbedPane.setBounds(145, 10, 820, 800);
+		tabbedPane.setBounds(145, 10, 1000, 800);
 		add(tabbedPane);
-		JPanel topologyPanel = new JPanel();
-		tabbedPane.addTab("Topology", null, topologyPanel, null);
 
 		NodePanel nodePanel = new NodePanel(this);
 		tabbedPane.addTab("Nodes", null, nodePanel, null);
@@ -184,7 +185,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 
 		EventPanel eventPanel = new EventPanel(this);
 		tabbedPane.addTab("Events", null, eventPanel, null);
-		
+
 		nodePanel.setPacketPanel(packetPanel);
 		nodePanel.setEvtPanel(eventPanel);
 		packetPanel.setEvtPanel(eventPanel);
@@ -192,7 +193,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 		visualizerPanel = new JPanel();
 		visualizerPanel.setBackground(Color.WHITE);
 		tabbedPane.addTab("Visualizer", null, visualizerPanel, null);
-		tabbedPane.setBackgroundAt(4, Color.WHITE);
+		tabbedPane.setBackgroundAt(3, Color.WHITE);
 		visualizerPanel.setLayout(null);
 //		RulesPanel rulesPanel = new RulesPanel(nodePanel.getFilterHeader(),packetPanel.getFilterHeader(),eventPanel.getFilterHeader());
 //		tabbedPane.addTab("Rules", null,rulesPanel,null);
@@ -200,7 +201,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 		mediaPanel = new JPanel();
 		mediaPanel.setBackground(Color.WHITE);
 		mediaPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
-		mediaPanel.setBounds(10, 0, 770, 88);
+		mediaPanel.setBounds(10, 0, 1000, 88);
 		visualizerPanel.add(mediaPanel);
 
 		JButton btnNewButton_1 = new JButton("Open");
@@ -220,14 +221,14 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 
 					if (files[0].getName().equals("Neighbors.txt")
 							|| files[0].getName().equals("Neighbors.tr")) {
-						
-						
+
+
 						onFileOpen(files[0].getAbsolutePath(),
 								files[1].getAbsolutePath());
 					} else if (files[1].getName().equals("Neighbors.txt")
 							|| files[1].getName().equals("Neighbors.tr")) {
-						
-						
+
+
 						onFileOpen(files[1].getAbsolutePath(),
 								files[0].getAbsolutePath());
 
@@ -247,14 +248,22 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 		mSliderPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		mSliderPanel.setForeground(Color.WHITE);
 		mSliderPanel.setBackground(Color.WHITE);
-		mSliderPanel.setBounds(90, 11, 600, 60);
+		mSliderPanel.setBounds(90, 11, 750, 60);
 		mediaPanel.add(mSliderPanel);
 
 		Button visualizeBtn = new Button("Visualize");
+		visualizeBtn.setFont(new Font("Tahoma", Font.PLAIN, 12));
 
 		visualizeBtn.addActionListener(new visualizeHandle());
-		visualizeBtn.setBounds(700, 11, 60, 60);
+		visualizeBtn.setBounds(850, 11, 60, 60);
 		mediaPanel.add(visualizeBtn);
+		
+		JButton btnPlay = new JButton("Play");
+		btnPlay.setIcon(null);
+		btnPlay.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		btnPlay.setBounds(920, 11, 60, 60);
+		btnPlay.addActionListener(new drawGraphHandle());
+		mediaPanel.add(btnPlay);
 
 		consolePanel = new JPanel();
 		consolePanel.setBorder(new TitledBorder(null, "Console",
@@ -266,8 +275,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 		mConsoleInfor.setEditable(false);
 		mConsoleInfor.setForeground(Color.WHITE);
 		mConsoleInfor.setFont(new Font("Arial", Font.PLAIN, 11));
-		mConsoleInfor.setPreferredSize(new Dimension(
-				consolePanel.getWidth() - 10, 10000));
+		mConsoleInfor.setPreferredSize(new Dimension(390, 1000));
 		mConsoleInfor.setBackground(Color.DARK_GRAY);
 		/**
 		 * Add scroll bar into console infor text area
@@ -284,11 +292,11 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 		mPropertiesPanel.setBackground(new Color(192, 192, 192));
 		mPropertiesPanel.setBorder(new TitledBorder(null, "Properties",
 				TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-		mPropertiesPanel.setBounds(410, 500, 400, 150);
+		mPropertiesPanel.setBounds(410, 500, 650, 150);
 		visualizerPanel.add(mPropertiesPanel);
 		mPropertiesPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
-		
-		
+
+
 		mPacketFocusInfor = new JTextArea("");
 		mPacketFocusInfor.setWrapStyleWord(true);
 		mPacketFocusInfor.setBackground(mPropertiesPanel.getBackground());
@@ -296,7 +304,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 		mPropertiesPanel.add(mPacketFocusInfor);
 		GraphViewPanel = new JPanel();
 		GraphViewPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
-		GraphViewPanel.setBounds(10, 102, 800, 400);
+		GraphViewPanel.setBounds(10, 102, 1050, 400);
 		visualizerPanel.add(GraphViewPanel);
 
 		view.setSize(GraphViewPanel.getWidth(), GraphViewPanel.getHeight());
@@ -349,15 +357,13 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 	}
 
 	public void onFileOpen(String FilePathNode, String FilePathEvent) {
-		
+
 		if (mGraph.getNodeCount() > 0) {
 			resetGraph(mGraph);
 		}
 		try {
 			mCurrentDisplayMode = DisplayMode.NORMALMODE;
-			mTextEventSliderInfor.setText("Lower Bound Event : "
-					+ "Upper Bound Event : " + "Time Interval : [--]");
-			
+
 			if (AbstractParser.getHeaderFileParser(FilePathEvent).equals("Y")) {
 				mParser = new FullParser();
 				mParser.setMainPanel(this);
@@ -377,7 +383,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 				mSliderPanel.remove(mTimeslider);
 				mTimeslider = null;
 			}
-			
+
 			mTimeslider = new RangeSlider(0, sizeListEvent - 1 > 0 ? sizeListEvent -1 : 1);
 			if(sizeListEvent <1)
 				JOptionPane.showMessageDialog(null, "No events can be visualized");
@@ -457,9 +463,9 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 				// // TODO Auto-generated method stub
 				//
 				// ea.setListEvents(mTraceFileParser.getListEvents());
-				int valuedown = ((RangeSlider) arg0.getSource()).getValue();
-				int valueup = ((RangeSlider) arg0.getSource()).getUpperValue();
-				mCurrentUpValue = valueup;
+			valuedown = ((RangeSlider) arg0.getSource()).getValue();
+			valueup = ((RangeSlider) arg0.getSource()).getUpperValue();
+			mCurrentUpValue = valueup;
 				logEvenSlider = "Lower Bound Event: " + valuedown
 						+ " Upper Bound Event: " + valueup
 						+ " Time Interval(ms) ["
@@ -468,7 +474,10 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 				mCurrentStartTime = mParser.getListEvents().get(valuedown).time;
 				mCurrentEndTime = mParser.getListEvents().get(valueup).time;
 				mTextEventSliderInfor.setText(logEvenSlider);
-				mEventPanelInfor.removeAll();
+				
+				/*
+				  
+				 mEventPanelInfor.removeAll();
 				JTextArea jt1 = new JTextArea("Start Event:\n" + valuedown
 						+ "\nEnd Event:\n" + valueup
 						+ "\nTime Interval:\n "
@@ -479,7 +488,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 				jt1.setPreferredSize(new Dimension(
 						mEventPanelInfor.getWidth() - 5, mEventPanelInfor
 								.getHeight() - 5));
-				
+
 				mEventPanelInfor.add(jt1);
 				if (mCurrentDisplayMode == DisplayMode.NORMALMODE) {
 					ea.animationEvent(
@@ -513,6 +522,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 					mConsoleInfor.setText("");
 					ea.setLogInforfromEvent(mConsoleInfor);
 				}
+				*/
 
 			}
 
@@ -765,7 +775,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 			if (ea != null && packet != null) {
 				mCurrentFocusPacket = packet;
 				focusCount++;
-				
+
 				String nodesPath = "";
 				//nodesPath+= packet.sourceID+"-->";
 				int cntNodePerLine = 0;
@@ -782,7 +792,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 					nodesPath +="(Packet Dropped) \n";
 				mPacketFocusInfor.setText("Focus on Packet :"+ packet.getId() + " Packet Type:"+packet.getType() +"\nPath: " + nodesPath);
 				ea.animationPacket(packet, mGraph);
-				
+
 
 			}
 		}
@@ -879,7 +889,58 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 		popupDisplayModeMenu.show(GraphViewPanel, position.x, position.y);
 
 	}
+	protected class drawGraphHandle implements ActionListener{
 
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			JTextArea jt1 = new JTextArea("Start Event:\n" + valuedown
+					+ "\nEnd Event:\n" + valueup
+					+ "\nTime Interval:\n "
+					+ "\nFrom:\n " + mParser.getListEvents().get(valuedown).time 
+					+ "\nTo: \n"+ mParser.getListEvents().get(valueup).time) ;
+			jt1.setBackground(mEventPanelInfor.getBackground());
+			jt1.setEditable(false);
+			jt1.setPreferredSize(new Dimension(
+					mEventPanelInfor.getWidth() - 5, mEventPanelInfor
+							.getHeight() - 5));
+
+			mEventPanelInfor.add(jt1);
+			if (mCurrentDisplayMode == DisplayMode.NORMALMODE) {
+				ea.animationEvent(
+						mParser.getListEvents().get(valuedown).time,
+						mParser.getListEvents().get(valueup).time, mGraph);
+				mCurrentStartTime = mParser.getListEvents().get(valuedown).time;
+				mCurrentEndTime = mParser.getListEvents().get(valueup).time;
+				mConsoleInfor.setText("");
+				mConsoleInfor.setLineWrap(true);
+				ea.setLogInforfromEvent(mConsoleInfor);
+			} else if (mCurrentDisplayMode == DisplayMode.AREAMODE) {
+
+				mCurrentStartTime = mParser.getListEvents().get(valuedown).time;
+				mCurrentEndTime = mParser.getListEvents().get(valueup).time;
+				System.out
+						.println("Release mouse animation event by group ID ");
+				System.out.println(mCurrentStartTime + " "
+						+ mCurrentEndTime + "GROUP1" + mCurrentNodeIDGroup1
+						+ "GROUP2" + mCurrentNodeIDGroup2);
+				ea.animationEventbyGroupID(mCurrentStartTime,
+						mCurrentEndTime, mCurrentNodeIDGroup1,
+						mCurrentNodeIDGroup2, mParser, mGraph);
+				mConsoleInfor.setText("");
+				ea.setLogInforfromEvent(mConsoleInfor);
+			} else {
+				mCurrentStartTime = mParser.getListEvents().get(valuedown).time;
+				mCurrentEndTime = mParser.getListEvents().get(valueup).time;
+
+				ea.animationEnergy(mCurrentStartTime, mCurrentEndTime,
+						mGraph, true);
+				mConsoleInfor.setText("");
+				ea.setLogInforfromEvent(mConsoleInfor);
+			}
+		}
+		
+	}
 	protected class visualizeHandle implements ActionListener {
 
 		@Override
@@ -927,7 +988,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 			System.out.println(e.getActionCommand());
 			switch (e.getActionCommand()) {
 			case "NORMAL MODE":
-				
+
 				if (ea != null) {
 					ea.animationEvent(mCurrentStartTime, mCurrentEndTime,
 							mGraph);
@@ -935,13 +996,13 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 				mCurrentDisplayMode = DisplayMode.NORMALMODE;
 				if(mPacketFocusInfor.getText().length() > 1)
 				mPacketFocusInfor.setText("");
-				
+
 				break;
 			case "AREA MODE":
 
 				if (ea != null) {
-					
-					
+
+
 					ea.reset(mGraph);
 				}
 				mCurrentDisplayMode = DisplayMode.AREAMODE;
@@ -994,22 +1055,20 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 	}
 
 	public void onNotifyLoading(boolean isLoading) {
-		
+
 		if(isLoading){
 			Thread loadingTheard = new Thread(new Runnable() {
-				
+
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
 					mTextEventSliderInfor.setText("Waiting...");
 				}
 			});
-			
+
 		}
 		else{
 			mTextEventSliderInfor.setText("parsed...");
 		}
 	}
-
-	
 }

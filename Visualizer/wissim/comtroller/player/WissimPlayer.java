@@ -219,7 +219,7 @@ public class WissimPlayer implements MediaContainer {
 									}
 									switch (e.type) {
 									case "send":
-										
+
 										Edge edge = mGraph.addEdge(e.packetId
 												+ "To" + desNode.getId(),
 												sendNode, desNode, true);

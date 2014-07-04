@@ -70,7 +70,7 @@ public class FullParser extends AbstractParser {
 		 * Input : trace file path, xml file path Output : write data into xml
 		 * file
 		 */
-		
+
 		listPacket = new ArrayList<Packet>();
 		// mFilePathNodes = "D://GR/GR3Material/Neighbors.txt";
 		// mFilePathEvent = "D://GR/GR3Material/Trace_Energy.tr";
@@ -130,13 +130,13 @@ public class FullParser extends AbstractParser {
 						listNeighbors += neighborsData[i] + " ";
 					}
 				}
-				
+
 			else{
-				
+
 			}
-				
-				
-				
+
+
+
 				NodeTrace nodeElement = new NodeTrace(
 						Integer.parseInt(retval[0]),
 						Float.parseFloat(retval[1]),
@@ -150,7 +150,7 @@ public class FullParser extends AbstractParser {
 			}
 			br.close();
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 		}
 
@@ -161,7 +161,7 @@ public class FullParser extends AbstractParser {
 		String retval[];
 		// int line = 0;
 		System.out.println("Running...");
-		
+
 		while ((sCurrentLine = br.readLine()) != null) {
 			sCurrentLine = Pattern.compile(" +").matcher(sCurrentLine.trim())
 					.replaceAll(" ");
@@ -206,7 +206,7 @@ public class FullParser extends AbstractParser {
 							retval[13], retval[5], "0", retval[26].substring(0,
 									retval[26].length() - 1), "", "", "");
 					event.packetType = retval[3];
-					
+
 					listEvents.add(event);
 					setEnergyOfNode(event.sourceId, event.time, retval[13]);
 					if (retval[0].equals("s") && !retval[3].equals("AGT")) {
@@ -279,7 +279,7 @@ public class FullParser extends AbstractParser {
 
 		}
 		br.close();
-		
+
 	}
 
 	/**

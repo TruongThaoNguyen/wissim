@@ -78,7 +78,7 @@ public class EventParser extends AbstractParser {
 			while ((currentLine = br.readLine()) != null) {
 				String[] retval = currentLine.split("\\s+");
 
-				
+
 				listNeighbors = "";
 				if(retval.length > 3){
 					String[] neighborsData = retval[3].split(",");
@@ -86,9 +86,9 @@ public class EventParser extends AbstractParser {
 						listNeighbors += neighborsData[i] + " ";
 					}
 				}
-				
+
 			else{
-				
+
 			}
 
 				NodeTrace nodeElement = new NodeTrace(
@@ -208,7 +208,7 @@ public class EventParser extends AbstractParser {
 						listPacket.get(i).endTime = retval[1];
 						listPacket.get(i).destID = retval[16].substring(0,
 								retval[16].length() - 1);
-						
+
 						listPacket.get(i).isSuccess = false;
 						break;
 					}
@@ -266,6 +266,6 @@ public class EventParser extends AbstractParser {
 	public static void main(String args[]) throws IOException {
 		EventParser ep = new EventParser();
 		ep.ConvertTraceFile(mFilePathNodes, mFilePathEvent);
-		
+
 	}
 }
