@@ -112,12 +112,20 @@ public class ApplicationSettings {
 		loadNetworkConfig();		
 	}
 	
+	/**
+	 * Save application configuration
+	 * @throws Exception
+	 */
 	public static void saveConfig() throws Exception {
 		saveNetworkConfig();
 		saveGraphicConfig();
 	}
 
 	
+	/**
+	 * Save network configuration
+	 * @throws Exception
+	 */
 	public static void saveNetworkConfig() throws Exception {		
 		Element root = new Element("network-settings");
 		Document settingsDoc = new Document(root);
@@ -177,6 +185,10 @@ public class ApplicationSettings {
 		XMLReader.save(settingsDoc, SETTINGS_PATH);
 	}
 
+	/**
+	 * Save graphic configuration (node color, network color, label color, etc...)
+	 * @throws Exception
+	 */
 	public static void saveGraphicConfig() throws Exception {
 		Element eGraphicSettings = new Element("settings");
 		Document doc = new Document(eGraphicSettings);
@@ -229,6 +241,10 @@ public class ApplicationSettings {
 		XMLReader.save(doc, GRAPHICS_SETTINGS_PATH);
 	}
 
+	/**
+	 * Load graphic configuration (node color, network color, label color, etc...)
+	 * @throws Exception
+	 */
 	
 	private static void loadGraphicConfig() throws Exception {
 		Document doc = null;
@@ -286,6 +302,10 @@ public class ApplicationSettings {
 		}
 	}
 
+	/**
+	 * Load network configuration contain size of network, range of node, application protocol, routing protocol
+	 * @throws Exception
+	 */
 	private static void loadNetworkConfig() throws Exception {
 		Document doc = null;
 		
@@ -333,7 +353,13 @@ public class ApplicationSettings {
 		getProtocols(root, "interface-queues", 		interfaceQueues, 		defaultInterfaceQueue		);		
 	}
 
-	
+	/**
+	 * Read protocols from xml file
+	 * @param root
+	 * @param type
+	 * @param routingProtocols2 : all routing protocol may postible to change
+	 * @param defaultProtocol : routing protocol has selected
+	 */
 	private static void getProtocols(Element root, String type, HashMap<String, LinkedHashMap<String, String>> routingProtocols2, StringBuilder defaultProtocol) {		
 		Element eProtocols = root.getFirstChildElement(type);
 		Elements ps = eProtocols.getChildElements();
@@ -362,7 +388,13 @@ public class ApplicationSettings {
 			routingProtocols2.put(pType, paramMap);
 		}
 	}
-	
+	/**
+	 * Set 
+	 * @param root
+	 * @param type
+	 * @param routingProtocols2
+	 * @param defaultProtocol
+	 */
 	public static void setDefaultProtocol(Element root, String type, HashMap<String, LinkedHashMap<String, String>> routingProtocols2, StringBuilder defaultProtocol) {
 		Element eProtocols = new Element(type + "s");
 		
@@ -390,6 +422,10 @@ public class ApplicationSettings {
 		root.appendChild(eProtocols);
 	}
 	
+	/**
+	 * Apply setting default for project
+	 * @param project
+	 */
 	public static void applyDefaultSettingsToProject(Project project) {			
 		Project.setAntennas(antennas);
 		Project.setApplicationProtocols(applicationProtocols);

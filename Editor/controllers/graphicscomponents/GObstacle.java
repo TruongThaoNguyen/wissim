@@ -30,7 +30,14 @@ public class GObstacle extends GSelectableObject {
 	int[] pointArray;
 	
 	private GNetwork network;
-
+	
+	/**
+	 * Contructor 
+	 * Create a area as a obstacle
+	 * @param parent : Composite parent
+	 * @param style : style to attack parent composite
+	 * @param area : area to define obstacle
+	 */
 	public GObstacle(Composite parent, int style, Area area) {
 		super(parent, style);
 		
@@ -107,11 +114,21 @@ public class GObstacle extends GSelectableObject {
 		
 		this.setRegion(region);
 	}
-	
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @param ratio
+	 * @return
+	 */
 	private Point getGraphicLocation(int x, int y, double ratio) {
 		return new Point((int) (x * ratio), (int) (y * ratio));
 	}
 	
+	/**
+	 * 
+	 * @return area referent to obstacle
+	 */
 	public Area getArea() {
 		return area;
 	}

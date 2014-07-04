@@ -75,11 +75,18 @@ public abstract class GSelectableObject extends Canvas {
 			}
 		});
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isSelected() {
 		return isSelected;
 	}
 	
+	/**
+	 * 
+	 * @param select : to turn on or turn off node is selected
+	 */
 	public void setSelect(boolean select) {
 		this.isSelected = select;
 		redraw();

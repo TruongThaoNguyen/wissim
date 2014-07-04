@@ -36,6 +36,9 @@ public class WorkspacePropertyManager extends Observable {
 	private boolean showRNG = false;
 	private boolean showGG = false;
 	
+	/**
+	 * Turn visualize off
+	 */
 	public void turnVisualizeOff() {
 		visualizeMode = VISUAL_OFF;
 	
@@ -59,6 +62,9 @@ public class WorkspacePropertyManager extends Observable {
 		notifyObservers("TurnVisualizeOff");
 	}
 	
+	/**
+	 * 
+	 */
 	public void showVoronoiDiagram() {
 		visualizeMode = VISUAL_ON;
 		

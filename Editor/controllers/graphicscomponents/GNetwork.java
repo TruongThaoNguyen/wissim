@@ -78,8 +78,8 @@ public class GNetwork extends Canvas {
 	
 	/**
 	 * Create the composite.
-	 * @param parent
-	 * @param style
+	 * @param parent : Composite parent which gnetwork attack to
+	 * @param style 
 	 */
 	public GNetwork(Composite parent, int style) {
 		super(parent, style);
@@ -328,7 +328,9 @@ public class GNetwork extends Canvas {
 	}
 	
 	static WirelessNetwork getNetwork() { return ProjectManager.getProject().getNetwork(); }
-	
+	/**
+	 * Draw shortest path for two node
+	 */
 	protected void showShortestPaths() {
 		List<GraphicPath> paths = visualizeManager.getShortestPaths();
 		GraphicPath p = paths.get(paths.size()-1);
@@ -351,6 +353,9 @@ public class GNetwork extends Canvas {
 //		}
 	}
 
+	/**
+	 * Draw greedy path for two node
+	 */
 	protected void showGreedyPaths() {
 		List<GraphicPath> paths = visualizeManager.getGreedyPaths();
 //		System.out.println(paths.get(paths.size()));
@@ -373,7 +378,9 @@ public class GNetwork extends Canvas {
 			}					
 //		}	
 	}
-
+/**
+ * Show neighbors of selected nodes
+ */
 	protected void showNeighbors() {
 		Workspace workspace = (Workspace) getParent();
 		int len = workspace.getPropertyManager().getNeighborLen();
@@ -397,7 +404,9 @@ public class GNetwork extends Canvas {
 			}
 		}
 	}
-
+/**
+ * Show range of selected nodes
+ */
 	protected void showRange() {
 		Workspace workspace = (Workspace) getParent();
 		int len = workspace.getPropertyManager().getRangeLen();
@@ -439,7 +448,9 @@ public class GNetwork extends Canvas {
 		this.initX = x;
 		this.initY = y;
 	}
-	
+	/**
+	 * Update bound of networks
+	 */
 	public void updateBounds() {
 		Workspace w = (Workspace) getParent();
 		// calculate initial graphic size of the network
@@ -461,7 +472,9 @@ public class GNetwork extends Canvas {
 		
 		this.setBounds(x, y, width, height);
 	}
-	
+	/**
+	 * Update menu by mouse right click on workspace working 
+	 */
 	private void updateMenu() {
 		final Workspace workspace = (Workspace) getParent();
 		
@@ -486,7 +499,9 @@ public class GNetwork extends Canvas {
 			updateMenuForVisualization();					// when visualization mode is turn on
 		}
 	}
-
+	/**
+	 * Update menu by mouse right click of selected area
+	 */
     private void updateAreaMenu() {
     	// do not show menu when there is no polygon chosen
     	if (selectedArea.npoints < 3)
@@ -595,7 +610,9 @@ public class GNetwork extends Canvas {
     		}
     	});
 	}
-
+/**
+ * Update menu for mouse right click when a set of node has selected
+ */
 	private void updateMenuForMultipleNodesSelected() {
     	final Workspace workspace = (Workspace) getParent();
     	Workspace.getProject();
@@ -733,7 +750,9 @@ public class GNetwork extends Canvas {
     		}
     	});
 	}
-    
+    /**
+     * Update normal menu when right click by mouse
+     */
     private void updateNormalMenu() {
     	final Workspace workspace = (Workspace) getParent();
     	

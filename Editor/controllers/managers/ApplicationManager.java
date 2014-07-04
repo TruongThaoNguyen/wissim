@@ -72,6 +72,11 @@ import views.helpers.PrintHelper;
 public class ApplicationManager {
 	private static int newProjectCount = 1;
 	
+	/**
+	 * Create new project
+	 * @param editor : Editor that project belong to
+	 * @return a project simulation
+	 */
 	public static Project newProject(Editor editor) {
 		String defaultName = "Untitled" + newProjectCount;
 		CreateProjectResult result = (CreateProjectResult)new CreateProjectDialog(editor.getShell(), SWT.SHEET, defaultName).open();				
@@ -109,6 +114,11 @@ public class ApplicationManager {
 		return null;
 	}
 
+	/**
+	 * Open project from tcl scenario
+	 * @param mainWindow 
+	 * @return Project simulation
+	 */
 	public static Project openProject(Editor mainWindow) {
 		// open Open Dialog
 		FileDialog openDialog = new FileDialog(mainWindow.getShell(), SWT.OPEN);
@@ -131,10 +141,20 @@ public class ApplicationManager {
 		return null;
 	}
 
+	/**
+	 * Save project or scenario
+	 * @param mainWindow
+	 * @throws IOException
+	 * @throws ParseException
+	 */
 	public static void saveWorkspace(Editor mainWindow) throws IOException, ParseException {		
 		ProjectManager.saveProject();			
 	}
 
+	/**
+	 * Save project to inform path
+	 * @param workspace
+	 */
 	public static void saveWorkspaceAs(Workspace workspace) {	
 		if (workspace == null) return;
 		FileDialog saveDialog = new FileDialog(workspace.getShell(), SWT.SAVE);
@@ -156,11 +176,16 @@ public class ApplicationManager {
 		}
 	}
 	
+
 	public static void exportToImage(Workspace workspace) {	
 		if (workspace == null) return;
 		new ExportImageDialog(workspace.getShell(), SWT.SHEET, workspace).open();
 	}
 	
+	/**
+	 * Export scenario to image
+	 * @param workspace
+	 */	
 	public static BufferedImage exportToImage(Workspace workspace, int imageMaxSize) {
 		Project project = Workspace.getProject();
 		
@@ -247,6 +272,11 @@ public class ApplicationManager {
 		}		
 	}
 
+	/**
+	 * Create a node
+	 * @param workspace
+	 * @param editor
+	 */
 	public static void createASingleNode(Workspace workspace, Editor editor) {
 		if (workspace == null) return;
 		
@@ -274,6 +304,12 @@ public class ApplicationManager {
 		}
 	}
 
+	/**
+	 * Create a set of node to topology.
+	 * Method of create a set of node has 2 way: grid topo and random topo
+	 * @param workspace
+	 * @param editor
+	 */
 	public static void createASetOfNodes(Workspace workspace,Editor editor) {
 		Date s = new Date();
 		
@@ -301,6 +337,10 @@ public class ApplicationManager {
 		System.out.println(new Date().getTime() - s.getTime());
 	}
 
+	/**
+	 * Manage Traffic anf Flow, contain add event sending from source node to destination node
+	 * @param workspace
+	 */
 	public static void manageTrafficFlow(Workspace workspace) {
 		if (workspace != null)
 			if (Workspace.getProject().getNetwork().getNodeList().size() < 2) {
@@ -310,12 +350,21 @@ public class ApplicationManager {
 			}
 	}
 	
+	/**
+	 * Delete a node from topology
+	 * @param gwnode : node to delete
+	 */
 	public static void deleteNode(GWirelessNode gwnode) {
 		ProjectManager.deleteNode(gwnode.getWirelessNode());
 		gwnode.dispose();
 		gwnode.getParent().layout(true);
 	}
 
+	/**
+	 * Delete a set of node
+	 * @param workspace
+	 * @return
+	 */
 	public static boolean deleteNodes(Workspace workspace) {
 		if (workspace == null) return false;
 		boolean rlt = false;
@@ -342,6 +391,11 @@ public class ApplicationManager {
 		return rlt;
 	}
 	
+	/**
+	 * Copy every node is selected
+	 * @param workspace
+	 * @return
+	 */
 	public static GWirelessNode copyNode(Workspace workspace) {
 		GWirelessNode gn = null;
 		for (GSelectableObject o : workspace.getSelectedObject()) {
@@ -352,6 +406,12 @@ public class ApplicationManager {
 		return gn;
 	}
 	
+	/**
+	 * Paste nodes has copied to workspace
+	 * @param workspace
+	 * @param x
+	 * @param y
+	 */
 	public static void pasteNode(Workspace workspace, int x, int y) {
 		WirelessNode wnode = ProjectManager.createSingleNode(x, y);
 		
@@ -372,6 +432,11 @@ public class ApplicationManager {
 		}
 	}
 	
+	/**
+	 * Delete all node of topology
+	 * @param w
+	 * @return true or false
+	 */
 	public static boolean deleteAllNodes(Workspace w) {
 		if (w == null) return false;
 		boolean b = false;
@@ -396,14 +461,27 @@ public class ApplicationManager {
 		return b;
 	}
 
+	/**
+	 * View information of network
+	 * @param workspace
+	 */
 	public static void viewNetworkInfo(Workspace workspace) {
 		new NetworkPropertiesDialog(workspace.getShell(), SWT.SHEET).open();
 	}
 
+	/**
+	 * View information of selected node
+	 * @param workspace
+	 * @param wnode
+	 */
 	public static void viewNodeInfo(Workspace workspace, GWirelessNode wnode) {
 		new NodePropertiesDialog(workspace.getShell(), SWT.SHEET, wnode).open();		
 	}
 
+	/**
+	 * Show obstacle on network
+	 * @param workspace
+	 */
 	public static void showObstacles(Workspace workspace) {	
 		if (workspace == null) return;
 		
@@ -420,6 +498,10 @@ public class ApplicationManager {
 		}			
 	}
 	
+	/**
+	 * Show neighbor of all node has selected
+	 * @param workspace
+	 */
 	public static void showNeighbors(Workspace workspace) {
 		if (workspace == null) return;
 		if(workspace.getSelectedObject().size() == 0) {
@@ -441,12 +523,20 @@ public class ApplicationManager {
 		workspace.getGraphicNetwork().redraw();
 	}
 
+	/**
+	 * Search a node on network
+	 * @param workspace
+	 */
 	public static void searchNodes(Workspace workspace) {
 		if (workspace != null) {
 			new SearchNodeDialog(workspace.getShell(), SWT.DIALOG_TRIM, workspace).open();
 		}
 	}
 
+	/**
+	 * Move a node to new location
+	 * @param gWirelessNode : node has to move
+	 */
 	public static void moveNodeTo(GWirelessNode gWirelessNode) {		
 		NodeLocationResult result = (NodeLocationResult) new NodeLocationDialog(gWirelessNode.getShell(), SWT.SHEET, gWirelessNode.getWirelessNode()).open();
 
@@ -469,6 +559,11 @@ public class ApplicationManager {
 		}
 	}
 
+	/**
+	 * Calculate the shortest path connect two node
+	 * @param gStartNode : node start of path
+	 * @param gEndNode : node end of path
+	 */
 	public static void findShortestPath(GWirelessNode gStartNode, GWirelessNode gEndNode) {
 		Workspace workspace = (Workspace) gStartNode.getParent();
 		
@@ -498,6 +593,11 @@ public class ApplicationManager {
 		workspace.getGraphicNetwork().redraw();		
 	}
 
+	/**
+	 * Calculate the greedy path connect two node
+	 * @param gStartNode : node start of path
+	 * @param gEndNode : node end of path
+	 */
 	public static void findGreedyPath(GWirelessNode gStartNode, GWirelessNode gEndNode) {
 		Workspace workspace = (Workspace) gStartNode.getParent();
 		
@@ -528,18 +628,31 @@ public class ApplicationManager {
 		
 	}
 
+	/**
+	 * Calculate voironoi diagram
+	 * @param workspace
+	 */
 	public static void showVoronoiDiagram(Workspace workspace) {
         workspace.getPropertyManager().showVoronoiDiagram();
 		workspace.getGraphicNetwork().getVisualizeManager().calculateVoronoiDiagram();
 		workspace.getGraphicNetwork().redraw();
 	}
 
+	/**
+	 * Calculate delaunay triangulation
+	 * @param workspace
+	 */
 	public static void showDelaunayTriangulation(Workspace workspace) {
         workspace.getPropertyManager().showDelaunayTriangulation();
 		workspace.getGraphicNetwork().getVisualizeManager().calculateVoronoiDiagram();
 		workspace.getGraphicNetwork().redraw();
 	}
 	
+	/**
+	 * Show RNG graph
+	 * @param workspace
+	 * @return
+	 */
 	public static boolean showRNG(Workspace workspace) {
 		workspace.getGraphicNetwork().getVisualizeManager().calculateRNGGraph();		
 		if (workspace.getGraphicNetwork().getVisualizeManager().getRNGGraph() == null) {
@@ -552,6 +665,11 @@ public class ApplicationManager {
 		}
 	}
 	
+	/**
+	 * Show GG graph
+	 * @param workspace
+	 * @return
+	 */
 	public static boolean showGG(Workspace workspace) {
 		workspace.getGraphicNetwork().getVisualizeManager().calculateGGGraph();
 		
@@ -565,6 +683,11 @@ public class ApplicationManager {
 		}
 	}
 
+	/**
+	 * Create a random node 
+	 * @param w
+	 * @return
+	 */
 	public static boolean createARandomNode(Workspace w) {
 		boolean rlt = false;
 		if (w != null) {
@@ -585,6 +708,10 @@ public class ApplicationManager {
 		return rlt;
 	}
 
+	/**
+	 * Show range of nodes that has selected
+	 * @param workspace
+	 */
 	public static void showRange(Workspace workspace) {
 		Control c;
 		if(workspace.getSelectedObject().size() == 0) {
@@ -614,6 +741,11 @@ public class ApplicationManager {
 //		}
 	}
 
+	/**
+	 * Show network connection
+	 * @param workspace
+	 * @param isShow
+	 */
 	public static void showConnection(Workspace workspace, boolean isShow) {
 		if (workspace != null) {
 			workspace.getPropertyManager().setShowConnection(isShow);
@@ -621,6 +753,10 @@ public class ApplicationManager {
 		}
 	}	
 	
+	/**
+	 * Check network has connectivity or else
+	 * @param workspace
+	 */
 	public static void checkConnectivity(Workspace workspace) {
 		if (workspace != null) {
 			boolean isConnect = ProjectManager.checkConnectivity();
@@ -636,11 +772,19 @@ public class ApplicationManager {
 		}
 	}
 
+	/**
+	 * Manage label 
+	 * @param workspace
+	 */
 	public static void manageLabels(Workspace workspace) {
 		if (workspace != null)
 			new LabelDialog(workspace.getShell(), SWT.SHEET).open();		
 	}
 
+	/**
+	 * Manage path
+	 * @param workspace
+	 */
 	public static void managePaths(Workspace workspace) {
 		if (workspace != null)
 			new ViewPathInfo(workspace.getShell(), SWT.SHEET, workspace.getGraphicNetwork()).open();
@@ -675,6 +819,10 @@ public class ApplicationManager {
 		}
 	}
 
+	/**
+	 * Change size of network
+	 * @param workspace
+	 */
 	public static void changeNetworkSize(Workspace workspace) {
 		if (workspace == null) return;
 		
@@ -687,6 +835,10 @@ public class ApplicationManager {
 		workspace.getGraphicNetwork().redraw();
 	}
 
+	/**
+	 * Print scenario to pdf file
+	 * @param w
+	 */
 	public static void print(Workspace w) {
 		if (w == null) return;		
 		Project p = Workspace.getProject();		

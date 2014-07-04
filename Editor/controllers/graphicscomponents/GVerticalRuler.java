@@ -24,6 +24,12 @@ public class GVerticalRuler extends Canvas {
 	
 	public int thickSize = 15;
 
+	/**
+	 * Contructor
+	 * Create a Vertical ruler 
+	 * @param parent : composite parent
+	 * @param style
+	 */
 	public GVerticalRuler(Composite parent, int style) {
 		super(parent, style);
 		workspace = (Workspace) ((ScrolledComposite)parent).getContent();
@@ -122,10 +128,16 @@ public class GVerticalRuler extends Canvas {
 		});
 	}
 	
+	/**
+	 * Update bound for ruler
+	 */
 	public void updateBounds() {
 		setBounds(0, thickSize, thickSize, getParent().getClientArea().height);
 	}
 
+	/**
+	 * OnUpdate with Observer
+	 */
 	public void adaptChanges() {
 		updateBounds();
 		redraw();

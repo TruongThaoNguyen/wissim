@@ -19,10 +19,16 @@ import views.Workspace;
 public class GHorizontalRuler extends Canvas {
 	public static final int minPixel = 20;
 	
-	Workspace workspace;
+	Workspace workspace;	//workspace
 	
 	public int thickSize = 15;
 	
+	/**
+	 * Contructor
+	 * Create new Horizontal Ruler on workspace
+	 * @param parent : The parent composite of ruler
+	 * @param style : Style of ruler
+	 */
 	public GHorizontalRuler(Composite parent, int style) {
 		super(parent, style);
 	
@@ -121,11 +127,15 @@ public class GHorizontalRuler extends Canvas {
 			}
 		});
 	}
-	
+	/**
+	 * update bound for ruler
+	 */
 	public void updateBounds() {
 		setBounds(thickSize, 0, getParent().getClientArea().width, thickSize);
 	}
-
+/**
+ * Listen from observer to auto-change ruler
+ */
 	public void adaptChanges() {
 		updateBounds();
 		redraw();
