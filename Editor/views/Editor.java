@@ -52,13 +52,13 @@ import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import controllers.Configure;
-import controllers.converter.Converter;
 import controllers.graphicscomponents.GSelectableObject;
 import controllers.graphicscomponents.GWirelessNode;
 import controllers.managers.ApplicationManager;
 import controllers.managers.ApplicationSettings;
 import controllers.managers.ProjectManager;
 import controllers.managers.WorkspacePropertyManager;
+import controllers.synchronizer.Converter;
 import views.MainContent;
 import views.RulerScrolledComposite;
 import views.Workspace;

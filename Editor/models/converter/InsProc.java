@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import controllers.converter.Converter;
-import controllers.converter.TclObject;
+import controllers.synchronizer.Converter;
+import controllers.synchronizer.TclObject;
 
 /**
  * InsProc.java

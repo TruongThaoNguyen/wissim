@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import controllers.converter.Converter;
+import controllers.synchronizer.Converter;
 
 public class Entry {				
 	private InsProc insProc;

@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Stack;
 
 import controllers.Configure;
-import controllers.converter.Converter;
-import controllers.converter.Scanner;
-import controllers.converter.TclObject;
+import controllers.synchronizer.Converter;
+import controllers.synchronizer.Scanner;
+import controllers.synchronizer.TclObject;
 import models.Project;
 import models.converter.Entry;
 import models.converter.InsProc;

@@ -1,4 +1,4 @@
-package controllers.converter;
+package controllers.synchronizer;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

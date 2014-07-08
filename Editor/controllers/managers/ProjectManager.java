@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Random;
 
 import controllers.Configure;
-import controllers.converter.Converter;
+import controllers.synchronizer.Converter;
 import models.Project;
 import models.converter.ParseException;
 import models.networkcomponents.Node;

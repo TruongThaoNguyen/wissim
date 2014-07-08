@@ -2,7 +2,7 @@ package controllers.converter.shadow;
 
 import java.util.List;
 
-import controllers.converter.Converter;
+import controllers.synchronizer.Converter;
 import models.converter.InsProc;
 import models.converter.ParseException;
 

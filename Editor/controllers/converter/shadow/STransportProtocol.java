@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import controllers.converter.Converter;
-import controllers.converter.Scheduler;
-import controllers.converter.TclObject;
+import controllers.synchronizer.Converter;
+import controllers.synchronizer.Scheduler;
+import controllers.synchronizer.TclObject;
 import models.converter.Entry;
 import models.converter.InsProc;
 import models.converter.InsVar;

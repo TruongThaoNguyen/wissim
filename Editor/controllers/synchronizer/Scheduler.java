@@ -1,4 +1,4 @@
-package controllers.converter;
+package controllers.synchronizer;
 
 import java.util.HashMap;
 
