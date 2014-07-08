@@ -564,11 +564,11 @@ public class Editor extends MainContent implements Observer {
 
 		actSave = new Action("Save") {
 			public void run() {
-						Cursor cursor = new Cursor(getDisplay(), SWT.CURSOR_WAIT);
-						setCursor(cursor);
-						actionSave();
-						cursor = new Cursor(getDisplay(), SWT.CURSOR_ARROW);
-						setCursor(cursor);
+				Cursor cursor = new Cursor(getDisplay(), SWT.CURSOR_WAIT);
+				setCursor(cursor);
+				actionSave();
+				cursor = new Cursor(getDisplay(), SWT.CURSOR_ARROW);
+				setCursor(cursor);
 			}
 		};
 		actSave.setToolTipText("Save current project (CTRL + S)");
@@ -2147,9 +2147,8 @@ public class Editor extends MainContent implements Observer {
 		updateNodeInfoLabel();
 		updateNetworkInfoLabel();
 		if(getWorkspace() != null)
-			getWorkspace().updateLayout();
-//		ec.updateDesign(this, styledText);
-//		ec.updateEditToDesign(this,styledText);
-			
+		{
+			//getWorkspace().updateLayout();	
+		}
 	}
 }

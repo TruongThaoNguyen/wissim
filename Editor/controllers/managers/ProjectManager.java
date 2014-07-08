@@ -367,11 +367,16 @@ public class ProjectManager {
 	//TODO need to code Pattern and Area first
 	//public static Area createObstacle(Pattern pattern, double scale) { return null; }
 	
-	// create Obstacle 
-	public static boolean addObstacle(Area area) { return false; }
+	/**
+	 * Create Obstacle 
+	 * @param area
+	 * @return
+	 */
+	public static boolean addObstacle(Area area) {		
+		return false; 
+	}
 	
-	public static List<Area> getObstacles() { getProject();
-	return Project.getObstacleList(); }
+	public static List<Area> getObstacles() { return Project.getObstacleList(); }
 	
 	public static List<WirelessNode> getNeighbors(WirelessNode node) { return node.getNeighborList(); }
 	

@@ -8,22 +8,38 @@ import java.util.Observable;
  *
  */
 public class WorkspacePropertyManager extends Observable {
-	public final static int CURSOR = 0, HAND = 1, NODE_GEN = 2, AREA = 3;	// values for mouse mode	
-	public final static int VISUAL_ON = 1, VISUAL_OFF = 0;					// values for visualization
+	/**
+	 * values for mouse mode.
+	 */
+	public final static int CURSOR = 0, HAND = 1, NODE_GEN = 2, AREA = 3;	
 	
+	/**
+	 * 	values for visualization.
+	 */
+	public final static int VISUAL_ON = 1, VISUAL_OFF = 0;				
 	
-	private int mouseMode = CURSOR;				// mouse node		
-	private int visualizeMode = VISUAL_OFF;		// visualize mode
+	/**
+	 * mouse node.
+	 */
+	private int mouseMode = CURSOR;			
 	
-	// key states
-	private boolean controlKeyPressed = false;
-	private boolean shiftKeyPressed = false;
+	/**
+	 * visualize mode.
+	 */
+	private int visualizeMode = VISUAL_OFF;
 	
-	// visualization
-	private int neighborsLen = 0;
-	private int[] nodeIdShowedNeighbors = null;
-	private int rangeLen = 0;
-	private int[] nodeIdShowedRange = null;
+	/**
+	 * key states.
+	 */
+	private boolean controlKeyPressed = false, shiftKeyPressed = false;
+	
+	/**
+	 * visualization.
+	 */
+	private int 	neighborsLen = 0;
+	private int[] 	nodeIdShowedNeighbors = null;
+	private int 	rangeLen = 0;
+	private int[] 	nodeIdShowedRange = null;
 	private boolean showConnection = false;
 	private boolean showVoronoiDiagram = false;
 	private boolean showDelaunayTriangulation = false;
@@ -33,6 +49,7 @@ public class WorkspacePropertyManager extends Observable {
 	private boolean showGreedyPath = false;
 	private boolean showBoundary = false;
 	private boolean showObstacles = false;
+	private boolean showAreas = false;
 	private boolean showRNG = false;
 	private boolean showGG = false;
 	
@@ -398,13 +415,36 @@ public class WorkspacePropertyManager extends Observable {
 		return showObstacles;
 	}
 
+	/**
+	 * hide/show obstacles.
+	 * @param showObstacles enable or not
+	 */
 	public void setShowObstacles(boolean showObstacles) {
 		this.showObstacles = showObstacles;
 		
 		setChanged();
 		notifyObservers("ShowObstacles");
 	}
+	
+	/**
+	 * hide/show selected areas.
+	 * @param showAreas enable or not
+	 */
+	public void setShowAreas(boolean showAreas) {
+		this.showAreas = showAreas;
+		
+		setChanged();
+		notifyObservers("ShowAreas");
+	}
 
+	/**
+	 * is show Areas or not.
+	 * @return
+	 */
+	public boolean isShowAreas() {
+		return showAreas;
+	}
+	
 	public boolean isShowRNG() {
 		return showRNG;
 	}

@@ -37,13 +37,22 @@ import views.dialogs.ViewProjectInfoDialog;
 
 public class Workspace extends Composite {
 	public final static int OVERVIEW = 0, EXTEND = 1;
-		
-	private int mode;			// view mode of workspace
-	private double scale;		// handle the scale of the network
+	
+	/**
+	 * view mode of workspace
+	 */
+	private int mode;			
+	
+	/**
+	 * handle the scale of the network.
+	 */
+	private double scale;		
 	
 	private int savedStateIndex; 
 	
-	// temporary values
+	/**
+	 * temporary values.
+	 */
 	private boolean isLeftMouseDown;
 	private Point mouseLeftTempPoint;
 	
@@ -149,13 +158,14 @@ public class Workspace extends Composite {
 	public static Project getProject() { return ProjectManager.getProject(); }
 	
 	/**
-	 * Update menu on current workspace
+	 * Update menu on current workspace.
 	 */
 	private void updateMenu() {
 		Menu menu = new Menu(this);
 		setMenu(menu);
 		
-		if (propertyManager.getMouseMode() == WorkspacePropertyManager.HAND) {
+		if (propertyManager.getMouseMode() == WorkspacePropertyManager.HAND) 
+		{
 			MenuItem mntmViewProjectInfo = new MenuItem(menu, SWT.NONE);
 			mntmViewProjectInfo.setText("Exit Hand Mode");
 			mntmViewProjectInfo.addSelectionListener(new SelectionAdapter() {				
