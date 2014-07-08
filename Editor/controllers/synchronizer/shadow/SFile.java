@@ -1,4 +1,4 @@
-package controllers.converter.shadow;
+package controllers.synchronizer.shadow;
 
 public class SFile extends SCommonObject {
 

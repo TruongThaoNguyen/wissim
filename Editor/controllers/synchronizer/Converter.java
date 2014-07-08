@@ -12,7 +12,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import controllers.Configure;
-import controllers.converter.shadow.SProject;
+import controllers.synchronizer.shadow.SProject;
 import models.Project;
 import models.converter.Entry;
 import models.converter.ParseException;

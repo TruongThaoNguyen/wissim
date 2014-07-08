@@ -1,4 +1,4 @@
-package controllers.converter.shadow;
+package controllers.synchronizer.shadow;
 
 import java.util.ArrayList;
 import java.util.HashMap;

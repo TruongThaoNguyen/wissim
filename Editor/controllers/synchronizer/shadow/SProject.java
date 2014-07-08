@@ -1,4 +1,4 @@
-package controllers.converter.shadow;
+package controllers.synchronizer.shadow;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
