@@ -24,7 +24,9 @@ import views.Workspace;
  *
  */
 public class GObstacle extends GSelectableObject {
-	// the obstacle area
+	/**
+	 * the obstacle area.
+	 */
 	private Area area;
 	
 	int[] pointArray;
@@ -32,7 +34,7 @@ public class GObstacle extends GSelectableObject {
 	private GNetwork network;
 	
 	/**
-	 * Contructor 
+	 * Constructor 
 	 * Create a area as a obstacle
 	 * @param parent : Composite parent
 	 * @param style : style to attack parent composite

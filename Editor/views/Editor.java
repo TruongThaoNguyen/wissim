@@ -187,7 +187,7 @@ public class Editor extends MainContent implements Observer {
 	private void createContent() {
 		setLayout(new GridLayout(1, false));
 		
-		// region ------------------- toolbar ------------- //
+		// region ------------------- tool bar ------------- //
 		
 //		Composite toolbarComposite = new Composite(this,  SWT.BORDER);
 //		GridData gd_toolbarComposite = new GridData(SWT.LEFT, SWT.TOP, true, false, 1, 1);
@@ -1595,6 +1595,9 @@ public class Editor extends MainContent implements Observer {
 		}
 	}
 	
+	/**
+	 * Create new area in workspace.
+	 */
 	public void actionMouseCreateArea() {
 		Workspace workspace = getWorkspace();
 
@@ -1702,19 +1705,16 @@ public class Editor extends MainContent implements Observer {
 	{
 		toolBarManager.add(actNew);
 		toolBarManager.add(actOpen);
-		toolBarManager.add(actSave);
+		toolBarManager.add(actSave);		
+//		toolBarManager.add(actSaveAll);		
+		toolBarManager.add(new Separator());
 		
-//		toolBarManager.add(actSaveAll);
-		Separator separator = new Separator();
-		toolBarManager.add(separator);
 		toolBarManager.add(actMouseHand);
-		toolBarManager.add(actMouseCursor);
-		Separator separator2 = new Separator();
-		toolBarManager.add(separator2);
+		toolBarManager.add(actMouseCursor);		
+		toolBarManager.add(new Separator());
 		
 		toolBarManager.add(actMouseCreateNode);
-		toolBarManager.add(actMouseCreateArea);
-		
+		toolBarManager.add(actMouseCreateArea);		
 		toolBarManager.add(actCreateARandomNode);
 		toolBarManager.add(actCreateASingleNode);
 		toolBarManager.add(actCreateASetOfNodes);
