@@ -1,7 +1,14 @@
 package controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import controllers.managers.ProjectManager;
+import models.Project;
+import models.networkcomponents.Node;
+import models.networkcomponents.WirelessNode;
+import models.networkcomponents.features.Area;
 import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;
@@ -201,5 +208,22 @@ public final class Configure {
 			return directory + fileName;		
 		else
 			return directory + slash + fileName;
+	}
+
+	public static List<List<Integer>> getGroups()
+	{
+		ArrayList<List<Integer>> re = new ArrayList<List<Integer>>();
+		
+		for (Area a : Project.getAreaList()) {
+			ArrayList<Integer> su = new ArrayList<Integer>();
+			re.add(su);
+			
+			for (Node n : ProjectManager.getProject().getNetwork().getNodeList()) {
+				WirelessNode w = (WirelessNode) n;
+				if (a.contains(w.getX(), w.getY())) su.add(w.getId());
+			}
+		}
+		
+		return re;
 	}
 }

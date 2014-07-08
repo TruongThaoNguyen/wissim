@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
-import controllers.Configure;
-import controllers.synchronizer.Converter;
 import models.Project;
 import models.converter.ParseException;
 import models.networkcomponents.Node;
@@ -23,8 +21,12 @@ import models.networkcomponents.algorithms.BFSAlgorithm;
 import models.networkcomponents.algorithms.DijikstraAlgorithm;
 import models.networkcomponents.algorithms.GreedyAlgorithm;
 import models.networkcomponents.events.Event.EventType;
-import models.networkcomponents.features.*;
+import models.networkcomponents.features.Area;
+import models.networkcomponents.features.Label;
 import models.networkcomponents.protocols.ApplicationProtocol;
+import nu.xom.ParsingException;
+import controllers.Configure;
+import controllers.synchronizer.Converter;
 
 /**
  * Acts as a proxy between models and the program
@@ -86,11 +88,31 @@ public class ProjectManager {
 	 * @throws ParseException 
 	 */
 	public static void saveProject() throws IOException, ParseException {						
+		// region --------------- save tcl file --------------- //
+		
 		String fileName = Configure.getTclFile();
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));		
 		bw.write(Converter.DTC());
-		bw.close();				
+		bw.close();
+
+		// endregion save tcl file
+		
+		// region --------------- save areas storage file --------------- //
+		
+		fileName = Configure.getFilePath(Configure.getDirectory(), "SelectedArea.tr");
+		bw = new BufferedWriter(new FileWriter(fileName));
+		
+		for (List<Integer> l : Configure.getGroups()) 
+		{
+			for (Integer i : l) bw.write(i + " ");
+			
+			bw.write("\n");
+		}
+		
+		bw.close();
+
+		// endregion save areas storage file
 	}
 	
 	/**

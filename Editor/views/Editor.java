@@ -1373,7 +1373,7 @@ public class Editor extends MainContent implements Observer {
 	 * save tcl file
 	 * @author trongnguyen
 	 */
-	public void actionSave() {		
+	public void actionSave() {				
 		try 
 		{
 			if (tabFolder.getSelectionIndex() == 0) // edit

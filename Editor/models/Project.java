@@ -82,6 +82,7 @@ public abstract class Project {
 	public static Date 			getLastSavedDate() 				{ return lastSavedDate; }
 	public static List<Label>	getLabelList() 					{ return labelList; }
 	public static List<Area> 	getObstacleList()			 	{ return obstacleList; }
+	public static List<Area>	getAreaList()					{ return areaList; }
 
 	public static void addObstacle(Area area) {
 		area.setId(obstacleIndex++);
