@@ -23,7 +23,7 @@ import views.Workspace;
  * @author leecom
  *
  */
-public class GObstacle extends GSelectableObject {
+public class GGroup extends GSelectableObject {
 	/**
 	 * the obstacle area.
 	 */
@@ -40,7 +40,7 @@ public class GObstacle extends GSelectableObject {
 	 * @param style : style to attack parent composite
 	 * @param area : area to define obstacle
 	 */
-	public GObstacle(Composite parent, int style, Area area) {
+	public GGroup(Composite parent, int style, Area area) {
 		super(parent, style);
 		
 		this.area = area;	
@@ -52,9 +52,10 @@ public class GObstacle extends GSelectableObject {
 			@Override
 			public void paintControl(PaintEvent arg0) {
 				if (isSelected())
-					setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+					setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
 				else
-					setBackground(ApplicationSettings.colorAWTtoSWT(ApplicationSettings.obstacleBackgroundColor));
+					setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_CYAN));
+					//setBackground(ApplicationSettings.colorAWTtoSWT(ApplicationSettings.obstacleBackgroundColor));
 				
 				arg0.gc.setAntialias(SWT.ON);
 				
@@ -64,6 +65,11 @@ public class GObstacle extends GSelectableObject {
 			}
 		});
 		
+		createMenu();
+	}
+	
+	private void createMenu()
+	{
 		Menu menu = new Menu(this);
 		setMenu(menu);
 		
@@ -73,7 +79,7 @@ public class GObstacle extends GSelectableObject {
 			@Override
 			public void widgetSelected(SelectionEvent e) {				
 				Project.getObstacleList().remove(getArea());				
-				GObstacle.this.dispose();
+				GGroup.this.dispose();
 			}
 		});
 	}

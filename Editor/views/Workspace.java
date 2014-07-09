@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import controllers.graphicscomponents.GGroup;
 import controllers.graphicscomponents.GNetwork;
 import controllers.graphicscomponents.GObstacle;
 import controllers.graphicscomponents.GSelectableObject;
@@ -195,6 +196,8 @@ public class Workspace extends Composite {
 		GNetwork gnetwork = getGraphicNetwork();
 		if (gnetwork == null) return;
 		
+		// region --------------- nodes --------------- //
+
 		// check whether the graphic node is sill represented of a node		
 		for (GWirelessNode gn : getGraphicNodes()) 
 		{						
@@ -224,6 +227,10 @@ public class Workspace extends Composite {
 			}
 		}	
 		
+		// endregion nodes
+		
+		// region --------------- Obstacles --------------- //
+
 		if (Project.getObstacleList() != null)
 		{
 			for (Area area : Project.getObstacleList()) 
@@ -262,6 +269,51 @@ public class Workspace extends Composite {
 			
 			if (!isExisted)	garea.dispose();			
 		}
+
+		// endregion Obstacles
+		
+		// region --------------- Groups --------------- //
+
+		if (Project.getAreaList() != null)
+		{
+			for (Area area : Project.getAreaList()) 
+			{
+				// check whether area in getProject() are instantiated yet			
+				isExisted = false;
+				for (GObstacle garea : getGraphicObstacles()) 
+				{
+					if (garea.getArea().getId() == area.getId()) 
+					{
+						isExisted = true;
+						break;
+					}
+				}
+			
+				if (!isExisted) 
+				{			
+					GGroup ggroup = new GGroup(this, SWT.NONE, area);
+					ggroup.moveAbove(gnetwork);
+				}
+			}
+		}
+		
+		for (GGroup garea : getGraphicGroups()) 
+		{
+			// check whether the graphic node is sill represented of a node
+			isExisted = false;
+			for (Area area : Project.getAreaList())
+			{
+				if (garea.getArea().getId() == area.getId()) 
+				{
+					isExisted = true;
+					break;
+				}
+			}
+			
+			if (!isExisted)	garea.dispose();			
+		}
+
+		// endregion Groups
 	}
 	
 	/**
@@ -311,6 +363,10 @@ public class Workspace extends Composite {
 		return null;
 	} 
 	
+	/**
+	 * get list of Obstacle's graphic objects.
+	 * @return list of GObjecle
+	 */
 	public List<GObstacle> getGraphicObstacles() {
 		List<GObstacle> obstacleList = new LinkedList<GObstacle>();
 		
@@ -319,6 +375,20 @@ public class Workspace extends Composite {
 				obstacleList.add((GObstacle) c);
 	
 		return obstacleList;
+	}
+	
+	/**
+	 * get list of Group's graphic objects.
+	 * @return list of GGroup
+	 */
+	public List<GGroup> getGraphicGroups() {
+		List<GGroup> groupList = new LinkedList<GGroup>();
+		
+		for (Control c: getChildren())
+			if (c instanceof GGroup)
+				groupList.add((GGroup) c);
+	
+		return groupList;	
 	}
 	
 	/**

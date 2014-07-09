@@ -624,21 +624,29 @@ public class GNetwork extends Canvas {
 				
 				// check whether this area contains nodes
 				List<WirelessNode> nodeList = new LinkedList<WirelessNode>();
-				for (Node n : project.getNetwork().getNodeList()) {
+				for (Node n : project.getNetwork().getNodeList()) 
+				{
 					WirelessNode wn = (WirelessNode) n;
-					if (selectedArea.contains(wn.getX(), wn.getY())) {
+					if (selectedArea.contains(wn.getX(), wn.getY())) 
+					{
 						nodeList.add(wn);
 					}
 				}
 				
 				if (nodeList.size() > 0)
-					if (MessageDialog.openQuestion(getShell(), "Create Obstacle", "The selected area contains node(s)\r\n" +
-							"Do you want to remove them to create obstacle")) {
+				{
+					if (MessageDialog.openQuestion(getShell(), "Create Obstacle", "The selected area contains node(s)\r\nDo you want to remove them to create obstacle")) 
+					{
 						for (WirelessNode n : nodeList)
+						{
 							workspace.getGraphicNodeByNode(n).dispose();
-					} else {
+						}
+					}
+					else 
+					{
 						return;
-					}				
+					}
+				}
 				
 				Project.addObstacle(selectedArea);				
 				workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);
@@ -654,16 +662,14 @@ public class GNetwork extends Canvas {
     	// region --------------- set as area --------------- //
 
     	MenuItem mntmSetArea = new MenuItem(menu, SWT.NONE);
-    	mntmSetArea.setText("Set as Area");
+    	mntmSetArea.setText("Set as Group of nodes");
     	mntmSetArea.addSelectionListener(new SelectionAdapter() {			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) 
 			{
-				Workspace workspace = (Workspace) getParent();
-				Project project = Workspace.getProject();				
-				
 				Project.addArea(selectedArea);				
 				
+				Workspace workspace = (Workspace) getParent();
 				workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);
 				workspace.getPropertyManager().setShowAreas(true);
 				workspace.updateLayout();
