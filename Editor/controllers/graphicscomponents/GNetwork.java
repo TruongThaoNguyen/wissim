@@ -667,11 +667,11 @@ public class GNetwork extends Canvas {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) 
 			{
-				Project.addArea(selectedArea);				
+				Project.addGroup(selectedArea);				
 				
 				Workspace workspace = (Workspace) getParent();
 				workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);
-				workspace.getPropertyManager().setShowAreas(true);
+				workspace.getPropertyManager().setShowGroups(true);
 				workspace.updateLayout();
 				workspace.getGraphicNetwork().redraw();	
 				clearSelectedArea();

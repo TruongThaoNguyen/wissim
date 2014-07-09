@@ -456,6 +456,7 @@ public class Editor extends MainContent implements Observer {
 		menuManager_View.add(new Separator());
 		menuManager_View.add(actShowConnection);
 		menuManager_View.add(actShowObstacles);
+		menuManager_View.add(actShowGroups);
 		menuManager_View.add(new Separator());
 		menuManager_View.add(actShowRulers);
 		
@@ -677,7 +678,6 @@ public class Editor extends MainContent implements Observer {
 		actViewNodeInfo.setAccelerator(SWT.CTRL | 'I');
 		actViewNodeInfo.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/contrast.png"));
 
-
 		actShowObstacles = new Action("Show Obstacle(s)") {
 			public void run() {
 				actionShowObstacles();
@@ -687,6 +687,15 @@ public class Editor extends MainContent implements Observer {
 		actShowObstacles.setAccelerator(SWT.ALT | SWT.CTRL | 'O');
 		actShowObstacles.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/contrast.png"));
 
+		actShowGroups = new Action("Show Group(s)") {
+			public void run() {
+				actionShowGroups();
+			}
+		};
+		actShowGroups.setToolTipText("Show groups (ALT + G)");
+		actShowGroups.setAccelerator(SWT.ALT | SWT.CTRL | 'G');
+		actShowGroups.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/contrast.png"));
+		
 		actShowNeighbors = new Action("Show Neighbors") {
 			public void run() {
 				actionShowNeighbors();
@@ -1455,6 +1464,14 @@ public class Editor extends MainContent implements Observer {
 		ApplicationManager.showObstacles(workspace);
 	}
 	
+	/**
+	 * show areas that selected by user.
+	 */
+	public void actionShowGroups() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.showGroups(workspace);
+	}
+	
 	public void actionShowNeighbors() {
 		Workspace workspace = getWorkspace();
 		ApplicationManager.showNeighbors(workspace);
@@ -1931,8 +1948,16 @@ public class Editor extends MainContent implements Observer {
 		return actViewNodeInfo;
 	}
 
+	/**
+	 * get action show Obstacles.
+	 * @return action
+	 */
 	public Action getActShowObstacles() {
 		return actShowObstacles;
+	}
+	
+	public Action getActShowGroups() {
+		return actShowGroups;
 	}
 
 	public Action getActShowNeighbors() {
@@ -2063,6 +2088,7 @@ public class Editor extends MainContent implements Observer {
 	private Action actViewNetworkInfo;
 	private Action actViewNodeInfo;
 	private Action actShowObstacles;
+	private Action actShowGroups;
 	private Action actShowNeighbors;
 	private Action actSearchNode;
 	private Action actIdentifyBoundary;

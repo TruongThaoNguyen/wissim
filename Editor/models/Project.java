@@ -48,7 +48,7 @@ public abstract class Project {
 	/**
 	 * List of areas.
 	 */
-	private static List<Area> areaList = new ArrayList<Area>();
+	private static List<Area> groupList = new ArrayList<Area>();
 	
 	/**
 	 * Obstacle index generator.
@@ -58,7 +58,7 @@ public abstract class Project {
 	/**
 	 * Area index generator.
 	 */
-	private static int areaIndex = 0;
+	private static int groupIndex = 0;
 	
 	/**
 	 * Transport protocol
@@ -82,16 +82,16 @@ public abstract class Project {
 	public static Date 			getLastSavedDate() 				{ return lastSavedDate; }
 	public static List<Label>	getLabelList() 					{ return labelList; }
 	public static List<Area> 	getObstacleList()			 	{ return obstacleList; }
-	public static List<Area>	getAreaList()					{ return areaList; }
+	public static List<Area>	getGroupsList()					{ return groupList; }
 
 	public static void addObstacle(Area area) {
 		area.setId(obstacleIndex++);
 		obstacleList.add(area);
 	}
 	
-	public static void addArea(Area area) {
-		area.setId(areaIndex++);
-		areaList.add(area);
+	public static void addGroup(Area area) {
+		area.setId(groupIndex++);
+		groupList.add(area);
 	}
 	// endregion Manager properties
 

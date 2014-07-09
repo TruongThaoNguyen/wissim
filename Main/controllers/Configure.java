@@ -214,7 +214,7 @@ public final class Configure {
 	{
 		ArrayList<List<Integer>> re = new ArrayList<List<Integer>>();
 		
-		for (Area a : Project.getAreaList()) {
+		for (Area a : Project.getGroupsList()) {
 			ArrayList<Integer> su = new ArrayList<Integer>();
 			re.add(su);
 			

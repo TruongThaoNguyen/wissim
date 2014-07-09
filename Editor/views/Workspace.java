@@ -274,34 +274,31 @@ public class Workspace extends Composite {
 		
 		// region --------------- Groups --------------- //
 
-		if (Project.getAreaList() != null)
+		for (Area area : Project.getGroupsList()) 
 		{
-			for (Area area : Project.getAreaList()) 
+			// check whether area in getProject() are instantiated yet			
+			isExisted = false;
+			for (GObstacle garea : getGraphicObstacles()) 
 			{
-				// check whether area in getProject() are instantiated yet			
-				isExisted = false;
-				for (GObstacle garea : getGraphicObstacles()) 
+				if (garea.getArea().getId() == area.getId()) 
 				{
-					if (garea.getArea().getId() == area.getId()) 
-					{
-						isExisted = true;
-						break;
-					}
-				}
-			
-				if (!isExisted) 
-				{			
-					GGroup ggroup = new GGroup(this, SWT.NONE, area);
-					ggroup.moveAbove(gnetwork);
+					isExisted = true;
+					break;
 				}
 			}
-		}
+		
+			if (!isExisted) 
+			{			
+				GGroup ggroup = new GGroup(this, SWT.NONE, area);
+				ggroup.moveAbove(gnetwork);
+			}
+			}		
 		
 		for (GGroup garea : getGraphicGroups()) 
 		{
 			// check whether the graphic node is sill represented of a node
 			isExisted = false;
-			for (Area area : Project.getAreaList())
+			for (Area area : Project.getGroupsList())
 			{
 				if (garea.getArea().getId() == area.getId()) 
 				{

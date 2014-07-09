@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 
 import controllers.Configure;
+import controllers.graphicscomponents.GGroup;
 import controllers.graphicscomponents.GObstacle;
 import controllers.graphicscomponents.GSelectableObject;
 import controllers.graphicscomponents.GWirelessNode;
@@ -485,17 +486,28 @@ public class ApplicationManager {
 	public static void showObstacles(Workspace workspace) {	
 		if (workspace == null) return;
 		
-		if (workspace.getPropertyManager().isShowObstacles()) {
-			for (GObstacle obs : workspace.getGraphicObstacles())
-				obs.setVisible(false);
+		boolean enable = workspace.getPropertyManager().isShowObstacles();
+		for (GObstacle obs : workspace.getGraphicObstacles())
+			obs.setVisible(enable);
 			
-			workspace.getPropertyManager().setShowObstacles(false);
-		} else {
-			for (GObstacle obs : workspace.getGraphicObstacles())
-				obs.setVisible(true);
+		workspace.getPropertyManager().setShowObstacles(enable);			
+	}
+	
+	/**
+	 * Show groups that selected by user.
+	 * @param workspace workspace to show
+	 */
+	public static void showGroups(Workspace workspace) {
+		if (workspace == null) return;
+		WorkspacePropertyManager pm = workspace.getPropertyManager();
+		
+		boolean enable = pm.isShowGroups();		
+		for (GGroup g : workspace.getGraphicGroups())
+		{
+			g.setVisible(enable);
+		}
 			
-			workspace.getPropertyManager().setShowObstacles(true);
-		}			
+		pm.setShowGroups(enable);
 	}
 	
 	/**

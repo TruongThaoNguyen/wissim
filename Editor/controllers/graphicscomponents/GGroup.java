@@ -78,7 +78,7 @@ public class GGroup extends GSelectableObject {
 		mntmRemoveObstacle.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {				
-				Project.getObstacleList().remove(getArea());				
+				Project.getGroupsList().remove(getArea());				
 				GGroup.this.dispose();
 			}
 		});

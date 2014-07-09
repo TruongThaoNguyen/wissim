@@ -49,7 +49,7 @@ public class WorkspacePropertyManager extends Observable {
 	private boolean showGreedyPath = false;
 	private boolean showBoundary = false;
 	private boolean showObstacles = false;
-	private boolean showAreas = false;
+	private boolean showGroups = false;
 	private boolean showRNG = false;
 	private boolean showGG = false;
 	
@@ -430,8 +430,8 @@ public class WorkspacePropertyManager extends Observable {
 	 * hide/show selected areas.
 	 * @param showAreas enable or not
 	 */
-	public void setShowAreas(boolean showAreas) {
-		this.showAreas = showAreas;
+	public void setShowGroups(boolean showGroups) {
+		this.showGroups = showGroups;
 		
 		setChanged();
 		notifyObservers("ShowAreas");
@@ -441,8 +441,8 @@ public class WorkspacePropertyManager extends Observable {
 	 * is show Areas or not.
 	 * @return
 	 */
-	public boolean isShowAreas() {
-		return showAreas;
+	public boolean isShowGroups() {
+		return showGroups;
 	}
 	
 	public boolean isShowRNG() {
