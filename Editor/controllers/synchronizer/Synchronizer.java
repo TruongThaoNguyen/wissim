@@ -28,10 +28,91 @@ import models.converter.Token.TokenType;
 public class Synchronizer 
 {		
 	public static SProject global;	
-	public static List<Entry> generateEntry = new ArrayList<Entry>();
 	
+	private static List<Entry> generateEntry = new ArrayList<Entry>();	
 	private static int newNodeIndex = 0;
-	  
+	 
+	/**
+	 * get default script for new project.
+	 * @return script as string
+	 */
+	public static String DefaultScript() {		
+		StringBuilder sb = new StringBuilder();		
+		sb.append("#\n");
+		sb.append("# Initialize Global Variable\n");
+		sb.append("#\n");
+		sb.append("\n");
+		sb.append("# set start time\n");
+		sb.append("set startTime [clock seconds]\n");
+		sb.append("\n");
+		sb.append("# set up ns simulator and nam trace\n");
+		sb.append("set ns_		[new Simulator]\n");
+		sb.append("set chan	[new Channel/WirelessChannel]\n");
+		sb.append("set prop	[new Propagation/TwoRayGround]\n");
+		sb.append("set topo	[new Topography]\n");
+		sb.append("\n");
+		sb.append("# run the simulator\n");
+		sb.append("set tracefd	[open Trace.tr w]\n");
+		sb.append("$ns_ trace-all $tracefd\n");
+		sb.append("\n");
+		sb.append("$topo load_flatgrid 1000 1000\n");
+		sb.append("$prop topography $topo\n");
+		sb.append("\n");
+		sb.append("set god_ [create-god 0]\n");
+		sb.append("\n");
+		sb.append("# configure the nodes\n");
+		sb.append("$ns_ node-config -adhocRouting GPSR \\\n");
+		sb.append("		 -llType LL \\\n");
+		sb.append("		 -macType Mac/802_11 \\\n");
+		sb.append("		 -ifqType Queue/DropTail/PriQueue \\\n");
+		sb.append("		 -ifqLen 50 \\\n");
+		sb.append("		 -antType Antenna/OmniAntenna \\\n");
+		sb.append("		 -propType Propagation/TwoRayGround \\\n");
+		sb.append("		 -phyType Phy/WirelessPhy \\\n");
+		sb.append("		 -channel [new Channel/WirelessChannel] \\\n");
+		sb.append("		 -topoInstance $topo \\\n");
+		sb.append("		 -agentTrace ON \\\n");
+		sb.append("		 -routerTrace ON \\\n");
+		sb.append("		 -macTrace OFF \\\n");
+		sb.append("		 -movementTrace OFF \\\n");
+		sb.append("		 -energyModel EnergyModel \\\n");
+		sb.append("		 -idlePower 0.0096 \\\n");
+		sb.append("		 -rxPower 0.021 \\\n");
+		sb.append("		 -txPower 0.0255 \\\n");
+		sb.append("		 -sleepPower 0.000648 \\\n");
+		sb.append("		 -transitionPower 0.024 \\\n");
+		sb.append("		 -transitionTime 0.0129 \\\n");
+		sb.append("		 -initialEnergy 1000\n");
+		sb.append("\n");
+		sb.append("# ending the simulation\n"); 
+		sb.append("$ns_ at 200 \"stop\"\n");
+		sb.append("\n");
+		sb.append("proc stop {} {\n");
+		sb.append("	global ns_ tracefd startTime\n");
+		sb.append("	$ns_ flush-trace\n");
+		sb.append("	close $tracefd\n");
+		sb.append("\n");
+		sb.append("	puts \"end simulation\"\n");
+		sb.append("\n");
+		sb.append("	set runTime [clock second]\n");
+		sb.append("	set runTime [expr $runTime - $startTime]\n");
+		sb.append("\n");
+		sb.append("	set s [expr $runTime % 60];	set runTime [expr $runTime / 60];\n");
+		sb.append("	set m [expr $runTime % 60];	set runTime [expr $runTime / 60];\n");
+		sb.append("\n");
+		sb.append("	puts \"Runtime: $runTime hours, $m minutes, $s seconds\"\n");
+		sb.append("\n");
+		sb.append("	$ns_ halt\n");
+		sb.append("	exit 0\n");
+		sb.append("}\n");
+		sb.append("\n");
+		sb.append("$ns_ run\n");
+		sb.append("\n");
+		sb.append("##################### end script #####################\n");
+		
+		return sb.toString();
+	}
+	
 	/**
 	 * CTD - Code to Design
 	 * Parser Tcl code to a Project model 
@@ -247,83 +328,6 @@ public class Synchronizer
 		return result.substring(0, result.length() - 1);
 	}
 	
-	public static String DefaultScript() {		
-		StringBuilder sb = new StringBuilder();		
-		sb.append("#\n");
-		sb.append("# Initialize Global Variable\n");
-		sb.append("#\n");
-		sb.append("\n");
-		sb.append("# set start time\n");
-		sb.append("set startTime [clock seconds]\n");
-		sb.append("\n");
-		sb.append("# set up ns simulator and nam trace\n");
-		sb.append("set ns_		[new Simulator]\n");
-		sb.append("set chan	[new Channel/WirelessChannel]\n");
-		sb.append("set prop	[new Propagation/TwoRayGround]\n");
-		sb.append("set topo	[new Topography]\n");
-		sb.append("\n");
-		sb.append("# run the simulator\n");
-		sb.append("set tracefd	[open Trace.tr w]\n");
-		sb.append("$ns_ trace-all $tracefd\n");
-		sb.append("\n");
-		sb.append("$topo load_flatgrid 1000 1000\n");
-		sb.append("$prop topography $topo\n");
-		sb.append("\n");
-		sb.append("set god_ [create-god 0]\n");
-		sb.append("\n");
-		sb.append("# configure the nodes\n");
-		sb.append("$ns_ node-config -adhocRouting GPSR \\\n");
-		sb.append("		 -llType LL \\\n");
-		sb.append("		 -macType Mac/802_11 \\\n");
-		sb.append("		 -ifqType Queue/DropTail/PriQueue \\\n");
-		sb.append("		 -ifqLen 50 \\\n");
-		sb.append("		 -antType Antenna/OmniAntenna \\\n");
-		sb.append("		 -propType Propagation/TwoRayGround \\\n");
-		sb.append("		 -phyType Phy/WirelessPhy \\\n");
-		sb.append("		 -channel [new Channel/WirelessChannel] \\\n");
-		sb.append("		 -topoInstance $topo \\\n");
-		sb.append("		 -agentTrace ON \\\n");
-		sb.append("		 -routerTrace ON \\\n");
-		sb.append("		 -macTrace OFF \\\n");
-		sb.append("		 -movementTrace OFF \\\n");
-		sb.append("		 -energyModel EnergyModel \\\n");
-		sb.append("		 -idlePower 0.0096 \\\n");
-		sb.append("		 -rxPower 0.021 \\\n");
-		sb.append("		 -txPower 0.0255 \\\n");
-		sb.append("		 -sleepPower 0.000648 \\\n");
-		sb.append("		 -transitionPower 0.024 \\\n");
-		sb.append("		 -transitionTime 0.0129 \\\n");
-		sb.append("		 -initialEnergy 1000\n");
-		sb.append("\n");
-		sb.append("# ending the simulation\n"); 
-		sb.append("$ns_ at 200 \"stop\"\n");
-		sb.append("\n");
-		sb.append("proc stop {} {\n");
-		sb.append("	global ns_ tracefd startTime\n");
-		sb.append("	$ns_ flush-trace\n");
-		sb.append("	close $tracefd\n");
-		sb.append("\n");
-		sb.append("	puts \"end simulation\"\n");
-		sb.append("\n");
-		sb.append("	set runTime [clock second]\n");
-		sb.append("	set runTime [expr $runTime - $startTime]\n");
-		sb.append("\n");
-		sb.append("	set s [expr $runTime % 60];	set runTime [expr $runTime / 60];\n");
-		sb.append("	set m [expr $runTime % 60];	set runTime [expr $runTime / 60];\n");
-		sb.append("\n");
-		sb.append("	puts \"Runtime: $runTime hours, $m minutes, $s seconds\"\n");
-		sb.append("\n");
-		sb.append("	$ns_ halt\n");
-		sb.append("	exit 0\n");
-		sb.append("}\n");
-		sb.append("\n");
-		sb.append("$ns_ run\n");
-		sb.append("\n");
-		sb.append("##################### end script #####################\n");
-		
-		return sb.toString();
-	}
-	
 	/**
 	 * get index of generateEntry to put code for new Node.
 	 * @return index
@@ -347,6 +351,34 @@ public class Synchronizer
 	 */
 	public static int setNewNodeIndex(int value) {
 		return newNodeIndex = value;
+	}
+	
+	/**
+	 * register new entry to generteEntry.
+	 * @param e new entry
+	 * @return add success or not
+	 */
+	public static boolean registerEntry(Entry e) {
+		return generateEntry.add(e);
+	}
+	
+	/**
+	 * register new entry to generteEntry.
+	 * @param index index to register
+	 * @param e new entry
+	 * @return index of new entry
+	 */
+	public static int registerEntry(int index, Entry e){
+		generateEntry.add(index, e);
+		return index;
+	}
+	
+	/**
+	 * get generate entry list.
+	 * @return generateEntry
+	 */
+	public static List<Entry> getGenerateEntry() {
+		return generateEntry;
 	}
 	
 	public static void main(String[] args)  throws Exception {		

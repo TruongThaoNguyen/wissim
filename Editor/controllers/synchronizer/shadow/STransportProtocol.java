@@ -241,10 +241,10 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 		
 		// region ------------------- generate Tcl code ------------------- //
 		
-		int	index = Synchronizer.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
+		int	index = Synchronizer.getGenerateEntry().lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
 		
 		Entry e = new Entry(getInsProc("set"), Arrays.asList(param + "", value + ""));
-		Synchronizer.generateEntry.add(index, e);
+		Synchronizer.registerEntry(index, e);
 		this.addEntry(e);
 		
 		// endregion generate Tcl code
@@ -274,30 +274,30 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 		// region ------------------- Generate Tcl code ------------------- //
 		
 		int index = Math.max(
-				Synchronizer.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)),
-				Synchronizer.generateEntry.lastIndexOf(dest.getEntry().get(dest.getEntry().size() - 1))) + 1;
+				Synchronizer.getGenerateEntry().lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)),
+				Synchronizer.getGenerateEntry().lastIndexOf(dest.getEntry().get(dest.getEntry().size() - 1))) + 1;
 	
 		// $mnode_($s($i)) setdest [$mnode_($d($i)) set X_] [$mnode_($d($i)) set Y_] 0
 		Entry e = new Entry(this.node.getLabel() + " setdest [" + dest.getLabel() + " set X_] [" + dest.getLabel() + " set Y_] 0\n");
-		Synchronizer.generateEntry.add(index++, e);
+		Synchronizer.registerEntry(index++, e);
 		app.addEntry(e);
 		dest.addEntry(e);		
 		
 		// $ns_ connect $udp_($i) $sink_($i)
 		e = new Entry(Synchronizer.global.getNetwork().getLabel() + " connect " + this.getLabel() + " " + connectedAgent.getLabel() + "\n");
-		Synchronizer.generateEntry.add(index++, e);
+		Synchronizer.registerEntry(index++, e);
 		app.addEntry(e);
 		dest.addEntry(e);
 		
 		// set cbr_($i) [new Application/Traffic/CBR]
 		e = new Entry("set " + label + " [new Application/Traffic/" + type + "]\n");
-		Synchronizer.generateEntry.add(index++, e);
+		Synchronizer.registerEntry(index++, e);
 		app.addEntry(e);
 		dest.addEntry(e);
 		
 		// $cbr_($i) attach-agent $udp_($i)
 		e = new Entry(app.getLabel() + " attach-agent " + this.getLabel() + "\n");
-		Synchronizer.generateEntry.add(index++, e);
+		Synchronizer.registerEntry(index++, e);
 		app.addEntry(e);
 		dest.addEntry(e);
 		
@@ -312,7 +312,7 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 		
 		getAppList().remove(app);
 		for (Entry e : ((SApplicationProtocol)app).getEntry()) {
-			Synchronizer.generateEntry.remove(e);
+			Synchronizer.getGenerateEntry().remove(e);
 		}
 		
 		return true;

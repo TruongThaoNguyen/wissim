@@ -229,25 +229,25 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 		int index = 0;
 		for (Node node : Synchronizer.global.getNetwork().getNodeList()) {
 			SNode sn = (SNode) node;
-			index = Math.max(index, Synchronizer.generateEntry.lastIndexOf(sn.getEntry().get(sn.getEntry().size() - 1)));
+			index = Math.max(index, Synchronizer.getGenerateEntry().lastIndexOf(sn.getEntry().get(sn.getEntry().size() - 1)));
 		}	
 		index += 1;
 		
 		// space
 		Entry e = new Entry(" \n");
-		Synchronizer.generateEntry.add(index++, e);
+		Synchronizer.registerEntry(index++, e);
 		addEntry(e);
 		tp.addEntry(e);
 		
 		// set udp_($i) [new Agent/UDP]
 		e = new Entry("set " + label + " [new Agent/" + type + "]\n");
-		Synchronizer.generateEntry.add(index++, e);
+		Synchronizer.registerEntry(index++, e);
 		addEntry(e);
 		tp.addEntry(e);
 		
 		// $ns_ attach-agent $mnode_($s($i)) $udp_($i)
 		e = new Entry(((SNetwork)Synchronizer.global.getNetwork()).getLabel() + " attach-agent " + getLabel() + " " + tp.getLabel() + "\n");
-		Synchronizer.generateEntry.add(index++, e);
+		Synchronizer.registerEntry(index++, e);
 		addEntry(e);
 		tp.addEntry(e);		
 		
@@ -262,7 +262,7 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 		transportProtocolList.remove(transproc);
 		
 		for (Entry e : ((STransportProtocol)transproc).getEntry()) {
-			Synchronizer.generateEntry.remove(e);			
+			Synchronizer.getGenerateEntry().remove(e);			
 		}
 		
 		return true;

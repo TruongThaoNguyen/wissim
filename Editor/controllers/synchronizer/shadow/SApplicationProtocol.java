@@ -275,10 +275,10 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 		insVar.put(param, new InsVar(param, value));
 		
 		// generate tcl code here
-		int	index = Synchronizer.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
+		int	index = Synchronizer.getGenerateEntry().lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
 		
 		Entry e = new Entry(getInsProc("set"), Arrays.asList(param + "", value + ""));
-		Synchronizer.generateEntry.add(index, e);
+		Synchronizer.registerEntry(index, e);
 		this.addEntry(e);
 	}
 
@@ -297,11 +297,11 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 		event.put(type.toString(), raisedTime);
 
 		// generate tcl code here
-		int	index = Synchronizer.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
+		int	index = Synchronizer.getGenerateEntry().lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
 		
 		//	$ns_ at 100 "$cbr_($i) start"
 		Entry e = new Entry(Synchronizer.global.getNetwork().getLabel() + " at " + raisedTime + " \"" + this.getLabel() + " " + type.toString().toLowerCase() + "\"\n");
-		Synchronizer.generateEntry.add(index, e);
+		Synchronizer.registerEntry(index, e);
 		this.addEntry(e);
 		
 		return true;
@@ -344,20 +344,20 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 
 			// find last index of entry in the global register			
 			int	index = Math.max(Math.max(
-					Synchronizer.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)),
-					Synchronizer.generateEntry.lastIndexOf(destNode.getEntry().get(destNode.getEntry().size() - 1))),					
-					Synchronizer.generateEntry.lastIndexOf(transportProtocol.getEntry().get(transportProtocol.getEntry().size() - 1)));
+					Synchronizer.getGenerateEntry().lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)),
+					Synchronizer.getGenerateEntry().lastIndexOf(destNode.getEntry().get(destNode.getEntry().size() - 1))),					
+					Synchronizer.getGenerateEntry().lastIndexOf(transportProtocol.getEntry().get(transportProtocol.getEntry().size() - 1)));
 							
 			// 	$ns_ connect $udp_($i) $sink_($i)
 			Entry en = new Entry(Synchronizer.global.getLabel() + " connect " + transportProtocol.getLabel() + " " + newSink.getLabel() + "\n"); 
-			Synchronizer.generateEntry.add(index + 1, en);
+			Synchronizer.registerEntry(index + 1, en);
 			this.addEntry(en);
 			transportProtocol.addEntry(en);
 			destNode.addEntry(en);
 			
 			// 	$mnode_($s($i)) setdest [$mnode_($d($i)) set X_] [$mnode_($d($i)) set Y_] 0
 			en = new Entry(transportProtocol.getNode().getLabel() + " setdest [" + destNode.getLabel() + "set X_] [" + destNode.getLabel() + " set Y_] 0\n"); 
-			Synchronizer.generateEntry.add(index + 1, en);
+			Synchronizer.registerEntry(index + 1, en);
 			this.addEntry(en);
 			transportProtocol.addEntry(en);
 			destNode.addEntry(en);

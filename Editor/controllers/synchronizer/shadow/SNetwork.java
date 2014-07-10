@@ -331,7 +331,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	private String insprocNode(List<String> command) throws Exception {
 		if (command.size() != 0) throw new ParseException(ParseException.InvalidArgument);
 		SNode newNode = new SNode(this);
-		newNode.addEntry(Synchronizer.generateEntry.get(Synchronizer.generateEntry.size() - 1));			
+		newNode.addEntry(Synchronizer.getGenerateEntry().get(Synchronizer.getGenerateEntry().size() - 1));			
 		return Synchronizer.global.addObject(newNode);								
 	}
 	
@@ -354,9 +354,9 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		// remove register entry
 		for (Entry e : ((SNode)n).getEntry())
 		{
-			int i = Synchronizer.generateEntry.indexOf(e);
-			if (Synchronizer.generateEntry.get(i - 1).toString().trim().isEmpty()) Synchronizer.generateEntry.remove(i - 1);
-			Synchronizer.generateEntry.remove(e);			
+			int i = Synchronizer.getGenerateEntry().indexOf(e);
+			if (Synchronizer.getGenerateEntry().get(i - 1).toString().trim().isEmpty()) Synchronizer.getGenerateEntry().remove(i - 1);
+			Synchronizer.getGenerateEntry().remove(e);			
 		}	
 		
 		return true;
@@ -372,7 +372,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		// find last index of network's component in the global register					
 //		int	index = 0;
 //		for (Entry entry : nodeConfig.getEntry()) {
-//			index = Math.max(index, Converter.generateEntry.lastIndexOf(entry));
+//			index = Math.max(index, Converter.getGenerateEntry().lastIndexOf(entry));
 //		}
 //		index++;
 		
@@ -380,40 +380,40 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		
 		// space
 		Entry en = new Entry("\n");
-		Synchronizer.generateEntry.add(index++, en);
+		Synchronizer.registerEntry(index++, en);
 		newNode.addEntry(en);
 		
 		// create node 		set mnode_($i) [$ns_ node]
 		en = new Entry("set mnode_(" + newNode.getId() + ") [" + this.getLabel() + " node]\n");
-		Synchronizer.generateEntry.add(index++, en);
+		Synchronizer.registerEntry(index++, en);
 		newNode.addEntry(en);
 		
 		// set position		$mnode_(0) set X_ 30	; $mnode_(0) set Y_ 860	; $mnode_(0) set Z_ 0
 		en = new Entry(newNode.getInsProc("set"), Arrays.asList("X_", x + ""));
-		Synchronizer.generateEntry.add(index++, en);
+		Synchronizer.registerEntry(index++, en);
 		newNode.addEntry(en);
 		
 		en = new Entry(newNode.getInsProc("set"), Arrays.asList("Y_", y + ""));
-		Synchronizer.generateEntry.add(index++, en);
+		Synchronizer.registerEntry(index++, en);
 		newNode.addEntry(en);
 		
 		en = new Entry(newNode.getLabel() + " set Z_ 0\n");
-		Synchronizer.generateEntry.add(index++, en);
+		Synchronizer.registerEntry(index++, en);
 		newNode.addEntry(en);		
 		
 		// $ns_ initial_node_pos $mnode_($i) 5
 		en = new Entry(this.label + " initial_node_pos " + newNode.getLabel() + " 5\n");
-		Synchronizer.generateEntry.add(index++, en);
+		Synchronizer.registerEntry(index++, en);
 		newNode.addEntry(en);
 		
 		// $ns_ at [expr $opt(stop) - 5] "[$mnode_($i) set ragent_] dump"
 		en = new Entry(this.label + " at [expr " + getTime() + " - 5] \"[" + newNode.getLabel() + " set ragent_] dump\"\n");
-		Synchronizer.generateEntry.add(index++, en);
+		Synchronizer.registerEntry(index++, en);
 		newNode.addEntry(en);
 		
 		// $ns_ at $opt(stop) "$mnode($i) reset" 
 		en = new Entry(this.label + " at " + getTime() + ".0001 \"" + newNode.getLabel() + " reset\"\n");
-		Synchronizer.generateEntry.add(index++, en);
+		Synchronizer.registerEntry(index++, en);
 		newNode.addEntry(en);
 		
 		Synchronizer.setNewNodeIndex(index);

@@ -547,7 +547,7 @@ public class SProject  extends Project implements TclObject
 		}
 		
 		
-		Synchronizer.generateEntry.add(new Entry("\n"));
+		Synchronizer.registerEntry(new Entry("\n"));
 		return "";
 	}
 

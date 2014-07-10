@@ -106,6 +106,6 @@ public abstract class InsProc
 			entry = new Entry(this, new ArrayList<>(Arrays.asList("\n")));
 		}
 		
-		Synchronizer.generateEntry.add(entry);
+		Synchronizer.registerEntry(entry);
 	}
 }
