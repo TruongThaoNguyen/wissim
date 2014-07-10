@@ -2,8 +2,6 @@ TraceFileParser.wissim
 chart2D
 chart3D
 controllers
-controllers.converter
-controllers.converter.shadow
 controllers.graphicscomponents
 controllers.helpers
 controllers.managers
@@ -11,6 +9,8 @@ controllers.plugins
 controllers.plugins.demo.api
 controllers.plugins.demo.api.demo1
 controllers.plugins.util
+controllers.synchronizer
+controllers.synchronizer.shadow
 main
 models
 models.converter
