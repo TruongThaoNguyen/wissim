@@ -66,6 +66,8 @@ public class GGroup extends GSelectableObject {
 		});
 		
 		createMenu();
+		
+		this.setToolTipText("Group " + area.getId());
 	}
 	
 	private void createMenu()

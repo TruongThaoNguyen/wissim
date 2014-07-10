@@ -1190,8 +1190,9 @@ public class Editor extends MainContent implements Observer {
 		if (ApplicationManager.openProject(editor) == null) return;
 		getShell().setText(Configure.getTclFile());
 		showProject();		
-		System.setProperty("user.dir", Configure.getDirectory());
-		getWorkspace().getSelectableObject().get(getWorkspace().getSelectableObject().size() - 1).moveAbove(null);
+		//System.setProperty("user.dir", Configure.getDirectory());
+		if (getWorkspace().getSelectableObject().size() > 0)
+			getWorkspace().getSelectableObject().get(getWorkspace().getSelectableObject().size() - 1).moveAbove(null);
 		updateNetworkInfoLabel();
 		updateNodeInfoLabel();
 //		updateDesign();
