@@ -29,6 +29,8 @@ public class Converter
 {		
 	public static SProject global;	
 	public static List<Entry> generateEntry = new ArrayList<Entry>();
+	
+	private static int newNodeIndex = 0;
 	  
 	/**
 	 * CTD - Code to Design
@@ -44,6 +46,7 @@ public class Converter
 		generateEntry.clear();
 		global = new SProject();
 		global.parse(text);
+		newNodeIndex = 0;
 		
 		long time = new Date().getTime() - st.getTime(); 
 		
@@ -319,6 +322,31 @@ public class Converter
 		sb.append("##################### end script #####################\n");
 		
 		return sb.toString();
+	}
+	
+	/**
+	 * get index of generateEntry to put code for new Node.
+	 * @return index
+	 */
+	public static int getNewNodeIndex() {
+		if (newNodeIndex == 0)
+		{			
+			for (Entry entry : global.getNetwork().getNodeConfig().getEntry()) {
+				newNodeIndex = Math.max(newNodeIndex, Converter.generateEntry.lastIndexOf(entry));
+			}
+			newNodeIndex++;	
+		}
+		
+		return newNodeIndex;
+	}
+	
+	/**
+	 * set index of generateEntry to put code for new Node.
+	 * @param value new index value
+	 * @return new index value
+	 */
+	public static int setNewNodeIndex(int value) {
+		return newNodeIndex = value;
 	}
 	
 	public static void main(String[] args)  throws Exception {		

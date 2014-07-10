@@ -125,6 +125,15 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	
 	// region ------------------- InsVar ------------------- //
 	
+	/**
+	 * get nodeConfig object.
+	 * nodeConfig object is object that storage configation for each node.
+	 * @return
+	 */
+	public SCommonObject getNodeConfig() {
+		return nodeConfig;
+	}
+	
 	@Override
 	public HashMap<String, InsVar> getInsVar() {
 		return insVar;
@@ -361,11 +370,13 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		// region ------------------- auto generate tcl code ------------------- //
 
 		// find last index of network's component in the global register					
-		int	index = 0;
-		for (Entry entry : nodeConfig.getEntry()) {
-			index = Math.max(index, Converter.generateEntry.lastIndexOf(entry));
-		}
-		index++;
+//		int	index = 0;
+//		for (Entry entry : nodeConfig.getEntry()) {
+//			index = Math.max(index, Converter.generateEntry.lastIndexOf(entry));
+//		}
+//		index++;
+		
+		int index = Converter.getNewNodeIndex();
 		
 		// space
 		Entry en = new Entry("\n");
@@ -404,6 +415,8 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		en = new Entry(this.label + " at " + getTime() + ".0001 \"" + newNode.getLabel() + " reset\"\n");
 		Converter.generateEntry.add(index++, en);
 		newNode.addEntry(en);
+		
+		Converter.setNewNodeIndex(index);
 		
 		// endregion generate auto tcl code
 		

@@ -27,6 +27,12 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 		addInsProc();		
 	}
 	
+	/**
+	 * Create new SNode Object.
+	 * @param network network that new node belong to
+	 * @param x x position
+	 * @param y y position
+	 */
 	public SNode(SNetwork network, int x, int y) {
 		super(network);
 		setInsVar("X_", x + "");

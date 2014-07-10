@@ -40,8 +40,8 @@ public abstract class Node extends Observable {
 		// node name is set as id as default
 		this.name = getId() + "";
 		
-	//	network.getNodeList().add(this);
-		network.getNodeList().add(0, this);
+		network.getNodeList().add(this);
+	//	network.getNodeList().add(0, this);
 	}
 		
 	public Network	getNetwork()		{ return network; }
