@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Stack;
 
 import controllers.Configure;
-import controllers.synchronizer.Converter;
+import controllers.synchronizer.Synchronizer;
 import controllers.synchronizer.Scanner;
 import controllers.synchronizer.TclObject;
 import models.Project;
@@ -98,7 +98,7 @@ public class SProject  extends Project implements TclObject
 		if (command.isEmpty()) 	return null;		
 		if (command.size() < 2)	return getInsProc(null).Run(command, isRecord);					
 		
-		String arg = Converter.parseIdentify(command.get(0));
+		String arg = Synchronizer.parseIdentify(command.get(0));
 		
 		if (arg == null) return getInsProc(null).Run(command, isRecord);  
 		
@@ -313,12 +313,12 @@ public class SProject  extends Project implements TclObject
 				{
 					case 0 : throw new ParseException(ParseException.MissArgument);
 					case 1 : 
-						InsVar i = getInsVar(Converter.parseIdentify(command.get(0)));
+						InsVar i = getInsVar(Synchronizer.parseIdentify(command.get(0)));
 						if (i != null)	return i.getValue();
 						return null;
 					case 2 : //return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).getValue();
-						String arg0 = Converter.parseIdentify(command.get(0));
-						String arg1 = Converter.parseIdentify(command.get(1));
+						String arg0 = Synchronizer.parseIdentify(command.get(0));
+						String arg1 = Synchronizer.parseIdentify(command.get(1));
 						String arg2 = command.get(1);
 						return setInsVar(arg0, arg1, arg2).getValue();
 					default: throw new ParseException(ParseException.InvalidArgument);
@@ -331,7 +331,7 @@ public class SProject  extends Project implements TclObject
 				String id;
 				try
 				{
-					id = Converter.parseIdentify(command.get(0));
+					id = Synchronizer.parseIdentify(command.get(0));
 				}
 				catch (Exception e)
 				{
@@ -349,7 +349,7 @@ public class SProject  extends Project implements TclObject
 				if (command.size() == 0)	throw new ParseException(ParseException.MissArgument);
 				if (command.size() >  1)	throw new ParseException(ParseException.InvalidArgument);
 				
-				String arg = Converter.parseIdentify(command.get(0));
+				String arg = Synchronizer.parseIdentify(command.get(0));
 				
 				if (arg.equals("Simulator")) 				return "_o0";
 				if (arg.equals("Topography"))				return addObject(new STopographyObject("[new " + arg + "]"));		
@@ -366,8 +366,8 @@ public class SProject  extends Project implements TclObject
 				if (command.size() == 0)	throw new ParseException(ParseException.MissArgument);
 				if (command.size() > 2) 	throw new ParseException(ParseException.InvalidArgument);
 				
-				String arg1 = Converter.parseIdentify(command.get(0));
-				String arg2 = Converter.parseIdentify(command.get(1));				
+				String arg1 = Synchronizer.parseIdentify(command.get(0));
+				String arg2 = Synchronizer.parseIdentify(command.get(1));				
 				
 				SCommonObject file = new SCommonObject("");				
 				String id = addObject(file);
@@ -400,7 +400,7 @@ public class SProject  extends Project implements TclObject
 			@Override
 			protected String run(List<String> command) throws Exception {				
 				if (command.size() != 1) throw new ParseException(ParseException.InvalidArgument);				
-				InsVar i = insVar.get(Converter.parseIdentify(command.get(0)));				
+				InsVar i = insVar.get(Synchronizer.parseIdentify(command.get(0)));				
 				return i.setValue(Integer.parseInt(i.getValue()) + 1, false);				
 			}	
 		};
@@ -419,7 +419,7 @@ public class SProject  extends Project implements TclObject
 				if (command.size() != 1) throw new ParseException(ParseException.InvalidArgument);				
 							
 				String fileName =  Configure.getTclFile().substring(0, Configure.getTclFile().lastIndexOf("/") + 1)
-								+  Converter.parseIdentify(command.get(0));				
+								+  Synchronizer.parseIdentify(command.get(0));				
 				br = new BufferedReader(new FileReader(fileName));				
 				
 				StringBuilder sb = new StringBuilder();
@@ -473,7 +473,7 @@ public class SProject  extends Project implements TclObject
 				}
 				else
 				{
-					prefix.add(Converter.parseIdentify(s));
+					prefix.add(Synchronizer.parseIdentify(s));
 				}
 			}
 		}		
@@ -547,7 +547,7 @@ public class SProject  extends Project implements TclObject
 		}
 		
 		
-		Converter.generateEntry.add(new Entry("\n"));
+		Synchronizer.generateEntry.add(new Entry("\n"));
 		return "";
 	}
 

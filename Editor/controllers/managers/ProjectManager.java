@@ -26,7 +26,7 @@ import models.networkcomponents.features.Label;
 import models.networkcomponents.protocols.ApplicationProtocol;
 import nu.xom.ParsingException;
 import controllers.Configure;
-import controllers.synchronizer.Converter;
+import controllers.synchronizer.Synchronizer;
 
 /**
  * Acts as a proxy between models and the program
@@ -40,11 +40,11 @@ public class ProjectManager {
 	 *  available project in the program
 	 */	
 	public static Project getProject() {
-		return Converter.global;
+		return Synchronizer.global;
 	}
 	
 	private static WirelessNetwork getNetwork() {
-		return Converter.global.getNetwork();
+		return Synchronizer.global.getNetwork();
 	}
 	
 	/**
@@ -61,7 +61,7 @@ public class ProjectManager {
 		// checks input validity
 		if (width <= 0 || length <= 0 || time <= 0) return null;		 			
 		
-		Project project = Converter.CTD(Converter.DefaultScript());		
+		Project project = Synchronizer.CTD(Synchronizer.DefaultScript());		
 				
 		Project.setPath(path);		
 		
@@ -93,7 +93,7 @@ public class ProjectManager {
 		String fileName = Configure.getTclFile();
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));		
-		bw.write(Converter.DTC());
+		bw.write(Synchronizer.DTC());
 		bw.close();
 
 		// endregion save tcl file
@@ -133,7 +133,7 @@ public class ProjectManager {
 		    line = br.readLine();		    
 		}
 	    br.close();						
-		return Converter.CTD(sb.toString());
+		return Synchronizer.CTD(sb.toString());
 	}
 	
 	public static boolean changeTime(int time) {

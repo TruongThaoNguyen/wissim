@@ -335,14 +335,14 @@ public class Scanner {
 					{
 						case '*' : case '/' : case '%' :
 						case '+' : case '-' :
-							if (index > i) command.add(Converter.parseIdentify(code.substring(i, index)));													
+							if (index > i) command.add(Synchronizer.parseIdentify(code.substring(i, index)));													
 							command.add(code.charAt(index) + "");							
 							index++;
 							i = index;
 							break;
 							
 						case '<' : case '>' : case '!' :  case '=' :
-							if (index > i) command.add(Converter.parseIdentify(code.substring(i, index)));
+							if (index > i) command.add(Synchronizer.parseIdentify(code.substring(i, index)));
 							if (index + 1 < code.length() && code.charAt(index + 1) == '=')					
 								command.add(code.substring(index, ++index));
 							else
@@ -352,7 +352,7 @@ public class Scanner {
 							break;
 							
 						case '&' : case '|':
-							if (index > i) command.add(Converter.parseIdentify(code.substring(i, index)));
+							if (index > i) command.add(Synchronizer.parseIdentify(code.substring(i, index)));
 							if (index + 1 < code.length() && code.charAt(index) == code.charAt(index + 1))
 								command.add(code.substring(index, ++index));
 							else
@@ -379,7 +379,7 @@ public class Scanner {
 			}
 		}
 		
-		if (index > i) command.add(Converter.parseIdentify(code.substring(i, index)));
+		if (index > i) command.add(Synchronizer.parseIdentify(code.substring(i, index)));
 		
 		return command;
 	}

@@ -2,7 +2,7 @@ package controllers.synchronizer.shadow;
 
 import java.util.List;
 
-import controllers.synchronizer.Converter;
+import controllers.synchronizer.Synchronizer;
 import models.converter.InsProc;
 import models.converter.ParseException;
 
@@ -26,14 +26,14 @@ public class STopographyObject extends SCommonObject {
 			@Override
 			public String run(List<String> command) throws Exception {
 				if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);
-				Converter.global.getNetwork().setWidth(Integer.parseInt(Converter.parseIdentify(command.get(0))));
-				Converter.global.getNetwork().setLength(Integer.parseInt(Converter.parseIdentify(command.get(1))));		
+				Synchronizer.global.getNetwork().setWidth(Integer.parseInt(Synchronizer.parseIdentify(command.get(0))));
+				Synchronizer.global.getNetwork().setLength(Integer.parseInt(Synchronizer.parseIdentify(command.get(1))));		
 				return "";		
 			}
 
 			@Override
 			public String print(List<String> command) {
-				return Converter.global.getNetwork().getWidth() + " " + Converter.global.getNetwork().getLength();
+				return Synchronizer.global.getNetwork().getWidth() + " " + Synchronizer.global.getNetwork().getLength();
 			}
 		};
 	}

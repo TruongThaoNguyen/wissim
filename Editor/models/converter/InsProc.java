@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import controllers.synchronizer.Converter;
+import controllers.synchronizer.Synchronizer;
 import controllers.synchronizer.TclObject;
 
 /**
@@ -72,7 +72,7 @@ public abstract class InsProc
 		StringBuilder sb = new StringBuilder();
 		for (String string : arg)
 		{	
-			TclObject o = Converter.global.getObject(string);
+			TclObject o = Synchronizer.global.getObject(string);
 			if (o != null)	sb.append(o.getLabel() + " ");		
 			else			sb.append(string + " ");		
 		}
@@ -106,6 +106,6 @@ public abstract class InsProc
 			entry = new Entry(this, new ArrayList<>(Arrays.asList("\n")));
 		}
 		
-		Converter.generateEntry.add(entry);
+		Synchronizer.generateEntry.add(entry);
 	}
 }

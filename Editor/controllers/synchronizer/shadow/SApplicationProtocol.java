@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import controllers.synchronizer.Converter;
+import controllers.synchronizer.Synchronizer;
 import controllers.synchronizer.Scheduler;
 import controllers.synchronizer.TclObject;
 import models.converter.Entry;
@@ -99,7 +99,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	public final String parse(List<String> command, boolean isRecord) throws Exception {
 		if (command.isEmpty()) throw new ParseException(ParseException.MissArgument);
 		
-		InsProc proc = insProc.get(Converter.parseIdentify(command.get(0)));
+		InsProc proc = insProc.get(Synchronizer.parseIdentify(command.get(0)));
 		if (proc != null)
 		{
 			command.remove(0);
@@ -203,10 +203,10 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 				switch (command.size()) 
 				{
 					case 0 : throw new ParseException(ParseException.MissArgument);
-					case 1 : InsVar i = getInsVar(Converter.parseIdentify(command.get(0)));
+					case 1 : InsVar i = getInsVar(Synchronizer.parseIdentify(command.get(0)));
 					 		 if (i != null)	return i.getValue();
 					 		 return null;
-					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).getValue();
+					case 2 : return setInsVar(Synchronizer.parseIdentify(command.get(0)), Synchronizer.parseIdentify(command.get(1)), command.get(1)).getValue();
 					default: throw new ParseException(ParseException.InvalidArgument);
 				}
 			}
@@ -235,7 +235,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	private void insProcAttachAgent(List<String> command) throws Exception
 	{
 		if (command.size() != 1) throw new ParseException(ParseException.InvalidArgument);
-		STransportProtocol tp = (STransportProtocol) Converter.global.getObject(Converter.parseIdentify(command.get(0)));;
+		STransportProtocol tp = (STransportProtocol) Synchronizer.global.getObject(Synchronizer.parseIdentify(command.get(0)));;
 		tp.addApp(this);
 		this.transportProtocol = tp;
 	}
@@ -275,10 +275,10 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 		insVar.put(param, new InsVar(param, value));
 		
 		// generate tcl code here
-		int	index = Converter.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
+		int	index = Synchronizer.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
 		
 		Entry e = new Entry(getInsProc("set"), Arrays.asList(param + "", value + ""));
-		Converter.generateEntry.add(index, e);
+		Synchronizer.generateEntry.add(index, e);
 		this.addEntry(e);
 	}
 
@@ -297,11 +297,11 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 		event.put(type.toString(), raisedTime);
 
 		// generate tcl code here
-		int	index = Converter.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
+		int	index = Synchronizer.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
 		
 		//	$ns_ at 100 "$cbr_($i) start"
-		Entry e = new Entry(Converter.global.getNetwork().getLabel() + " at " + raisedTime + " \"" + this.getLabel() + " " + type.toString().toLowerCase() + "\"\n");
-		Converter.generateEntry.add(index, e);
+		Entry e = new Entry(Synchronizer.global.getNetwork().getLabel() + " at " + raisedTime + " \"" + this.getLabel() + " " + type.toString().toLowerCase() + "\"\n");
+		Synchronizer.generateEntry.add(index, e);
 		this.addEntry(e);
 		
 		return true;
@@ -344,20 +344,20 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 
 			// find last index of entry in the global register			
 			int	index = Math.max(Math.max(
-					Converter.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)),
-					Converter.generateEntry.lastIndexOf(destNode.getEntry().get(destNode.getEntry().size() - 1))),					
-					Converter.generateEntry.lastIndexOf(transportProtocol.getEntry().get(transportProtocol.getEntry().size() - 1)));
+					Synchronizer.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)),
+					Synchronizer.generateEntry.lastIndexOf(destNode.getEntry().get(destNode.getEntry().size() - 1))),					
+					Synchronizer.generateEntry.lastIndexOf(transportProtocol.getEntry().get(transportProtocol.getEntry().size() - 1)));
 							
 			// 	$ns_ connect $udp_($i) $sink_($i)
-			Entry en = new Entry(Converter.global.getLabel() + " connect " + transportProtocol.getLabel() + " " + newSink.getLabel() + "\n"); 
-			Converter.generateEntry.add(index + 1, en);
+			Entry en = new Entry(Synchronizer.global.getLabel() + " connect " + transportProtocol.getLabel() + " " + newSink.getLabel() + "\n"); 
+			Synchronizer.generateEntry.add(index + 1, en);
 			this.addEntry(en);
 			transportProtocol.addEntry(en);
 			destNode.addEntry(en);
 			
 			// 	$mnode_($s($i)) setdest [$mnode_($d($i)) set X_] [$mnode_($d($i)) set Y_] 0
 			en = new Entry(transportProtocol.getNode().getLabel() + " setdest [" + destNode.getLabel() + "set X_] [" + destNode.getLabel() + " set Y_] 0\n"); 
-			Converter.generateEntry.add(index + 1, en);
+			Synchronizer.generateEntry.add(index + 1, en);
 			this.addEntry(en);
 			transportProtocol.addEntry(en);
 			destNode.addEntry(en);

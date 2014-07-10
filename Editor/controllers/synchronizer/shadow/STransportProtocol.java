@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import controllers.synchronizer.Converter;
+import controllers.synchronizer.Synchronizer;
 import controllers.synchronizer.Scheduler;
 import controllers.synchronizer.TclObject;
 import models.converter.Entry;
@@ -81,7 +81,7 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 	public String parse(List<String> command, boolean isRecord) throws Exception {
 		if (command.isEmpty()) throw new ParseException(ParseException.MissArgument);
 		
-		InsProc proc = insProc.get(Converter.parseIdentify(command.get(0)));
+		InsProc proc = insProc.get(Synchronizer.parseIdentify(command.get(0)));
 		if (proc != null)
 		{
 			command.remove(0);
@@ -180,10 +180,10 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 				switch (command.size()) 
 				{
 					case 0 : throw new ParseException(ParseException.MissArgument);
-					case 1 : InsVar i = getInsVar(Converter.parseIdentify(command.get(0)));
+					case 1 : InsVar i = getInsVar(Synchronizer.parseIdentify(command.get(0)));
 					 	if (i != null)	return i.getValue();
 					 	return null;
-					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).getValue();
+					case 2 : return setInsVar(Synchronizer.parseIdentify(command.get(0)), Synchronizer.parseIdentify(command.get(1)), command.get(1)).getValue();
 					default: throw new ParseException(ParseException.InvalidArgument);
 				}
 			}
@@ -241,10 +241,10 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 		
 		// region ------------------- generate Tcl code ------------------- //
 		
-		int	index = Converter.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
+		int	index = Synchronizer.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)) + 1;
 		
 		Entry e = new Entry(getInsProc("set"), Arrays.asList(param + "", value + ""));
-		Converter.generateEntry.add(index, e);
+		Synchronizer.generateEntry.add(index, e);
 		this.addEntry(e);
 		
 		// endregion generate Tcl code
@@ -274,30 +274,30 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 		// region ------------------- Generate Tcl code ------------------- //
 		
 		int index = Math.max(
-				Converter.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)),
-				Converter.generateEntry.lastIndexOf(dest.getEntry().get(dest.getEntry().size() - 1))) + 1;
+				Synchronizer.generateEntry.lastIndexOf(this.getEntry().get(this.getEntry().size() - 1)),
+				Synchronizer.generateEntry.lastIndexOf(dest.getEntry().get(dest.getEntry().size() - 1))) + 1;
 	
 		// $mnode_($s($i)) setdest [$mnode_($d($i)) set X_] [$mnode_($d($i)) set Y_] 0
 		Entry e = new Entry(this.node.getLabel() + " setdest [" + dest.getLabel() + " set X_] [" + dest.getLabel() + " set Y_] 0\n");
-		Converter.generateEntry.add(index++, e);
+		Synchronizer.generateEntry.add(index++, e);
 		app.addEntry(e);
 		dest.addEntry(e);		
 		
 		// $ns_ connect $udp_($i) $sink_($i)
-		e = new Entry(Converter.global.getNetwork().getLabel() + " connect " + this.getLabel() + " " + connectedAgent.getLabel() + "\n");
-		Converter.generateEntry.add(index++, e);
+		e = new Entry(Synchronizer.global.getNetwork().getLabel() + " connect " + this.getLabel() + " " + connectedAgent.getLabel() + "\n");
+		Synchronizer.generateEntry.add(index++, e);
 		app.addEntry(e);
 		dest.addEntry(e);
 		
 		// set cbr_($i) [new Application/Traffic/CBR]
 		e = new Entry("set " + label + " [new Application/Traffic/" + type + "]\n");
-		Converter.generateEntry.add(index++, e);
+		Synchronizer.generateEntry.add(index++, e);
 		app.addEntry(e);
 		dest.addEntry(e);
 		
 		// $cbr_($i) attach-agent $udp_($i)
 		e = new Entry(app.getLabel() + " attach-agent " + this.getLabel() + "\n");
-		Converter.generateEntry.add(index++, e);
+		Synchronizer.generateEntry.add(index++, e);
 		app.addEntry(e);
 		dest.addEntry(e);
 		
@@ -312,7 +312,7 @@ public class STransportProtocol extends TransportProtocol implements TclObject, 
 		
 		getAppList().remove(app);
 		for (Entry e : ((SApplicationProtocol)app).getEntry()) {
-			Converter.generateEntry.remove(e);
+			Synchronizer.generateEntry.remove(e);
 		}
 		
 		return true;

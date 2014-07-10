@@ -58,7 +58,7 @@ import controllers.managers.ApplicationManager;
 import controllers.managers.ApplicationSettings;
 import controllers.managers.ProjectManager;
 import controllers.managers.WorkspacePropertyManager;
-import controllers.synchronizer.Converter;
+import controllers.synchronizer.Synchronizer;
 import views.MainContent;
 import views.RulerScrolledComposite;
 import views.Workspace;
@@ -356,7 +356,7 @@ public class Editor extends MainContent implements Observer {
 						try 
 						{	
 							Date st = new Date();
-							if (Converter.CTD(text.getText()) != null) 	
+							if (Synchronizer.CTD(text.getText()) != null) 	
 							{						
 								// Workspace.getProject().getNetwork().updateNeighbors();
 								if(getWorkspace() != null)
@@ -1242,12 +1242,12 @@ public class Editor extends MainContent implements Observer {
 		final Date st = new Date();
 		
 		// set text
-		text.setText(Converter.DTC());
+		text.setText(Synchronizer.DTC());
 		
 		final int line = StringUtils.countMatches(text.getText(), "\n");		
 		
 		// set style
-		final List<Token> tokenList = Converter.DTC_token();
+		final List<Token> tokenList = Synchronizer.DTC_token();
 		final Display display = Display.getCurrent();
 		
 		new Thread(new Runnable() 

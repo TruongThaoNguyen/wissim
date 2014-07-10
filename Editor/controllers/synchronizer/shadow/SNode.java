@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import controllers.synchronizer.Converter;
+import controllers.synchronizer.Synchronizer;
 import controllers.synchronizer.Scheduler;
 import controllers.synchronizer.TclObject;
 import models.converter.Entry;
@@ -72,7 +72,7 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 	public String parse(List<String> command, boolean isRecord) throws Exception {
 		if (command.isEmpty()) throw new ParseException(ParseException.MissArgument);
 		
-		InsProc proc = insProc.get(Converter.parseIdentify(command.get(0)));
+		InsProc proc = insProc.get(Synchronizer.parseIdentify(command.get(0)));
 		if (proc != null)
 		{
 			command.remove(0);
@@ -171,10 +171,10 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 				switch (command.size()) 
 				{
 					case 0 : throw new ParseException(ParseException.MissArgument);
-					case 1 : InsVar i = getInsVar(Converter.parseIdentify(command.get(0)));
+					case 1 : InsVar i = getInsVar(Synchronizer.parseIdentify(command.get(0)));
 							 if (i != null)	return i.getValue();
 							 return null;
-					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).getValue();
+					case 2 : return setInsVar(Synchronizer.parseIdentify(command.get(0)), Synchronizer.parseIdentify(command.get(1)), command.get(1)).getValue();
 					default: throw new ParseException(ParseException.InvalidArgument);
 				}
 			}
@@ -227,27 +227,27 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 		// region ------------------- Generate Tcl Code ------------------- //
 		
 		int index = 0;
-		for (Node node : Converter.global.getNetwork().getNodeList()) {
+		for (Node node : Synchronizer.global.getNetwork().getNodeList()) {
 			SNode sn = (SNode) node;
-			index = Math.max(index, Converter.generateEntry.lastIndexOf(sn.getEntry().get(sn.getEntry().size() - 1)));
+			index = Math.max(index, Synchronizer.generateEntry.lastIndexOf(sn.getEntry().get(sn.getEntry().size() - 1)));
 		}	
 		index += 1;
 		
 		// space
 		Entry e = new Entry(" \n");
-		Converter.generateEntry.add(index++, e);
+		Synchronizer.generateEntry.add(index++, e);
 		addEntry(e);
 		tp.addEntry(e);
 		
 		// set udp_($i) [new Agent/UDP]
 		e = new Entry("set " + label + " [new Agent/" + type + "]\n");
-		Converter.generateEntry.add(index++, e);
+		Synchronizer.generateEntry.add(index++, e);
 		addEntry(e);
 		tp.addEntry(e);
 		
 		// $ns_ attach-agent $mnode_($s($i)) $udp_($i)
-		e = new Entry(((SNetwork)Converter.global.getNetwork()).getLabel() + " attach-agent " + getLabel() + " " + tp.getLabel() + "\n");
-		Converter.generateEntry.add(index++, e);
+		e = new Entry(((SNetwork)Synchronizer.global.getNetwork()).getLabel() + " attach-agent " + getLabel() + " " + tp.getLabel() + "\n");
+		Synchronizer.generateEntry.add(index++, e);
 		addEntry(e);
 		tp.addEntry(e);		
 		
@@ -262,7 +262,7 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 		transportProtocolList.remove(transproc);
 		
 		for (Entry e : ((STransportProtocol)transproc).getEntry()) {
-			Converter.generateEntry.remove(e);			
+			Synchronizer.generateEntry.remove(e);			
 		}
 		
 		return true;
@@ -270,7 +270,7 @@ public class SNode extends WirelessNode implements TclObject, Scheduler {
 
 	@Override
 	public int getRange() {
-		return Converter.global.getNodeRange();
+		return Synchronizer.global.getNodeRange();
 	}
 
 	@Override

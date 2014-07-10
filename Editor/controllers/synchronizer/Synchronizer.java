@@ -25,7 +25,7 @@ import models.converter.Token.TokenType;
  * @author Duc-Trong Nguyen
  * @version 2.0
  */
-public class Converter 
+public class Synchronizer 
 {		
 	public static SProject global;	
 	public static List<Entry> generateEntry = new ArrayList<Entry>();
@@ -332,7 +332,7 @@ public class Converter
 		if (newNodeIndex == 0)
 		{			
 			for (Entry entry : global.getNetwork().getNodeConfig().getEntry()) {
-				newNodeIndex = Math.max(newNodeIndex, Converter.generateEntry.lastIndexOf(entry));
+				newNodeIndex = Math.max(newNodeIndex, Synchronizer.generateEntry.lastIndexOf(entry));
 			}
 			newNodeIndex++;	
 		}
@@ -367,13 +367,13 @@ public class Converter
 		
 		// ------------ using converter
 		
-		Converter.CTD(code);
+		Synchronizer.CTD(code);
 								
 		System.out.println("\n------------------------------\n");		
 		
 		// Do something with project object
 		
-		Converter.DTC();
+		Synchronizer.DTC();
 	}
 
 }

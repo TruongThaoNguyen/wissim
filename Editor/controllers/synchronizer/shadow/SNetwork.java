@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import controllers.Configure;
-import controllers.synchronizer.Converter;
+import controllers.synchronizer.Synchronizer;
 import controllers.synchronizer.Scanner;
 import controllers.synchronizer.Scheduler;
 import controllers.synchronizer.TclObject;
@@ -78,7 +78,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	public String parse(List<String> command, boolean isRecord) throws Exception {
 		if (command.isEmpty()) throw new ParseException(ParseException.MissArgument);
 		
-		InsProc proc = insProc.get(Converter.parseIdentify(command.get(0)));
+		InsProc proc = insProc.get(Synchronizer.parseIdentify(command.get(0)));
 		if (proc != null)
 		{
 			command.remove(0);
@@ -194,10 +194,10 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 				switch (command.size()) 
 				{
 					case 0 : throw new ParseException(ParseException.MissArgument);
-					case 1 : InsVar i = getInsVar(Converter.parseIdentify(command.get(0)));
+					case 1 : InsVar i = getInsVar(Synchronizer.parseIdentify(command.get(0)));
 					 	if (i != null)	return i.getValue();
 					 	return null;
-					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).getValue();
+					case 2 : return setInsVar(Synchronizer.parseIdentify(command.get(0)), Synchronizer.parseIdentify(command.get(1)), command.get(1)).getValue();
 					default: throw new ParseException(ParseException.InvalidArgument);
 				}
 			}
@@ -214,7 +214,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 				if (command.size() == 0)	throw new ParseException(ParseException.MissArgument);
 				if (command.size() > 1)		throw new ParseException(ParseException.InvalidArgument);
 				
-				return Configure.setTraceFile(Converter.parseIdentify(command.get(0)));
+				return Configure.setTraceFile(Synchronizer.parseIdentify(command.get(0)));
 				//return setInsVar("trace-all", Converter.parseIdentify(command.get(0)), command.get(0)).getValue();
 			}
 
@@ -233,7 +233,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 				if (command.size() % 2 == 1) throw new ParseException(ParseException.MissArgument);
 				for (int i = 0; i < command.size(); i+=2)
 				{
-					nodeConfig.setInsVar(Converter.parseIdentify(command.get(i)), Converter.parseIdentify(command.get(i + 1)), command.get(i + 1));
+					nodeConfig.setInsVar(Synchronizer.parseIdentify(command.get(i)), Synchronizer.parseIdentify(command.get(i + 1)), command.get(i + 1));
 				}
 				return "";
 			}
@@ -264,7 +264,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 				command.add("set");
 				command.add("initial_node_pos");
 				command.add(arg.get(1));
-				TclObject node = Converter.global.getObject(Converter.parseIdentify(arg.get(0)));
+				TclObject node = Synchronizer.global.getObject(Synchronizer.parseIdentify(arg.get(0)));
 				node.addEntry(entry);				
 				return node.parse(command, false);
 			}
@@ -276,7 +276,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 			public String run(List<String> command) throws Exception 
 			{
 				if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);		
-				addEvent(Double.parseDouble(Converter.parseIdentify(command.get(0))), command.get(1));
+				addEvent(Double.parseDouble(Synchronizer.parseIdentify(command.get(0))), command.get(1));
 				
 				// check if it is about node				
 				List<Token> token = new Scanner(command.get(1)).scanWord();
@@ -285,7 +285,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 					List<String> cmd = new Scanner(token.get(0).Value()).scanCommand();
 					if (cmd.size() > 1)
 					{
-						TclObject o = Converter.global.getObject(Converter.parseIdentify(cmd.get(0)));
+						TclObject o = Synchronizer.global.getObject(Synchronizer.parseIdentify(cmd.get(0)));
 						if (o != null) o.addEntry(entry);						
 					}
 				}
@@ -305,8 +305,8 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 			protected String run(List<String> command) throws Exception {
 				if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);
 				
-				SNode 		  		node  = (SNode) 		  	 Converter.global.getObject(Converter.parseIdentify(command.get(0)));
-				STransportProtocol	agent = (STransportProtocol) Converter.global.getObject(Converter.parseIdentify(command.get(1)));				
+				SNode 		  		node  = (SNode) 		  	 Synchronizer.global.getObject(Synchronizer.parseIdentify(command.get(0)));
+				STransportProtocol	agent = (STransportProtocol) Synchronizer.global.getObject(Synchronizer.parseIdentify(command.get(1)));				
 				
 				agent.setNode(node);
 				node.addTransportProtocol(agent);
@@ -320,8 +320,8 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 			@Override
 			public String run(List<String> command) throws Exception {
 				if (command.size() != 2) throw new ParseException(ParseException.InvalidArgument);
-				STransportProtocol	base  = (STransportProtocol) Converter.global.getObject(Converter.parseIdentify(command.get(0)));
-				STransportProtocol	agent = (STransportProtocol) Converter.global.getObject(Converter.parseIdentify(command.get(1)));
+				STransportProtocol	base  = (STransportProtocol) Synchronizer.global.getObject(Synchronizer.parseIdentify(command.get(0)));
+				STransportProtocol	agent = (STransportProtocol) Synchronizer.global.getObject(Synchronizer.parseIdentify(command.get(1)));
 				base.setConnected(agent);
 				return "";
 			}	
@@ -331,8 +331,8 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 	private String insprocNode(List<String> command) throws Exception {
 		if (command.size() != 0) throw new ParseException(ParseException.InvalidArgument);
 		SNode newNode = new SNode(this);
-		newNode.addEntry(Converter.generateEntry.get(Converter.generateEntry.size() - 1));			
-		return Converter.global.addObject(newNode);								
+		newNode.addEntry(Synchronizer.generateEntry.get(Synchronizer.generateEntry.size() - 1));			
+		return Synchronizer.global.addObject(newNode);								
 	}
 	
 	// endregion InsProc
@@ -346,7 +346,7 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		if (!nodeList.contains(n)) return false;							
 		
 		// remove from global objList
-		Converter.global.removeObject(n);
+		Synchronizer.global.removeObject(n);
 		
 		// remove form nodeList
 		nodeList.remove(n);
@@ -354,9 +354,9 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 		// remove register entry
 		for (Entry e : ((SNode)n).getEntry())
 		{
-			int i = Converter.generateEntry.indexOf(e);
-			if (Converter.generateEntry.get(i - 1).toString().trim().isEmpty()) Converter.generateEntry.remove(i - 1);
-			Converter.generateEntry.remove(e);			
+			int i = Synchronizer.generateEntry.indexOf(e);
+			if (Synchronizer.generateEntry.get(i - 1).toString().trim().isEmpty()) Synchronizer.generateEntry.remove(i - 1);
+			Synchronizer.generateEntry.remove(e);			
 		}	
 		
 		return true;
@@ -376,47 +376,47 @@ public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
 //		}
 //		index++;
 		
-		int index = Converter.getNewNodeIndex();
+		int index = Synchronizer.getNewNodeIndex();
 		
 		// space
 		Entry en = new Entry("\n");
-		Converter.generateEntry.add(index++, en);
+		Synchronizer.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
 		// create node 		set mnode_($i) [$ns_ node]
 		en = new Entry("set mnode_(" + newNode.getId() + ") [" + this.getLabel() + " node]\n");
-		Converter.generateEntry.add(index++, en);
+		Synchronizer.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
 		// set position		$mnode_(0) set X_ 30	; $mnode_(0) set Y_ 860	; $mnode_(0) set Z_ 0
 		en = new Entry(newNode.getInsProc("set"), Arrays.asList("X_", x + ""));
-		Converter.generateEntry.add(index++, en);
+		Synchronizer.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
 		en = new Entry(newNode.getInsProc("set"), Arrays.asList("Y_", y + ""));
-		Converter.generateEntry.add(index++, en);
+		Synchronizer.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
 		en = new Entry(newNode.getLabel() + " set Z_ 0\n");
-		Converter.generateEntry.add(index++, en);
+		Synchronizer.generateEntry.add(index++, en);
 		newNode.addEntry(en);		
 		
 		// $ns_ initial_node_pos $mnode_($i) 5
 		en = new Entry(this.label + " initial_node_pos " + newNode.getLabel() + " 5\n");
-		Converter.generateEntry.add(index++, en);
+		Synchronizer.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
 		// $ns_ at [expr $opt(stop) - 5] "[$mnode_($i) set ragent_] dump"
 		en = new Entry(this.label + " at [expr " + getTime() + " - 5] \"[" + newNode.getLabel() + " set ragent_] dump\"\n");
-		Converter.generateEntry.add(index++, en);
+		Synchronizer.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
 		// $ns_ at $opt(stop) "$mnode($i) reset" 
 		en = new Entry(this.label + " at " + getTime() + ".0001 \"" + newNode.getLabel() + " reset\"\n");
-		Converter.generateEntry.add(index++, en);
+		Synchronizer.generateEntry.add(index++, en);
 		newNode.addEntry(en);
 		
-		Converter.setNewNodeIndex(index);
+		Synchronizer.setNewNodeIndex(index);
 		
 		// endregion generate auto tcl code
 		

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import controllers.synchronizer.Converter;
+import controllers.synchronizer.Synchronizer;
 import controllers.synchronizer.TclObject;
 import models.converter.Entry;
 import models.converter.InsProc;
@@ -65,7 +65,7 @@ public class SCommonObject implements TclObject
 	public String parse(List<String> command, boolean isRecord) throws Exception {
 		if (command.isEmpty()) throw new ParseException(ParseException.MissArgument);
 		
-		InsProc proc = insProc.get(Converter.parseIdentify(command.get(0)));
+		InsProc proc = insProc.get(Synchronizer.parseIdentify(command.get(0)));
 		if (proc != null)
 		{
 			command.remove(0);
@@ -164,10 +164,10 @@ public class SCommonObject implements TclObject
 				switch (command.size()) 
 				{
 					case 0 : throw new ParseException(ParseException.MissArgument);
-					case 1 : InsVar i = getInsVar(Converter.parseIdentify(command.get(0)));
+					case 1 : InsVar i = getInsVar(Synchronizer.parseIdentify(command.get(0)));
 					 	if (i != null)	return i.getValue();
 					 	return null;
-					case 2 : return setInsVar(Converter.parseIdentify(command.get(0)), Converter.parseIdentify(command.get(1)), command.get(1)).getValue();
+					case 2 : return setInsVar(Synchronizer.parseIdentify(command.get(0)), Synchronizer.parseIdentify(command.get(1)), command.get(1)).getValue();
 					default: throw new ParseException(ParseException.InvalidArgument);
 				}		
 			}
