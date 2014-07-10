@@ -354,7 +354,8 @@ public class Synchronizer
 	}
 	
 	/**
-	 * register new entry to generteEntry.
+	 * register new entry to generateEntry.
+	 * new entry will be added to last index of generateEntry.
 	 * @param e new entry
 	 * @return add success or not
 	 */
@@ -369,6 +370,7 @@ public class Synchronizer
 	 * @return index of new entry
 	 */
 	public static int registerEntry(int index, Entry e){
+		if (index < newNodeIndex) newNodeIndex++;
 		generateEntry.add(index, e);
 		return index;
 	}
