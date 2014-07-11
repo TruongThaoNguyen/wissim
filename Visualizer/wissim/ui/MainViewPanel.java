@@ -71,7 +71,7 @@ import TraceFileParser.wissim.Packet;
 import TraceFileParser.wissim.FullParser;
 import wissim.controller.animation.EventAnimation;
 import wissim.controller.filters.gui.TableFilterHeader;
-import wissim.comtroller.player.WissimPlayer;
+import wissim.controller.player.WissimPlayer;
 import wissim.object.WiGraph;
 import wissim.object.wiEdge;
 import wissim.object.wiNode;

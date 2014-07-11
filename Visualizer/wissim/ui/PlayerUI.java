@@ -10,7 +10,7 @@ import javax.swing.border.LineBorder;
 import org.graphstream.graph.Graph;
 import org.graphstream.ui.swingViewer.View;
 
-import wissim.comtroller.player.WissimPlayer;
+import wissim.controller.player.WissimPlayer;
 
 import java.awt.FlowLayout;
 

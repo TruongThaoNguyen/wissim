@@ -1,5 +1,8 @@
 package views;
 
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -37,15 +40,63 @@ public class Visualizer extends MainContent {
 		
 		final Composite compos = new Composite(this, SWT.EMBEDDED);
 		compos.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		java.awt.Frame frame = SWT_AWT.new_Frame(compos);
+		final java.awt.Frame frame = SWT_AWT.new_Frame(compos);
 		
 		panel = new MainViewPanel();
 		frame.add(panel);
 		//frame.setSize(panel.getWidth(), panel.getHeight());
-//		 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		// ((JFrame) frame).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		frame.setVisible(true);
-		
+		frame.addWindowListener(new WindowListener() {
+			
+			@Override
+			public void windowOpened(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowIconified(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeiconified(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeactivated(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				for (Thread t : Thread.getAllStackTraces().keySet()) 
+				{  if (t.getState()==Thread.State.RUNNABLE) 
+				     t.interrupt(); 
+				} 
+				
+				frame.dispose();
+			}
+			
+			@Override
+			public void windowClosed(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowActivated(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 
 	}
 }

@@ -1,4 +1,4 @@
-package wissim.comtroller.player;
+package wissim.controller.player;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
