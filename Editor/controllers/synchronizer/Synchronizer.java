@@ -20,16 +20,25 @@ import models.converter.Token;
 import models.converter.Token.TokenType;
 
 /**
- * Parser.java file.
- * @copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and Technology
- * @author Duc-Trong Nguyen
+ * Synchronizer - module used to synchronize between Edit mode and Design mode.
+ * @author Trong Nguyen
  * @version 2.0
  */
-public class Synchronizer 
-{		
-	public static SProject global;	
+public class Synchronizer {	
+	/**
+	 * global object, described the Project object.
+	 */
+	public static SProject global;
 	
-	private static List<Entry> generateEntry = new ArrayList<Entry>();	
+	/**
+	 * List of entry, used to generate tcl code.
+	 */
+	private static List<Entry> generateEntry = new ArrayList<Entry>();
+	
+	/**
+	 * index of generateEntry. 
+	 * tcl code for new node will be add to generateEntry in this index.
+	 */
 	private static int newNodeIndex = 0;
 	 
 	/**
@@ -115,10 +124,10 @@ public class Synchronizer
 	
 	/**
 	 * CTD - Code to Design
-	 * Parser Tcl code to a Project model 
-	 * @param text
-	 * @return project
-	 * @throws ParseException 
+	 * Parser Tcl code to a Project model.
+	 * @param text Tcl code
+	 * @return project project object 
+	 * @throws ParseException exception in parsing process
 	 */
 	public static Project CTD(String text) throws ParseException {
 		int line = StringUtils.countMatches(text, "\n");		
@@ -244,12 +253,12 @@ public class Synchronizer
 	}
 	
 	/**
-	 * Parse Identify
+	 * Parse Identify of a word.
 	 * @param word Tcl word
-	 * @return a String is a Identify
-	 * @throws Exception
+	 * @return a String is a Identify of this word
+	 * @throws Exception parsing exception
 	 */
-	public static String parseIdentify(String word) throws Exception {	
+	public static String parseIdentify(final String word) throws Exception {	
 		StringBuilder result = new StringBuilder();
 		Scanner scanner = new Scanner(word);
 		List<Token> tokenList = scanner.scanWord();
@@ -273,11 +282,11 @@ public class Synchronizer
 				case Bracket:
 					Scanner subScanner = new Scanner(token.Value());
 					List<String> command = subScanner.scanCommand();
-					if (subScanner.haveNext()) throw new ParseException(ParseException.InvalidArgument);					
+					if (subScanner.haveNext()) throw new ParseException(ParseException.InvalidArgument);
 					
 					String r = global.parse(command, false); 
 					if (r != null)	result.append(r);
-					else			result.append(token.toString());																	
+					else			result.append(token.toString());
 					break;		
 					
 				case Quote:
@@ -383,7 +392,12 @@ public class Synchronizer
 		return generateEntry;
 	}
 	
-	public static void main(String[] args)  throws Exception {		
+	/**
+	 * single program that using to test Synchronizer.
+	 * @param args nonsense
+	 * @throws Exception running exception
+	 */
+	public static void main(String[] args)  throws Exception {
 		Configure.setTclFile("/home/trongnguyen/");
 		String fileName = Configure.getDirectory() + "Untitled1.tcl";
 		BufferedReader br = new BufferedReader(new FileReader(fileName));
