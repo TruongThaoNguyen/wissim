@@ -61,6 +61,8 @@ import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.swingViewer.View;
 import org.graphstream.ui.swingViewer.Viewer;
 
+import controllers.Configure;
+
 import TraceFileParser.wissim.AbstractParser;
 import TraceFileParser.wissim.Event;
 import TraceFileParser.wissim.EventParser;
@@ -231,6 +233,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 
 						onFileOpen(files[1].getAbsolutePath(),
 								files[0].getAbsolutePath());
+						
 
 					} else
 						JOptionPane.showMessageDialog(null,
