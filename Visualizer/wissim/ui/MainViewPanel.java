@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
@@ -456,7 +457,26 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 		}
 
 	}
-
+	/**
+	 * Init area of node
+	 */
+	public void initArea(){
+		List<List<Integer>> listGroup = Configure.getGroups();
+		if(listGroup.size() > 1){
+		List<Integer> firstGroup = listGroup.get(0);
+		List<Integer> secondGroup = listGroup.get(1);
+		for(Integer i : firstGroup){
+			mCurrentNodeIDGroup1.add(i.toString());
+		}
+		for(Integer i : secondGroup){
+			mCurrentNodeIDGroup2.add(i.toString());
+		}
+		}
+		else{
+			
+		}
+		
+	}
 	public void setTimeSliderListenter() {
 		// TODO Auto-generated method stub
 		mTimeslider.addMouseListener(new MouseListener() {
@@ -626,6 +646,7 @@ public class MainViewPanel extends JPanel implements ViewContainer,
 		view = viewer.addView("v", new J2DGraphRenderer(), false);
 
 		setGraphMouseManager();
+		initArea();
 
 	}
 

@@ -181,7 +181,6 @@ public class FullParser extends AbstractParser {
 
 				if (!retval[0].equals("M")) {
 					if (!retval[13].equals("[energy")) {
-						System.out.println("setEnergy of node "+retval[2].substring(1, retval[2].length() - 1)+" "+retval[1]+""+retval[13]);
 						
 						setEnergyOfNode(
 								retval[2].substring(1, retval[2].length() - 1),
