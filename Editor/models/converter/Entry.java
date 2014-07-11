@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import controllers.converter.Converter;
+import controllers.synchronizer.Synchronizer;
 
 public class Entry {				
 	private InsProc insProc;
@@ -33,7 +33,7 @@ public class Entry {
 			{
 				String s;
 				try {
-					s = Converter.parseIdentify(arg.get(i));				
+					s = Synchronizer.parseIdentify(arg.get(i));				
 				} catch (Exception e) {
 					s = arg.get(i);
 				}				
@@ -67,7 +67,7 @@ public class Entry {
 
 	public Entry(String arg)
 	{
-		insProc = Converter.global.getInsProc(null);
+		insProc = Synchronizer.global.getInsProc(null);
 		this.arg = Arrays.asList(arg);
 		this.sperator = "";
 	}

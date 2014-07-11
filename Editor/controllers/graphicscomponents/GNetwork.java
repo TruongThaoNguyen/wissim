@@ -54,23 +54,56 @@ import models.networkcomponents.features.Area;
 import models.networkcomponents.features.GraphicLabel;
 import models.networkcomponents.features.Label;
 
-
+/**
+ * Graphical implementation for a network.
+ * @author hieu nguyen
+ *
+ */
 public class GNetwork extends Canvas {
-	public final static int MARGIN = 17;				// the minimum margin with the workspace
+	/**
+	 * the minimum margin with the workspace
+	 */
+	public final static int MARGIN = 17;				
 	
-    private Random random = new Random();       		// source of random numbers	
-	private int initX, initY, initWidth, initHeight;	// initial x, y, width, height before scaling
+	/**
+	 * source of random numbers
+	 */
+    private Random random = new Random();       		
+    
+    /**
+     * initial x, y, width, height before scaling
+     */
+	private int initX, initY, initWidth, initHeight;	
 	
-	private Point mouseLeftLastDown = null;			// handle mouse state
+	/**
+	 * last click point.
+	 */
+	private Point mouseLeftLastDown = null;			
 	
+	/**
+	 * handle mouse state.
+	 */
 	private Point mouseCurrentPoint = null;
 	
-	private Menu menu;									// drop down menu    
-    private GC gc;										// used for painting
+	/**
+	 * drop down menu.
+	 */
+	private Menu menu;    
     
-    private VisualizeManager visualizeManager;			// manage the visualization of the network    
+	/**
+	 * used for painting
+	 */
+	private GC gc;										
     
-    private boolean showSelectRectangle = false;		// show select rectangle
+    /**
+     * manage the visualization of the network
+     */
+	private VisualizeManager visualizeManager;			    
+    
+    /**
+     * show select rectangle
+     */
+	private boolean showSelectRectangle = false;		
     
     private List<GSelectableObject> tempObjectList = new LinkedList<GSelectableObject>();
     private Area selectedArea;
@@ -78,8 +111,8 @@ public class GNetwork extends Canvas {
 	
 	/**
 	 * Create the composite.
-	 * @param parent
-	 * @param style
+	 * @param parent : Composite parent which gnetwork attack to
+	 * @param style 
 	 */
 	public GNetwork(Composite parent, int style) {
 		super(parent, style);
@@ -165,10 +198,14 @@ public class GNetwork extends Canvas {
 			@Override
 			public void mouseDown(MouseEvent arg0) {
 				if (arg0.button == 1)
+				{
 					mouseLeftLastDown = new Point(arg0.x, arg0.y);
-				if (arg0.button == 3) {
-					updateMenu();	
 				}
+				
+				if (arg0.button == 3)
+				{
+					updateMenu();	
+				}				
 				
 				Workspace workspace = (Workspace) getParent();				
 				WorkspacePropertyManager workspacePropertyManager = workspace.getPropertyManager();			
@@ -328,7 +365,9 @@ public class GNetwork extends Canvas {
 	}
 	
 	static WirelessNetwork getNetwork() { return ProjectManager.getProject().getNetwork(); }
-	
+	/**
+	 * Draw shortest path for two node
+	 */
 	protected void showShortestPaths() {
 		List<GraphicPath> paths = visualizeManager.getShortestPaths();
 		GraphicPath p = paths.get(paths.size()-1);
@@ -351,6 +390,9 @@ public class GNetwork extends Canvas {
 //		}
 	}
 
+	/**
+	 * Draw greedy path for two node
+	 */
 	protected void showGreedyPaths() {
 		List<GraphicPath> paths = visualizeManager.getGreedyPaths();
 //		System.out.println(paths.get(paths.size()));
@@ -374,6 +416,9 @@ public class GNetwork extends Canvas {
 //		}	
 	}
 
+	/**
+	 * Show neighbors of selected nodes
+	 */
 	protected void showNeighbors() {
 		Workspace workspace = (Workspace) getParent();
 		int len = workspace.getPropertyManager().getNeighborLen();
@@ -398,6 +443,9 @@ public class GNetwork extends Canvas {
 		}
 	}
 
+	/**
+	 * Show range of selected nodes
+	 */
 	protected void showRange() {
 		Workspace workspace = (Workspace) getParent();
 		int len = workspace.getPropertyManager().getRangeLen();
@@ -439,7 +487,9 @@ public class GNetwork extends Canvas {
 		this.initX = x;
 		this.initY = y;
 	}
-	
+	/**
+	 * Update bound of networks
+	 */
 	public void updateBounds() {
 		Workspace w = (Workspace) getParent();
 		// calculate initial graphic size of the network
@@ -461,7 +511,9 @@ public class GNetwork extends Canvas {
 		
 		this.setBounds(x, y, width, height);
 	}
-	
+	/**
+	 * Update menu by mouse right click on workspace working 
+	 */
 	private void updateMenu() {
 		final Workspace workspace = (Workspace) getParent();
 		
@@ -486,11 +538,41 @@ public class GNetwork extends Canvas {
 			updateMenuForVisualization();					// when visualization mode is turn on
 		}
 	}
-
+	/**
+	 * Update menu by mouse right click of selected area
+	 */
     private void updateAreaMenu() {
     	// do not show menu when there is no polygon chosen
     	if (selectedArea.npoints < 3)
     		return;
+    	
+    	// region --------------- deploy nodes in selected area --------------- //
+
+    	MenuItem mntmDeployNodesInArea = new MenuItem(menu, SWT.NONE);
+    	mntmDeployNodesInArea.setText("Deploy nodes in selected area");
+    	mntmDeployNodesInArea.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				CreateNodeSetResult result = (CreateNodeSetResult) new CreateNodeSetDialog(getShell(), SWT.SHEET, selectedArea).open();
+				
+				switch (result.creationType) {
+				case CreateNodeSetResult.GRID:
+					break;
+				case CreateNodeSetResult.RANDOM:
+					Workspace w = (Workspace) getParent();
+					ProjectManager.createRandomNodes(result.numOfNodes, Workspace.getProject().getNodeRange(), selectedArea);					
+					w.updateLayout();					
+					clearSelectedArea();
+					w.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);					
+					w.getGraphicNetwork().redraw();
+					break;
+				}
+			}
+		});		
+
+		// endregion
+    	
+    	// region --------------- remove nodes in selected area --------------- //
     	
     	MenuItem mntmRemoveAllNodes = new MenuItem(menu, SWT.NONE);
     	mntmRemoveAllNodes.setText("Remove all nodes in selected area");
@@ -527,6 +609,10 @@ public class GNetwork extends Canvas {
 				redraw();
     		}
     	});
+
+		// endregion remove nodes in selected area
+    	
+    	// region --------------- set as obstacle --------------- //
     	
     	MenuItem mntmSetObstacle = new MenuItem(menu, SWT.NONE);
     	mntmSetObstacle.setText("Set as Obstacle");
@@ -538,21 +624,29 @@ public class GNetwork extends Canvas {
 				
 				// check whether this area contains nodes
 				List<WirelessNode> nodeList = new LinkedList<WirelessNode>();
-				for (Node n : project.getNetwork().getNodeList()) {
+				for (Node n : project.getNetwork().getNodeList()) 
+				{
 					WirelessNode wn = (WirelessNode) n;
-					if (selectedArea.contains(wn.getX(), wn.getY())) {
+					if (selectedArea.contains(wn.getX(), wn.getY())) 
+					{
 						nodeList.add(wn);
 					}
 				}
 				
 				if (nodeList.size() > 0)
-					if (MessageDialog.openQuestion(getShell(), "Create Obstacle", "The selected area contains node(s)\r\n" +
-							"Do you want to remove them to create obstacle")) {
+				{
+					if (MessageDialog.openQuestion(getShell(), "Create Obstacle", "The selected area contains node(s)\r\nDo you want to remove them to create obstacle")) 
+					{
 						for (WirelessNode n : nodeList)
+						{
 							workspace.getGraphicNodeByNode(n).dispose();
-					} else {
+						}
+					}
+					else 
+					{
 						return;
-					}				
+					}
+				}
 				
 				Project.addObstacle(selectedArea);				
 				workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);
@@ -563,27 +657,30 @@ public class GNetwork extends Canvas {
 			}
 		});
     	
-    	MenuItem mntmDeployNodesInArea = new MenuItem(menu, SWT.NONE);
-    	mntmDeployNodesInArea.setText("Deploy nodes in selected area");
-    	mntmDeployNodesInArea.addSelectionListener(new SelectionAdapter() {
+		// endregion set as obstacle
+
+    	// region --------------- set as area --------------- //
+
+    	MenuItem mntmSetArea = new MenuItem(menu, SWT.NONE);
+    	mntmSetArea.setText("Set as Group of nodes");
+    	mntmSetArea.addSelectionListener(new SelectionAdapter() {			
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				CreateNodeSetResult result = (CreateNodeSetResult) new CreateNodeSetDialog(getShell(), SWT.SHEET, selectedArea).open();
+			public void widgetSelected(SelectionEvent arg0) 
+			{
+				Project.addGroup(selectedArea);				
 				
-				switch (result.creationType) {
-				case CreateNodeSetResult.GRID:
-					break;
-				case CreateNodeSetResult.RANDOM:
-					Workspace w = (Workspace) getParent();
-					ProjectManager.createRandomNodes(result.numOfNodes, Workspace.getProject().getNodeRange(), selectedArea);					
-					w.updateLayout();					
-					clearSelectedArea();
-					w.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);					
-					w.getGraphicNetwork().redraw();
-					break;
-				}
+				Workspace workspace = (Workspace) getParent();
+				workspace.getPropertyManager().setMouseMode(WorkspacePropertyManager.CURSOR);
+				workspace.getPropertyManager().setShowGroups(true);
+				workspace.updateLayout();
+				workspace.getGraphicNetwork().redraw();	
+				clearSelectedArea();
 			}
 		});
+
+		// endregion set as area
+    	
+    	// region --------------- cancel --------------- //
     	
     	MenuItem mntmCancel = new MenuItem(menu, SWT.NONE);
     	mntmCancel.setText("Cancel");
@@ -594,8 +691,13 @@ public class GNetwork extends Canvas {
     			redraw();
     		}
     	});
-	}
 
+		// endregion cancel
+    }
+    
+/**
+ * Update menu for mouse right click when a set of node has selected
+ */
 	private void updateMenuForMultipleNodesSelected() {
     	final Workspace workspace = (Workspace) getParent();
     	Workspace.getProject();
@@ -733,7 +835,9 @@ public class GNetwork extends Canvas {
     		}
     	});
 	}
-    
+    /**
+     * Update normal menu when right click by mouse
+     */
     private void updateNormalMenu() {
     	final Workspace workspace = (Workspace) getParent();
     	

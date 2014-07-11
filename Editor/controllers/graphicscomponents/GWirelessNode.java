@@ -52,6 +52,13 @@ public class GWirelessNode extends GSelectableObject {
 	 */
 	Menu menu;
 
+	/**
+	 * Contructor
+	 * Create a graphic wireless node
+	 * @param parent
+	 * @param style
+	 * @param node : wireless node that graphic wireless node based on
+	 */
 	public GWirelessNode(Composite parent, int style, final WirelessNode node) {
 		super(parent, style);
 		this.nodeID = node.getId();
@@ -145,6 +152,9 @@ public class GWirelessNode extends GSelectableObject {
 		this.setToolTipText("Node " + node.getId() + "\n" + "(" + node.getX() + ", " + node.getY() + ")");		
 	}
 
+	/**
+	 * Update menu when current node has selected and right click mouse
+	 */
 	protected void updateMenu() {
 		if (menu != null) menu.dispose();
 
@@ -300,10 +310,18 @@ public class GWirelessNode extends GSelectableObject {
 		return new Point(x, y);
 	}
 
+	/**
+	 * 
+	 * @return wireless node from current graphic wireless node
+	 */
 	public WirelessNode getWirelessNode() {
 		return (WirelessNode) GNetwork.getNetwork().getNodeById(nodeID);
 	}
 	
+	/**
+	 * 
+	 * @return list of label that node has define
+	 */
 	public List<Label> getShownLabels() {
 		Workspace w = (Workspace) getParent();
 		List<Label> list = new LinkedList<Label>();
@@ -316,6 +334,9 @@ public class GWirelessNode extends GSelectableObject {
 		return list;
 	}
 
+	/**
+	 * Refresh all graphic about current wireless node
+	 */
 	public void refresh() {
 		WirelessNode node = getWirelessNode();
 		

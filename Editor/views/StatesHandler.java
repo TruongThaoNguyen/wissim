@@ -8,6 +8,9 @@ public class StatesHandler {
 		this.window = window;
 	}
 	
+	/**
+	 * Turn off simulation tool
+	 */
 	public void initialize() {
 		window.getActCreateARandomNode().setEnabled(false);
 		window.getActChangeNetworkSize().setEnabled(false);
@@ -58,6 +61,9 @@ public class StatesHandler {
 		window.getActVisualizeSettings().setEnabled(false);
 	}
 	
+	/**
+	 * Turn on Simulation tool
+	 */
 	public void activeProject() {
 		window.getActCreateARandomNode().setEnabled(true);
 		window.getActChangeNetworkSize().setEnabled(true);

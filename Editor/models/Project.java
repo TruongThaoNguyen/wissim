@@ -12,9 +12,9 @@ import models.networkcomponents.features.Area;
 import models.networkcomponents.features.Label;
 
 /**
- * Represents a project. A Project will contain the main network and everything related to the project itself (obstacles, labels,...)
+ * Represents a project. A Project will contain the main network and everything 
+ * related to the project itself (obstacles, labels,...)
  * @author leecom
- *
  */
 public abstract class Project {
 	
@@ -44,7 +44,21 @@ public abstract class Project {
 	 * list of obstacles
 	 */
 	private static List<Area> obstacleList = new ArrayList<Area>();
-	private static int obstacleIndex;
+	
+	/**
+	 * List of areas.
+	 */
+	private static List<Area> groupList = new ArrayList<Area>();
+	
+	/**
+	 * Obstacle index generator.
+	 */
+	private static int obstacleIndex = 0;
+	
+	/**
+	 * Area index generator.
+	 */
+	private static int groupIndex = 0;
 	
 	/**
 	 * Transport protocol
@@ -68,12 +82,17 @@ public abstract class Project {
 	public static Date 			getLastSavedDate() 				{ return lastSavedDate; }
 	public static List<Label>	getLabelList() 					{ return labelList; }
 	public static List<Area> 	getObstacleList()			 	{ return obstacleList; }
+	public static List<Area>	getGroupsList()					{ return groupList; }
 
 	public static void addObstacle(Area area) {
 		area.setId(obstacleIndex++);
 		obstacleList.add(area);
 	}
 	
+	public static void addGroup(Area area) {
+		area.setId(groupIndex++);
+		groupList.add(area);
+	}
 	// endregion Manager properties
 
 	// region ------------------- Configure properties ------------------- //
@@ -93,16 +112,16 @@ public abstract class Project {
 		
 	public static HashMap<String, LinkedHashMap<String, String>> getConfig(String label) 	{ return configure.get(label); }
 	
-	public static HashMap<String, LinkedHashMap<String, String>> getRoutingProtocols() 		{ return configure.get("-adhocRouting");		}//
-	public static HashMap<String, LinkedHashMap<String, String>> getLinkLayers() 			{ return configure.get("-llType");				}//
-	public static HashMap<String, LinkedHashMap<String, String>> getMacs() 					{ return configure.get("-macType"); 			}//
-	public static HashMap<String, LinkedHashMap<String, String>> getPropagationModels() 	{ return configure.get("-propType");			}//
-	public static HashMap<String, LinkedHashMap<String, String>> getNetworkInterfaces() 	{ return configure.get("-phyType");				}//
-	public static HashMap<String, LinkedHashMap<String, String>> getAntennas() 				{ return configure.get("-antType");				}//
-	public static HashMap<String, LinkedHashMap<String, String>> getInterfaceQueues() 		{ return configure.get("-ifqType");				}//
-	public static HashMap<String, LinkedHashMap<String, String>> getChannels()				{ return configure.get("-channel"); 			}//
-	public static HashMap<String, LinkedHashMap<String, String>> getTransportProtocols()	{ return configure.get("transportProtocols");	}//
-	public static HashMap<String, LinkedHashMap<String, String>> getApplicationProtocols()	{ return configure.get("applicationProtocols");	}//
+	public static HashMap<String, LinkedHashMap<String, String>> getRoutingProtocols() 		{ return configure.get("-adhocRouting");		}
+	public static HashMap<String, LinkedHashMap<String, String>> getLinkLayers() 			{ return configure.get("-llType");				}
+	public static HashMap<String, LinkedHashMap<String, String>> getMacs() 					{ return configure.get("-macType"); 			}
+	public static HashMap<String, LinkedHashMap<String, String>> getPropagationModels() 	{ return configure.get("-propType");			}
+	public static HashMap<String, LinkedHashMap<String, String>> getNetworkInterfaces() 	{ return configure.get("-phyType");				}
+	public static HashMap<String, LinkedHashMap<String, String>> getAntennas() 				{ return configure.get("-antType");				}
+	public static HashMap<String, LinkedHashMap<String, String>> getInterfaceQueues() 		{ return configure.get("-ifqType");				}
+	public static HashMap<String, LinkedHashMap<String, String>> getChannels()				{ return configure.get("-channel"); 			}
+	public static HashMap<String, LinkedHashMap<String, String>> getTransportProtocols()	{ return configure.get("transportProtocols");	}
+	public static HashMap<String, LinkedHashMap<String, String>> getApplicationProtocols()	{ return configure.get("applicationProtocols");	}
 	
 	// endregion Configure properties
 	
@@ -146,5 +165,5 @@ public abstract class Project {
 	public abstract String getSelectedInterfaceQueue();
 	public abstract String getSelectedNetworkInterface();
 	
-	// endregion Network properties
+	// endregion Network properties 
 }

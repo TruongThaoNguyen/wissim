@@ -13,6 +13,13 @@ import views.RulerScrolledComposite;
 
 public class RulerController extends Canvas {
 
+	/**
+	 * Contructor
+	 * 
+	 * Create a ruler on workspace
+	 * @param parent
+	 * @param style
+	 */
 	public RulerController(Composite parent, int style) {
 		super(parent, style);
 		

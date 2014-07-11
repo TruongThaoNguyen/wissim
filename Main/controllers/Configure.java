@@ -1,7 +1,14 @@
 package controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import controllers.managers.ProjectManager;
+import models.Project;
+import models.networkcomponents.Node;
+import models.networkcomponents.WirelessNode;
+import models.networkcomponents.features.Area;
 import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;
@@ -16,32 +23,32 @@ public final class Configure {
 	/**
 	 * Path to configure storage file.
 	 */
-	private static String CONFIGURE = getHomePath() + "/.wissim/configure.xml";
+	private static String configures = getHomePath() + "/.wissim/configure.xml";
 	
 	/**
 	 * Path to current directory.
 	 */
-	static String directory;
+	private static String directory;
 	
 	/**
 	 * Path to default trace file.
 	 */
-	static String traceFile;
+	private static String traceFile;
 	
 	/**
 	 * Path to default nam trace file.
 	 */
-	static String namTraceFile;	
+	private static String namTraceFile;	
 	
 	/**
 	 * Path to ns2 installed directory.
 	 */
-	static String ns2Path;	// = "/home/trongnguyen/NS2/";
-	
+	private static String ns2Path;	// = "/home/trongnguyen/NS2/";
+
 	/**
 	 * Path to current tcl file.
 	 */
-	static String tclFile;
+	private static String tclFile;
 	
 	/**
 	 * return user's home path.
@@ -56,7 +63,9 @@ public final class Configure {
 	 * @return the tclFile name
 	 */
 	public static String getTclFile() {
-		if (tclFile.contains("/")) return tclFile;
+		if (tclFile.contains("/")) {
+			return tclFile;
+		}
 		return directory + tclFile;
 	}
 	
@@ -65,10 +74,9 @@ public final class Configure {
 	 * @param value new file name.
 	 * @return new file name.
 	 */
-	public static String setTclFile(String value) {
+	public static String setTclFile(final String value) {
 		int i = value.lastIndexOf("/");
-		if (i != -1)
-		{			
+		if (i != -1) {			
 			directory = value.substring(0, i + 1);
 			return tclFile = value.substring(i + 1);
 		}		
@@ -88,10 +96,9 @@ public final class Configure {
 	 * @param value new file name
 	 * @return file name
 	 */
-	public static String setTraceFile(String value) {
+	public static String setTraceFile(final String value) {
 		int i = value.lastIndexOf("/");
-		if (i != -1)
-		{			
+		if (i != -1) {			
 			directory = value.substring(0, i + 1);
 			return traceFile = value.substring(i + 1);
 		}		
@@ -99,23 +106,27 @@ public final class Configure {
 	}
 
 	/**
-	 * name trace file's name
+	 * name trace file's name.
 	 * @return the namTraceFile
 	 */
 	public static String getNamTraceFile() {
-		if (namTraceFile.contains("/")) return namTraceFile;		
+		if (namTraceFile.contains("/")) {
+			return namTraceFile;
+		}		
 		return getFilePath(directory, namTraceFile);
 	}
 
 	/**
-	 * @param namTraceFile the namTraceFile to set
+	 * set default nam trace file.
+	 * @param value new name trace file
+	 * @return nam trace file
 	 */
-	public static String setNamTraceFile(String namTraceFile) {
-		return Configure.namTraceFile = namTraceFile;
+	public static String setNamTraceFile(final String value) {
+		return namTraceFile = value;
 	}
 	
 	/**
-	 * get current workspace directory
+	 * get current workspace directory.
 	 * @return directory
 	 */
 	public static String getDirectory() {
@@ -123,24 +134,27 @@ public final class Configure {
 	}
 	
 	/**
-	 * set current workspace directory
+	 * set current workspace directory.
 	 * @param dir new directory
 	 * @return directory
 	 */
 	public static String setDirectory(String dir) {
-		if (dir.endsWith(".tcl")) dir = dir.substring(0, dir.lastIndexOf("/"));
+		if (dir.endsWith(".tcl")) {
+			dir = dir.substring(0, dir.lastIndexOf("/"));
+		}
 		return directory = dir + "/";	
 	}
 
 	/**
-	 * get path to installed ns2
-	 * @return
+	 * get path to installed ns2 directory.
+	 * @return path
 	 */
 	public static String getNS2Path() {
 		if (ns2Path == null)
 		{
-			try {
-				Document doc = XMLReader.open(CONFIGURE);				
+			try 
+			{
+				Document doc = XMLReader.open(configures);				
 				Element root = doc.getRootElement();				
 				Element e = root.getFirstChildElement("NS2Path");
 				ns2Path = e.getAttributeValue("value");
@@ -158,7 +172,7 @@ public final class Configure {
 	 * @param path path to ns2 installed directory.
 	 * @return path to ns2 installed directory
 	 */
-	public static String setNS2Path(String path) {
+	public static String setNS2Path(final String path) {
 		if (!path.endsWith("/")) 	ns2Path = path + "/";		
 		else						ns2Path = path;
 		
@@ -171,7 +185,7 @@ public final class Configure {
 		
 		try 
 		{
-			XMLReader.save(doc, CONFIGURE);
+			XMLReader.save(doc, configures);
 		}
 		catch (IOException e1) 
 		{
@@ -194,5 +208,22 @@ public final class Configure {
 			return directory + fileName;		
 		else
 			return directory + slash + fileName;
+	}
+
+	public static List<List<Integer>> getGroups()
+	{
+		ArrayList<List<Integer>> re = new ArrayList<List<Integer>>();
+		
+		for (Area a : Project.getGroupsList()) {
+			ArrayList<Integer> su = new ArrayList<Integer>();
+			re.add(su);
+			
+			for (Node n : ProjectManager.getProject().getNetwork().getNodeList()) {
+				WirelessNode w = (WirelessNode) n;
+				if (a.contains(w.getX(), w.getY())) su.add(w.getId());
+			}
+		}
+		
+		return re;
 	}
 }

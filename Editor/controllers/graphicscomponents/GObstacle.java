@@ -24,13 +24,22 @@ import views.Workspace;
  *
  */
 public class GObstacle extends GSelectableObject {
-	// the obstacle area
+	/**
+	 * the obstacle area.
+	 */
 	private Area area;
 	
 	int[] pointArray;
 	
 	private GNetwork network;
-
+	
+	/**
+	 * Constructor 
+	 * Create a area as a obstacle
+	 * @param parent : Composite parent
+	 * @param style : style to attack parent composite
+	 * @param area : area to define obstacle
+	 */
 	public GObstacle(Composite parent, int style, Area area) {
 		super(parent, style);
 		
@@ -79,8 +88,9 @@ public class GObstacle extends GSelectableObject {
 		double ratio = network.getRatio();
 		Region region = new Region();
 		
-		int minx = 9999, miny = 9999, maxx = 0, maxy = 0;
-		for (int i = 0; i < area.npoints; i++) {
+		int minx = Integer.MAX_VALUE, miny = Integer.MAX_VALUE, maxx = 0, maxy = 0;
+		for (int i = 0; i < area.npoints; i++) 
+		{
 			Point p = getGraphicLocation(area.xpoints[i], area.ypoints[i], ratio);
 			
 			minx = minx > p.x ? p.x : minx;
@@ -93,8 +103,8 @@ public class GObstacle extends GSelectableObject {
 		for (int i = 0; i < area.npoints; i++) {
 			Point p = getGraphicLocation(area.xpoints[i], area.ypoints[i], ratio);
 			
-			pointArray[2*i] = p.x - minx;
-			pointArray[2*i+1] = p.y - miny;
+			pointArray[2 * i] 	  = p.x - minx;
+			pointArray[2 * i + 1] = p.y - miny;
 		}
 		region.add(pointArray);
 		
@@ -107,11 +117,21 @@ public class GObstacle extends GSelectableObject {
 		
 		this.setRegion(region);
 	}
-	
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @param ratio
+	 * @return
+	 */
 	private Point getGraphicLocation(int x, int y, double ratio) {
 		return new Point((int) (x * ratio), (int) (y * ratio));
 	}
 	
+	/**
+	 * 
+	 * @return area referent to obstacle
+	 */
 	public Area getArea() {
 		return area;
 	}

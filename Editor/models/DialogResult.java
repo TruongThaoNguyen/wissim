@@ -18,6 +18,11 @@ public class DialogResult {
 		public int time;
 	}
 	
+	/**
+	 * Property of network size
+	 * @author khaclinh
+	 *
+	 */
 	public class EditNetworkSizeResult {
 		public int width;
 		public int height;

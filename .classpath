@@ -34,7 +34,11 @@
 	<classpathentry kind="lib" path="lib/visualyzer/gs-algo-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/visualyzer/gs-core-1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/visualyzer/gs-ui-1.1.2.jar"/>
-	<classpathentry kind="lib" path="lib/editor/org.eclipse.swt.gtk.linux.x86_64_3.102.1.v20130827-2048.jar"/>
+	<classpathentry kind="lib" path="lib/editor/org.eclipse.swt.gtk.linux.x86_64_3.102.1.v20130827-2048.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://help.eclipse.org/indigo/nftopic/org.eclipse.platform.doc.isv/reference/api/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/editor/swt.jar"/>
 	<classpathentry kind="lib" path="lib/editor/xom-1.2.10.jar"/>
 	<classpathentry kind="lib" path="lib/visualyzer/poi-3.10-FINAL-20140208.jar"/>

@@ -5,34 +5,46 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-/*
- * Author: Trong Nguyen
- * 
+/**
+ * MainContent is abstract class for Editor, Visualizer, Analyzer.
+ * @author Trongnguyen
  */
-
-public class MainContent extends Composite {
-
+public abstract class MainContent extends Composite {
+	
+	/**
+	 * manager the main menu.
+	 */
 	protected MenuManager menuManager;
+	
+	/**
+	 * manager the main status line.
+	 */
 	protected StatusLineManager statusLineManager;
 	
 	/**
 	 * Create the composite.
-	 * @param parent
-	 * @param MenuManager
-	 * @param StatusLineManager
+	 * @param parent parent composite
+	 * @param menuManager main Menu manager
+	 * @param statusLineManager main status line manager
 	 */
-	public MainContent(Composite parent, MenuManager menuManager, StatusLineManager statusLineManager) {
+	public MainContent(final Composite parent, final MenuManager menuManager, final StatusLineManager statusLineManager) {
 		super(parent, SWT.NONE);
 		this.menuManager = menuManager;
 		this.statusLineManager = statusLineManager;
 	}
 	
-	public void UpdateMenu()
-	{
+	/**
+	 * Reset all menu items in main menu.
+	 */
+	final public void UpdateMenu()	{
 		menuManager.removeAll();
 		updateMenu();
 		menuManager.update(true);
 	}
 	
-	protected void updateMenu() {}
+	/**
+	 * abstract method updateMenu.
+	 * implement real action to update main menu's items.
+	 */
+	abstract void updateMenu();
 }

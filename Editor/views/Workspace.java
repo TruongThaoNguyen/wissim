@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import controllers.graphicscomponents.GGroup;
 import controllers.graphicscomponents.GNetwork;
 import controllers.graphicscomponents.GObstacle;
 import controllers.graphicscomponents.GSelectableObject;
@@ -37,13 +38,22 @@ import views.dialogs.ViewProjectInfoDialog;
 
 public class Workspace extends Composite {
 	public final static int OVERVIEW = 0, EXTEND = 1;
-		
-	private int mode;			// view mode of workspace
-	private double scale;		// handle the scale of the network
+	
+	/**
+	 * view mode of workspace
+	 */
+	private int mode;			
+	
+	/**
+	 * handle the scale of the network.
+	 */
+	private double scale;		
 	
 	private int savedStateIndex; 
 	
-	// temporary values
+	/**
+	 * temporary values.
+	 */
 	private boolean isLeftMouseDown;
 	private Point mouseLeftTempPoint;
 	
@@ -51,6 +61,13 @@ public class Workspace extends Composite {
 	
 	WorkspacePropertyManager propertyManager;
 
+	/**
+	 * Contructor
+	 * 
+	 * Build a workspace for scenarito.
+	 * @param parent
+	 * @param style
+	 */
 	public Workspace(Composite parent, int style) {
 		super(parent, style);
 		
@@ -141,11 +158,15 @@ public class Workspace extends Composite {
 	
 	public static Project getProject() { return ProjectManager.getProject(); }
 	
+	/**
+	 * Update menu on current workspace.
+	 */
 	private void updateMenu() {
 		Menu menu = new Menu(this);
 		setMenu(menu);
 		
-		if (propertyManager.getMouseMode() == WorkspacePropertyManager.HAND) {
+		if (propertyManager.getMouseMode() == WorkspacePropertyManager.HAND) 
+		{
 			MenuItem mntmViewProjectInfo = new MenuItem(menu, SWT.NONE);
 			mntmViewProjectInfo.setText("Exit Hand Mode");
 			mntmViewProjectInfo.addSelectionListener(new SelectionAdapter() {				
@@ -175,6 +196,8 @@ public class Workspace extends Composite {
 		GNetwork gnetwork = getGraphicNetwork();
 		if (gnetwork == null) return;
 		
+		// region --------------- nodes --------------- //
+
 		// check whether the graphic node is sill represented of a node		
 		for (GWirelessNode gn : getGraphicNodes()) 
 		{						
@@ -204,6 +227,10 @@ public class Workspace extends Composite {
 			}
 		}	
 		
+		// endregion nodes
+		
+		// region --------------- Obstacles --------------- //
+
 		if (Project.getObstacleList() != null)
 		{
 			for (Area area : Project.getObstacleList()) 
@@ -242,9 +269,53 @@ public class Workspace extends Composite {
 			
 			if (!isExisted)	garea.dispose();			
 		}
+
+		// endregion Obstacles
+		
+		// region --------------- Groups --------------- //
+
+		for (Area area : Project.getGroupsList()) 
+		{
+			// check whether area in getProject() are instantiated yet			
+			isExisted = false;
+			for (GObstacle garea : getGraphicObstacles()) 
+			{
+				if (garea.getArea().getId() == area.getId()) 
+				{
+					isExisted = true;
+					break;
+				}
+			}
+		
+			if (!isExisted) 
+			{			
+				GGroup ggroup = new GGroup(this, SWT.NONE, area);
+				ggroup.moveAbove(gnetwork);
+			}
+			}		
+		
+		for (GGroup garea : getGraphicGroups()) 
+		{
+			// check whether the graphic node is sill represented of a node
+			isExisted = false;
+			for (Area area : Project.getGroupsList())
+			{
+				if (garea.getArea().getId() == area.getId()) 
+				{
+					isExisted = true;
+					break;
+				}
+			}
+			
+			if (!isExisted)	garea.dispose();			
+		}
+
+		// endregion Groups
 	}
 	
-	// calculate scale layout every time when workspace is resized
+	/**
+	 * calculate scale layout every time when workspace is resized
+	 */
 	private void calculateLayoutForScale() {
 		GNetwork gnetwork = getGraphicNetwork();		
 		if (gnetwork == null) return;		
@@ -276,6 +347,11 @@ public class Workspace extends Composite {
 		return null;
 	}
 	
+	/**
+	 * Get graphic node immediately
+	 * @param node
+	 * @return
+	 */
 	public GWirelessNode getGraphicNodeByNode(Node node) {
 		for (Control c : getChildren())
 			if (c instanceof GWirelessNode && ((GWirelessNode) c).getWirelessNode().getId() == node.getId())
@@ -284,6 +360,10 @@ public class Workspace extends Composite {
 		return null;
 	} 
 	
+	/**
+	 * get list of Obstacle's graphic objects.
+	 * @return list of GObjecle
+	 */
 	public List<GObstacle> getGraphicObstacles() {
 		List<GObstacle> obstacleList = new LinkedList<GObstacle>();
 		
@@ -292,6 +372,20 @@ public class Workspace extends Composite {
 				obstacleList.add((GObstacle) c);
 	
 		return obstacleList;
+	}
+	
+	/**
+	 * get list of Group's graphic objects.
+	 * @return list of GGroup
+	 */
+	public List<GGroup> getGraphicGroups() {
+		List<GGroup> groupList = new LinkedList<GGroup>();
+		
+		for (Control c: getChildren())
+			if (c instanceof GGroup)
+				groupList.add((GGroup) c);
+	
+		return groupList;	
 	}
 	
 	/**
@@ -304,6 +398,10 @@ public class Workspace extends Composite {
 			obj.setSelect(false);
 	}
 	
+	/**
+	 * Retrieve network belong to workspace
+	 * @return
+	 */
 	public GNetwork getGraphicNetwork() {
 		for (Control c : getChildren())
 			if (c instanceof GNetwork)
@@ -312,6 +410,10 @@ public class Workspace extends Composite {
 		return null;
 	}
 		
+	/**
+	 * Get all node that selected
+	 * @return list of selected node
+	 */
 	public List<GSelectableObject> getSelectedObject() {
 		List<GSelectableObject> selectedList = new ArrayList<GSelectableObject>();
 		for (Control c : getChildren())
@@ -323,6 +425,10 @@ public class Workspace extends Composite {
 		return selectedList;
 	}
 	
+	/**
+	 * Get list of posible selected node
+	 * @return
+	 */
 	public List<GSelectableObject> getSelectableObject() {
 		List<GSelectableObject> selectableList = new ArrayList<GSelectableObject>();		
 		for (Control c : getChildren())
@@ -332,6 +438,10 @@ public class Workspace extends Composite {
 		return selectableList;
 	}
 	
+	/**
+	 * Get all node on workspace
+	 * @return
+	 */
 	public List<GWirelessNode> getGraphicNodes() {
 		List<GWirelessNode> nodeList = new LinkedList<GWirelessNode>();
 		for (Control c : getChildren()) {

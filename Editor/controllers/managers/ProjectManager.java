@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
-import controllers.Configure;
-import controllers.converter.Converter;
 import models.Project;
 import models.converter.ParseException;
 import models.networkcomponents.Node;
@@ -23,8 +21,12 @@ import models.networkcomponents.algorithms.BFSAlgorithm;
 import models.networkcomponents.algorithms.DijikstraAlgorithm;
 import models.networkcomponents.algorithms.GreedyAlgorithm;
 import models.networkcomponents.events.Event.EventType;
-import models.networkcomponents.features.*;
+import models.networkcomponents.features.Area;
+import models.networkcomponents.features.Label;
 import models.networkcomponents.protocols.ApplicationProtocol;
+import nu.xom.ParsingException;
+import controllers.Configure;
+import controllers.synchronizer.Synchronizer;
 
 /**
  * Acts as a proxy between models and the program
@@ -38,11 +40,11 @@ public class ProjectManager {
 	 *  available project in the program
 	 */	
 	public static Project getProject() {
-		return Converter.global;
+		return Synchronizer.global;
 	}
 	
 	private static WirelessNetwork getNetwork() {
-		return Converter.global.getNetwork();
+		return Synchronizer.global.getNetwork();
 	}
 	
 	/**
@@ -59,7 +61,7 @@ public class ProjectManager {
 		// checks input validity
 		if (width <= 0 || length <= 0 || time <= 0) return null;		 			
 		
-		Project project = Converter.CTD(Converter.DefaultScript());		
+		Project project = Synchronizer.CTD(Synchronizer.DefaultScript());		
 				
 		Project.setPath(path);		
 		
@@ -86,11 +88,31 @@ public class ProjectManager {
 	 * @throws ParseException 
 	 */
 	public static void saveProject() throws IOException, ParseException {						
+		// region --------------- save tcl file --------------- //
+		
 		String fileName = Configure.getTclFile();
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));		
-		bw.write(Converter.DTC());
-		bw.close();				
+		bw.write(Synchronizer.DTC());
+		bw.close();
+
+		// endregion save tcl file
+		
+		// region --------------- save areas storage file --------------- //
+		
+		fileName = Configure.getFilePath(Configure.getDirectory(), "SelectedArea.tr");
+		bw = new BufferedWriter(new FileWriter(fileName));
+		
+		for (List<Integer> l : Configure.getGroups()) 
+		{
+			for (Integer i : l) bw.write(i + " ");
+			
+			bw.write("\n");
+		}
+		
+		bw.close();
+
+		// endregion save areas storage file
 	}
 	
 	/**
@@ -111,7 +133,7 @@ public class ProjectManager {
 		    line = br.readLine();		    
 		}
 	    br.close();						
-		return Converter.CTD(sb.toString());
+		return Synchronizer.CTD(sb.toString());
 	}
 	
 	public static boolean changeTime(int time) {
@@ -367,11 +389,16 @@ public class ProjectManager {
 	//TODO need to code Pattern and Area first
 	//public static Area createObstacle(Pattern pattern, double scale) { return null; }
 	
-	// create Obstacle 
-	public static boolean addObstacle(Area area) { return false; }
+	/**
+	 * Create Obstacle 
+	 * @param area
+	 * @return
+	 */
+	public static boolean addObstacle(Area area) {		
+		return false; 
+	}
 	
-	public static List<Area> getObstacles() { getProject();
-	return Project.getObstacleList(); }
+	public static List<Area> getObstacles() { return Project.getObstacleList(); }
 	
 	public static List<WirelessNode> getNeighbors(WirelessNode node) { return node.getNeighborList(); }
 	

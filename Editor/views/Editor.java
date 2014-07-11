@@ -52,13 +52,13 @@ import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import controllers.Configure;
-import controllers.converter.Converter;
 import controllers.graphicscomponents.GSelectableObject;
 import controllers.graphicscomponents.GWirelessNode;
 import controllers.managers.ApplicationManager;
 import controllers.managers.ApplicationSettings;
 import controllers.managers.ProjectManager;
 import controllers.managers.WorkspacePropertyManager;
+import controllers.synchronizer.Synchronizer;
 import views.MainContent;
 import views.RulerScrolledComposite;
 import views.Workspace;
@@ -187,7 +187,7 @@ public class Editor extends MainContent implements Observer {
 	private void createContent() {
 		setLayout(new GridLayout(1, false));
 		
-		// region ------------------- toolbar ------------- //
+		// region ------------------- tool bar ------------- //
 		
 //		Composite toolbarComposite = new Composite(this,  SWT.BORDER);
 //		GridData gd_toolbarComposite = new GridData(SWT.LEFT, SWT.TOP, true, false, 1, 1);
@@ -356,7 +356,7 @@ public class Editor extends MainContent implements Observer {
 						try 
 						{	
 							Date st = new Date();
-							if (Converter.CTD(text.getText()) != null) 	
+							if (Synchronizer.CTD(text.getText()) != null) 	
 							{						
 								// Workspace.getProject().getNetwork().updateNeighbors();
 								if(getWorkspace() != null)
@@ -456,6 +456,7 @@ public class Editor extends MainContent implements Observer {
 		menuManager_View.add(new Separator());
 		menuManager_View.add(actShowConnection);
 		menuManager_View.add(actShowObstacles);
+		menuManager_View.add(actShowGroups);
 		menuManager_View.add(new Separator());
 		menuManager_View.add(actShowRulers);
 		
@@ -564,11 +565,11 @@ public class Editor extends MainContent implements Observer {
 
 		actSave = new Action("Save") {
 			public void run() {
-						Cursor cursor = new Cursor(getDisplay(), SWT.CURSOR_WAIT);
-						setCursor(cursor);
-						actionSave();
-						cursor = new Cursor(getDisplay(), SWT.CURSOR_ARROW);
-						setCursor(cursor);
+				Cursor cursor = new Cursor(getDisplay(), SWT.CURSOR_WAIT);
+				setCursor(cursor);
+				actionSave();
+				cursor = new Cursor(getDisplay(), SWT.CURSOR_ARROW);
+				setCursor(cursor);
 			}
 		};
 		actSave.setToolTipText("Save current project (CTRL + S)");
@@ -677,7 +678,6 @@ public class Editor extends MainContent implements Observer {
 		actViewNodeInfo.setAccelerator(SWT.CTRL | 'I');
 		actViewNodeInfo.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/contrast.png"));
 
-
 		actShowObstacles = new Action("Show Obstacle(s)") {
 			public void run() {
 				actionShowObstacles();
@@ -687,6 +687,15 @@ public class Editor extends MainContent implements Observer {
 		actShowObstacles.setAccelerator(SWT.ALT | SWT.CTRL | 'O');
 		actShowObstacles.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/contrast.png"));
 
+		actShowGroups = new Action("Show Group(s)") {
+			public void run() {
+				actionShowGroups();
+			}
+		};
+		actShowGroups.setToolTipText("Show groups (ALT + G)");
+		actShowGroups.setAccelerator(SWT.ALT | SWT.CTRL | 'G');
+		actShowGroups.setImageDescriptor(ResourceManager.getImageDescriptor(Editor.class, "/icons/contrast.png"));
+		
 		actShowNeighbors = new Action("Show Neighbors") {
 			public void run() {
 				actionShowNeighbors();
@@ -1181,8 +1190,9 @@ public class Editor extends MainContent implements Observer {
 		if (ApplicationManager.openProject(editor) == null) return;
 		getShell().setText(Configure.getTclFile());
 		showProject();		
-		System.setProperty("user.dir", Configure.getDirectory());
-		getWorkspace().getSelectableObject().get(getWorkspace().getSelectableObject().size() - 1).moveAbove(null);
+		//System.setProperty("user.dir", Configure.getDirectory());
+		if (getWorkspace().getSelectableObject().size() > 0)
+			getWorkspace().getSelectableObject().get(getWorkspace().getSelectableObject().size() - 1).moveAbove(null);
 		updateNetworkInfoLabel();
 		updateNodeInfoLabel();
 //		updateDesign();
@@ -1233,12 +1243,12 @@ public class Editor extends MainContent implements Observer {
 		final Date st = new Date();
 		
 		// set text
-		text.setText(Converter.DTC());
+		text.setText(Synchronizer.DTC());
 		
 		final int line = StringUtils.countMatches(text.getText(), "\n");		
 		
 		// set style
-		final List<Token> tokenList = Converter.DTC_token();
+		final List<Token> tokenList = Synchronizer.DTC_token();
 		final Display display = Display.getCurrent();
 		
 		new Thread(new Runnable() 
@@ -1373,7 +1383,7 @@ public class Editor extends MainContent implements Observer {
 	 * save tcl file
 	 * @author trongnguyen
 	 */
-	public void actionSave() {		
+	public void actionSave() {				
 		try 
 		{
 			if (tabFolder.getSelectionIndex() == 0) // edit
@@ -1453,6 +1463,14 @@ public class Editor extends MainContent implements Observer {
 	public void actionShowObstacles() {
 		Workspace workspace = getWorkspace();
 		ApplicationManager.showObstacles(workspace);
+	}
+	
+	/**
+	 * show areas that selected by user.
+	 */
+	public void actionShowGroups() {
+		Workspace workspace = getWorkspace();
+		ApplicationManager.showGroups(workspace);
 	}
 	
 	public void actionShowNeighbors() {
@@ -1595,6 +1613,9 @@ public class Editor extends MainContent implements Observer {
 		}
 	}
 	
+	/**
+	 * Create new area in workspace.
+	 */
 	public void actionMouseCreateArea() {
 		Workspace workspace = getWorkspace();
 
@@ -1702,19 +1723,16 @@ public class Editor extends MainContent implements Observer {
 	{
 		toolBarManager.add(actNew);
 		toolBarManager.add(actOpen);
-		toolBarManager.add(actSave);
+		toolBarManager.add(actSave);		
+//		toolBarManager.add(actSaveAll);		
+		toolBarManager.add(new Separator());
 		
-//		toolBarManager.add(actSaveAll);
-		Separator separator = new Separator();
-		toolBarManager.add(separator);
 		toolBarManager.add(actMouseHand);
-		toolBarManager.add(actMouseCursor);
-		Separator separator2 = new Separator();
-		toolBarManager.add(separator2);
+		toolBarManager.add(actMouseCursor);		
+		toolBarManager.add(new Separator());
 		
 		toolBarManager.add(actMouseCreateNode);
-		toolBarManager.add(actMouseCreateArea);
-		
+		toolBarManager.add(actMouseCreateArea);		
 		toolBarManager.add(actCreateARandomNode);
 		toolBarManager.add(actCreateASingleNode);
 		toolBarManager.add(actCreateASetOfNodes);
@@ -1931,8 +1949,16 @@ public class Editor extends MainContent implements Observer {
 		return actViewNodeInfo;
 	}
 
+	/**
+	 * get action show Obstacles.
+	 * @return action
+	 */
 	public Action getActShowObstacles() {
 		return actShowObstacles;
+	}
+	
+	public Action getActShowGroups() {
+		return actShowGroups;
 	}
 
 	public Action getActShowNeighbors() {
@@ -2063,6 +2089,7 @@ public class Editor extends MainContent implements Observer {
 	private Action actViewNetworkInfo;
 	private Action actViewNodeInfo;
 	private Action actShowObstacles;
+	private Action actShowGroups;
 	private Action actShowNeighbors;
 	private Action actSearchNode;
 	private Action actIdentifyBoundary;
@@ -2147,9 +2174,8 @@ public class Editor extends MainContent implements Observer {
 		updateNodeInfoLabel();
 		updateNetworkInfoLabel();
 		if(getWorkspace() != null)
-			getWorkspace().updateLayout();
-//		ec.updateDesign(this, styledText);
-//		ec.updateEditToDesign(this,styledText);
-			
+		{
+			//getWorkspace().updateLayout();	
+		}
 	}
 }
