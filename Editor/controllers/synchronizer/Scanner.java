@@ -9,28 +9,47 @@ import models.converter.Token;
 import models.converter.Token.TokenType;
 
 /**
- * Scanner.java
- * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and Technology
+ * Scanner used to scan TCL command.
  * @Author Duc-Trong Nguyen
- * @Version 2.0
  */
-
 public class Scanner {
+	/**
+	 * TCL source code.
+	 */
 	private String code;
+	
+	/**
+	 * Current line.
+	 */
 	private int line;
+	
+	/**
+	 * Current index.
+	 */
 	private int index;
 	
-	public int getLine() { return line; }
+	/**
+	 * get current line.
+	 * @return line that parse reached.
+	 */
+	public final int getLine() { return line; }
 	
-	public Scanner(String text)	
-	{
+	/**
+	 * Create new Scanner.
+	 * @param text Tcl code.
+	 */
+	public Scanner(final String text) {
 		this.code = text.replace("\r\n", "\n").replace("\r", "\n");
 					
 		line = 0;
 		index = 0;			
 	}
 
-	public boolean haveNext() {
+	/**
+	 * check whether have next line in code or reached end of source code.
+	 * @return true if have next line. false if it is end of code
+	 */
+	public final boolean haveNext() {
 		return index < code.length();
 	}
 
@@ -40,66 +59,83 @@ public class Scanner {
 	 * @return List of words
 	 * @throws ParseException 
 	 */
-	public List<String> scanCommand() throws ParseException
-	{	
+	public final List<String> scanCommand() throws ParseException	{	
 		List<String> command = new ArrayList<String>();		
 		
 		// parse throw separator and space after last command.
-		while (index < code.length())
-		{	
+		while (index < code.length()) {	
 			CharType type = CharType.TypeOf(code.charAt(index));
-			if (type == CharType.Separator)
-			{
+			if (type == CharType.Separator)	{
 				index++;
 				line++;
 				break;
+			} else if (type == CharType.Space) {
+				index++;
+			} else {
+				break;
 			}
-			else if (type == CharType.Space) index++;
-			else break;
 		}		
+		
 		// parse throw space before this command
-		while (index < code.length())
-		{
-			if (CharType.TypeOf(code.charAt(index)) == CharType.Space) index++;
-			else break;
+		while (index < code.length()) {
+			if (CharType.TypeOf(code.charAt(index)) == CharType.Space) {
+				index++;
+			} else {
+				break;
+			}
 		}
 				
 		// scan this command
 		int i = index;	
-		while (index < code.length())
-		{
-			switch (CharType.TypeOf(code.charAt(index)))
-			{
+		while (index < code.length()) {
+			switch (CharType.TypeOf(code.charAt(index))) {
 				case Space:
-					if (index > i) command.add(code.substring(i, index));					
-					while (index < code.length() && CharType.TypeOf(code.charAt(index)) == CharType.Space) index++;
+					if (index > i) {
+						command.add(code.substring(i, index));
+					}
+					while (	index < code.length() && CharType.TypeOf(code.charAt(index)) == CharType.Space) {
+						index++;
+					}
 					i = index;
 					break;
 				
 				case Semicolon:
 					String word  = code.substring(i, index);
-					if (!word.isEmpty()) command.add(word);					
+					if (!word.isEmpty()) {
+						command.add(word);
+					}
 					index++;		
-					while (index < code.length() && CharType.TypeOf(code.charAt(index)) == CharType.Space) index++;
-					if (CharType.TypeOf(code.charAt(index)) == CharType.Separator) command.add(";\n");
-					else command.add(";"); 
+					while (index < code.length() 
+						&& CharType.TypeOf(code.charAt(index)) == CharType.Space) index++;
+					if (CharType.TypeOf(code.charAt(index)) == CharType.Separator) {
+						command.add(";\n");
+					} else {
+						command.add(";"); 
+					}
 					return command;
 					
 				case Separator:				
-					if (index > i) command.add(code.substring(i, index));	
+					if (index > i) {
+						command.add(code.substring(i, index));
+					}	
 					command.add("\n");
 					return command;
 					
 				case Comment:
-					if (command.size() != 0) throw new ParseException(ParseException.Comment);				
-					while (index < code.length() && CharType.TypeOf(code.charAt(index)) != CharType.Separator) index++;					
+					if (command.size() != 0) {
+						throw new ParseException(ParseException.Comment);				
+					}
+					while (index < code.length() && CharType.TypeOf(code.charAt(index)) != CharType.Separator) {
+						index++;					
+					}
 					command.add(code.substring(i, index));
 					command.add("\n");
 					return command;
 
 				case BackSlash:
 					index++;
-					if (index >= code.length() || CharType.TypeOf(code.charAt(index)) != CharType.Separator) 
+					if (index >= code.length() 
+					|| CharType.TypeOf(code.charAt(index)) != CharType.Separator) 
 						throw new ParseException(ParseException.InvalidSymbol);
 					index++;
 					line++;
@@ -130,12 +166,12 @@ public class Scanner {
 					index++;				
 					break;
 
-				case Unknow: throw new ParseException(ParseException.InvalidSymbol);
+				case Unknow: 
+					throw new ParseException(ParseException.InvalidSymbol);
 			}
 		}
 		
-		if (index > i)
-		{
+		if (index > i) {
 			command.add(code.substring(i, index));
 			//command.add("\n");
 		}
@@ -143,18 +179,15 @@ public class Scanner {
 	}
 
 	/**
-	 * Split word to tokens
-	 * @return List of tokens
-	 * @throws ParseException
+	 * Split word to tokens.
+	 * @return List of tokens 
+	 * @throws ParseException parse exception.
 	 */
-	public List<Token> scanWord() throws ParseException
-	{
+	public final List<Token> scanWord() throws ParseException {
 		List<Token> tokenList = new ArrayList<Token>();
 		
-		while (index < code.length())
-		{
-			switch (CharType.TypeOf(code.charAt(index)))
-			{							
+		while (index < code.length()) {
+			switch (CharType.TypeOf(code.charAt(index))) {							
 				case Separator: line++;
 				case Semicolon:					
 					index++;
@@ -162,14 +195,17 @@ public class Scanner {
 							
 				case BackSlash:
 					index++;
-					if (index >= code.length() || CharType.TypeOf(code.charAt(index)) != CharType.Separator) 
+					if (index >= code.length() 
+					|| CharType.TypeOf(code.charAt(index)) != CharType.Separator) 
 						throw new ParseException(ParseException.InvalidSymbol);
 					index++;
 					line++;
 					break;
 					
 				case Comment:
-					while (index < code.length() && code.charAt(index) != '\n') index++;
+					while (index < code.length() && code.charAt(index) != '\n') {
+						index++;
+					}
 					index++;
 					line++;
 					break;
@@ -195,13 +231,13 @@ public class Scanner {
 					break;
 					
 				case Letter:
-					tokenList.add(new Token(TokenType.Identify, scanIdentify()));					
+					tokenList.add(new Token(TokenType.Identify, scanIdentify()));
 					break;				
 					
 				case Space:										
 				case BraceClose:
 				case BracketClose:
-				case ParenthesisClose:														
+				case ParenthesisClose:
 				case Unknow:
 					throw new ParseException(ParseException.InvalidSymbol);
 			}
@@ -213,9 +249,9 @@ public class Scanner {
 	/**
 	 * Split Tcl code to words. using for display only.
 	 * @return List of tokens
-	 * @throws ParseException
+	 * @throws ParseException parse exception
 	 */
-	public List<Token> scan() throws ParseException
+	public final List<Token> scan() throws ParseException
 	{
 		List<Token> tokenList = new ArrayList<Token>();
 				
@@ -271,7 +307,7 @@ public class Scanner {
 					
 				case BraceClose:
 				case BracketClose:
-				case ParenthesisClose:														
+				case ParenthesisClose:
 				case Unknow:
 					throw new ParseException(ParseException.InvalidSymbol);
 			}
@@ -285,7 +321,7 @@ public class Scanner {
 	 * @return List of String.
 	 * @throws Exception Parser exception
 	 */
-	public List<String> scanOperator() throws Exception
+	public final List<String> scanOperator() throws Exception
 	{
 		List<String> command = new ArrayList<String>();		
 				
@@ -389,7 +425,7 @@ public class Scanner {
 	 * Identify = Letter
 	 * Identify = Letter + Parenthesis
 	 * Put index to next of letter list.
-	 * @return
+	 * @return string is identification
 	 * @throws ParseException 
 	 */
 	private String scanIdentify() throws ParseException 
@@ -404,7 +440,7 @@ public class Scanner {
 	 * Identify = Letter
 	 * Identify = Letter + Parenthesis
 	 * Put index to next of letter list.
-	 * @return
+	 * @return string is referent
 	 * @throws ParseException 
 	 */
 	private String scanReferent() throws ParseException 
@@ -419,14 +455,16 @@ public class Scanner {
 	/**
 	 * Scan quote.
 	 * Put index to next of '"'
+	 * @return string is value of Quote
+	 * @throws ParseExeption parse exception
 	 */
 	private String scanQuote() throws ParseException 
 	{					
 		int i = ++index;
-		for (;index < code.length(); index++)
+		for (; index < code.length(); index++)
 		{
 			switch(CharType.TypeOf(code.charAt(index)))
-			{					
+			{
 				case Quote:	return code.substring(i, index++);
 				
 				case Separator:
@@ -445,6 +483,8 @@ public class Scanner {
 	/**
 	 * Scan parenthesis.
 	 * Put index to next of ')'
+	 * @return string is value of parenthesis
+	 * @throws ParseException parse exception 
 	 */
 	private String scanParenthesis() throws ParseException 
 	{				
@@ -460,7 +500,7 @@ public class Scanner {
 				
 				case ParenthesisClose:
 					count--;
-					if (count == 0) return code.substring(i, index++);						
+					if (count == 0) return code.substring(i, index++);
 					break;						
 					
 				case Separator:
@@ -478,6 +518,8 @@ public class Scanner {
 	/**
 	 * Scan bracket.
 	 * Put index to next of ']'
+	 * @return string is value of bracket
+	 * @throws ParseException parse exception
 	 */
 	private String scanBracket() throws ParseException 
 	{	
@@ -510,7 +552,7 @@ public class Scanner {
 	/**
 	 * Scan brace.
 	 * Put index to next of ')'
-	 * @throws ParseException 
+	 * @throws ParseException parse exception
 	 */
 	private String scanBrace() throws ParseException 
 	{
