@@ -142,12 +142,10 @@ public class Synchronizer {
 		
 		FileWriter out;
 		try {
-			out = new FileWriter("synchronization.log", true);						
+			out = new FileWriter("synchronization.log", true);
 			out.write("CTD_core:\t" + line + "\t" + time + "\n");
 			out.close();
-		}
-		catch (IOException e) 
-		{ 
+		} catch (IOException e)	{ 
 			e.printStackTrace();
 		}		
 		
@@ -200,8 +198,9 @@ public class Synchronizer {
 		long time = new Date().getTime() - st.getTime(); 
 		
 		FileWriter out;
-		try {
-			out = new FileWriter("synchronization.log", true);						
+		try 
+		{
+			out = new FileWriter("synchronization.log", true);
 			out.write("DTC_core:\t" + line + "\t" + time + "\n");
 			out.close();
 		}
@@ -263,7 +262,10 @@ public class Synchronizer {
 		Scanner scanner = new Scanner(word);
 		List<Token> tokenList = scanner.scanWord();
 		
-		if (tokenList.size() == 0) return null;		
+		if (tokenList.size() == 0) 
+		{
+			return null;
+		}		
 		
 		for (Token token : tokenList) 
 		{					

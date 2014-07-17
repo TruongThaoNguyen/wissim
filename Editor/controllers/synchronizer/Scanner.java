@@ -12,7 +12,8 @@ import models.converter.Token.TokenType;
  * Scanner used to scan TCL command.
  * @Author Duc-Trong Nguyen
  */
-public class Scanner {
+public class Scanner 
+{
 	/**
 	 * TCL source code.
 	 */
