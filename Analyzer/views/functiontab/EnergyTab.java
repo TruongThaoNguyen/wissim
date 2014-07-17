@@ -1,4 +1,4 @@
-package main;
+package views.functiontab;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,6 +10,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+
+import models.NodeEnergy;
+import models.NodeTrace;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -42,13 +45,13 @@ import org.swtchart.ILineSeries;
 import org.swtchart.LineStyle;
 import org.swtchart.ISeries.SeriesType;
 
-import chart2D.BarChart;
-import chart2D.ChartAllNode;
-import chart2D.ChartAllNodeMultiArea;
-import chart3D.SurfaceChartEnergy;
+import controllers.chart2d.BarChart;
+import controllers.chart2d.ChartAllNode;
+import controllers.chart2d.ChartAllNodeMultiArea;
+import controllers.chart3d.SurfaceChartEnergy;
+import controllers.parser.FullParser;
 
 
-import parser.*;
 import views.Analyzer;
 
 

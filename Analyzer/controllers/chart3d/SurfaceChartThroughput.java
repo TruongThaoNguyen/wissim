@@ -1,4 +1,4 @@
-package chart3D;
+package controllers.chart3d;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
-import parser.NodeTrace;
-import parser.Packet;
+import models.NodeTrace;
+import models.Packet;
 import views.Analyzer;
 
 public class SurfaceChartThroughput {

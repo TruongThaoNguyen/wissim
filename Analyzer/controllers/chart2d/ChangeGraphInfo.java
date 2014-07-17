@@ -1,4 +1,4 @@
-package chart2D;
+package controllers.chart2d;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;

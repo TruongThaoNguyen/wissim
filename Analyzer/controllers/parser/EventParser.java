@@ -1,4 +1,4 @@
-package parser;
+package controllers.parser;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import models.Event;
+import models.NodeTrace;
+import models.Packet;
 
 public class EventParser extends AbstractParser {
 	public static FileOutputStream fout;

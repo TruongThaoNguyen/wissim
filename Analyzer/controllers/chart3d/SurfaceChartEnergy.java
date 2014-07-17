@@ -1,4 +1,4 @@
-package chart3D;
+package controllers.chart3d;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

@@ -1,4 +1,4 @@
-package main;
+package views.functiontab;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,6 +10,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.rmi.CORBA.Tie;
+
+import models.NodeTrace;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -37,12 +39,11 @@ import org.swtchart.Chart;
 import org.swtchart.ILineSeries;
 import org.swtchart.ISeries.SeriesType;
 
-import chart2D.BarChart;
-import chart2D.ChartAllNodeMultiArea;
-
 import com.ibm.icu.text.DecimalFormat;
 
-import parser.*;
+import controllers.chart2d.BarChart;
+import controllers.chart2d.ChartAllNodeMultiArea;
+import controllers.parser.FullParser;
 import views.Analyzer;
 
 public class NetworkLifeTimeTab extends Tab implements Observer {

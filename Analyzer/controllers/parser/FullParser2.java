@@ -1,4 +1,4 @@
-package parser;
+package controllers.parser;
 
 
 import java.io.*;
@@ -12,6 +12,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import models.Event;
+import models.NodeEnergy;
+import models.NodeTrace;
+import models.Packet;
 
 
 

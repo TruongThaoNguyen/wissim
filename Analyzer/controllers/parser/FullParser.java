@@ -1,4 +1,4 @@
-package parser;
+package controllers.parser;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -9,7 +9,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import parser.NodeEnergy;
+import models.Event;
+import models.NodeEnergy;
+import models.NodeTrace;
+import models.Packet;
 
 public class FullParser extends AbstractParser{
 	public static FileOutputStream fout;

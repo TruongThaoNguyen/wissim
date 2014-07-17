@@ -1,37 +1,25 @@
-package main;
+package views.functiontab;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import models.NodeTrace;
+import models.Packet;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
@@ -40,20 +28,17 @@ import org.eclipse.swt.widgets.Text;
 import org.swtchart.Chart;
 import org.swtchart.ILineSeries;
 import org.swtchart.ISeries;
-import org.swtchart.LineStyle;
 import org.swtchart.ISeries.SeriesType;
+import org.swtchart.LineStyle;
 
-import chart2D.ChartAllNode;
-import chart3D.SurfaceChartThroughput;
+import views.Analyzer;
 
 import com.ibm.icu.text.DecimalFormat;
 
-import parser.*;
-import views.Analyzer;
+import controllers.chart2d.ChartAllNode;
 
 
-
-public class ThroughputTab extends Tab implements Observer{
+public class DelayTab extends Tab implements Observer{
   
   /* The example layout instance */
   FillLayout fillLayout;
@@ -64,7 +49,7 @@ public class ThroughputTab extends Tab implements Observer{
   /**
    * Creates the Tab within a given instance of LayoutExample.
    */
-  public ThroughputTab(Analyzer instance) {
+  public DelayTab(Analyzer instance) {
     super(instance);
     listNodeAreaSource = new ArrayList<NodeTrace>();
     listNodeAreaDest = new ArrayList<NodeTrace>();
@@ -120,7 +105,7 @@ public class ThroughputTab extends Tab implements Observer{
 	    filterByLabel.setText(Analyzer.getResourceString("Filter by"));
 	    filterByLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 	    
-	    filterByCombo = new Combo(controlGroup, SWT.READ_ONLY );
+	    filterByCombo = new Combo(controlGroup, SWT.READ_ONLY);
 	    filterByCombo.setItems(new String[] {"Node ID", "Label ID"});
 	    filterByCombo.select(0);
 	    /* Add listener */
@@ -138,13 +123,13 @@ public class ThroughputTab extends Tab implements Observer{
 	    fromLabel.setText(Analyzer.getResourceString("From"));
 	    fromLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 	    
-	    fromCombo = new Combo(controlGroup, SWT.READ_ONLY );
+	    fromCombo = new Combo(controlGroup, SWT.READ_ONLY);
 	    
 	    Label toLabel=new Label(controlGroup, SWT.None);
 	    toLabel.setText(Analyzer.getResourceString("To"));
 	    toLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 	    
-	    toCombo = new Combo(controlGroup, SWT.READ_ONLY );
+	    toCombo = new Combo(controlGroup, SWT.READ_ONLY);
 	    setItemFromComboToCombo();
 	    
 	    analyze = new Button(controlGroup, SWT.PUSH);
@@ -155,15 +140,16 @@ public class ThroughputTab extends Tab implements Observer{
 	    analyzeGroup.setText(Analyzer.getResourceString("Analyze Group"));
 	    analyzeGroup.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 	    
-	    /* Add listener to button analyze */
+	    /* Add listener to button analyze group */
 	    analyzeGroup.addSelectionListener(new SelectionAdapter() {
 	      public void widgetSelected(SelectionEvent e) {
 	    	  if(listNodeAreaDest.size()>0 && listNodeAreaSource.size()>0){
-	    	  		setUpInfoGroupThroughput();
+	    	  		setUpInfoGroupDelay();
 	    	  	}
 	      }
 	    });
-	    /* Add listener to button analyze */
+	    
+	    /* Add listener to add an element to the table */
 	    analyze.addSelectionListener(new SelectionAdapter() {
 	      public void widgetSelected(SelectionEvent e) {
 	    		if(fromCombo.getSelectionIndex()==-1 || toCombo.getSelectionIndex()==-1){
@@ -175,11 +161,10 @@ public class ThroughputTab extends Tab implements Observer{
 				else{	
 					table.removeAll();
 					int No=1;
-					double maxThroughput=0;
-					double minThroughput=1000000000;
-					double totalSize=0;
-					double totalTime=0;
-					LinkedHashMap<Packet,Double> listThroughputPacket = new LinkedHashMap<Packet,Double>();
+					double maxDelay=0;
+					double minDelay=1000000000;
+					double totalDelay=0;
+					LinkedHashMap<Packet,Double> listDelayPacket = new LinkedHashMap<Packet,Double>();
 					ArrayList<Packet> listPacket = new ArrayList<Packet>();
 					for (int i=0;i<Analyzer.mParser.getListPacket().size();i++){ 
 						 Packet packet=Analyzer.mParser.getListPacket().get(i);
@@ -208,24 +193,22 @@ public class ThroughputTab extends Tab implements Observer{
 							 if(packet.isSuccess ){
 								 listPacket.add(packet);
 							 }
-						 }						 
-						 
+						 }				 
 					}
 					for(int i =0 ;i < listPacket.size(); i++){
 						Packet packet = listPacket.get(i);
 						TableItem tableItem= new TableItem(table, SWT.NONE);
 						 tableItem.setText(0,Integer.toString(No++));
 						 tableItem.setText(1,packet.id);
-						 tableItem.setText(2,singlePacketThroughput(packet));
+						 tableItem.setText(2,new DecimalFormat("0.00000000").format(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)));
 						 tableItem.setText(3,packet.sourceID +"---"+packet.destID);
-						 totalSize+=Double.parseDouble(packet.size);
-						 totalTime+=(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
-						 listThroughputPacket.put(packet, Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)));
+						 totalDelay+=(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
+						 listDelayPacket.put(packet,(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)));
 						
-						 if(maxThroughput < Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)))
-							 maxThroughput = Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
-						 if(minThroughput > Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)))
-							 minThroughput = Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
+						 if(maxDelay < (Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)))
+							 maxDelay = (Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
+						 if(minDelay > (Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)))
+							 minDelay = (Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
 					}
 					if(No==1){
 						MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
@@ -241,16 +224,17 @@ public class ThroughputTab extends Tab implements Observer{
 						ySeries=new double[0];
 					}
 					else{
-						DecimalFormat df = new DecimalFormat("0.00");
-						String str= df.format(totalSize/totalTime);
+						DecimalFormat df = new DecimalFormat("0.00000000");
+						//System.out.println(No-1);
+						String str= df.format(totalDelay/(No-1));
 						//set mean
 						avgText.setText(str);
 						//set text variant
-						variantText.setText(df.format(variancesThroughput(listThroughputPacket,totalTime))); 
-						maxText.setText(df.format(maxThroughput));
-						minText.setText(df.format(minThroughput));
+						variantText.setText(df.format(variancesDelay(listDelayPacket,totalDelay))); 
+						maxText.setText(df.format(maxDelay));
+						minText.setText(df.format(minDelay));
 						//init line chart
-						initXYseries(listThroughputPacket);
+						initXYseries(listDelayPacket);
 						
 					}
 					if(filterByCombo.getSelectionIndex()==0)
@@ -260,13 +244,11 @@ public class ThroughputTab extends Tab implements Observer{
 	      }
 	    });    
 	   
-	    
 	    /* Add common controls */
 	    super.createControlWidgets();
 
    
   }
-  
   /* Set up item for fromCombo and toCombo */
   void setItemFromComboToCombo(){
 	  if(filterByCombo.getSelectionIndex()==0){
@@ -283,21 +265,20 @@ public class ThroughputTab extends Tab implements Observer{
 			}
 	  }
 	  if(filterByCombo.getSelectionIndex()==1){
-		 //chart.setVisible(false);
-		 super.refreshLayoutComposite();
-		 fromCombo.setItems(new String[] {});
-		 toCombo.setItems(new String[] {});
-		 
-		 ySeries = new double[Analyzer.mParser.getListNodes().size()];
-	     xSeries = new double[Analyzer.mParser.getListNodes().size()];    
-			for(int i=0;i<Analyzer.mParser.getListNodes().size();i++) {
-				NodeTrace node = Analyzer.mParser.getListNodes().get(i);
-				xSeries[i]=node.x;
-				ySeries[i]=node.y;
-			}
-		 chartAllNode = new ChartAllNode(xSeries, ySeries);
-		 chartAllNode.addObserver(this);
-		 chartAllNode.createChart(layoutComposite);
+		   super.refreshLayoutComposite();
+			 fromCombo.setItems(new String[] {});
+			 toCombo.setItems(new String[] {});
+			 
+			 ySeries = new double[Analyzer.mParser.getListNodes().size()];
+		     xSeries = new double[Analyzer.mParser.getListNodes().size()];    
+				for(int i=0;i<Analyzer.mParser.getListNodes().size();i++) {
+					NodeTrace node = Analyzer.mParser.getListNodes().get(i);
+					xSeries[i]=node.x;
+					ySeries[i]=node.y;
+				}
+			 chartAllNode = new ChartAllNode(xSeries, ySeries);
+			 chartAllNode.addObserver(this);
+			 chartAllNode.createChart(layoutComposite);
 	  }
   }
   @Override
@@ -307,11 +288,11 @@ public class ThroughputTab extends Tab implements Observer{
   		  this.listNodeAreaDest=((ChartAllNode) arg0).listNodeAreaDest; 
   	}
   	if(this.listNodeAreaDest.size()>0 && this.listNodeAreaSource.size()>0){
-  		setUpInfoGroupThroughput();
+  		setUpInfoGroupDelay();
   	}
   
   }
-  public void setUpInfoGroupThroughput(){
+  public void setUpInfoGroupDelay(){
 	  String[] itemListSource=new String[this.listNodeAreaSource.size()] ; 
 	  String[] itemListDest=new String[this.listNodeAreaDest.size()] ;	
 			for (int i=0;i<this.listNodeAreaSource.size();i++){ 
@@ -324,36 +305,34 @@ public class ThroughputTab extends Tab implements Observer{
 				 itemListDest[i]=Integer.toString(node.id);
 			}
 			toCombo.setItems(itemListDest);
-	  table.removeAll();
-      int No=1;
-	  double maxThroughput=0;
-	  double minThroughput=1000000000;
-	  double totalSize=0;
-	  double totalTime=0;
-	  LinkedHashMap<Packet,Double> listThroughputPacket = new LinkedHashMap<Packet,Double>();
+			
+		table.removeAll();
+			int No=1;
+			double maxDelay=0;
+			double minDelay=1000000000;
+			double totalDelay=0;
+			LinkedHashMap<Packet,Double> listDelayPacket = new LinkedHashMap<Packet,Double>();
 			for (int i=0;i<Analyzer.mParser.getListPacket().size();i++){ 
 				 Packet packet=Analyzer.mParser.getListPacket().get(i);
-				 for(int j=0;j<this.listNodeAreaSource.size();j++)
-				 	for(int k=0;k<this.listNodeAreaDest.size();k++){
-					 if(this.listNodeAreaSource.get(j).id == Integer.parseInt(packet.sourceID) 
-							 && this.listNodeAreaDest.get(k).id==Integer.parseInt(packet.destID) && packet.isSuccess ){
-						 TableItem tableItem= new TableItem(table, SWT.NONE);
-						 tableItem.setText(0,Integer.toString(No++));
-						 tableItem.setText(1,packet.id);
-						 tableItem.setText(2,singlePacketThroughput(packet));
-						 tableItem.setText(3,packet.sourceID+"--"+packet.destID);
-						 
-						 totalSize+=Double.parseDouble(packet.size);
-						 totalTime+=(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
-						 listThroughputPacket.put(packet, Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)));
-						
-						 if(maxThroughput < Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)))
-							 maxThroughput = Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
-						 if(minThroughput > Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)))
-							 minThroughput = Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
-					 }
-				 }
-				 
+				 	for(int j=0;j<this.listNodeAreaSource.size();j++)
+					 	for(int k=0;k<this.listNodeAreaDest.size();k++){
+					 	   if(this.listNodeAreaSource.get(j).id == Integer.parseInt(packet.sourceID) 
+								 && this.listNodeAreaDest.get(k).id==Integer.parseInt(packet.destID) && packet.isSuccess ){
+							 TableItem tableItem= new TableItem(table, SWT.NONE);
+							 tableItem.setText(0,Integer.toString(No++));
+							 tableItem.setText(1,packet.id);
+							 tableItem.setText(2,new DecimalFormat("0.00000000").format(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)));
+							 tableItem.setText(3,packet.sourceID+"--"+packet.destID);
+							 
+							 totalDelay+=(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
+							 listDelayPacket.put(packet,(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)));
+							
+							 if(maxDelay < (Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)))
+								 maxDelay = (Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
+							 if(minDelay > (Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)))
+								 minDelay = (Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
+						  }
+					 	} 
 				 
 			}
 			if(No==1){
@@ -365,52 +344,43 @@ public class ThroughputTab extends Tab implements Observer{
 				variantText.setText("0");
 				maxText.setText("0");
 				minText.setText("0");
-				//xSeries=new double[0];
-				//ySeries=new double[0];
 			}
 			else{
-				DecimalFormat df = new DecimalFormat("0.00");
-				String str= df.format(totalSize/totalTime);
+				DecimalFormat df = new DecimalFormat("0.00000000");
+				//System.out.println(No-1);
+				String str= df.format(totalDelay/(No-1));
 				//set mean
 				avgText.setText(str);
 				//set text variant
-				variantText.setText(df.format(variancesThroughput(listThroughputPacket,totalTime))); 
-				maxText.setText(df.format(maxThroughput));
-				minText.setText(df.format(minThroughput));
-				//init line chart
-				//initXYseries(listThroughputPacket);
+				variantText.setText(df.format(variancesDelay(listDelayPacket,totalDelay))); 
+				maxText.setText(df.format(maxDelay));
+				minText.setText(df.format(minDelay));
 				
 			}
-			//resetEditors();		
-  }
-  
-	public String singlePacketThroughput(Packet packet){
-		DecimalFormat df = new DecimalFormat("0.00");
-		String str= df.format(Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)));
-		return str;
-	} 
-	
-	public double variancesThroughput(LinkedHashMap<Packet,Double> listThroughputPacket,Double totalTime){
-		double variances=0; // E(X*X)-E(X)*E(X)
-		double expectedValue1=0; // E(X*X)=x*x*p+....
-		double expectedValue2=0; // E(X)=x*p+....
-		for (Packet i : listThroughputPacket.keySet()) {
+		//	if(filterByCombo.getSelectionIndex()==0)
+		//		resetEditors(); 		
+  }		
+	public double variancesDelay(LinkedHashMap<Packet,Double> listDelayPacket,Double totalDelay){
+		double variances=0; // 
+		double expectedValue1=0; //
+		double expectedValue2=0; // 
+		for (Packet i : listDelayPacket.keySet()) {
 	          //  System.out.println( i.id +" : " + listThroughputPacket.get(i));
-			expectedValue1 += listThroughputPacket.get(i)*listThroughputPacket.get(i)*
-					((Double.parseDouble(i.endTime)-Double.parseDouble(i.startTime))/totalTime);
-			expectedValue2 += listThroughputPacket.get(i)*((Double.parseDouble(i.endTime)-Double.parseDouble(i.startTime))/totalTime);
+			expectedValue1 += listDelayPacket.get(i)*listDelayPacket.get(i)*
+					((Double.parseDouble(i.endTime)-Double.parseDouble(i.startTime))/totalDelay);
+			expectedValue2 += listDelayPacket.get(i)*((Double.parseDouble(i.endTime)-Double.parseDouble(i.startTime))/totalDelay);
 	        }
 		variances=expectedValue1-expectedValue2*expectedValue2;
 	    return variances;
 	}
 	
-	public void initXYseries(LinkedHashMap<Packet,Double> listThroughputPacket){
+	public void initXYseries(LinkedHashMap<Packet,Double> listDelayPacket){
 		int j=0;
-		xSeries=new double[listThroughputPacket.size()];
-		ySeries=new double[listThroughputPacket.size()];
-		if(listThroughputPacket.size()!=0){
-			for (Packet i : listThroughputPacket.keySet()) {
-				ySeries[j]=listThroughputPacket.get(i);
+		xSeries=new double[listDelayPacket.size()];
+		ySeries=new double[listDelayPacket.size()];
+		if(listDelayPacket.size()!=0){
+			for (Packet i : listDelayPacket.keySet()) {
+				ySeries[j]=listDelayPacket.get(i);
 				xSeries[j]=Double.parseDouble(i.startTime);
 				j++;
 			}
@@ -423,17 +393,7 @@ public class ThroughputTab extends Tab implements Observer{
   void createLayout() {
     fillLayout = new FillLayout();
     layoutComposite.setLayout(fillLayout);
-    super.createLayout(); 
-    
-    Button drawChart3D = new Button(layoutGroup, SWT.PUSH);
-    drawChart3D.setText(Analyzer.getResourceString("Draw 3Dchart"));
-    drawChart3D.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
-    /*Add listener to button drawChart*/
-    drawChart3D.addSelectionListener(new SelectionAdapter() {
-	      public void widgetSelected(SelectionEvent e) {
-	    	SurfaceChartThroughput.drawChart3D();
-	      }
-	    }); 
+    super.createLayout();
   }
 
   /**
@@ -447,14 +407,14 @@ public class ThroughputTab extends Tab implements Observer{
    * Returns the layout data field names.
    */
   String[] getLayoutDataFieldNames() {
-    return new String[] { "No", "Packet","Throughput","Source-Dest"};
+    return new String[] { "No", "Packet","Time","Source-Dest" };
   }
 
   /**
    * Gets the text for the tab folder item.
    */
   public String getTabText() {
-    return "Throughput";
+    return "Delay";
   }
 
   /**
@@ -469,9 +429,9 @@ public class ThroughputTab extends Tab implements Observer{
   void refreshLayoutComposite() {
 	    super.refreshLayoutComposite();
 	    chart = new Chart(layoutComposite, SWT.NONE);
-        chart.getTitle().setText("Throughput");
+        chart.getTitle().setText("Delay");
         chart.getAxisSet().getXAxis(0).getTitle().setText("Time(s)");
-        chart.getAxisSet().getYAxis(0).getTitle().setText("Throughput(bps)");
+        chart.getAxisSet().getYAxis(0).getTitle().setText("Delay(s)");
         // create line series
         ILineSeries lineSeries = (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE, "line series");
         lineSeries.setYSeries(ySeries);
@@ -500,7 +460,7 @@ public class ThroughputTab extends Tab implements Observer{
 
             private void setToolTipText(ISeries series, int xIndex,int yIndex,int id) {
                 chart.getPlotArea().setToolTipText(
-                		"No: " + ++id + "\nTime start send: " + series.getXSeries()[xIndex] + "\nThroughput: "
+                		"No: " + ++id + "\nTime start send: " + series.getXSeries()[xIndex] + "\nDelay: "
                                 + series.getYSeries()[yIndex]);
          
             }
@@ -512,6 +472,5 @@ public class ThroughputTab extends Tab implements Observer{
   void setLayoutState() {
     
   }
-
-
 }
+

@@ -9,15 +9,6 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import main.DelayTab;
-import main.EfficiencyTab;
-import main.EnergyTab;
-import main.HopCountTab;
-import main.NetworkLifeTimeTab;
-import main.SleepPeriodTab;
-import main.Tab;
-import main.ThroughputTab;
-
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.SWT;
@@ -34,13 +25,20 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-import parser.AbstractParser;
-import parser.EventParser;
-import parser.FullParser;
-
 import com.ibm.icu.text.MessageFormat;
 
+import controllers.parser.AbstractParser;
+import controllers.parser.EventParser;
+import controllers.parser.FullParser;
 import views.MainContent;
+import views.functiontab.DelayTab;
+import views.functiontab.EfficiencyTab;
+import views.functiontab.EnergyTab;
+import views.functiontab.HopCountTab;
+import views.functiontab.NetworkLifeTimeTab;
+import views.functiontab.SleepPeriodTab;
+import views.functiontab.Tab;
+import views.functiontab.ThroughputTab;
 
 public class Analyzer extends MainContent {
 

@@ -1,4 +1,4 @@
-package parser;import java.util.ArrayList;
+package models;import java.util.ArrayList;
 
 
 public class NodeTrace {

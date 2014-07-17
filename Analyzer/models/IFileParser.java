@@ -1,4 +1,4 @@
-package parser;
+package models;
 import java.awt.Component;
 import java.io.IOException;
 

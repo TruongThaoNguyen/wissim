@@ -1,4 +1,4 @@
-package parser;
+package controllers.parser;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -8,6 +8,12 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import models.Event;
+import models.IFileParser;
+import models.NodeEnergy;
+import models.NodeTrace;
+import models.Packet;
 
 
 public abstract class AbstractParser implements IFileParser {

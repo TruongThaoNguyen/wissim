@@ -1,4 +1,4 @@
-package parser;
+package models;
 public class NodeEnergy {
 	protected String time = "";
 	protected String energy;

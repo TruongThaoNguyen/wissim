@@ -1,4 +1,4 @@
-package main;
+package views.functiontab;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,6 +6,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+
+import models.NodeTrace;
+import models.Packet;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -31,14 +34,12 @@ import org.swtchart.Chart;
 import org.swtchart.ILineSeries;
 import org.swtchart.ISeries.SeriesType;
 
-import chart2D.BarChart;
-import chart2D.ChartAllNodeMultiArea;
-import chart3D.SurfaceChartEfficiency;
-import chart3D.SurfaceChartThroughput;
-
 import com.ibm.icu.text.DecimalFormat;
 
-import parser.*;
+import controllers.chart2d.BarChart;
+import controllers.chart2d.ChartAllNodeMultiArea;
+import controllers.chart3d.SurfaceChartEfficiency;
+import controllers.chart3d.SurfaceChartThroughput;
 import views.Analyzer;
 
 public class EfficiencyTab extends Tab implements Observer{

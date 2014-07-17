@@ -1,4 +1,4 @@
-package chart2D;
+package controllers.chart2d;
 
 import java.util.ArrayList;
 

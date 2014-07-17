@@ -1,4 +1,4 @@
-package main;
+package views.functiontab;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -48,9 +48,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.swtchart.Chart;
 
+import controllers.chart2d.ChangeGraphInfo;
 import views.Analyzer;
-
-import chart2D.ChangeGraphInfo;
 
 
 
