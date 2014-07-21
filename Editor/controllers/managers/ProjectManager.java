@@ -61,7 +61,7 @@ public class ProjectManager {
 		// checks input validity
 		if (width <= 0 || length <= 0 || time <= 0) return null;		 			
 		
-		Project project = Synchronizer.CTD(Synchronizer.DefaultScript());		
+		Project project = Synchronizer.CTD(Synchronizer.defaultScript());		
 				
 		Project.setPath(path);		
 		

@@ -11,9 +11,9 @@ import models.converter.InsVar;
  * Interface for Tcl shadow objects.
  * Tcl shadow objects is "shadow" of fable tcl object.
  * this interface include general method of all shadow object.
- * @Author Duc-Trong Nguyen
  */
-public interface TclObject {
+public interface TclObject 
+{
 	
 	/**
 	 * Parse a tcl command and call corresponding InstProc. 

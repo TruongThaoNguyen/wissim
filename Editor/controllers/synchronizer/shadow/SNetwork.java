@@ -21,37 +21,58 @@ import models.networkcomponents.WirelessNetwork;
 
 /**
  * SimulatorObject.java
- * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and Technology
- * @Author Duc-Trong Nguyen
- * @Version 2.0
+ * @author Duc-Trong Nguyen
  */
-
 public class SNetwork extends WirelessNetwork implements TclObject, Scheduler
-{			
+{	
+	/**
+	 * label of this object.
+	 */
+	private String label;
+	
+	/**
+	 * entry list.
+	 */
+	private List<Entry> entryList = new ArrayList<Entry>();
+	
+	/**
+	 * insProc list.
+	 */
+	private HashMap<String, InsProc> insProc = new HashMap<String, InsProc>();
+	
+	/**
+	 * insVar list.
+	 */
+	private HashMap<String, InsVar>  insVar = new HashMap<String, InsVar>();
+	
+	/**
+	 * event list.
+	 */
+	private HashMap<String, Double> event = new HashMap<String, Double>();
+	
+	/**
+	 * nodeConfig object.
+	 * that object include all configure for nodes.
+	 * corresponding with "node-config" Tcl command.
+	 */
+	SCommonObject nodeConfig; 
+	
 	/**
 	 * Create new Shadow Network Object.
-	 * @param value
+	 * @param label label of this object
 	 */
-	public SNetwork(String label)
+	public SNetwork(final String label)
 	{		
 		this.label = label;	
 		nodeConfig = new SCommonObject("node-config");
 		nodeConfig.setParent(this);
 		addInsProc();
 	}
-	
-	private String label;
-	private List<Entry> entryList = new ArrayList<Entry>();
-	private HashMap<String, InsProc> insProc = new HashMap<String, InsProc>();
-	private HashMap<String, InsVar>  insVar = new HashMap<String, InsVar>();
-	private HashMap<String, Double> event = new HashMap<String, Double>();
-	
-	SCommonObject nodeConfig; 
 
 	// region ------------------- Event ------------------- //
 	
 	@Override
-	public void addEvent(double time, String arg) {
+	public void addEvent(final double time, String arg) {
 		event.put(arg, time);
 		
 		// check if this event is stop event or not

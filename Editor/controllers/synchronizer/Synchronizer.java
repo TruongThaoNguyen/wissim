@@ -40,12 +40,13 @@ public class Synchronizer {
 	 * tcl code for new node will be add to generateEntry in this index.
 	 */
 	private static int newNodeIndex = 0;
-	 
+	 	
 	/**
 	 * get default script for new project.
 	 * @return script as string
 	 */
-	public static String DefaultScript() {		
+	public static String defaultScript() 
+	{		
 		StringBuilder sb = new StringBuilder();		
 		sb.append("#\n");
 		sb.append("# Initialize Global Variable\n");
@@ -129,7 +130,8 @@ public class Synchronizer {
 	 * @return project project object 
 	 * @throws ParseException exception in parsing process
 	 */
-	public static Project CTD(String text) throws ParseException {
+	public static Project CTD(final String text) throws ParseException 
+	{
 		int line = StringUtils.countMatches(text, "\n");		
 		Date st = new Date();
 				
@@ -141,11 +143,14 @@ public class Synchronizer {
 		long time = new Date().getTime() - st.getTime(); 
 		
 		FileWriter out;
-		try {
+		try 
+		{
 			out = new FileWriter("synchronization.log", true);
 			out.write("CTD_core:\t" + line + "\t" + time + "\n");
 			out.close();
-		} catch (IOException e)	{ 
+		}
+		catch (IOException e)	
+		{ 
 			e.printStackTrace();
 		}		
 		
@@ -155,10 +160,11 @@ public class Synchronizer {
 	/**
 	 * DTC - Design to Code.
 	 * Generate TCL code from Project model.
-	 * @return String
-	 * @throws ParseException 
+	 * @return String new TCL source code
+	 * @throws ParseException parse exception
 	 */
-	public static String DTC() throws ParseException {
+	public static String DTC() throws ParseException 
+	{
 		Date st = new Date();		
 		int line = 0;
 		StringBuilder sb = new StringBuilder();
@@ -217,13 +223,15 @@ public class Synchronizer {
 	 * Generate TCL code form Project model.
 	 * Split Tcl code to token to display with style
 	 * @return list of token
-	 * @throws ParseException
+	 * @throws ParseException parse exception
 	 */
-	public static List<Token> DTC_token() throws ParseException {
+	public static List<Token> DTC_token() throws ParseException 
+	{
 		List<Token> token = new ArrayList<Token>();
 
 		// configure
-		for (String k : Project.configure.keySet()) {			
+		for (String k : Project.configure.keySet()) 
+		{			
 			HashMap<String, String> h = Project.getConfig(k).get(global.getSelectedConfig(k));
 			if (h != null)
 			{
@@ -257,7 +265,8 @@ public class Synchronizer {
 	 * @return a String is a Identify of this word
 	 * @throws Exception parsing exception
 	 */
-	public static String parseIdentify(final String word) throws Exception {	
+	public static String parseIdentify(final String word) throws Exception 
+	{	
 		StringBuilder result = new StringBuilder();
 		Scanner scanner = new Scanner(word);
 		List<Token> tokenList = scanner.scanWord();
@@ -313,10 +322,12 @@ public class Synchronizer {
 	/**
 	 * Parse Quote string.
 	 * Replace Referent token with this value 
+	 * @param word TCL word
 	 * @return string with replaced referent token
-	 * @throws Exception 
+	 * @throws Exception parse exception
 	 */
-	private static String parseQuote(String word) throws Exception {
+	private static String parseQuote(String word) throws Exception 
+	{
 		StringBuilder result = new StringBuilder();
 		Scanner scanner = new Scanner(word);
 		List<String> command = scanner.scanCommand();
@@ -343,10 +354,12 @@ public class Synchronizer {
 	 * get index of generateEntry to put code for new Node.
 	 * @return index
 	 */
-	public static int getNewNodeIndex() {
+	public static int getNewNodeIndex() 
+	{
 		if (newNodeIndex == 0)
 		{			
-			for (Entry entry : global.getNetwork().getNodeConfig().getEntry()) {
+			for (Entry entry : global.getNetwork().getNodeConfig().getEntry()) 
+			{
 				newNodeIndex = Math.max(newNodeIndex, Synchronizer.generateEntry.lastIndexOf(entry));
 			}
 			newNodeIndex++;	
@@ -360,7 +373,8 @@ public class Synchronizer {
 	 * @param value new index value
 	 * @return new index value
 	 */
-	public static int setNewNodeIndex(int value) {
+	public static int setNewNodeIndex(final int value) 
+	{
 		return newNodeIndex = value;
 	}
 	
@@ -370,7 +384,8 @@ public class Synchronizer {
 	 * @param e new entry
 	 * @return add success or not
 	 */
-	public static boolean registerEntry(Entry e) {
+	public static boolean registerEntry(final Entry e) 
+	{
 		return generateEntry.add(e);
 	}
 	
@@ -380,7 +395,8 @@ public class Synchronizer {
 	 * @param e new entry
 	 * @return index of new entry
 	 */
-	public static int registerEntry(int index, Entry e){
+	public static int registerEntry(final int index, final Entry e)
+	{
 		if (index < newNodeIndex) newNodeIndex++;
 		generateEntry.add(index, e);
 		return index;
@@ -390,7 +406,8 @@ public class Synchronizer {
 	 * get generate entry list.
 	 * @return generateEntry
 	 */
-	public static List<Entry> getGenerateEntry() {
+	public static List<Entry> getGenerateEntry() 
+	{
 		return generateEntry;
 	}
 	
@@ -399,14 +416,16 @@ public class Synchronizer {
 	 * @param args nonsense
 	 * @throws Exception running exception
 	 */
-	public static void main(String[] args)  throws Exception {
+	public static void main(final String[] args)  throws Exception 
+	{
 		Configure.setTclFile("/home/trongnguyen/");
 		String fileName = Configure.getDirectory() + "Untitled1.tcl";
 		BufferedReader br = new BufferedReader(new FileReader(fileName));
 		StringBuilder sb = new StringBuilder();
 	    
 		String line = br.readLine();		
-	    while (line != null) {
+	    while (line != null) 
+	    {
 	        sb.append(line);
 	        sb.append(System.lineSeparator());
 	        line = br.readLine();

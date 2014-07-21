@@ -13,26 +13,40 @@ import models.converter.InsVar;
 import models.converter.ParseException;
 
 /**
- * UndefineObject.java
- * @Copyright (C) 2014, Sedic Laboratory, Hanoi University of Science and Technology
- * @Author Duc-Trong Nguyen
- * @Version 2.0
+ * UndefineObject - Tcl Shadow object with undefined type. 
  */
-
 public class SCommonObject implements TclObject
 {	
+	/**
+	 * label of this object.
+	 */
 	private String label;
+	
+	/**
+	 * entry list of this object.
+	 */
 	private List<Entry> entryList = new ArrayList<Entry>();
+	
+	/**
+	 * insProc list.
+	 */
 	private HashMap<String, InsProc> insProc  = new HashMap<String, InsProc>();	
+	
+	/**
+	 * insVar list.
+	 */
 	private HashMap<String, InsVar>  insVar  = new LinkedHashMap<String, InsVar>();
 	
+	/**
+	 * parent object of this object.
+	 */
 	private TclObject parent;
 	
 	/**
 	 * Create new Shadow Common Object.
-	 * @param value Value and label
+	 * @param label Value and label
 	 */
-	public SCommonObject(String label)
+	public SCommonObject(final String label)
 	{
 		this.label = label;		
 		addInsProc();
@@ -43,7 +57,7 @@ public class SCommonObject implements TclObject
 	 * @param value
 	 * @param insVar
 	 */
-	public SCommonObject(String label, HashMap<String, String> var)
+	public SCommonObject(final String label, HashMap<String, String> var)
 	{
 		this.label = label;
 		
@@ -56,6 +70,10 @@ public class SCommonObject implements TclObject
 		addInsProc();
 	}
 	
+	/**
+	 * set parent for this object.
+	 * @param p parent object
+	 */
 	public void setParent(TclObject p)
 	{
 		parent = p;
@@ -150,6 +168,9 @@ public class SCommonObject implements TclObject
 		insProc.put(p.insprocName, p);
 	}
 	
+	/**
+	 * add default insProcs.
+	 */
 	protected void addInsProc() {				
 		new InsProc(this, null) {
 			@Override

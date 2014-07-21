@@ -10,7 +10,6 @@ import models.converter.Token.TokenType;
 
 /**
  * Scanner used to scan TCL command.
- * @Author Duc-Trong Nguyen
  */
 public class Scanner 
 {
@@ -33,13 +32,17 @@ public class Scanner
 	 * get current line.
 	 * @return line that parse reached.
 	 */
-	public final int getLine() { return line; }
+	public final int getLine() 
+	{ 
+		return line; 
+	}
 	
 	/**
 	 * Create new Scanner.
 	 * @param text Tcl code.
 	 */
-	public Scanner(final String text) {
+	public Scanner(final String text) 
+	{
 		this.code = text.replace("\r\n", "\n").replace("\r", "\n");
 					
 		line = 0;
@@ -50,7 +53,8 @@ public class Scanner
 	 * check whether have next line in code or reached end of source code.
 	 * @return true if have next line. false if it is end of code
 	 */
-	public final boolean haveNext() {
+	public final boolean haveNext() 
+	{
 		return index < code.length();
 	}
 
@@ -60,41 +64,55 @@ public class Scanner
 	 * @return List of words
 	 * @throws ParseException 
 	 */
-	public final List<String> scanCommand() throws ParseException	{	
+	public final List<String> scanCommand() throws ParseException	
+	{	
 		List<String> command = new ArrayList<String>();		
 		
 		// parse throw separator and space after last command.
-		while (index < code.length()) {	
+		while (index < code.length()) 
+		{	
 			CharType type = CharType.TypeOf(code.charAt(index));
-			if (type == CharType.Separator)	{
+			if (type == CharType.Separator)	
+			{
 				index++;
 				line++;
 				break;
-			} else if (type == CharType.Space) {
+			}
+			else if (type == CharType.Space) 
+			{
 				index++;
-			} else {
+			} else 
+			{
 				break;
 			}
 		}		
 		
 		// parse throw space before this command
-		while (index < code.length()) {
-			if (CharType.TypeOf(code.charAt(index)) == CharType.Space) {
+		while (index < code.length()) 
+		{
+			if (CharType.TypeOf(code.charAt(index)) == CharType.Space) 
+			{
 				index++;
-			} else {
+			}
+			else 
+			{
 				break;
 			}
 		}
 				
 		// scan this command
 		int i = index;	
-		while (index < code.length()) {
-			switch (CharType.TypeOf(code.charAt(index))) {
+		while (index < code.length()) 
+		{
+			switch (CharType.TypeOf(code.charAt(index))) 
+			{
 				case Space:
-					if (index > i) {
+					if (index > i) 
+					{
 						command.add(code.substring(i, index));
 					}
-					while (	index < code.length() && CharType.TypeOf(code.charAt(index)) == CharType.Space) {
+					while (index < code.length() && CharType.TypeOf(code.charAt(index)) == CharType.Space) 
+					{
 						index++;
 					}
 					i = index;
@@ -102,41 +120,34 @@ public class Scanner
 				
 				case Semicolon:
 					String word  = code.substring(i, index);
-					if (!word.isEmpty()) {
+					if (!word.isEmpty()) 
+					{
 						command.add(word);
 					}
 					index++;		
-					while (index < code.length() 
-						&& CharType.TypeOf(code.charAt(index)) == CharType.Space) index++;
-					if (CharType.TypeOf(code.charAt(index)) == CharType.Separator) {
-						command.add(";\n");
-					} else {
-						command.add(";"); 
-					}
+					while (index < code.length() && CharType.TypeOf(code.charAt(index)) == CharType.Space) index++;
+					if (CharType.TypeOf(code.charAt(index)) == CharType.Separator) 
+							command.add(";\n");
+					else	command.add(";"); 					
 					return command;
 					
 				case Separator:				
-					if (index > i) {
-						command.add(code.substring(i, index));
-					}	
+					if (index > i) command.add(code.substring(i, index));
 					command.add("\n");
 					return command;
 					
 				case Comment:
-					if (command.size() != 0) {
-						throw new ParseException(ParseException.Comment);				
-					}
-					while (index < code.length() && CharType.TypeOf(code.charAt(index)) != CharType.Separator) {
-						index++;					
-					}
+					if (command.size() != 0) throw new ParseException(ParseException.Comment);				
+					
+					while (index < code.length() && CharType.TypeOf(code.charAt(index)) != CharType.Separator)
+						index++;										
 					command.add(code.substring(i, index));
 					command.add("\n");
 					return command;
 
 				case BackSlash:
 					index++;
-					if (index >= code.length() 
-					|| CharType.TypeOf(code.charAt(index)) != CharType.Separator) 
+					if (index >= code.length() || CharType.TypeOf(code.charAt(index)) != CharType.Separator) 
 						throw new ParseException(ParseException.InvalidSymbol);
 					index++;
 					line++;
@@ -172,10 +183,7 @@ public class Scanner
 			}
 		}
 		
-		if (index > i) {
-			command.add(code.substring(i, index));
-			//command.add("\n");
-		}
+		if (index > i) command.add(code.substring(i, index));			
 		return command;
 	}
 
@@ -184,11 +192,14 @@ public class Scanner
 	 * @return List of tokens 
 	 * @throws ParseException parse exception.
 	 */
-	public final List<Token> scanWord() throws ParseException {
+	public final List<Token> scanWord() throws ParseException 
+	{
 		List<Token> tokenList = new ArrayList<Token>();
 		
-		while (index < code.length()) {
-			switch (CharType.TypeOf(code.charAt(index))) {							
+		while (index < code.length()) 
+		{
+			switch (CharType.TypeOf(code.charAt(index))) 
+			{
 				case Separator: line++;
 				case Semicolon:					
 					index++;
@@ -204,9 +215,7 @@ public class Scanner
 					break;
 					
 				case Comment:
-					while (index < code.length() && code.charAt(index) != '\n') {
-						index++;
-					}
+					while (index < code.length() && code.charAt(index) != '\n') index++;					
 					index++;
 					line++;
 					break;
@@ -372,7 +381,7 @@ public class Scanner
 					{
 						case '*' : case '/' : case '%' :
 						case '+' : case '-' :
-							if (index > i) command.add(Synchronizer.parseIdentify(code.substring(i, index)));													
+							if (index > i) command.add(Synchronizer.parseIdentify(code.substring(i, index)));
 							command.add(code.charAt(index) + "");							
 							index++;
 							i = index;
@@ -457,9 +466,9 @@ public class Scanner
 	 * Scan quote.
 	 * Put index to next of '"'
 	 * @return string is value of Quote
-	 * @throws ParseExeption parse exception
+	 * @throws ParseException parse exception
 	 */
-	private String scanQuote() throws ParseException 
+	private String scanQuote() throws ParseException
 	{					
 		int i = ++index;
 		for (; index < code.length(); index++)
@@ -553,6 +562,7 @@ public class Scanner
 	/**
 	 * Scan brace.
 	 * Put index to next of ')'
+	 * @return string is value of brace
 	 * @throws ParseException parse exception
 	 */
 	private String scanBrace() throws ParseException 

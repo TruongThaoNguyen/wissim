@@ -24,13 +24,14 @@ import models.networkcomponents.protocols.TransportProtocol.TransportProtocolTyp
  * @author Trongnguyen
  *
  */
-public class SApplicationProtocol extends ApplicationProtocol implements TclObject, Scheduler {
-	
+public class SApplicationProtocol extends ApplicationProtocol implements TclObject, Scheduler 
+{	
 	/**
 	 * Create new Shadow Application Protocol.
 	 * @param label label for new object.
 	 */
-	public SApplicationProtocol(String label) {
+	public SApplicationProtocol(final String label) 
+	{
 		super(ApplicationProtocolType.valueOf(label));
 		this.label = label;
 		addInsProc();
@@ -43,7 +44,8 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	 * @param tp Transport protocol
 	 * @param destNode destination node
 	 */
-	public SApplicationProtocol(ApplicationProtocolType type, String name, STransportProtocol tp, Node destNode) {
+	public SApplicationProtocol(final ApplicationProtocolType type, final String name, STransportProtocol tp, Node destNode) 
+	{
 		super(type);		
 		setDestNode(destNode);
 		addInsProc();
@@ -57,17 +59,20 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	private HashMap<String, Double> event = new HashMap<String, Double>();
 	
 	@Override
-	public final void addEvent(final double time, String arg) {
+	public final void addEvent(final double time, String arg) 
+	{
 		event.put(arg, time);		
 	}
 
 	@Override
-	public final double getEvent(final String arg) {
+	public final double getEvent(final String arg) 
+	{
 		return event.get(arg);
 	}
 	
 	@Override
-	public final HashMap<String, Double> getEvent() {
+	public final HashMap<String, Double> getEvent() 
+	{
 		return event;
 	}
 	
@@ -118,7 +123,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	}
 	
 	@Override
-	public final void addEntry(final int index, Entry e) {
+	public final void addEntry(final int index, final Entry e) {
 		entryList.add(index, e);
 		if (transportProtocol != null) transportProtocol.addEntry(e);
 	}
@@ -146,12 +151,12 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	}
 	
 	@Override
-	public InsVar getInsVar(String key) {
+	public final InsVar getInsVar(String key) {
 		return insVar.get(key);
 	}
 
 	@Override
-	public InsVar setInsVar(String key, String value) {		
+	public final InsVar setInsVar(String key, String value) {		
 		InsVar i = insVar.get(key);
 		if (i != null)
 		{
@@ -166,7 +171,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	}
 	
 	@Override
-	public InsVar setInsVar(String key, String value, String label) {
+	public final InsVar setInsVar(String key, String value, String label) {
 		InsVar i = new InsVar(value, label);
 		insVar.put(key, i);
 		return i;
@@ -177,19 +182,19 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	// region ------------------- InsProc ------------------- //
 
 	@Override
-	public InsProc getInsProc(String key) {
+	public final InsProc getInsProc(String key) {
 		return insProc.get(key);
 	}
 	
 	@Override
-	public void addInsProc(InsProc p) {
+	public final void addInsProc(InsProc p) {
 		insProc.put(p.insprocName, p);
 	}
 	
 	/**
 	 * create and add default InsProc.
 	 */
-	protected void addInsProc()	{
+	protected final void addInsProc()	{
 		new InsProc(this, null) {			
 			@Override			
 			protected String run(List<String> command) throws Exception {
@@ -228,7 +233,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	}
 	
 	/**
-	 * Implement of "AttachAgent" insProc
+	 * Implement of "AttachAgent" insProc.
 	 * @param command command of task
 	 * @throws Exception Parse Tcl command exception
 	 */
@@ -246,15 +251,18 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 
 	// region ------------------- Application properties ------------------- //
 	
+	/**
+	 * transportProtocol.
+	 */
 	STransportProtocol transportProtocol;
 	
 	@Override
-	public String getName() {
+	public final String getName() {
 		return label;
 	}
 
 	@Override
-	public HashMap<String, String> getParameters() {
+	public final HashMap<String, String> getParameters() {
 		HashMap<String, String> re = new HashMap<>();
 		for (String key : insVar.keySet()) {
 			re.put(key, insVar.get(key).getValue());
@@ -263,7 +271,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	}
 
 	@Override
-	public void setParameters(HashMap<String, String> params) {
+	public final void setParameters(final HashMap<String, String> params) {
 		insVar.clear();
 		for (String key : params.keySet()) {
 			addParameter(key, params.get(key));
@@ -271,7 +279,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	}
 
 	@Override
-	public void addParameter(String param, String value) {
+	public final void addParameter(final String param, final String value) {
 		insVar.put(param, new InsVar(param, value));
 		
 		// generate tcl code here
@@ -283,17 +291,17 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	}
 
 	@Override
-	public String getValue(String param) {
+	public final String getValue(final String param) {
 		return getInsVar(param).toString();
 	}
 
 	@Override
-	public boolean removeEvent(Event e) {						
+	public final boolean removeEvent(final Event e) {						
 		return event.remove(e) != null;		
 	}
 
 	@Override
-	public boolean addEvent(EventType type, double raisedTime) {		
+	public final boolean addEvent(final EventType type, final double raisedTime) {		
 		event.put(type.toString(), raisedTime);
 
 		// generate tcl code here
@@ -308,7 +316,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	}
 
 	@Override
-	public List<Event> getEventList() {
+	public final List<Event> getEventList() {
 		List<Event> re = new ArrayList<Event>();
 		for (String key : event.keySet()) {
 			try {
@@ -320,7 +328,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	}
 
 	@Override
-	public Node getDestNode() {
+	public final Node getDestNode() {
 		if (transportProtocol == null) return null;
 		List<ApplicationProtocol> l = transportProtocol.getAppList();
 		
@@ -329,7 +337,7 @@ public class SApplicationProtocol extends ApplicationProtocol implements TclObje
 	}
 
 	@Override
-	protected void setDestNode(Node node) {
+	protected final void setDestNode(final Node node) {
 		SNode destNode = (SNode) node;
 		
 		// connect base TransportProtocol to destNode's TransportProtocol

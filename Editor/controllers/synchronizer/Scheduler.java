@@ -6,7 +6,8 @@ import java.util.HashMap;
  * Interface for schedulable objects.
  * @author trongnguyen
  */
-public interface Scheduler {	
+public interface Scheduler 
+{	
 	/**
 	 * add an event to scheduler of this object.
 	 * @param time time of event
