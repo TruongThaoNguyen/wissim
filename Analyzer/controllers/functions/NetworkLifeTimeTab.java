@@ -1,4 +1,4 @@
-package views.functiontab;
+package controllers.functions;
 
 import java.io.IOException;
 import java.util.ArrayList;

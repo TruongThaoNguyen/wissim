@@ -1,4 +1,4 @@
-package views.functiontab;
+package controllers.functions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,10 +49,12 @@ import org.swtchart.ISeries.SeriesType;
 import com.ibm.icu.text.DecimalFormat;
 
 import controllers.chart2d.ChartAllNode;
+import controllers.chart3d.SurfaceChartThroughput;
 import views.Analyzer;
 
 
-public class HopCountTab extends Tab implements Observer {
+
+public class ThroughputTab extends Tab implements Observer{
   
   /* The example layout instance */
   FillLayout fillLayout;
@@ -63,7 +65,7 @@ public class HopCountTab extends Tab implements Observer {
   /**
    * Creates the Tab within a given instance of LayoutExample.
    */
-  public HopCountTab(Analyzer instance) {
+  public ThroughputTab(Analyzer instance) {
     super(instance);
     listNodeAreaSource = new ArrayList<NodeTrace>();
     listNodeAreaDest = new ArrayList<NodeTrace>();
@@ -119,7 +121,7 @@ public class HopCountTab extends Tab implements Observer {
 	    filterByLabel.setText(Analyzer.getResourceString("Filter by"));
 	    filterByLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 	    
-	    filterByCombo = new Combo(controlGroup, SWT.READ_ONLY);
+	    filterByCombo = new Combo(controlGroup, SWT.READ_ONLY );
 	    filterByCombo.setItems(new String[] {"Node ID", "Label ID"});
 	    filterByCombo.select(0);
 	    /* Add listener */
@@ -137,13 +139,13 @@ public class HopCountTab extends Tab implements Observer {
 	    fromLabel.setText(Analyzer.getResourceString("From"));
 	    fromLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 	    
-	    fromCombo = new Combo(controlGroup, SWT.READ_ONLY);
+	    fromCombo = new Combo(controlGroup, SWT.READ_ONLY );
 	    
 	    Label toLabel=new Label(controlGroup, SWT.None);
 	    toLabel.setText(Analyzer.getResourceString("To"));
 	    toLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 	    
-	    toCombo = new Combo(controlGroup, SWT.READ_ONLY);
+	    toCombo = new Combo(controlGroup, SWT.READ_ONLY );
 	    setItemFromComboToCombo();
 	    
 	    analyze = new Button(controlGroup, SWT.PUSH);
@@ -154,16 +156,15 @@ public class HopCountTab extends Tab implements Observer {
 	    analyzeGroup.setText(Analyzer.getResourceString("Analyze Group"));
 	    analyzeGroup.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 	    
-	    /* Add listener to button analyze group */
+	    /* Add listener to button analyze */
 	    analyzeGroup.addSelectionListener(new SelectionAdapter() {
 	      public void widgetSelected(SelectionEvent e) {
 	    	  if(listNodeAreaDest.size()>0 && listNodeAreaSource.size()>0){
-	    	  		setUpInfoGroupHopCount();
+	    	  		setUpInfoGroupThroughput();
 	    	  	}
 	      }
 	    });
-	    
-	    /* Add listener to add an element to the table */
+	    /* Add listener to button analyze */
 	    analyze.addSelectionListener(new SelectionAdapter() {
 	      public void widgetSelected(SelectionEvent e) {
 	    		if(fromCombo.getSelectionIndex()==-1 || toCombo.getSelectionIndex()==-1){
@@ -175,11 +176,11 @@ public class HopCountTab extends Tab implements Observer {
 				else{	
 					table.removeAll();
 					int No=1;
-					int maxHopCount=0;
-					int minHopCount=1000000000;
-					double totalHopCount=0;
+					double maxThroughput=0;
+					double minThroughput=1000000000;
+					double totalSize=0;
 					double totalTime=0;
-					LinkedHashMap<Packet,Integer> listHopCountPacket = new LinkedHashMap<Packet,Integer>();
+					LinkedHashMap<Packet,Double> listThroughputPacket = new LinkedHashMap<Packet,Double>();
 					ArrayList<Packet> listPacket = new ArrayList<Packet>();
 					for (int i=0;i<Analyzer.mParser.getListPacket().size();i++){ 
 						 Packet packet=Analyzer.mParser.getListPacket().get(i);
@@ -208,23 +209,24 @@ public class HopCountTab extends Tab implements Observer {
 							 if(packet.isSuccess ){
 								 listPacket.add(packet);
 							 }
-						 }	
+						 }						 
+						 
 					}
 					for(int i =0 ;i < listPacket.size(); i++){
 						Packet packet = listPacket.get(i);
 						TableItem tableItem= new TableItem(table, SWT.NONE);
 						 tableItem.setText(0,Integer.toString(No++));
 						 tableItem.setText(1,packet.id);
-						 tableItem.setText(2,Integer.toString(packet.listNode.size()-1));
+						 tableItem.setText(2,singlePacketThroughput(packet));
 						 tableItem.setText(3,packet.sourceID +"---"+packet.destID);
-						 totalHopCount+=packet.listNode.size()-1;
+						 totalSize+=Double.parseDouble(packet.size);
 						 totalTime+=(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
-						 listHopCountPacket.put(packet,packet.listNode.size()-1);
+						 listThroughputPacket.put(packet, Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)));
 						
-						 if(maxHopCount < packet.listNode.size()-1)
-							 maxHopCount = packet.listNode.size()-1;
-						 if(minHopCount > packet.listNode.size()-1)
-							 minHopCount = packet.listNode.size()-1;
+						 if(maxThroughput < Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)))
+							 maxThroughput = Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
+						 if(minThroughput > Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)))
+							 minThroughput = Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
 					}
 					if(No==1){
 						MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
@@ -241,16 +243,15 @@ public class HopCountTab extends Tab implements Observer {
 					}
 					else{
 						DecimalFormat df = new DecimalFormat("0.00");
-						//System.out.println(No-1);
-						String str= df.format(totalHopCount/(No-1));
+						String str= df.format(totalSize/totalTime);
 						//set mean
 						avgText.setText(str);
 						//set text variant
-						variantText.setText(df.format(variancesHopCount(listHopCountPacket,totalTime))); 
-						maxText.setText(Integer.toString(maxHopCount));
-						minText.setText(Integer.toString(minHopCount));
+						variantText.setText(df.format(variancesThroughput(listThroughputPacket,totalTime))); 
+						maxText.setText(df.format(maxThroughput));
+						minText.setText(df.format(minThroughput));
 						//init line chart
-						initXYseries(listHopCountPacket);
+						initXYseries(listThroughputPacket);
 						
 					}
 					if(filterByCombo.getSelectionIndex()==0)
@@ -260,11 +261,13 @@ public class HopCountTab extends Tab implements Observer {
 	      }
 	    });    
 	   
+	    
 	    /* Add common controls */
 	    super.createControlWidgets();
 
    
   }
+  
   /* Set up item for fromCombo and toCombo */
   void setItemFromComboToCombo(){
 	  if(filterByCombo.getSelectionIndex()==0){
@@ -281,20 +284,21 @@ public class HopCountTab extends Tab implements Observer {
 			}
 	  }
 	  if(filterByCombo.getSelectionIndex()==1){
-		  super.refreshLayoutComposite();
-			 fromCombo.setItems(new String[] {});
-			 toCombo.setItems(new String[] {});
-			 
-			 ySeries = new double[Analyzer.mParser.getListNodes().size()];
-		     xSeries = new double[Analyzer.mParser.getListNodes().size()];    
-				for(int i=0;i<Analyzer.mParser.getListNodes().size();i++) {
-					NodeTrace node = Analyzer.mParser.getListNodes().get(i);
-					xSeries[i]=node.x;
-					ySeries[i]=node.y;
-				}
-			 chartAllNode = new ChartAllNode(xSeries, ySeries);
-			 chartAllNode.addObserver(this);
-			 chartAllNode.createChart(layoutComposite);
+		 //chart.setVisible(false);
+		 super.refreshLayoutComposite();
+		 fromCombo.setItems(new String[] {});
+		 toCombo.setItems(new String[] {});
+		 
+		 ySeries = new double[Analyzer.mParser.getListNodes().size()];
+	     xSeries = new double[Analyzer.mParser.getListNodes().size()];    
+			for(int i=0;i<Analyzer.mParser.getListNodes().size();i++) {
+				NodeTrace node = Analyzer.mParser.getListNodes().get(i);
+				xSeries[i]=node.x;
+				ySeries[i]=node.y;
+			}
+		 chartAllNode = new ChartAllNode(xSeries, ySeries);
+		 chartAllNode.addObserver(this);
+		 chartAllNode.createChart(layoutComposite);
 	  }
   }
   @Override
@@ -304,11 +308,11 @@ public class HopCountTab extends Tab implements Observer {
   		  this.listNodeAreaDest=((ChartAllNode) arg0).listNodeAreaDest; 
   	}
   	if(this.listNodeAreaDest.size()>0 && this.listNodeAreaSource.size()>0){
-  		setUpInfoGroupHopCount();
+  		setUpInfoGroupThroughput();
   	}
   
   }
-  public void setUpInfoGroupHopCount(){
+  public void setUpInfoGroupThroughput(){
 	  String[] itemListSource=new String[this.listNodeAreaSource.size()] ; 
 	  String[] itemListDest=new String[this.listNodeAreaDest.size()] ;	
 			for (int i=0;i<this.listNodeAreaSource.size();i++){ 
@@ -321,36 +325,35 @@ public class HopCountTab extends Tab implements Observer {
 				 itemListDest[i]=Integer.toString(node.id);
 			}
 			toCombo.setItems(itemListDest);
-		
-		table.removeAll();
-			int No=1;
-			int maxHopCount=0;
-			int minHopCount=1000000000;
-			double totalHopCount=0;
-			double totalTime=0;
-			LinkedHashMap<Packet,Integer> listHopCountPacket = new LinkedHashMap<Packet,Integer>();
+	  table.removeAll();
+      int No=1;
+	  double maxThroughput=0;
+	  double minThroughput=1000000000;
+	  double totalSize=0;
+	  double totalTime=0;
+	  LinkedHashMap<Packet,Double> listThroughputPacket = new LinkedHashMap<Packet,Double>();
 			for (int i=0;i<Analyzer.mParser.getListPacket().size();i++){ 
 				 Packet packet=Analyzer.mParser.getListPacket().get(i);
 				 for(int j=0;j<this.listNodeAreaSource.size();j++)
-					 	for(int k=0;k<this.listNodeAreaDest.size();k++){
-					 	   if(this.listNodeAreaSource.get(j).id == Integer.parseInt(packet.sourceID) 
-								 && this.listNodeAreaDest.get(k).id==Integer.parseInt(packet.destID) && packet.isSuccess ) {
-							 TableItem tableItem= new TableItem(table, SWT.NONE);
-							 tableItem.setText(0,Integer.toString(No++));
-							 tableItem.setText(1,packet.id);
-							 tableItem.setText(2,Integer.toString(packet.listNode.size()-1));
-							 tableItem.setText(3,packet.sourceID+"--"+packet.destID);
-							 
-							 totalHopCount+=packet.listNode.size()-1;
-							 totalTime+=(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
-							 listHopCountPacket.put(packet,packet.listNode.size()-1);
-							
-							 if(maxHopCount < packet.listNode.size()-1)
-								 maxHopCount = packet.listNode.size()-1;
-							 if(minHopCount > packet.listNode.size()-1)
-								 minHopCount = packet.listNode.size()-1;
-					 	   }
-					 	}
+				 	for(int k=0;k<this.listNodeAreaDest.size();k++){
+					 if(this.listNodeAreaSource.get(j).id == Integer.parseInt(packet.sourceID) 
+							 && this.listNodeAreaDest.get(k).id==Integer.parseInt(packet.destID) && packet.isSuccess ){
+						 TableItem tableItem= new TableItem(table, SWT.NONE);
+						 tableItem.setText(0,Integer.toString(No++));
+						 tableItem.setText(1,packet.id);
+						 tableItem.setText(2,singlePacketThroughput(packet));
+						 tableItem.setText(3,packet.sourceID+"--"+packet.destID);
+						 
+						 totalSize+=Double.parseDouble(packet.size);
+						 totalTime+=(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
+						 listThroughputPacket.put(packet, Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)));
+						
+						 if(maxThroughput < Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)))
+							 maxThroughput = Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
+						 if(minThroughput > Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)))
+							 minThroughput = Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
+					 }
+				 }
 				 
 				 
 			}
@@ -363,45 +366,52 @@ public class HopCountTab extends Tab implements Observer {
 				variantText.setText("0");
 				maxText.setText("0");
 				minText.setText("0");
+				//xSeries=new double[0];
+				//ySeries=new double[0];
 			}
 			else{
 				DecimalFormat df = new DecimalFormat("0.00");
-				//System.out.println(No-1);
-				String str= df.format(totalHopCount/(No-1));
+				String str= df.format(totalSize/totalTime);
 				//set mean
 				avgText.setText(str);
 				//set text variant
-				variantText.setText(df.format(variancesHopCount(listHopCountPacket,totalTime))); 
-				maxText.setText(Integer.toString(maxHopCount));
-				minText.setText(Integer.toString(minHopCount));
+				variantText.setText(df.format(variancesThroughput(listThroughputPacket,totalTime))); 
+				maxText.setText(df.format(maxThroughput));
+				minText.setText(df.format(minThroughput));
+				//init line chart
+				//initXYseries(listThroughputPacket);
 				
 			}
-		//	if(filterByCombo.getSelectionIndex()==0)
-		//		resetEditors();
+			//resetEditors();		
   }
-
-		
-	public double variancesHopCount(LinkedHashMap<Packet,Integer> listHopCountPacket,Double totalTime){
-		double variances=0; //  E(X*X)-E(X)*E(X)
+  
+	public String singlePacketThroughput(Packet packet){
+		DecimalFormat df = new DecimalFormat("0.00");
+		String str= df.format(Double.parseDouble(packet.size)/(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)));
+		return str;
+	} 
+	
+	public double variancesThroughput(LinkedHashMap<Packet,Double> listThroughputPacket,Double totalTime){
+		double variances=0; // E(X*X)-E(X)*E(X)
 		double expectedValue1=0; // E(X*X)=x*x*p+....
 		double expectedValue2=0; // E(X)=x*p+....
-		for (Packet i : listHopCountPacket.keySet()) {
+		for (Packet i : listThroughputPacket.keySet()) {
 	          //  System.out.println( i.id +" : " + listThroughputPacket.get(i));
-			expectedValue1 += listHopCountPacket.get(i)*listHopCountPacket.get(i)*
+			expectedValue1 += listThroughputPacket.get(i)*listThroughputPacket.get(i)*
 					((Double.parseDouble(i.endTime)-Double.parseDouble(i.startTime))/totalTime);
-			expectedValue2 += listHopCountPacket.get(i)*((Double.parseDouble(i.endTime)-Double.parseDouble(i.startTime))/totalTime);
+			expectedValue2 += listThroughputPacket.get(i)*((Double.parseDouble(i.endTime)-Double.parseDouble(i.startTime))/totalTime);
 	        }
 		variances=expectedValue1-expectedValue2*expectedValue2;
 	    return variances;
 	}
 	
-	public void initXYseries(LinkedHashMap<Packet,Integer> listHopCountPacket){
+	public void initXYseries(LinkedHashMap<Packet,Double> listThroughputPacket){
 		int j=0;
-		xSeries=new double[listHopCountPacket.size()];
-		ySeries=new double[listHopCountPacket.size()];
-		if(listHopCountPacket.size()!=0){
-			for (Packet i : listHopCountPacket.keySet()) {
-				ySeries[j]=listHopCountPacket.get(i);
+		xSeries=new double[listThroughputPacket.size()];
+		ySeries=new double[listThroughputPacket.size()];
+		if(listThroughputPacket.size()!=0){
+			for (Packet i : listThroughputPacket.keySet()) {
+				ySeries[j]=listThroughputPacket.get(i);
 				xSeries[j]=Double.parseDouble(i.startTime);
 				j++;
 			}
@@ -414,7 +424,17 @@ public class HopCountTab extends Tab implements Observer {
   void createLayout() {
     fillLayout = new FillLayout();
     layoutComposite.setLayout(fillLayout);
-    super.createLayout();
+    super.createLayout(); 
+    
+    Button drawChart3D = new Button(layoutGroup, SWT.PUSH);
+    drawChart3D.setText(Analyzer.getResourceString("Draw 3Dchart"));
+    drawChart3D.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
+    /*Add listener to button drawChart*/
+    drawChart3D.addSelectionListener(new SelectionAdapter() {
+	      public void widgetSelected(SelectionEvent e) {
+	    	SurfaceChartThroughput.drawChart3D();
+	      }
+	    }); 
   }
 
   /**
@@ -428,14 +448,14 @@ public class HopCountTab extends Tab implements Observer {
    * Returns the layout data field names.
    */
   String[] getLayoutDataFieldNames() {
-    return new String[] { "No", "Packet","Hop count","Source-Dest"};
+    return new String[] { "No", "Packet","Throughput","Source-Dest"};
   }
 
   /**
    * Gets the text for the tab folder item.
    */
- public  String getTabText() {
-    return "Hop count";
+  public String getTabText() {
+    return "Throughput";
   }
 
   /**
@@ -450,11 +470,11 @@ public class HopCountTab extends Tab implements Observer {
   void refreshLayoutComposite() {
 	    super.refreshLayoutComposite();
 	    chart = new Chart(layoutComposite, SWT.NONE);
-        chart.getTitle().setText("Hop count");
+        chart.getTitle().setText("Throughput");
         chart.getAxisSet().getXAxis(0).getTitle().setText("Time(s)");
-        chart.getAxisSet().getYAxis(0).getTitle().setText("Hop count");
+        chart.getAxisSet().getYAxis(0).getTitle().setText("Throughput(bps)");
         // create line series
-        ILineSeries lineSeries = (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE, "line");
+        ILineSeries lineSeries = (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE, "line series");
         lineSeries.setYSeries(ySeries);
         lineSeries.setXSeries(xSeries);
         lineSeries.setLineStyle(LineStyle.DOT);
@@ -481,17 +501,18 @@ public class HopCountTab extends Tab implements Observer {
 
             private void setToolTipText(ISeries series, int xIndex,int yIndex,int id) {
                 chart.getPlotArea().setToolTipText(
-                		"No: " + ++id + "\nTime start send: " + series.getXSeries()[xIndex] + "\nHop count: "
+                		"No: " + ++id + "\nTime start send: " + series.getXSeries()[xIndex] + "\nThroughput: "
                                 + series.getYSeries()[yIndex]);
          
             }
         });
-  	}
+	  }
   /**
    * Sets the state of the layout.
    */
   void setLayoutState() {
     
   }
-}
 
+
+}

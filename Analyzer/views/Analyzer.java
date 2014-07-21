@@ -20,17 +20,16 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-import views.functiontab.DelayTab;
-import views.functiontab.EfficiencyTab;
-import views.functiontab.EnergyTab;
-import views.functiontab.HopCountTab;
-import views.functiontab.NetworkLifeTimeTab;
-import views.functiontab.SleepPeriodTab;
-import views.functiontab.Tab;
-import views.functiontab.ThroughputTab;
-
 import com.ibm.icu.text.MessageFormat;
 
+import controllers.functions.DelayTab;
+import controllers.functions.EfficiencyTab;
+import controllers.functions.EnergyTab;
+import controllers.functions.HopCountTab;
+import controllers.functions.NetworkLifeTimeTab;
+import controllers.functions.SleepPeriodTab;
+import controllers.functions.Tab;
+import controllers.functions.ThroughputTab;
 import controllers.parser.AbstractParser;
 import controllers.parser.EventParser;
 import controllers.parser.FullParser;

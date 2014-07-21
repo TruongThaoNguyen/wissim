@@ -1,4 +1,4 @@
-package views.functiontab;
+package controllers.functions;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -37,7 +37,11 @@ import com.ibm.icu.text.DecimalFormat;
 
 import controllers.chart2d.ChartAllNode;
 
-
+/**
+ * Delay function tab.
+ * @author Nghianguyen
+ * last edited by Trong nguyen
+ */
 public class DelayTab extends Tab implements Observer{
 	
 	/**
@@ -120,13 +124,13 @@ public class DelayTab extends Tab implements Observer{
 			}
 		});
 		
-		Label fromLabel=new Label(controlGroup, SWT.None);
+		Label fromLabel = new Label(controlGroup, SWT.None);
 		fromLabel.setText(Analyzer.getResourceString("From"));
 		fromLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 		
 		fromCombo = new Combo(controlGroup, SWT.READ_ONLY);
 		
-		Label toLabel=new Label(controlGroup, SWT.None);
+		Label toLabel = new Label(controlGroup, SWT.None);
 		toLabel.setText(Analyzer.getResourceString("To"));
 		toLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 		
@@ -152,14 +156,17 @@ public class DelayTab extends Tab implements Observer{
 		
 		/* Add listener to add an element to the table */
 		analyze.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if(fromCombo.getSelectionIndex()==-1 || toCombo.getSelectionIndex()==-1){
+			public void widgetSelected(SelectionEvent e) 
+			{
+				if (fromCombo.getSelectionIndex()==-1 || toCombo.getSelectionIndex()==-1)
+				{
 					MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
 					dialog.setText("Error");
 					dialog.setMessage("Let choose source node and destination node!");
 					dialog.open(); 
 				}
-				else{	
+				else
+				{	
 					table.removeAll();
 					int No=1;
 					double maxDelay=0;
@@ -167,7 +174,9 @@ public class DelayTab extends Tab implements Observer{
 					double totalDelay=0;
 					LinkedHashMap<Packet,Double> listDelayPacket = new LinkedHashMap<Packet,Double>();
 					ArrayList<Packet> listPacket = new ArrayList<Packet>();
-					for (int i=0;i<Analyzer.mParser.getListPacket().size();i++){ 
+					
+					for (int i = 0; i < Analyzer.mParser.getListPacket().size(); i++)
+					{ 
 						Packet packet=Analyzer.mParser.getListPacket().get(i);
 					 
 						if (!fromCombo.getItem(fromCombo.getSelectionIndex()).equals("All nodes") && !toCombo.getItem(toCombo.getSelectionIndex()).equals("All nodes")) 

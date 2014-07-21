@@ -1,4 +1,4 @@
-package views.functiontab;
+package controllers.functions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
