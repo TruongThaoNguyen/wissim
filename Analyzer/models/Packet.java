@@ -1,20 +1,23 @@
 package models;
-import java.util.ArrayList;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+/**
+ * describe a packet.
+ * @author trongnguyen
+ *
+ */
 public class Packet {
 	public String id;
-	public String type;
-	public String sourceID;
-	public String sourcePort;
-	public String TTL;
-	public String destID;
-	public String destPort;
-	public ArrayList<Integer> forwardNodeIDs;
-	public String size;
-	public String startTime;
-	public String endTime;
-	public boolean isSuccess;
-
+	
+	private List<Event> event;
+	
+	
+	
+	
+	
 	public String getId() {
 		return id;
 	}
@@ -103,25 +106,24 @@ public class Packet {
 		this.isSuccess = isSuccess;
 	}
 
-	public ArrayList<WirelessNode> getListNode() {
+	public ArrayList<Node> getListNode() {
 		return listNode;
 	}
 
-	public void setListNode(ArrayList<WirelessNode> listNode) {
+	public void setListNode(ArrayList<Node> listNode) {
 		this.listNode = listNode;
 	}
 
-	public ArrayList<WirelessNode> getListNodeDest() {
+	public ArrayList<Node> getListNodeDest() {
 		return listNodeDest;
 	}
 
-	public void setListNodeDest(ArrayList<WirelessNode> listNodeDest) {
+	public void setListNodeDest(ArrayList<Node> listNodeDest) {
 		this.listNodeDest = listNodeDest;
 	}
 
-	// public HashMap<Node,String> listNode;
-	public ArrayList<WirelessNode> listNode;
-	public ArrayList<WirelessNode> listNodeDest;// use for HELLO packet
+
+	public ArrayList<Node> listNodeDest;// use for HELLO packet
 
 	public Packet(String id, String type, String sourceID, String sourcePort,
 			String destID, String destPort, String size, String startTime,

@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
-import models.WirelessNode;
+import models.Node;
 import models.Packet;
 import views.Analyzer;
 
@@ -25,7 +25,7 @@ public class SurfaceChartEfficiency {
 		FileOutputStream fos= new FileOutputStream("DataEfficiency",false);
         PrintWriter pw= new PrintWriter(fos);
         for(int i=0;i<totalDrop.length;i++){
-        	WirelessNode node = Analyzer.mParser.getListNodes().get(i);
+        	Node node = Analyzer.mParser.getListNodes().get(i);
         	if (totalDrop[i] !=0)
         		pw.println(node.x+" "+node.y+" "+totalDrop[i]);
         }

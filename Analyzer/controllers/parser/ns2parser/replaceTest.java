@@ -1,4 +1,4 @@
-package controllers.parser;
+package controllers.parser.ns2parser;
 public class replaceTest {
 	public static void main(String args[]) {
 		String a = "a  b  c d";

@@ -30,9 +30,9 @@ import controllers.functions.NetworkLifeTimeTab;
 import controllers.functions.SleepPeriodTab;
 import controllers.functions.Tab;
 import controllers.functions.ThroughputTab;
-import controllers.parser.AbstractParser;
-import controllers.parser.EventParser;
-import controllers.parser.FullParser;
+import controllers.parser.ns2parser.NS2Parser;
+import controllers.parser.ns2parser.EventParser;
+import controllers.parser.ns2parser.FullParser;
 
 /**
  * main Control for Analyzer.
@@ -41,7 +41,7 @@ import controllers.parser.FullParser;
  */
 public class Analyzer extends MainContent {
 
-	public static AbstractParser mParser;
+	public static NS2Parser mParser;
 	public TabFolder tabFolder;
 	public static boolean checkFileFormat = false;
 	public static Composite composite;
@@ -129,7 +129,7 @@ public class Analyzer extends MainContent {
 	 */
 	public static void onFileOpen(String filePathNode, String filePathEvent) throws IOException 
 	{
-		String returnvalue = AbstractParser.getHeaderFileParser(filePathEvent);
+		String returnvalue = NS2Parser.getHeaderFileParser(filePathEvent);
 		if (returnvalue.equals("Y")) {
 			mParser = new FullParser();
 		} else {

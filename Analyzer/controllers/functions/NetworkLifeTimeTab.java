@@ -11,7 +11,7 @@ import java.util.Observer;
 
 import javax.rmi.CORBA.Tie;
 
-import models.WirelessNode;
+import models.Node;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -43,7 +43,7 @@ import com.ibm.icu.text.DecimalFormat;
 
 import controllers.chart2d.BarChart;
 import controllers.chart2d.ChartAllNodeMultiArea;
-import controllers.parser.FullParser;
+import controllers.parser.ns2parser.FullParser;
 import views.Analyzer;
 
 public class NetworkLifeTimeTab extends Tab implements Observer {
@@ -53,7 +53,7 @@ public class NetworkLifeTimeTab extends Tab implements Observer {
   Text deadPercentText,lifeTimeText,energyNodeDeadText;
   Combo filterByCombo;
   Button resetButton;
-  ArrayList<ArrayList<WirelessNode>> listNodeAreas;
+  ArrayList<ArrayList<Node>> listNodeAreas;
   ChartAllNodeMultiArea chartAllNodeLifeTime;
   ArrayList<Double> listLifeTimeOfAreas;
   final static double MAX_TIME = 100000;
@@ -64,7 +64,7 @@ public class NetworkLifeTimeTab extends Tab implements Observer {
    */
   public NetworkLifeTimeTab(Analyzer instance) {
     super(instance);
-    listNodeAreas = new ArrayList<ArrayList<WirelessNode>>();
+    listNodeAreas = new ArrayList<ArrayList<Node>>();
     listLifeTimeOfAreas = new ArrayList<Double>();
   }
 
@@ -195,7 +195,7 @@ public class NetworkLifeTimeTab extends Tab implements Observer {
 				   	    			  int numberNodeDeadOfArea;
 				   	    			  Map<Integer,Double> listNodeDeadArea;
 				   		    			  for(int i=0; i<listNodeAreas.size(); i++){
-				   		    				  ArrayList<WirelessNode> listNodeOfOneArea = listNodeAreas.get(i);
+				   		    				  ArrayList<Node> listNodeOfOneArea = listNodeAreas.get(i);
 				   		    				  numberNodeDeadOfArea = listNodeOfOneArea.size()*percentNodeDead/100;
 				   		    				  if(numberNodeDeadOfArea == 0)
 				   		    					  lifeTimeOneArea = 0;
@@ -282,7 +282,7 @@ public class NetworkLifeTimeTab extends Tab implements Observer {
 		 ySeries = new double[Analyzer.mParser.getListNodes().size()];
 	     xSeries = new double[Analyzer.mParser.getListNodes().size()];    
 			for(int j=0;j<Analyzer.mParser.getListNodes().size();j++) {
-				WirelessNode node = Analyzer.mParser.getListNodes().get(j);
+				Node node = Analyzer.mParser.getListNodes().get(j);
 				xSeries[j]=node.x;
 				ySeries[j]=node.y;
 			}

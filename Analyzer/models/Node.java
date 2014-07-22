@@ -1,46 +1,47 @@
 package models;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Describe a node.
  * @author trongnguyen
  *
  */
-public class WirelessNode {
+public class Node {
 	
 	/**
 	 * id of this node.
 	 */
-	public int id;
+	private int id;
 	
 	/**
 	 * position.
 	 */
-	public float x, y, z;
+	private float x, y, z;
 	
-	public HashMap<Double, Double> Energy;
+	/**
+	 * Energy.
+	 */
+	private HashMap<Double, Double> energy;
 	
+	private List<Event> event;
+	
+	public Node(int id, float x, float y) {
+		this.id = id;
+		this.x = x;
+		this.y = y;
+	}
+
+
 	@Deprecated
 	private int packetId;
 	@Deprecated
 	public String time;
 	@Deprecated
-	public String energy;
-	@Deprecated
-	public String maxEnergy;
-	@Deprecated
 	public String listIDNeighbors;
 	@Deprecated
 	public int groupID;
-	
-	public String getEnergy() {
-		return energy;
-	}
-	
-	public void setEnergy(String energy) {
-		this.energy = energy;
-	}
 	
 	public String getListNeighbors() {
 		return listIDNeighbors;
@@ -50,22 +51,7 @@ public class WirelessNode {
 		this.listIDNeighbors = listNeighbors;
 	}
 	
-	public WirelessNode(int id,String time){
-		this.id=id;
-		this.time=time;
-	}
-	
-	public WirelessNode(int id, float x, float y, float z, String time, String energy,
-			String listNeighbors) {
-		super();
-		this.id = id;
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.time = time;
-		this.energy = energy;
-		this.listIDNeighbors = listNeighbors;
-	}
+
 	
 	public float getY() {
 		return y;
@@ -96,11 +82,5 @@ public class WirelessNode {
 	}
 	public void setPacketId(int packetId){
 		this.packetId=packetId;
-	}
-	@Override
-	public String toString() {
-		return "NodeTrace [id=" + id + ", x=" + x + ", y=" + y + ", z=" + z
-				+ ", packetId=" + packetId + ", time=" + time + ", energy="
-				+ energy + ", listIDNeighbors=" + listIDNeighbors + "]";
 	}
 }

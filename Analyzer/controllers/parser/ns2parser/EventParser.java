@@ -1,4 +1,4 @@
-package controllers.parser;
+package controllers.parser.ns2parser;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -6,18 +6,37 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import models.Event;
-import models.WirelessNode;
+import models.Node;
 import models.Packet;
 
-public class EventParser extends AbstractParser {
+public class EventParser extends NS2Parser {
+	
+	/**
+	 * list of packets.
+	 * hash by id.
+	 */
+	public static HashMap<Integer, Packet>	listPacket;
+	
+	/**
+	 * list of nodes.
+	 * hash by id.
+	 */
+	public static HashMap<Integer, Node> 	listNodes;
+	
+	/**
+	 * list of events.
+	 * hash by time.
+	 */
+	public static List<Event>	listEvents;
+	
+	
 	public static FileOutputStream fout;
 	public static OutputStreamWriter out;
 	public static String sCurrentLine;
-	public  ArrayList<Packet> listPacket = new ArrayList<Packet>();
-	public  ArrayList<WirelessNode> listNodesWithNeighbors;
-	public static ArrayList<Event> listEvents = new ArrayList<Event>();
+	
 	public static String listNeighbors;
 	public static Event mEvent;
 	public static HashMap<String, Integer> timeLine;
@@ -28,105 +47,75 @@ public class EventParser extends AbstractParser {
 
 	public static String mFilePathEvent = "D://GR/GR3Material/GR3TestFile/T/gridonline/Trace.tr";
 
-	public  ArrayList<Packet> getListPacket() {
+	public HashMap<Integer, Packet> getPackets() {
 		return listPacket;
 	}
 
-	public  void setListPacket(ArrayList<Packet> listPacket) {
-		this.listPacket = listPacket;
-	}
-
-	public ArrayList<Event> getListEvents() {
+	public List<Event> getEvents() {
 		return listEvents;
+	}	
+
+	public HashMap<Integer, Node> getNodes() {
+		return listNodes;
 	}
+	
+	public void ConvertTraceFile(String filePathNodes, String filePathEvent) throws IOException {
+		listNodes  = new HashMap<Integer, Node>();
+		listPacket = new HashMap<Integer, Packet>();
+		listEvents = new ArrayList<Event>();		
 
-	public static void setListEvents(ArrayList<Event> listEvents) {
-		EventParser.listEvents = listEvents;
-	}
-
-	@Override
-	public void ConvertTraceFile(String filePathNodes, String filePathEvent)
-			throws IOException {
-		// TODO Auto-generated method stub
-		listPacket = new ArrayList<Packet>();
-		listNodesWithNeighbors = new ArrayList<WirelessNode>();
-
-		mEvent = new Event();
-		listEvents = new ArrayList<Event>();
+		mEvent = new Event();		
 
 		parseNodes(filePathNodes);
 		parseEvents(filePathEvent);
 	}
 
-	public  ArrayList<WirelessNode> getListNodes() {
-		return listNodesWithNeighbors;
-	}
-
 	@Override
 	public void parseNodes(String mNodesTraceFile) {
-		// TODO Auto-generated method stub
-
 		try {
 			String currentLine;
-			BufferedReader br = new BufferedReader(new FileReader(
-					mNodesTraceFile));
+			BufferedReader br = new BufferedReader(new FileReader(mNodesTraceFile));
 			System.out.println("Parsing nodes...");
 
-			while ((currentLine = br.readLine()) != null) {
-				String[] retval = currentLine.split("\\s+");
-
-//				String[] neighborsData = retval[3].split(",");
-//
-//				listNeighbors = "";
-//				for (int i = 0; i < neighborsData.length; i++) {
-//					listNeighbors += neighborsData[i] + " ";
-//				}
-
-				WirelessNode nodeElement = new WirelessNode(
-						Integer.parseInt(retval[0]),
-						Float.parseFloat(retval[1]),
-						Float.parseFloat(retval[2]), 0, "0", "200",
-						listNeighbors);
-
-				listNodesWithNeighbors.add(nodeElement);
-
+			while ((currentLine = br.readLine()) != null) 
+			{
+				String[] retval = currentLine.split("\\s+"); 
+				int id = Integer.parseInt(retval[0]);
+				listNodes.put(id, new Node(id, Float.parseFloat(retval[1]), Float.parseFloat(retval[2])));
 			}
+			
 			br.close();
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
 			System.out.println("catch Exception :(( Message=" + e.getMessage());
 			e.printStackTrace();
 		}
-
 	}
 
 	@Override
-	public void parseEvents(String mFileTraceEvent) throws IOException {
-		// TODO Auto-generated method stub
+	public void parseEvents(String mFileTraceEvent) throws IOException {		
 		BufferedReader br = new BufferedReader(new FileReader(mFileTraceEvent));
 		String retval[];
-		// int line = 0;
+		
 		System.out.println("Running...");
+		
 		while ((sCurrentLine = br.readLine()) != null) {
 			sCurrentLine = sCurrentLine.trim().replaceAll(" +", " ");
 			retval = sCurrentLine.split(" ");
-			if(retval[0].equals("M") == false && retval[6].equals("HELLO") == false ){
-			switch (retval[0]) {
-			case "s":
-				if (retval[3].equals("RTR")) {
-					/**
-					 * read packet , checking if packet is broadcast or single path
-					 */
-					Packet newPacket = new Packet(retval[5], retval[6],
-							retval[2].substring(1, retval[2].length() - 1),
-							"255", retval[16].substring(0,
+			if (retval[0].equals("M") == false && retval[6].equals("HELLO") == false )
+			{
+				switch (retval[0]) {
+					case "s":
+						if (retval[3].equals("RTR")) {
+							// read packet , checking if packet is broadcast or single path
+							Packet newPacket = new Packet(
+									retval[5], retval[6],	retval[2].substring(1, retval[2].length() - 1),	"255", retval[16].substring(0,
 									retval[16].length() - 1), "255", retval[7],
-							retval[1], retval[1]);
-					newPacket.listNode = new ArrayList<WirelessNode>();
-					newPacket.isSuccess = true;
-					listPacket.add(newPacket);
-					/**
-					 * read event data
-					 */
+									retval[1], retval[1]);
+							
+							listPacket.put(retval[5], newPacket);
+
+					//* read event data
 					Event event = new Event(convertType(retval[0]), retval[1],
 							"", "255", retval[2].substring(1,
 									retval[2].length() - 1), "", retval[5], "",
@@ -143,7 +132,7 @@ public class EventParser extends AbstractParser {
 					for (int i = 0; i < listPacket.size(); i++) {
 						if (listPacket.get(i).id.equals(retval[5])) {
 							listPacket.get(i).listNode
-									.add(new WirelessNode(Integer
+									.add(new Node(Integer
 											.parseInt(retval[2].substring(1,
 													retval[2].length() - 1)),
 											retval[1]));
@@ -186,7 +175,7 @@ public class EventParser extends AbstractParser {
 				 */
 				for (int i = 0; i < listPacket.size(); i++) {
 					if (listPacket.get(i).id.equals(retval[5])) {
-						listPacket.get(i).listNode.add(new WirelessNode(Integer
+						listPacket.get(i).listNode.add(new Node(Integer
 								.parseInt(retval[2].substring(1,
 										retval[2].length() - 1)), retval[1]));
 						listPacket.get(i).endTime = retval[1];
@@ -216,14 +205,14 @@ public class EventParser extends AbstractParser {
 							retval[2].substring(1, retval[2].length() - 1),
 							"0", "-1", "255",
 							retval[7], retval[1], retval[1]);
-					newpacket.listNode = new ArrayList<WirelessNode>();
+					newpacket.listNode = new ArrayHashMap<Integer, Node>();
 					
 					listPacket.add(newpacket);
 				}
 				if (retval[0].equals("D")) {
 					for (int i = 0; i < listPacket.size(); i++) {
 						if (listPacket.get(i).id.equals(retval[5])) {
-							listPacket.get(i).listNode.add(new WirelessNode(
+							listPacket.get(i).listNode.add(new Node(
 									Integer.parseInt(retval[2].substring(1,
 											retval[2].length() - 1)),
 									retval[1]));								
@@ -268,4 +257,5 @@ public class EventParser extends AbstractParser {
 		ep.ConvertTraceFile(mFilePathNodes, mFilePathEvent);
 		
 	}
+
 }

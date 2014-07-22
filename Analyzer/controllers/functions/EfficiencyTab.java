@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import models.WirelessNode;
+import models.Node;
 import models.Packet;
 
 import org.eclipse.swt.SWT;
@@ -50,7 +50,7 @@ public class EfficiencyTab extends Tab implements Observer{
   Combo criteriaCombo; 
   Combo filterByCombo;
   Button resetButton;
-  ArrayList<ArrayList<WirelessNode>> listNodeAreas;
+  ArrayList<ArrayList<Node>> listNodeAreas;
   ChartAllNodeMultiArea chartAllNodeEfficiency;
   ArrayList<Double> listEfficiencyOfAreas;
   /**
@@ -58,7 +58,7 @@ public class EfficiencyTab extends Tab implements Observer{
    */
   public EfficiencyTab(Analyzer instance) {
     super(instance);
-    listNodeAreas = new ArrayList<ArrayList<WirelessNode>>();
+    listNodeAreas = new ArrayList<ArrayList<Node>>();
     listEfficiencyOfAreas = new ArrayList<Double>();
   }
 
@@ -134,9 +134,9 @@ public class EfficiencyTab extends Tab implements Observer{
 	    				  double numberDroppedPacket,numberPacketOfArea;
 	    				  int No=1;
 	    				  boolean checkBelongTo;
-	    				  ArrayList<WirelessNode> listNodeOfSourceArea = listNodeAreas.get(0);
+	    				  ArrayList<Node> listNodeOfSourceArea = listNodeAreas.get(0);
 	    				  for(int i=0; i<listNodeAreas.size(); i++){
-		    				  ArrayList<WirelessNode> listNodeOfOneArea = listNodeAreas.get(i);
+		    				  ArrayList<Node> listNodeOfOneArea = listNodeAreas.get(i);
 		    				  numberDroppedPacket = 0;
 		    				  numberPacketOfArea = 0;
 		    				  for (int j=0;j<Analyzer.mParser.getListPacket().size();j++){ 
@@ -144,8 +144,8 @@ public class EfficiencyTab extends Tab implements Observer{
 		    					  checkBelongTo = false;
 		    					  for(int k = 0;k < listNodeOfOneArea.size(); k++){
 		    						  for(int t = 0;t < listNodeOfSourceArea.size(); t++){
-			    						  WirelessNode nodeDest = listNodeOfOneArea.get(k);
-			    						  WirelessNode nodeSource = listNodeOfSourceArea.get(t);
+			    						  Node nodeDest = listNodeOfOneArea.get(k);
+			    						  Node nodeSource = listNodeOfSourceArea.get(t);
 			    						  if((nodeDest.id == Integer.parseInt(packet.destID)) && (nodeSource.id == Integer.parseInt(packet.sourceID))){
 			    							  checkBelongTo = true;
 			    							  numberPacketOfArea++;
@@ -215,7 +215,7 @@ public class EfficiencyTab extends Tab implements Observer{
 		 ySeries = new double[Analyzer.mParser.getListNodes().size()];
 	     xSeries = new double[Analyzer.mParser.getListNodes().size()];    
 			for(int j=0;j<Analyzer.mParser.getListNodes().size();j++) {
-				WirelessNode node = Analyzer.mParser.getListNodes().get(j);
+				Node node = Analyzer.mParser.getListNodes().get(j);
 				xSeries[j]=node.x;
 				ySeries[j]=node.y;
 			}

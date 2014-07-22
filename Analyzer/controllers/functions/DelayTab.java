@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Observable;
 import java.util.Observer;
 
-import models.WirelessNode;
+import models.Node;
 import models.Packet;
 
 import org.eclipse.swt.SWT;
@@ -50,7 +50,7 @@ public class DelayTab extends Tab implements Observer{
 	FillLayout fillLayout;
 	Text avgText,variantText,maxText,minText;
 	Combo filterByCombo,fromCombo,toCombo; 
-	ArrayList<WirelessNode> listNodeAreaSource,listNodeAreaDest;
+	ArrayList<Node> listNodeAreaSource,listNodeAreaDest;
 	ChartAllNode chartAllNode;
 	
 	/**
@@ -58,8 +58,8 @@ public class DelayTab extends Tab implements Observer{
 	 */
 	public DelayTab(Analyzer instance) {
 		super(instance);
-		listNodeAreaSource = new ArrayList<WirelessNode>();
-		listNodeAreaDest = new ArrayList<WirelessNode>();
+		listNodeAreaSource = new ArrayList<Node>();
+		listNodeAreaDest = new ArrayList<Node>();
 	}
 
 	/**
@@ -276,7 +276,7 @@ public class DelayTab extends Tab implements Observer{
 			{
 				itemList[0]="All nodes";
 				for (int i=0;i<Analyzer.mParser.getListNodes().size();i++) { 
-					 WirelessNode node=Analyzer.mParser.getListNodes().get(i);
+					 Node node=Analyzer.mParser.getListNodes().get(i);
 					 itemList[i+1]=Integer.toString(node.id);
 				}
 				fromCombo.setItems(itemList);
@@ -291,7 +291,7 @@ public class DelayTab extends Tab implements Observer{
 			ySeries = new double[Analyzer.mParser.getListNodes().size()];
 			xSeries = new double[Analyzer.mParser.getListNodes().size()];		
 			for(int i=0;i<Analyzer.mParser.getListNodes().size();i++) {
-				WirelessNode node = Analyzer.mParser.getListNodes().get(i);
+				Node node = Analyzer.mParser.getListNodes().get(i);
 				xSeries[i]=node.x;
 				ySeries[i]=node.y;
 			}
@@ -317,14 +317,14 @@ public class DelayTab extends Tab implements Observer{
 		String[] itemListDest=new String[this.listNodeAreaDest.size()] ;	
 			
 		for (int i=0;i<this.listNodeAreaSource.size();i++){ 
-			WirelessNode node=this.listNodeAreaSource.get(i);
+			Node node=this.listNodeAreaSource.get(i);
 			itemListSource[i]=Integer.toString(node.id);
 		}
 		
 		fromCombo.setItems(itemListSource);
 		
 		for (int i=0;i<this.listNodeAreaDest.size();i++){ 
-			 WirelessNode node=this.listNodeAreaDest.get(i);
+			 Node node=this.listNodeAreaDest.get(i);
 			 itemListDest[i]=Integer.toString(node.id);
 		}
 		

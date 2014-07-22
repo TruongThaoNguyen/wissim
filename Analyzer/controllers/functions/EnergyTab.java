@@ -12,7 +12,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import models.NodeEnergy;
-import models.WirelessNode;
+import models.Node;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -49,9 +49,9 @@ import controllers.chart2d.BarChart;
 import controllers.chart2d.ChartAllNode;
 import controllers.chart2d.ChartAllNodeMultiArea;
 import controllers.chart3d.SurfaceChartEnergy;
-import controllers.parser.FullParser;
 
 
+import controllers.parser.ns2parser.FullParser;
 import views.Analyzer;
 
 
@@ -61,7 +61,7 @@ public class EnergyTab extends Tab implements Observer{
   FillLayout fillLayout;
   Combo filterByCombo,equalCombo; 
   Button resetButton;
-  ArrayList<ArrayList<WirelessNode>> listNodeAreas;
+  ArrayList<ArrayList<Node>> listNodeAreas;
   ChartAllNodeMultiArea chartAllNodeEnergy;
   ArrayList<Double> listEnergyOfAreas,listAvgEnergyOfAreas;
   /**
@@ -69,7 +69,7 @@ public class EnergyTab extends Tab implements Observer{
    */
   public EnergyTab(Analyzer instance) {
     super(instance);
-    listNodeAreas = new ArrayList<ArrayList<WirelessNode>>();
+    listNodeAreas = new ArrayList<ArrayList<Node>>();
     listEnergyOfAreas = new ArrayList<Double>(); 
     listAvgEnergyOfAreas = new ArrayList<Double>(); 
   }
@@ -215,7 +215,7 @@ public class EnergyTab extends Tab implements Observer{
 	    			  int No=1;
 	    			  ArrayList<NodeEnergy> listNodeEnergy= new ArrayList<NodeEnergy>();
 		    			  for(int i=0; i<listNodeAreas.size(); i++){
-		    				  ArrayList<WirelessNode> listNodeOfOneArea = listNodeAreas.get(i);
+		    				  ArrayList<Node> listNodeOfOneArea = listNodeAreas.get(i);
 		    				  areaEnergy = 0;
 		    				  for(int j=0; j<listNodeOfOneArea.size(); j++){
 		    					  listNodeEnergy = Analyzer.mParser.getListEnergy().get(listNodeOfOneArea.get(j).id);
@@ -264,7 +264,7 @@ public class EnergyTab extends Tab implements Observer{
 			{
 				itemList[0]="All nodes";
 				for (i=0;i<Analyzer.mParser.getListNodes().size();i++){ 
-					 WirelessNode node=Analyzer.mParser.getListNodes().get(i);
+					 Node node=Analyzer.mParser.getListNodes().get(i);
 					 itemList[i+1]=Integer.toString(node.id);
 				}
 				equalCombo.setItems(itemList);
@@ -278,7 +278,7 @@ public class EnergyTab extends Tab implements Observer{
 		 ySeries = new double[Analyzer.mParser.getListNodes().size()];
 	     xSeries = new double[Analyzer.mParser.getListNodes().size()];    
 			for(int j=0;j<Analyzer.mParser.getListNodes().size();j++) {
-				WirelessNode node = Analyzer.mParser.getListNodes().get(j);
+				Node node = Analyzer.mParser.getListNodes().get(j);
 				xSeries[j]=node.x;
 				ySeries[j]=node.y;
 			}

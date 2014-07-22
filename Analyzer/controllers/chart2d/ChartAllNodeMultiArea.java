@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 
 import views.Analyzer;
-import models.WirelessNode;
+import models.Node;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -54,8 +54,8 @@ public class ChartAllNodeMultiArea extends Observable{
    private static int currentY;
 
    private static boolean drag = false, dragMove = false, checkMove = false;
-   public ArrayList<ArrayList<WirelessNode>> listNodeArea;
-   public ArrayList<WirelessNode> listNodeOfOneArea;
+   public ArrayList<ArrayList<Node>> listNodeArea;
+   public ArrayList<Node> listNodeOfOneArea;
    public Chart chartAllNode;
    Menu popupMenu;
    
@@ -102,8 +102,8 @@ public class ChartAllNodeMultiArea extends Observable{
      * @return The created chart
      */
     public void createChart(Composite parent) {
-    	listNodeArea = new ArrayList<ArrayList<WirelessNode>>();
-    	listNodeOfOneArea = new ArrayList<WirelessNode>();
+    	listNodeArea = new ArrayList<ArrayList<Node>>();
+    	listNodeOfOneArea = new ArrayList<Node>();
         // create a chart
         chartAllNode = new Chart(parent, SWT.NONE);
        
@@ -172,9 +172,9 @@ public class ChartAllNodeMultiArea extends Observable{
 	                          "Question",
 	                          "Do you want to choose this area?");
 	                if(answer){
-	                	listNodeOfOneArea = new ArrayList<WirelessNode>();
+	                	listNodeOfOneArea = new ArrayList<Node>();
 		                	for(int i=0;i<Analyzer.mParser.getListNodes().size();i++) {
-		            			WirelessNode node = Analyzer.mParser.getListNodes().get(i);
+		            			Node node = Analyzer.mParser.getListNodes().get(i);
 		            			if(startX <= node.x+2 && endX >= node.x-2 && startY >= node.y-2 && endY <= node.y+2 )
 		            				listNodeOfOneArea.add(node);	
 		                	}
@@ -271,7 +271,7 @@ public class ChartAllNodeMultiArea extends Observable{
                     	listNodeOfOneArea = listNodeArea.get(k);
                     	 gc.setBackground(Display.getDefault().getSystemColor(k+2));
 			                for(int i=0;i<listNodeOfOneArea.size();i++){
-			                	WirelessNode node = listNodeOfOneArea.get(i);
+			                	Node node = listNodeOfOneArea.get(i);
 			                	IAxis xAxis = chartAllNode.getAxisSet().getXAxis(0);
 			                    IAxis yAxis = chartAllNode.getAxisSet().getYAxis(0);
 		
