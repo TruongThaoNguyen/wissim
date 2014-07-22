@@ -1,17 +1,13 @@
 package models;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Event {
-	
-	/**
-	 * For Event
-	 */
+
 	public static final int TYPE_SEND = 0x1;
 	public static final int TYPE_RECEIVE = 0x10;
 	public static final int TYPE_FORWARD = 0x100;
 	public static final int TYPE_SLEEP = 0x1000;
 	public static final int TYPE_WAKE = 0x10000;
+	
 	public String type = "";
 	public String time = "";
 	public String timeReceive = "";
@@ -26,6 +22,7 @@ public class Event {
 	public String bufferLength = "";
 	public String nodeId = "";
 	public String reason = "";
+
 	// move
 	public String currX = "";
 	public String currY = "";
@@ -34,6 +31,7 @@ public class Event {
 	public String destY = "";
 	public String destZ = "";
 	public String speed = "";
+	
 	public Event() {
 		super();
 	}

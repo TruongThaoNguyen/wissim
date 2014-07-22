@@ -15,7 +15,7 @@ import java.util.TreeMap;
 
 import models.Event;
 import models.NodeEnergy;
-import models.NodeTrace;
+import models.WirelessNode;
 import models.Packet;
 
 
@@ -25,7 +25,7 @@ public class FullParser2 {
 	public static OutputStreamWriter out;
 	public static String sCurrentLine;
 	public static ArrayList<Packet> listPacket;
-	public static ArrayList<NodeTrace> listNodesWithNeighbors;
+	public static ArrayList<WirelessNode> listNodesWithNeighbors;
 	public static ArrayList<Event> listEvents;
 	public static String listNeighbors;
 	public static Event mEvent;
@@ -52,8 +52,8 @@ public class FullParser2 {
 		listPacket = new ArrayList<Packet>();
 		//mFilePathNodes = "Neighbors.txt";
 		//mFilePathEvent = "Trace_Energy.tr";
-		listNodesWithNeighbors = new ArrayList<NodeTrace>();
-		listNodesWithNeighbors = new ArrayList<NodeTrace>();
+		listNodesWithNeighbors = new ArrayList<WirelessNode>();
+		listNodesWithNeighbors = new ArrayList<WirelessNode>();
 		listEnergy= new ArrayList<ArrayList<NodeEnergy>>();
 		
 		mEvent = new Event();
@@ -122,7 +122,7 @@ public class FullParser2 {
 					listNeighbors += neighborsData[i] + " ";
 				}
 
-				NodeTrace nodeElement = new NodeTrace(
+				WirelessNode nodeElement = new WirelessNode(
 						Integer.parseInt(retval[0]),
 						Float.parseFloat(retval[1]),
 						Float.parseFloat(retval[2]), 0, "0", "200",
@@ -191,14 +191,14 @@ public class FullParser2 {
 								"0", retval[27].substring(0,
 										retval[27].length() - 1), "0",
 								retval[8], retval[1], retval[1]);
-						newpacket.listNode = new ArrayList<NodeTrace>();
+						newpacket.listNode = new ArrayList<WirelessNode>();
 
 						listPacket.add(newpacket);
 					}
 					if (retval[0].equals("r") && retval[3].equals("RTR")) {
 						for (int i = 0; i < listPacket.size(); i++) {
 							if (listPacket.get(i).id.equals(retval[6])) {
-								listPacket.get(i).listNode.add(new NodeTrace(
+								listPacket.get(i).listNode.add(new WirelessNode(
 										Integer.parseInt(retval[2].substring(1,
 												retval[2].length() - 1)),
 										retval[1]));
@@ -213,7 +213,7 @@ public class FullParser2 {
 					if (retval[0].equals("D") && retval[3].equals("RTR")) {
 						for (int i = 0; i < listPacket.size(); i++) {
 							if (listPacket.get(i).id.equals(retval[6])) {
-								listPacket.get(i).listNode.add(new NodeTrace(
+								listPacket.get(i).listNode.add(new WirelessNode(
 										Integer.parseInt(retval[2].substring(1,
 												retval[2].length() - 1)),
 										retval[1]));
@@ -228,7 +228,7 @@ public class FullParser2 {
 						for (int i = 0; i < listPacket.size(); i++) {
 							if (listPacket.get(i).id.equals(retval[6])) {
 
-								listPacket.get(i).listNode.add(new NodeTrace(
+								listPacket.get(i).listNode.add(new WirelessNode(
 										Integer.parseInt(retval[2].substring(1,
 												retval[2].length() - 1)),
 										retval[1]));
@@ -257,13 +257,13 @@ public class FullParser2 {
 								"0", retval[26].substring(0,
 										retval[26].length() - 1), "0",
 								retval[7], retval[1], retval[1]);
-						newpacket.listNode = new ArrayList<NodeTrace>();
+						newpacket.listNode = new ArrayList<WirelessNode>();
 						listPacket.add(newpacket);
 					}
 					if (retval[0].equals("r") && retval[3].equals("RTR")) {
 						for (int i = 0; i < listPacket.size(); i++) {
 							if (listPacket.get(i).id.equals(retval[5])) {
-								listPacket.get(i).listNode.add(new NodeTrace(
+								listPacket.get(i).listNode.add(new WirelessNode(
 										Integer.parseInt(retval[2].substring(1,
 												retval[2].length() - 1)),
 										retval[1]));
@@ -279,7 +279,7 @@ public class FullParser2 {
 					if (retval[0].equals("D") && retval[3].equals("RTR")) {
 						for (int i = 0; i < listPacket.size(); i++) {
 							if (listPacket.get(i).id.equals(retval[5])) {
-								listPacket.get(i).listNode.add(new NodeTrace(
+								listPacket.get(i).listNode.add(new WirelessNode(
 										Integer.parseInt(retval[2].substring(1,
 												retval[2].length() - 1)),
 										retval[1]));
@@ -294,7 +294,7 @@ public class FullParser2 {
 						for (int i = 0; i < listPacket.size(); i++) {
 							if (listPacket.get(i).id.equals(retval[5])) {
 
-								listPacket.get(i).listNode.add(new NodeTrace(
+								listPacket.get(i).listNode.add(new WirelessNode(
 										Integer.parseInt(retval[2].substring(1,
 												retval[2].length() - 1)),
 										retval[1]));
@@ -344,7 +344,7 @@ public class FullParser2 {
 	 * @throws IOException
 	 */
 	
-	public static ArrayList<NodeEnergy> getNodeEnergy(NodeTrace node) throws IOException {
+	public static ArrayList<NodeEnergy> getNodeEnergy(WirelessNode node) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(mFilePathEvent));
 		String retval[];
 		NodeEnergy nE = new NodeEnergy("","", "0");
@@ -493,11 +493,11 @@ public class FullParser2 {
 		FullParser2.listPacket = listPacket;
 	}
 
-	public static ArrayList<NodeTrace> getListNodes() {
+	public static ArrayList<WirelessNode> getListNodes() {
 		return listNodesWithNeighbors;
 	}
 
-	public static void setListNodes(ArrayList<NodeTrace> listNodesWithNeighbors) {
+	public static void setListNodes(ArrayList<WirelessNode> listNodesWithNeighbors) {
 		FullParser2.listNodesWithNeighbors = listNodesWithNeighbors;
 	}
 

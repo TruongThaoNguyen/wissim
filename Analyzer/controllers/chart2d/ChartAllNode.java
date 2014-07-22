@@ -6,7 +6,7 @@ import java.rmi.dgc.DGC;
 import java.util.ArrayList;
 import java.util.Observable;
 
-import models.NodeTrace;
+import models.WirelessNode;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -55,8 +55,8 @@ public class ChartAllNode extends Observable{
    private static int currentY;
 
    private static boolean drag = false, dragMove = false, checkMove = false;
-   public ArrayList<NodeTrace> listNodeAreaSource,listNodeAreaDest;
-   public ArrayList<ArrayList<NodeTrace>> listNodeArea;
+   public ArrayList<WirelessNode> listNodeAreaSource,listNodeAreaDest;
+   public ArrayList<ArrayList<WirelessNode>> listNodeArea;
    Chart chartAllNode;
    Menu popupMenu;
    
@@ -103,9 +103,9 @@ public class ChartAllNode extends Observable{
      * @return The created chart
      */
     public void createChart(Composite parent) {
-    	listNodeAreaSource = new ArrayList<NodeTrace>();
-    	listNodeAreaDest = new ArrayList<NodeTrace>();
-    	listNodeArea = new ArrayList<ArrayList<NodeTrace>>();
+    	listNodeAreaSource = new ArrayList<WirelessNode>();
+    	listNodeAreaDest = new ArrayList<WirelessNode>();
+    	listNodeArea = new ArrayList<ArrayList<WirelessNode>>();
         // create a chart
         chartAllNode = new Chart(parent, SWT.NONE);
        
@@ -180,7 +180,7 @@ public class ChartAllNode extends Observable{
 	                if(answer){
 	                	if(listNodeAreaSource.size() == 0){
 		                	for(int i=0;i<Analyzer.mParser.getListNodes().size();i++) {
-		            			NodeTrace node = Analyzer.mParser.getListNodes().get(i);
+		            			WirelessNode node = Analyzer.mParser.getListNodes().get(i);
 		            			if(startX <= node.x+2 && endX >= node.x-2 && startY >= node.y-2 && endY <= node.y+2 )
 		            				listNodeAreaSource.add(node);
 		            		}
@@ -188,7 +188,7 @@ public class ChartAllNode extends Observable{
 	                	else
 	                		if(listNodeAreaDest.size() == 0){
 	                			for(int i=0;i<Analyzer.mParser.getListNodes().size();i++) {
-	    	            			NodeTrace node = Analyzer.mParser.getListNodes().get(i);
+	    	            			WirelessNode node = Analyzer.mParser.getListNodes().get(i);
 	    	            			if(startX <= node.x+2 && endX >= node.x-2 && startY >= node.y-2 && endY <= node.y+2 )
 	    	            				listNodeAreaDest.add(node);
 	    	            		}
@@ -282,7 +282,7 @@ public class ChartAllNode extends Observable{
                 	gc.setAlpha(128);
                     gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 	                for(int i=0;i<listNodeAreaSource.size();i++){
-	                	NodeTrace node = listNodeAreaSource.get(i);
+	                	WirelessNode node = listNodeAreaSource.get(i);
 	                	IAxis xAxis = chartAllNode.getAxisSet().getXAxis(0);
 	                    IAxis yAxis = chartAllNode.getAxisSet().getYAxis(0);
 
@@ -351,7 +351,7 @@ public class ChartAllNode extends Observable{
                     gc.setAlpha(128);
               
 	                for(int i=0;i<listNodeAreaDest.size();i++){
-	                	NodeTrace node = listNodeAreaDest.get(i);
+	                	WirelessNode node = listNodeAreaDest.get(i);
 	                	IAxis xAxis = chartAllNode.getAxisSet().getXAxis(0);
 	                    IAxis yAxis = chartAllNode.getAxisSet().getYAxis(0);
 

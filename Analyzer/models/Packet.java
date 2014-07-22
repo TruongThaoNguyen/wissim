@@ -103,25 +103,25 @@ public class Packet {
 		this.isSuccess = isSuccess;
 	}
 
-	public ArrayList<NodeTrace> getListNode() {
+	public ArrayList<WirelessNode> getListNode() {
 		return listNode;
 	}
 
-	public void setListNode(ArrayList<NodeTrace> listNode) {
+	public void setListNode(ArrayList<WirelessNode> listNode) {
 		this.listNode = listNode;
 	}
 
-	public ArrayList<NodeTrace> getListNodeDest() {
+	public ArrayList<WirelessNode> getListNodeDest() {
 		return listNodeDest;
 	}
 
-	public void setListNodeDest(ArrayList<NodeTrace> listNodeDest) {
+	public void setListNodeDest(ArrayList<WirelessNode> listNodeDest) {
 		this.listNodeDest = listNodeDest;
 	}
 
 	// public HashMap<Node,String> listNode;
-	public ArrayList<NodeTrace> listNode;
-	public ArrayList<NodeTrace> listNodeDest;// use for HELLO packet
+	public ArrayList<WirelessNode> listNode;
+	public ArrayList<WirelessNode> listNodeDest;// use for HELLO packet
 
 	public Packet(String id, String type, String sourceID, String sourcePort,
 			String destID, String destPort, String size, String startTime,

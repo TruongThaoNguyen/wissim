@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import models.Event;
-import models.NodeTrace;
+import models.WirelessNode;
 import models.Packet;
 
 public class EventParser extends AbstractParser {
@@ -16,7 +16,7 @@ public class EventParser extends AbstractParser {
 	public static OutputStreamWriter out;
 	public static String sCurrentLine;
 	public  ArrayList<Packet> listPacket = new ArrayList<Packet>();
-	public  ArrayList<NodeTrace> listNodesWithNeighbors;
+	public  ArrayList<WirelessNode> listNodesWithNeighbors;
 	public static ArrayList<Event> listEvents = new ArrayList<Event>();
 	public static String listNeighbors;
 	public static Event mEvent;
@@ -49,7 +49,7 @@ public class EventParser extends AbstractParser {
 			throws IOException {
 		// TODO Auto-generated method stub
 		listPacket = new ArrayList<Packet>();
-		listNodesWithNeighbors = new ArrayList<NodeTrace>();
+		listNodesWithNeighbors = new ArrayList<WirelessNode>();
 
 		mEvent = new Event();
 		listEvents = new ArrayList<Event>();
@@ -58,7 +58,7 @@ public class EventParser extends AbstractParser {
 		parseEvents(filePathEvent);
 	}
 
-	public  ArrayList<NodeTrace> getListNodes() {
+	public  ArrayList<WirelessNode> getListNodes() {
 		return listNodesWithNeighbors;
 	}
 
@@ -82,7 +82,7 @@ public class EventParser extends AbstractParser {
 //					listNeighbors += neighborsData[i] + " ";
 //				}
 
-				NodeTrace nodeElement = new NodeTrace(
+				WirelessNode nodeElement = new WirelessNode(
 						Integer.parseInt(retval[0]),
 						Float.parseFloat(retval[1]),
 						Float.parseFloat(retval[2]), 0, "0", "200",
@@ -121,7 +121,7 @@ public class EventParser extends AbstractParser {
 							"255", retval[16].substring(0,
 									retval[16].length() - 1), "255", retval[7],
 							retval[1], retval[1]);
-					newPacket.listNode = new ArrayList<NodeTrace>();
+					newPacket.listNode = new ArrayList<WirelessNode>();
 					newPacket.isSuccess = true;
 					listPacket.add(newPacket);
 					/**
@@ -143,7 +143,7 @@ public class EventParser extends AbstractParser {
 					for (int i = 0; i < listPacket.size(); i++) {
 						if (listPacket.get(i).id.equals(retval[5])) {
 							listPacket.get(i).listNode
-									.add(new NodeTrace(Integer
+									.add(new WirelessNode(Integer
 											.parseInt(retval[2].substring(1,
 													retval[2].length() - 1)),
 											retval[1]));
@@ -186,7 +186,7 @@ public class EventParser extends AbstractParser {
 				 */
 				for (int i = 0; i < listPacket.size(); i++) {
 					if (listPacket.get(i).id.equals(retval[5])) {
-						listPacket.get(i).listNode.add(new NodeTrace(Integer
+						listPacket.get(i).listNode.add(new WirelessNode(Integer
 								.parseInt(retval[2].substring(1,
 										retval[2].length() - 1)), retval[1]));
 						listPacket.get(i).endTime = retval[1];
@@ -216,14 +216,14 @@ public class EventParser extends AbstractParser {
 							retval[2].substring(1, retval[2].length() - 1),
 							"0", "-1", "255",
 							retval[7], retval[1], retval[1]);
-					newpacket.listNode = new ArrayList<NodeTrace>();
+					newpacket.listNode = new ArrayList<WirelessNode>();
 					
 					listPacket.add(newpacket);
 				}
 				if (retval[0].equals("D")) {
 					for (int i = 0; i < listPacket.size(); i++) {
 						if (listPacket.get(i).id.equals(retval[5])) {
-							listPacket.get(i).listNode.add(new NodeTrace(
+							listPacket.get(i).listNode.add(new WirelessNode(
 									Integer.parseInt(retval[2].substring(1,
 											retval[2].length() - 1)),
 									retval[1]));								

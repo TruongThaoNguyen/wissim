@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
-import models.NodeTrace;
+import models.WirelessNode;
 import models.Packet;
 import views.Analyzer;
 
@@ -29,7 +29,7 @@ public class SurfaceChartThroughput {
 		FileOutputStream fos= new FileOutputStream("DataThroughput",false);
         PrintWriter pw= new PrintWriter(fos);
         for(int i=0;i<totalSize.length;i++){
-        	NodeTrace node = Analyzer.mParser.getListNodes().get(i);
+        	WirelessNode node = Analyzer.mParser.getListNodes().get(i);
         	if (totalTime[i] !=0)
         		pw.println(node.x+" "+node.y+" "+totalSize[i]/totalTime[i]);
         }

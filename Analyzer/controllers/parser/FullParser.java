@@ -11,7 +11,7 @@ import java.util.Map;
 
 import models.Event;
 import models.NodeEnergy;
-import models.NodeTrace;
+import models.WirelessNode;
 import models.Packet;
 
 public class FullParser extends AbstractParser{
@@ -19,7 +19,7 @@ public class FullParser extends AbstractParser{
 	public static OutputStreamWriter out;
 	public static String sCurrentLine;
 	public  ArrayList<Packet> listPacket = new ArrayList<Packet>();
-	public  ArrayList<NodeTrace> listNodesWithNeighbors;
+	public  ArrayList<WirelessNode> listNodesWithNeighbors;
 	public static ArrayList<Event> listEvents = new ArrayList<Event>();
 	public static String listNeighbors;
 	public static Event mEvent;
@@ -68,7 +68,7 @@ public class FullParser extends AbstractParser{
 		listPacket = new ArrayList<Packet>();
 //		mFilePathNodes = "D://GR/GR3Material/Neighbors.txt";
 //		mFilePathEvent = "D://GR/GR3Material/Trace_Energy.tr";
-		listNodesWithNeighbors = new ArrayList<NodeTrace>();
+		listNodesWithNeighbors = new ArrayList<WirelessNode>();
 	
 		listEnergy = new ArrayList<ArrayList<NodeEnergy>>();
 
@@ -124,7 +124,7 @@ public class FullParser extends AbstractParser{
 //					listNeighbors += neighborsData[i] + " ";
 //				}
 
-				NodeTrace nodeElement = new NodeTrace(
+				WirelessNode nodeElement = new WirelessNode(
 						Integer.parseInt(retval[0]),
 						Float.parseFloat(retval[1]),
 						Float.parseFloat(retval[2]), 0, "0", "200",
@@ -268,14 +268,14 @@ public class FullParser extends AbstractParser{
 								"0", retval[26].substring(0,
 										retval[26].length() - 1).replaceAll("[^\\d.]", ""), retval[7],
 								retval[7], retval[1], retval[1]);
-						newpacket.listNode = new ArrayList<NodeTrace>();
+						newpacket.listNode = new ArrayList<WirelessNode>();
 						
 						listPacket.add(newpacket);
 					}
 					if (retval[0].equals("r") && retval[3].equals("RTR")) {
 						for (int i = 0; i < listPacket.size(); i++) {
 							if (listPacket.get(i).id.equals(retval[5])) {
-								listPacket.get(i).listNode.add(new NodeTrace(
+								listPacket.get(i).listNode.add(new WirelessNode(
 										Integer.parseInt(retval[2].substring(1,
 												retval[2].length() - 1)),
 										retval[1]));
@@ -291,7 +291,7 @@ public class FullParser extends AbstractParser{
 					if (retval[0].equals("D") && retval[3].equals("RTR")) {
 						for (int i = 0; i < listPacket.size(); i++) {
 							if (listPacket.get(i).id.equals(retval[5])) {
-								listPacket.get(i).listNode.add(new NodeTrace(
+								listPacket.get(i).listNode.add(new WirelessNode(
 										Integer.parseInt(retval[2].substring(1,
 												retval[2].length() - 1)),
 										retval[1]));
@@ -306,7 +306,7 @@ public class FullParser extends AbstractParser{
 						for (int i = 0; i < listPacket.size(); i++) {
 							if (listPacket.get(i).id.equals(retval[5])) {
 
-								listPacket.get(i).listNode.add(new NodeTrace(
+								listPacket.get(i).listNode.add(new WirelessNode(
 										Integer.parseInt(retval[2].substring(1,
 												retval[2].length() - 1)),
 										retval[1]));
@@ -327,14 +327,14 @@ public class FullParser extends AbstractParser{
 								retval[2].substring(1, retval[2].length() - 1),
 								"0", "-1", "255",
 								retval[7], retval[1], retval[1]);
-						newpacket.listNode = new ArrayList<NodeTrace>();
+						newpacket.listNode = new ArrayList<WirelessNode>();
 						
 						listPacket.add(newpacket);
 					}
 					if (retval[0].equals("D")) {
 						for (int i = 0; i < listPacket.size(); i++) {
 							if (listPacket.get(i).id.equals(retval[5])) {
-								listPacket.get(i).listNode.add(new NodeTrace(
+								listPacket.get(i).listNode.add(new WirelessNode(
 										Integer.parseInt(retval[2].substring(1,
 												retval[2].length() - 1)),
 										retval[1]));								
@@ -359,7 +359,7 @@ public class FullParser extends AbstractParser{
 	 * @throws IOException
 	 */
 
-	public static ArrayList<NodeEnergy> getNodeEnergy(NodeTrace node,
+	public static ArrayList<NodeEnergy> getNodeEnergy(WirelessNode node,
 			String time) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(mFilePathEvent));
 		String retval[];
@@ -521,11 +521,11 @@ public class FullParser extends AbstractParser{
 		this.listPacket = listPacket;
 	}
 
-	public  ArrayList<NodeTrace> getListNodes() {
+	public  ArrayList<WirelessNode> getListNodes() {
 		return listNodesWithNeighbors;
 	}
 
-	public  void setListNodes(ArrayList<NodeTrace> listNodesWithNeighbors) {
+	public  void setListNodes(ArrayList<WirelessNode> listNodesWithNeighbors) {
 		this.listNodesWithNeighbors = listNodesWithNeighbors;
 	}
 

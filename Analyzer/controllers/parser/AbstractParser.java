@@ -12,7 +12,7 @@ import java.util.Map;
 import models.Event;
 import models.IFileParser;
 import models.NodeEnergy;
-import models.NodeTrace;
+import models.WirelessNode;
 import models.Packet;
 
 
@@ -48,7 +48,7 @@ public abstract class AbstractParser implements IFileParser {
 		return null;
 	}
 
-	public ArrayList<NodeTrace> getListNodes() {
+	public ArrayList<WirelessNode> getListNodes() {
 		// TODO Auto-generated method stub
 		return null;
 	}

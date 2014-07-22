@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import models.NodeTrace;
+import models.WirelessNode;
 import models.Packet;
 
 import org.eclipse.swt.SWT;
@@ -60,7 +60,7 @@ public class SleepPeriodTab extends Tab implements Observer{
   Button resetButton;
   Text avgText,maxText,minText;
   
-  ArrayList<ArrayList<NodeTrace>> listNodeAreas;
+  ArrayList<ArrayList<WirelessNode>> listNodeAreas;
   ChartAllNodeMultiArea chartAllNodeSleepTime;
   ArrayList<Double> listSleepTimeOfAreas,listAvgSleepTimeOfAreas;
   /*constant of network*/
@@ -72,7 +72,7 @@ public class SleepPeriodTab extends Tab implements Observer{
    */
   public SleepPeriodTab(Analyzer instance) {
     super(instance);
-    listNodeAreas = new ArrayList<ArrayList<NodeTrace>>();
+    listNodeAreas = new ArrayList<ArrayList<WirelessNode>>();
     listSleepTimeOfAreas = new ArrayList<Double>(); 
     listAvgSleepTimeOfAreas = new ArrayList<Double>();
     initSleepTime();
@@ -88,7 +88,7 @@ public class SleepPeriodTab extends Tab implements Observer{
 			sleepTime[Integer.parseInt(packet.sourceID)] -= TRANSITION_TIME;								
 			// 						 								
 			for(int j = 0; j < packet.listNode.size(); j++){	
-				NodeTrace node = packet.listNode.get(j);
+				WirelessNode node = packet.listNode.get(j);
 //				if(packet.isSuccess){
 					if(packet.listNode.indexOf(node) == packet.listNode.size()-1)
 						sleepTime[node.id] -= TRANSITION_TIME;
@@ -237,7 +237,7 @@ public class SleepPeriodTab extends Tab implements Observer{
 	    			  double areaSleepTime;
 	    			  int No=1;
 		    			  for(int i=0; i<listNodeAreas.size(); i++){
-		    				  ArrayList<NodeTrace> listNodeOfOneArea = listNodeAreas.get(i);
+		    				  ArrayList<WirelessNode> listNodeOfOneArea = listNodeAreas.get(i);
 		    				  areaSleepTime = 0;
 		    				  for(int j=0; j<listNodeOfOneArea.size(); j++){
 		    					  TableItem tableItem= new TableItem(table, SWT.NONE);
@@ -278,7 +278,7 @@ public class SleepPeriodTab extends Tab implements Observer{
 			{
 				itemList[0]="All nodes";
 				for (i=0;i<Analyzer.mParser.getListNodes().size();i++){ 
-					 NodeTrace node=Analyzer.mParser.getListNodes().get(i);
+					 WirelessNode node=Analyzer.mParser.getListNodes().get(i);
 					 itemList[i+1]=Integer.toString(node.id);
 				}
 				equalCombo.setItems(itemList);
@@ -292,7 +292,7 @@ public class SleepPeriodTab extends Tab implements Observer{
 		 ySeries = new double[Analyzer.mParser.getListNodes().size()];
 	     xSeries = new double[Analyzer.mParser.getListNodes().size()];    
 			for(int j=0;j<Analyzer.mParser.getListNodes().size();j++) {
-				NodeTrace node = Analyzer.mParser.getListNodes().get(j);
+				WirelessNode node = Analyzer.mParser.getListNodes().get(j);
 				xSeries[j]=node.x;
 				ySeries[j]=node.y;
 			}
