@@ -2,16 +2,11 @@ package controllers.parser.ns2parser;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import models.Event;
 import models.Packet;
-import models.Node;
 import controllers.parser.Parser;
-
 
 public abstract class NS2Parser implements Parser {
 
@@ -28,44 +23,44 @@ public abstract class NS2Parser implements Parser {
 	 */
 	public abstract void parseEvents(String mFileTraceEvent) throws IOException;
 	
-	public Packet getPacketFromID(String packetId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public String getmaxEnergyFromNodeID(String nodeID){
-		return null;
-	}
 	
-	public int getNumberNodeDead(){
-		return 0;
-	}
-	public void setNumberNodeDead(int n){
+	
+	@Deprecated
+	public abstract Packet getPacketFromID(String packetId);
+	
+	@Deprecated
+	public abstract String getmaxEnergyFromNodeID(String nodeID);
 		
-	}
-	public double getEnergyNodeDead(){
-		return 0;
-	}
-	public void setEnergyNodeDead(double e){
-		// TODO Auto-generated method stub
-	}
-	public String getLifeTime(){
-		return null;
-	}
-	public LinkedHashMap<Integer,Double> getListNodeDead(){
-		return null;
-	}
-	public void setNetworkLifeTime() {
-		// TODO Auto-generated method stub
-	}
-	/*Sort map by value*/
-	public  Map<Integer,Double> sortByValue(Map<Integer,Double> map) {
-		return null;
-	} 
+	@Deprecated	
+	public abstract double getEnergyNodeDead();
+	
+	@Deprecated
+	public abstract void setEnergyNodeDead(double e);
+	
+	@Deprecated
+	public abstract String getLifeTime();
+	
+	@Deprecated
+	public abstract LinkedHashMap<Integer,Double> getListNodeDead();
+	
+	
+	/**
+	 * Sort map by value
+	 */
+	@Deprecated
+	public abstract  Map<Integer,Double> sortByValue(Map<Integer,Double> map);
+	
+	
+	
+	@Deprecated
+	public static String resultofheader = "";
+	
+	@Deprecated
 	public String getResultofheader() {
 		return resultofheader;
 	}
-
-	public static String resultofheader = "";
+	
+	@Deprecated
 	public static String getHeaderFileParser(String mFilePathEvents) throws IOException {
 		/**
 		 * get the header of trace file to know if file contains energy or not

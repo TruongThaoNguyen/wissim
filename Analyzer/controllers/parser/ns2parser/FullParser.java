@@ -529,7 +529,7 @@ public class FullParser extends NS2Parser{
 		this.listNodesWithNeighbors = listNodesWithNeighbors;
 	}
 
-	public ArrayList<Event> getListEvents() {
+	public List<Event> getEvents() {
 		return listEvents;
 	}
 
@@ -566,5 +566,6 @@ public class FullParser extends NS2Parser{
 		}
 		return "";
 	}
+	
 
 }

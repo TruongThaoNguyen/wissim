@@ -12,9 +12,14 @@ public class Event {
 	public static enum Type { SEND, RECEIVE, FORWARD, SLEEP, WAKE }
 	
 	/**
+	 * identify number.
+	 */
+	public int id;
+	
+	/**
 	 * Type of event.
 	 */
-	public Type type;
+	public Type type;	
 	
 	/**
 	 * Happen time.
@@ -37,13 +42,17 @@ public class Event {
 	public String message;
 
 	/**
-	 * identify number.
+	 * type of packet.
 	 */
-	public int id;
-	
 	public String packetType;
 	
+	/**
+	 * packet size.
+	 */
 	public int packetSize;
 	
+	/**
+	 * list of extend header.
+	 */
 	public List<Header> headerList;
 }

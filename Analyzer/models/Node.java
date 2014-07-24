@@ -16,58 +16,37 @@ public class Node {
 	private int id;
 	
 	/**
+	 * group id.
+	 */
+	public int groupID;
+	
+	/**
 	 * position.
 	 */
-	private float x, y, z;
+	private float x, y;
 	
 	/**
 	 * Energy.
+	 * store as a HashMap, hash by time
 	 */
 	private HashMap<Double, Double> energy;
 	
+	/**
+	 * list of events that belong to this node.
+	 */
 	private List<Event> event;
 	
+	/**
+	 * create new node.
+	 * @param id id of new node
+	 * @param x x position
+	 * @param y y position
+	 */
 	public Node(int id, float x, float y) {
 		this.id = id;
 		this.x = x;
 		this.y = y;
-	}
-
-
-	@Deprecated
-	private int packetId;
-	@Deprecated
-	public String time;
-	@Deprecated
-	public String listIDNeighbors;
-	@Deprecated
-	public int groupID;
-	
-	public String getListNeighbors() {
-		return listIDNeighbors;
-	}
-	
-	public void setListNeighbors(String listNeighbors) {
-		this.listIDNeighbors = listNeighbors;
-	}
-	
-
-	
-	public float getY() {
-		return y;
-	}
-	
-	public void setY(float y) {
-		this.y = y;
-	}
-	
-	public float getZ() {
-		return z;
-	}
-	
-	public void setZ(float z) {
-		this.z = z;
-	}
+	}	
 	
 	public int getId() {
 		return id;
@@ -77,10 +56,7 @@ public class Node {
 		return x;
 	}
 	
-	public int getPacketId(){
-		return this.packetId;
-	}
-	public void setPacketId(int packetId){
-		this.packetId=packetId;
-	}
+	public float getY() {
+		return y;
+	}	
 }

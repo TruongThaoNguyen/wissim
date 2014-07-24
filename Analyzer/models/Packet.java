@@ -1,7 +1,5 @@
 package models;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -10,151 +8,126 @@ import java.util.List;
  *
  */
 public class Packet {
+	/**
+	 * packet's id.
+	 */
 	public String id;
 	
+	/**
+	 * list of events that belong to this packet.
+	 * all the feature base on this this.
+	 */
 	private List<Event> event;
 	
-	
-	
-	
-	
+	/**
+	 * identify of this packet.
+	 * @return packet's id
+	 */
 	public String getId() {
 		return id;
 	}
 
-	public void setId(String id) {
-		this.id = id;
-	}
-
+	/**
+	 * get initialize type of this packet.
+	 * @return packet's initialize type
+	 */
 	public String getType() {
-		return type;
+		// TODO: get initialize type from first event 
+		return "";
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	/**
+	 * get type of this packet in special time.
+	 * packet's type can change during active time.
+	 * @param time check time
+	 * @return packet's type
+	 */
+	public String getType(int time) {
+		// TODO: get nearest event by time, return packet's type in this event
+		return null;
+	}
+	
+	/**
+	 * get source node that sent this packet.
+	 * @return source node
+	 */
+	public Node getSourceID() {
+		// TODO: get source node of from first event
+		return null;
 	}
 
-	public String getSourceID() {
-		return sourceID;
+	/**
+	 * get source node's layer
+	 * @return source layer
+	 */
+	public String getSourceLayer() {
+		// TODO: get source layer form first event
+		return null;
+	}	
+
+	/**
+	 * get destination node
+	 * @return destination node
+	 */
+	public Node getDestID() {
+		// TODO: get destination node form CMN_header of first event
+		return null;
 	}
 
-	public void setSourceID(String sourceID) {
-		this.sourceID = sourceID;
+	/**
+	 * get the last node packet passing
+	 * @return node
+	 */
+	public Node getLastNode() {
+		// TODO: get last node from last event
+		return null;
+	}
+	
+	/**
+	 * get list of all node that packet passing
+	 * @return
+	 */
+	public List<Node> getTranferNodes() {
+		// TODO: get list of forward nodes form event list
+		return null;
 	}
 
-	public String getSourcePort() {
-		return sourcePort;
-	}
-
-	public void setSourcePort(String sourcePort) {
-		this.sourcePort = sourcePort;
-	}
-
-	public String getDestID() {
-		return destID;
-	}
-
-	public void setDestID(String destID) {
-		this.destID = destID;
-	}
-
-	public String getDestPort() {
-		return destPort;
-	}
-
-	public void setDestPort(String destPort) {
-		this.destPort = destPort;
-	}
-
-	public ArrayList<Integer> getForwardNodeIDs() {
-		return forwardNodeIDs;
-	}
-
-	public void setForwardNodeIDs(ArrayList<Integer> forwardNodeIDs) {
-		this.forwardNodeIDs = forwardNodeIDs;
-	}
-
+	/**
+	 * get initialize size of this packet.
+	 * packet's size can be change during active time.
+	 * @return initialize size of packet.
+	 */
 	public String getSize() {
-		return size;
+		// TODO: get initialize size of packet from first event 
+		return null;
 	}
 
-	public void setSize(String size) {
-		this.size = size;
-	}
-
+	/**
+	 * get time this packet was sent.
+	 * @return start time
+	 */
 	public String getStartTime() {
-		return startTime;
+		// TODO: get start time from first event
+		return null;
 	}
 
-	public void setStartTime(String startTime) {
-		this.startTime = startTime;
-	}
-
+	/**
+	 * get time this packet stop be transfered.
+	 * @return end time
+	 */
 	public String getEndTime() {
-		return endTime;
+		// TODO: get end time from last event
+		return null;
 	}
 
-	public void setEndTime(String endTime) {
-		this.endTime = endTime;
-	}
-
+	/**
+	 * a packet is success if:
+	 * * pass to destination node
+	 * * pass to same layer with source layer
+	 * @return this packet is transfer success of not.
+	 */
 	public boolean isSuccess() {
-		return isSuccess;
+		// TODO: check the conditional to success
+		return true;
 	}
-
-	public void setSuccess(boolean isSuccess) {
-		this.isSuccess = isSuccess;
-	}
-
-	public ArrayList<Node> getListNode() {
-		return listNode;
-	}
-
-	public void setListNode(ArrayList<Node> listNode) {
-		this.listNode = listNode;
-	}
-
-	public ArrayList<Node> getListNodeDest() {
-		return listNodeDest;
-	}
-
-	public void setListNodeDest(ArrayList<Node> listNodeDest) {
-		this.listNodeDest = listNodeDest;
-	}
-
-
-	public ArrayList<Node> listNodeDest;// use for HELLO packet
-
-	public Packet(String id, String type, String sourceID, String sourcePort,
-			String destID, String destPort, String size, String startTime,
-			String endTime) {
-		super();
-		this.id = id;
-		this.type = type;
-		this.sourceID = sourceID;
-		this.sourcePort = sourcePort;
-		this.destID = destID;
-		this.destPort = destPort;
-		this.size = size;
-		this.startTime = startTime;
-		this.endTime = endTime;
-	}
-
-	@Override
-	public String toString() {
-		return "Packet id=" + id + ", type=" + type + ", sourceID=" + sourceID
-				+ ", sourcePort=" + sourcePort + ", destID=" + destID
-				+ ", destPort=" + destPort + ", size=" + size + ", startTime="
-				+ startTime + ", endTime=" + endTime + ", isSuccess="
-				+ isSuccess;
-	}
-
-	public String Infor() {
-		return "********** <br>"+"Packet ID:" + id + "<br>Packet Type:" + type
-				+ "<br>SourceID: " + sourceID + "<br>Destination ID:" + destID
-				+ "<br>Size:" + size + "<br>Start Time:" + startTime
-				+ "<br>End Time:" + endTime + "<br> Success:" + isSuccess
-				+ "<br></html>";
-	}
-
 }

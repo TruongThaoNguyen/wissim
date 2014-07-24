@@ -1,4 +1,5 @@
 package controllers.parser.ns2parser;
+
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -6,7 +7,9 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import models.Event;
 import models.Node;
@@ -18,19 +21,19 @@ public class EventParser extends NS2Parser {
 	 * list of packets.
 	 * hash by id.
 	 */
-	public static HashMap<Integer, Packet>	listPacket;
+	public static HashMap<Integer, Packet>	listPacket = null;
 	
 	/**
 	 * list of nodes.
 	 * hash by id.
 	 */
-	public static HashMap<Integer, Node> 	listNodes;
+	public static HashMap<Integer, Node> 	listNodes = null;
 	
 	/**
 	 * list of events.
 	 * hash by time.
 	 */
-	public static List<Event>	listEvents;
+	public static List<Event>	listEvents = null;
 	
 	
 	public static FileOutputStream fout;
@@ -256,6 +259,48 @@ public class EventParser extends NS2Parser {
 		EventParser ep = new EventParser();
 		ep.ConvertTraceFile(mFilePathNodes, mFilePathEvent);
 		
+	}
+
+	@Override
+	public List<Event> getEvent() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getmaxEnergyFromNodeID(String nodeID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public double getEnergyNodeDead() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setEnergyNodeDead(double e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getLifeTime() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public LinkedHashMap<Integer, Double> getListNodeDead() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<Integer, Double> sortByValue(Map<Integer, Double> map) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
