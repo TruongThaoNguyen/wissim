@@ -138,18 +138,18 @@ public class HopCountTab extends Tab implements Observer {
 		analyze.setText("Analyze");
 		analyze.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 			
-		/* Add listener to add an element to the table */
-		analyze.addSelectionListener(new SelectionAdapter() 
-		{
-			public void widgetSelected(SelectionEvent e) 
-			{
-				if (fromCombo.getSelectionIndex() == -1 || toCombo.getSelectionIndex() == -1)
-				{
-					MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
-					dialog.setText("Error");
-					dialog.setMessage("Let choose source node and destination node!");
-					dialog.open(); 
-				}
+	    /* Add listener to add an element to the table */
+	    analyze.addSelectionListener(new SelectionAdapter() 
+	    {
+	    	public void widgetSelected(SelectionEvent e) 
+	    	{
+	    		if (fromCombo.getSelectionIndex() == -1 || toCombo.getSelectionIndex() == -1)
+	    		{
+	    			MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
+	    			dialog.setText("Error");
+	    			dialog.setMessage("Let choose source node and destination node!");
+	    			dialog.open(); 
+				}	
 				else
 				{	
 					table.removeAll();
@@ -157,98 +157,116 @@ public class HopCountTab extends Tab implements Observer {
 					int maxHopCount = 0;
 					int minHopCount = Integer.MAX_VALUE;
 					double totalHopCount = 0;
-					double totalTime=0;
-					
+					double totalTime = 0;
 					LinkedHashMap<Packet,Integer> listHopCountPacket = new LinkedHashMap<Packet,Integer>();
 					ArrayList<Packet> listPacket = new ArrayList<Packet>();
-				
+														
+					// find packets by source and destination
+					if (fromCombo.getSelectionIndex() == 0)		// all nodes
+					{
+						if (toCombo.getSelectionIndex() == 0)	// all nodes
+						{
+							listPacket.addAll(ParserManger.getParser().getPackets().values());
+						}						
+						else
+						{
+							int destID = Integer.parseInt(toCombo.getItem(toCombo.getSelectionIndex()));
+							for (Packet packet : ParserManger.getParser().getPackets().values()) 
+							{
+								if (packet.getDestNode().getId() == destID)
+								{
+									listPacket.add(packet); 
+								}
+							}
+						}
+					}
+					else										// one nodes
+					{
+						int sourceID = Integer.parseInt(fromCombo.getItem(fromCombo.getSelectionIndex()));
+						if (toCombo.getSelectionIndex() == 0)	// all nodes
+						{
+							for (Packet packet : ParserManger.getParser().getPackets().values()) 
+							{
+								if (packet.getSourceNode().getId() == sourceID) 
+								{
+									listPacket.add(packet); 
+								}
+							}
+						}
+						else									// one nodes
+						{
+							int destID = Integer.parseInt(toCombo.getItem(toCombo.getSelectionIndex()));
+							for (Packet packet : ParserManger.getParser().getPackets().values()) 
+							{
+								if (packet.getSourceNode().getId() == sourceID && packet.getDestNode().getId() == destID) 
+								{
+									listPacket.add(packet); 
+								}
+							}
+						}
+					}
+					
+					// Calculate
 					for (Packet packet : listPacket) 
-					{
-						if (!fromCombo.getItem(fromCombo.getSelectionIndex()).equals("All nodes") && !toCombo.getItem(toCombo.getSelectionIndex()).equals("All nodes"))
-						{
-							if (fromCombo.getItem(fromCombo.getSelectionIndex()).equals((packet.getSourceNode().getId())) 
-								&& toCombo.getItem(toCombo.getSelectionIndex()).equals((packet.getDestNode().getId())) && packet.isSuccess())
-							{
-								listPacket.add(packet);
-							}
-						}
-						if (!fromCombo.getItem(fromCombo.getSelectionIndex()).equals("All nodes") 
-							&& toCombo.getItem(toCombo.getSelectionIndex()).equals("All nodes"))
-						{
-							if (fromCombo.getItem(fromCombo.getSelectionIndex()).equals(packet.getSourceNode().getId()) 
-							&& packet.isSuccess())
-							{
-								listPacket.add(packet);
-							}
-						}
+					{					
+						TableItem tableItem = new TableItem(table, SWT.NONE);
+						tableItem.setText(0, Integer.toString(No++));
+						tableItem.setText(1, Integer.toString(packet.getId()));
+						tableItem.setText(2, Integer.toString(packet.getListNodes().size() - 1));
+						tableItem.setText(3, packet.getSourceNode().getId() + "---" + packet.getDestNode().getId());
 						
-						if (fromCombo.getItem(fromCombo.getSelectionIndex()).equals("All nodes") 
-							&& !toCombo.getItem(toCombo.getSelectionIndex()).equals("All nodes"))
-						{
-							if (toCombo.getItem(toCombo.getSelectionIndex()).equals((packet.getDestNode().getId())) && packet.isSuccess() )
-							{
-								listPacket.add(packet);
-							}
-						}
-						if (fromCombo.getItem(fromCombo.getSelectionIndex()).equals("All nodes") 
-							 && toCombo.getItem(toCombo.getSelectionIndex()).equals("All nodes"))
-						{
-							if (packet.isSuccess())
-							{
-							 listPacket.add(packet);
-							}
-						}	
+						totalHopCount += packet.getListNodes().size() - 1;
+						totalTime += packet.getEndTime() - packet.getStartTime();
+						listHopCountPacket.put(packet, packet.getListNodes().size() - 1);
+						
+						if (maxHopCount < packet.getListNodes().size()-1)
+							maxHopCount = packet.getListNodes().size()-1;
+						if (minHopCount > packet.getListNodes().size()-1)
+							minHopCount = packet.getListNodes().size()-1;
 					}
-					for(int i =0 ;i < listPacket.size(); i++)
-					{
-						Packet packet = listPacket.get(i);
-						TableItem tableItem= new TableItem(table, SWT.NONE);
-						tableItem.setText(0,Integer.toString(No++));
-						tableItem.setText(1,packet.getId() + "");
-						tableItem.setText(2,Integer.toString(packet.getListNodes().size()-1));
-						tableItem.setText(3,packet.getSourceNode().getId() +"---"+packet.getDestNode().getId());
-					 totalHopCount+=packet.getListNodes().size()-1;
-					 totalTime+=(Double.parseDouble(packet.getEndTime())-Double.parseDouble(packet.getStartTime()));
-					 listHopCountPacket.put(packet,packet.getListNodes().size()-1);
 					
-					 if(maxHopCount < packet.getListNodes().size()-1)
-						 maxHopCount = packet.getListNodes().size()-1;
-					 if(minHopCount > packet.getListNodes().size()-1)
-						 minHopCount = packet.getListNodes().size()-1;
-				}
-				if(No==1){
-					MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
-					dialog.setText("Error");
-					dialog.setMessage("No packet from node "+fromCombo.getItem(fromCombo.getSelectionIndex())+
-							" to node "+toCombo.getItem(toCombo.getSelectionIndex())+"!");
-						dialog.open(); 
-						avgText.setText("0");
-					variantText.setText("0");
-					maxText.setText("0");
-					minText.setText("0");
-					xSeries=new double[0];
-					ySeries=new double[0];
-				}
-				else{
-					DecimalFormat df = new DecimalFormat("0.00");
-					//System.out.println(No-1);
-					String str= df.format(totalHopCount/(No-1));
-					//set mean
-					avgText.setText(str);
-					//set text variant
-					variantText.setText(df.format(variancesHopCount(listHopCountPacket,totalTime))); 
-					maxText.setText(Integer.toString(maxHopCount));
-					minText.setText(Integer.toString(minHopCount));
-					//init line chart
-						initXYseries(listHopCountPacket);
-						
+					// show result
+					if (No == 1)
+					{
+						MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
+						dialog.setText("Error");
+						dialog.setMessage("No packet from node " + fromCombo.getItem(fromCombo.getSelectionIndex()) + 
+											" to node " + toCombo.getItem(toCombo.getSelectionIndex()) + "!");
+					    dialog.open(); 
+					    
+					    avgText.setText("0");
+						variantText.setText("0");
+						maxText.setText("0");
+						minText.setText("0");
+						xSeries=new double[0];
+						ySeries=new double[0];
 					}
-					if(filterByCombo.getSelectionIndex()==0)
+					else
+					{
+						DecimalFormat df = new DecimalFormat("0.00");
+						String str = df.format(totalHopCount / (No - 1));
+						
+						//set mean
+						avgText.setText(str);
+						
+						//set text variant
+						variantText.setText(df.format(variancesHopCount(listHopCountPacket,totalTime))); 
+						maxText.setText(Integer.toString(maxHopCount));
+						minText.setText(Integer.toString(minHopCount));
+						
+						//init line chart
+						initXYseries(listHopCountPacket);						
+					}
+					
+					// ??
+					if (filterByCombo.getSelectionIndex() == 0)
+					{
 						resetEditors();
+					}
 				}
-					
-				}
-			});		
+	        
+	      }
+	    });  
 		 
 		Button analyzeGroup = new Button(controlGroup, SWT.PUSH);
 		analyzeGroup.setText("Analyze Group");
@@ -270,8 +288,7 @@ public class HopCountTab extends Tab implements Observer {
 	/* Set up item for fromCombo and toCombo */
 	void setItemFromComboToCombo() {
 		if (filterByCombo.getSelectionIndex() == 0)
-		{
-			String[] itemList = new String[ParserManger.getParser().getNodes().size() + 1] ; 
+		{			
 			if (ParserManger.getParser().getNodes().size() > 0)
 			{				
 				fromCombo.add("All nodes");
@@ -350,7 +367,7 @@ public class HopCountTab extends Tab implements Observer {
 							 tableItem.setText(3,packet.getSourceNode().getId()+"--"+packet.getDestNode().getId());
 							 
 							 totalHopCount+=packet.getListNodes().size()-1;
-							 totalTime+=(Double.parseDouble(packet.getEndTime())-Double.parseDouble(packet.getStartTime()));
+							 totalTime+= packet.getEndTime() - packet.getStartTime();
 							 listHopCountPacket.put(packet,packet.getListNodes().size()-1);
 							
 							 if(maxHopCount < packet.getListNodes().size()-1)
@@ -396,8 +413,8 @@ public class HopCountTab extends Tab implements Observer {
 		for (Packet i : listHopCountPacket.keySet()) {
 						//	System.out.println( i.id +" : " + listThroughputPacket.get(i));
 			expectedValue1 += listHopCountPacket.get(i)*listHopCountPacket.get(i)*
-					((Double.parseDouble(i.getEndTime())-Double.parseDouble(i.getStartTime()))/totalTime);
-			expectedValue2 += listHopCountPacket.get(i)*((Double.parseDouble(i.getEndTime())-Double.parseDouble(i.getStartTime()))/totalTime);
+					((i.getEndTime()-i.getStartTime())/totalTime);
+			expectedValue2 += listHopCountPacket.get(i)*((i.getEndTime()-i.getStartTime())/totalTime);
 					}
 		variances=expectedValue1-expectedValue2*expectedValue2;
 			return variances;
@@ -410,7 +427,7 @@ public class HopCountTab extends Tab implements Observer {
 		if(listHopCountPacket.size()!=0){
 			for (Packet i : listHopCountPacket.keySet()) {
 				ySeries[j]=listHopCountPacket.get(i);
-				xSeries[j]=Double.parseDouble(i.getStartTime());
+				xSeries[j]=i.getStartTime();
 				j++;
 			}
 		}

@@ -20,6 +20,10 @@ public class Packet {
 	 */
 	private List<Event> event = new ArrayList<Event>();
 	
+	/**
+	 * nodes that packet cross.
+	 */
+	private List<Node> node;
 	
 	/**
 	 * @param id
@@ -48,8 +52,7 @@ public class Packet {
 	 * @return packet's initialize type
 	 */
 	public String getType() {
-		// TODO: get initialize type from first event 
-		return "";
+		return event.get(0).getPacketType();		
 	}
 
 	/**
@@ -59,8 +62,15 @@ public class Packet {
 	 * @return packet's type
 	 */
 	public String getType(int time) {
-		// TODO: get nearest event by time, return packet's type in this event
-		return null;
+		// get nearest event by time, return packet's type in this event
+		
+		String type = "";
+		for (Event e : event) {
+			if (e.getTime() > time) return type;
+			else type = e.getPacketType();
+		}
+
+		return type;
 	}
 	
 	/**
@@ -68,8 +78,8 @@ public class Packet {
 	 * @return source node
 	 */
 	public Node getSourceNode() {
-		// TODO: get source node of from first event
-		return null;
+		// get source node of from first event		
+		return event.get(0).getNode();
 	}
 
 	/**
@@ -77,8 +87,8 @@ public class Packet {
 	 * @return source layer
 	 */
 	public String getSourceLayer() {
-		// TODO: get source layer form first event
-		return null;
+		// get source layer form first event
+		return event.get(0).getLayer();
 	}	
 
 	/**
@@ -86,8 +96,8 @@ public class Packet {
 	 * @return destination node
 	 */
 	public Node getDestNode() {
-		// TODO: get destination node form CMN_header of first event
-		return null;
+		// TODO: get destination node form IP_header of first event
+		return event.get(event.size() - 1).getNode();
 	}
 
 	/**
@@ -95,8 +105,8 @@ public class Packet {
 	 * @return node
 	 */
 	public Node getLastNode() {
-		// TODO: get last node from last event
-		return null;
+		// get last node from last event
+		return event.get(event.size() - 1).getNode();
 	}
 	
 	/**
@@ -104,8 +114,14 @@ public class Packet {
 	 * @return
 	 */
 	public List<Node> getListNodes() {
-		// TODO: get list of forward nodes form event list
-		return null;
+		if (node == null)
+		{
+			node = new ArrayList<>();
+			for (Event e : event) {
+				if (!node.contains(e.getNode())) node.add(e.getNode());
+			}
+		}
+		return node;
 	}
 
 	/**
@@ -113,27 +129,27 @@ public class Packet {
 	 * packet's size can be change during active time.
 	 * @return initialize size of packet.
 	 */
-	public String getSize() {
-		// TODO: get initialize size of packet from first event 
-		return null;
+	public int getSize() {
+		// get initialize size of packet from first event		
+		return event.get(0).getPacketSize();
 	}
 
 	/**
 	 * get time this packet was sent.
 	 * @return start time
 	 */
-	public String getStartTime() {
-		// TODO: get start time from first event
-		return null;
+	public double getStartTime() {
+		// get start time from first event
+		return event.get(0).getTime();
 	}
 
 	/**
 	 * get time this packet stop be transfered.
 	 * @return end time
 	 */
-	public String getEndTime() {
-		// TODO: get end time from last event
-		return null;
+	public double getEndTime() {
+		// get end time from last event
+		return event.get(event.size() - 1).getTime();
 	}
 
 	/**
@@ -144,6 +160,6 @@ public class Packet {
 	 */
 	public boolean isSuccess() {
 		// TODO: check the conditional to success
-		return true;
+		return getLastNode() == getDestNode() && event.get(0).getLayer() == event.get(event.size() - 1).getLayer();
 	}
 }

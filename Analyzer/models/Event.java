@@ -98,8 +98,14 @@ public class Event {
 	 */
 	public void setNode(Node node) {
 		this.node = node;
-		List<Event> e = node.getEvent();
-		if (!e.contains(this)) e.add(this);
+		if (node == null)
+		{
+			System.out.println("here");
+		}
+		else {
+			List<Event> e = node.getEvent();
+			if (!e.contains(this)) e.add(this);
+		}
 	}
 
 	/**

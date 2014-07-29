@@ -57,21 +57,21 @@ public class NS2Parser implements Parser {
 	 * create new NS2 parer.
 	 */
 	public NS2Parser() {							
-		new Thread() {
-			public void run() {
+//		new Thread() {
+//			public void run() {
 
-				// try with default directory								
-				try 
-				{
-					filePathEvent	= Configure.getFilePath(Configure.getDirectory(), "Trace.tr");
-					filePathNode	= Configure.getFilePath(Configure.getDirectory(), "Neighbors.tr");
-					
-					readNodeTraceFile();
-					readEventTraceFile();
-					
-					System.out.print("done");
-				} 
-				catch (Exception e) 
+//				// try with default directory								
+//				try 
+//				{
+//					filePathEvent	= Configure.getFilePath(Configure.getDirectory(), "Trace.tr");
+//					filePathNode	= Configure.getFilePath(Configure.getDirectory(), "Neighbors.tr");
+//					
+//					readNodeTraceFile();
+//					readEventTraceFile();
+//					
+//					System.out.print("done");
+//				} 
+//				catch (Exception e) 
 				{													
 					JOptionPane.showMessageDialog(null, "Let choose file! First, let choose neighbors file to get position of nodes.");
 				    
@@ -110,12 +110,12 @@ public class NS2Parser implements Parser {
 						}
 						catch (Exception e1) {
 							// TODO Auto-generated catch block
-							e.printStackTrace();
+							e1.printStackTrace();
 						}
 					}
 				}
-			}
-		}.start();
+//			}
+//		}.start();
 	}
 	
 	@Override
