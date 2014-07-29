@@ -107,7 +107,7 @@ public class EnergyTab extends Tab implements Observer{
 	      });
 	    
 	    Label equalLabel=new Label(controlGroup, SWT.None);
-	    equalLabel.setText(Analyzer.getResourceString("equals to"));
+	    equalLabel.setText("equals to");
 	    equalLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 	    
 	    equalCombo = new Combo(controlGroup, SWT.READ_ONLY);	   
