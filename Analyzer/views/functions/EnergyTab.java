@@ -84,7 +84,7 @@ public class EnergyTab extends Tab implements Observer{
   /**
    * Creates the control widgets.
    */
-  void createControlWidgets() {
+  protected void createControlWidgets() {
     /* Controls the type of Throughput */
 	   // GridData gridData=new GridData(GridData.FILL_HORIZONTAL);
 	   
