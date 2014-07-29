@@ -45,10 +45,6 @@ import controllers.parser.ParserManger;
  *
  */
 public class HopCountTab extends Tab implements Observer {
-	
-	/**
-	 *  The example layout instance 
-	 */
 	FillLayout fillLayout;
 	Text avgText,variantText,maxText,minText;
 	Combo filterByCombo,fromCombo,toCombo; 
@@ -75,32 +71,32 @@ public class HopCountTab extends Tab implements Observer {
 		gridData.horizontalSpan = 3;
 		
 		Label lblAverage = new Label(childGroup, SWT.NONE);
-	lblAverage.setText("Average");
-	lblAverage.setLayoutData(gridData);
-	avgText = new Text(childGroup, SWT.BORDER);
-	avgText.setEditable(false);
-	avgText.setLayoutData(gridData);
-	
-	Label lblVariant = new Label(childGroup, SWT.NONE);
-	lblVariant.setText("Variant");
-	lblVariant.setLayoutData(gridData);
-	variantText = new Text(childGroup, SWT.BORDER);
-	variantText.setEditable(false);
-	variantText.setLayoutData(gridData);
-	
-	Label lblMax = new Label(childGroup, SWT.NONE);
-	lblMax.setText("Max");
-	lblMax.setLayoutData(gridData);
-	maxText = new Text(childGroup, SWT.BORDER);
-	maxText.setEditable(false);
-	maxText.setLayoutData(gridData);
-	
-	Label lblMin = new Label(childGroup, SWT.NONE);
-	lblMin.setText("Min");
-	lblMin.setLayoutData(gridData);
-	minText = new Text(childGroup, SWT.BORDER);
-	minText.setEditable(false);
-	minText.setLayoutData(gridData);
+		lblAverage.setText("Average");
+		lblAverage.setLayoutData(gridData);
+		avgText = new Text(childGroup, SWT.BORDER);
+		avgText.setEditable(false);
+		avgText.setLayoutData(gridData);
+		
+		Label lblVariant = new Label(childGroup, SWT.NONE);
+		lblVariant.setText("Variant");
+		lblVariant.setLayoutData(gridData);
+		variantText = new Text(childGroup, SWT.BORDER);
+		variantText.setEditable(false);
+		variantText.setLayoutData(gridData);
+		
+		Label lblMax = new Label(childGroup, SWT.NONE);
+		lblMax.setText("Max");
+		lblMax.setLayoutData(gridData);
+		maxText = new Text(childGroup, SWT.BORDER);
+		maxText.setEditable(false);
+		maxText.setLayoutData(gridData);
+		
+		Label lblMin = new Label(childGroup, SWT.NONE);
+		lblMin.setText("Min");
+		lblMin.setLayoutData(gridData);
+		minText = new Text(childGroup, SWT.BORDER);
+		minText.setEditable(false);
+		minText.setLayoutData(gridData);
 	}
 
 	/**
@@ -137,29 +133,18 @@ public class HopCountTab extends Tab implements Observer {
 		toLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 		
 		toCombo = new Combo(controlGroup, SWT.READ_ONLY);
-		setItemFromComboToCombo();
 		
 		analyze = new Button(controlGroup, SWT.PUSH);
 		analyze.setText("Analyze");
 		analyze.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
-		
-		Button analyzeGroup = new Button(controlGroup, SWT.PUSH);
-		analyzeGroup.setText("Analyze Group");
-		analyzeGroup.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
-		
-		/* Add listener to button analyze group */
-		analyzeGroup.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if(listNodeAreaDest.size()>0 && listNodeAreaSource.size()>0){
-						setUpInfoGroupHopCount();
-					}
-			}
-		});
-		
+			
 		/* Add listener to add an element to the table */
-		analyze.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if(fromCombo.getSelectionIndex()==-1 || toCombo.getSelectionIndex()==-1){
+		analyze.addSelectionListener(new SelectionAdapter() 
+		{
+			public void widgetSelected(SelectionEvent e) 
+			{
+				if (fromCombo.getSelectionIndex() == -1 || toCombo.getSelectionIndex() == -1)
+				{
 					MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
 					dialog.setText("Error");
 					dialog.setMessage("Let choose source node and destination node!");
@@ -168,11 +153,12 @@ public class HopCountTab extends Tab implements Observer {
 				else
 				{	
 					table.removeAll();
-					int No=1;
-					int maxHopCount=0;
-					int minHopCount=1000000000;
-					double totalHopCount=0;
+					int No = 1;
+					int maxHopCount = 0;
+					int minHopCount = Integer.MAX_VALUE;
+					double totalHopCount = 0;
 					double totalTime=0;
+					
 					LinkedHashMap<Packet,Integer> listHopCountPacket = new LinkedHashMap<Packet,Integer>();
 					ArrayList<Packet> listPacket = new ArrayList<Packet>();
 				
@@ -264,43 +250,61 @@ public class HopCountTab extends Tab implements Observer {
 				}
 			});		
 		 
-			/* Add common controls */
-		super.createControlWidgets();
+		Button analyzeGroup = new Button(controlGroup, SWT.PUSH);
+		analyzeGroup.setText("Analyze Group");
+		analyzeGroup.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 		
- 
+		/* Add listener to button analyze group */
+		analyzeGroup.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if(listNodeAreaDest.size()>0 && listNodeAreaSource.size()>0){
+						setUpInfoGroupHopCount();
+					}
+			}
+		});
+		
+		/* Add common controls */
+		super.createControlWidgets();
 	}
+	
 	/* Set up item for fromCombo and toCombo */
-	void setItemFromComboToCombo(){
-		if(filterByCombo.getSelectionIndex()==0){
-			String[] itemList=new String[ParserManger.getParser().getNodes().size()+1] ; 
-			if(ParserManger.getParser().getNodes().size()>0)
-			{
-				itemList[0]="All nodes";
-				for (int i=0;i<ParserManger.getParser().getNodes().size();i++){ 
-					 Node node=ParserManger.getParser().getNodes().get(i);
-					 itemList[i+1]=Integer.toString(node.getId());
+	void setItemFromComboToCombo() {
+		if (filterByCombo.getSelectionIndex() == 0)
+		{
+			String[] itemList = new String[ParserManger.getParser().getNodes().size() + 1] ; 
+			if (ParserManger.getParser().getNodes().size() > 0)
+			{				
+				fromCombo.add("All nodes");
+				toCombo.add("All nodes");
+				
+				for (Node node : ParserManger.getParser().getNodes().values()) 
+				{
+					fromCombo.add(node.getId() + "");
+					toCombo.add(node.getId() + "");
 				}
-				fromCombo.setItems(itemList);
-				toCombo.setItems(itemList);
 			}
 		}
-		if(filterByCombo.getSelectionIndex()==1){
+		
+		if (filterByCombo.getSelectionIndex() == 1)
+		{
 			super.refreshLayoutComposite();
-			 fromCombo.setItems(new String[] {});
-			 toCombo.setItems(new String[] {});
+			fromCombo.setItems(new String[] {});
+			toCombo.setItems(new String[] {});
 			 
-			 ySeries = new double[ParserManger.getParser().getNodes().size()];
-				 xSeries = new double[ParserManger.getParser().getNodes().size()];		
-				for(int i=0;i<ParserManger.getParser().getNodes().size();i++) {
-					Node node = ParserManger.getParser().getNodes().get(i);
-					xSeries[i]=node.getX();
-					ySeries[i]=node.getY();
-				}
-			 chartAllNode = new ChartAllNode(xSeries, ySeries);
-			 chartAllNode.addObserver(this);
-			 chartAllNode.createChart(layoutComposite);
+			ySeries = new double[ParserManger.getParser().getNodes().size()];
+			xSeries = new double[ParserManger.getParser().getNodes().size()];		
+			for (int i = 0; i < ParserManger.getParser().getNodes().size(); i++)
+			{
+				Node node = ParserManger.getParser().getNodes().get(i);
+				xSeries[i]=node.getX();
+				ySeries[i]=node.getY();
+			}
+			chartAllNode = new ChartAllNode(xSeries, ySeries);
+			chartAllNode.addObserver(this);
+			chartAllNode.createChart(layoutComposite);
 		}
 	}
+
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		if (arg0 instanceof ChartAllNode ) {
@@ -309,9 +313,9 @@ public class HopCountTab extends Tab implements Observer {
 		}
 		if(this.listNodeAreaDest.size()>0 && this.listNodeAreaSource.size()>0){
 			setUpInfoGroupHopCount();
-		}
-	
+		}	
 	}
+	
 	public void setUpInfoGroupHopCount(){
 		String[] itemListSource=new String[this.listNodeAreaSource.size()] ; 
 		String[] itemListDest=new String[this.listNodeAreaDest.size()] ;	

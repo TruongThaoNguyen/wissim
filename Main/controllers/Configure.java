@@ -206,8 +206,8 @@ public final class Configure {
 	 * @param fileName file name
 	 * @return full path to file
 	 */
-	public static String getFilePath(String directory, String fileName) {				
-		if (directory.substring(directory.length() - 1).equals(slash()))
+	public static String getFilePath(String directory, String fileName) {
+		if (directory.length() >  1 && directory.substring(directory.length() - 1).equals(slash()))
 			return directory + fileName;		
 		else
 			return directory + slash() + fileName;

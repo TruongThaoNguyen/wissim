@@ -5,7 +5,6 @@ import java.util.MissingResourceException;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
@@ -13,14 +12,7 @@ import org.eclipse.swt.widgets.TabItem;
 
 import com.ibm.icu.text.MessageFormat;
 
-import controllers.functions.DelayTab;
-import controllers.functions.EfficiencyTab;
-import controllers.functions.EnergyTab;
 import controllers.functions.HopCountTab;
-import controllers.functions.NetworkLifeTimeTab;
-import controllers.functions.SleepPeriodTab;
-import controllers.functions.ThroughputTab;
-import controllers.parser.ParserManger;
 
 /**
  * main Control for Analyzer.
@@ -42,8 +34,7 @@ public class Analyzer extends MainContent {
 	 */
 	public Analyzer(final Composite parent, MenuManager menuManager, StatusLineManager statusLineManager) {
 		super(parent, menuManager, statusLineManager);					
-		getShell().setCursor(new Cursor(getDisplay(), SWT.CURSOR_ARROW));
-		ParserManger.initParser();
+		createContents();
 	}
 	
 	@Override
@@ -59,13 +50,13 @@ public class Analyzer extends MainContent {
 		tabFolder = new TabFolder(this, SWT.NULL);
 		Tab[] tabs = new Tab[] 
 		{ 
-			new ThroughputTab(this),
-			new DelayTab(this),
+	//		new ThroughputTab(this),
+	//		new DelayTab(this),
 			new HopCountTab(this),
-			new EfficiencyTab(this),
-			new EnergyTab(this),
-			new NetworkLifeTimeTab(this),
-			new SleepPeriodTab(this)
+	//		new EfficiencyTab(this),
+	//		new EnergyTab(this),
+	//		new NetworkLifeTimeTab(this),
+	//		new SleepPeriodTab(this)
 		};
 		
 		for (int i = 0; i < tabs.length; i++) 
