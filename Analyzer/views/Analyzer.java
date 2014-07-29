@@ -10,6 +10,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
+import views.functions.DelayTab;
+import views.functions.EfficiencyTab;
 import views.functions.HopCountTab;
 
 import com.ibm.icu.text.MessageFormat;
@@ -51,9 +53,9 @@ public class Analyzer extends MainContent {
 		Tab[] tabs = new Tab[] 
 		{ 
 	//		new ThroughputTab(this),
-	//		new DelayTab(this),
+			new DelayTab(this),
 			new HopCountTab(this),
-	//		new EfficiencyTab(this),
+			new EfficiencyTab(this),
 	//		new EnergyTab(this),
 	//		new NetworkLifeTimeTab(this),
 	//		new SleepPeriodTab(this)

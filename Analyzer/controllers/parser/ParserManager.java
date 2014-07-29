@@ -7,7 +7,7 @@ import controllers.parser.ns2.NS2Parser;
  * @author Trongnguyen
  *
  */
-public class ParserManger {
+public class ParserManager {
 	/**
 	 * type for trace file.
 	 * @author Trongnguyen
@@ -37,7 +37,7 @@ public class ParserManger {
 	 * @param type the type to set
 	 */
 	public static void setType(final Type type) {
-		ParserManger.type = type;
+		ParserManager.type = type;
 	}
 	
 	/**
