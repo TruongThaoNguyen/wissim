@@ -37,7 +37,7 @@ import views.Tab;
 import com.ibm.icu.text.DecimalFormat;
 
 import controllers.chart2d.ChartAllNode;
-import controllers.parser.ParserManger;
+import controllers.parser.ParserManager;
 
 /**
  * Hop-count calculator tab.
@@ -166,12 +166,12 @@ public class HopCountTab extends Tab implements Observer {
 					{
 						if (toCombo.getSelectionIndex() == 0)	// all nodes
 						{
-							listPacket.addAll(ParserManger.getParser().getPackets().values());
+							listPacket.addAll(ParserManager.getParser().getPackets().values());
 						}						
 						else
 						{
 							int destID = Integer.parseInt(toCombo.getItem(toCombo.getSelectionIndex()));
-							for (Packet packet : ParserManger.getParser().getPackets().values()) 
+							for (Packet packet : ParserManager.getParser().getPackets().values()) 
 							{
 								if (packet.getDestNode().getId() == destID)
 								{
@@ -185,7 +185,7 @@ public class HopCountTab extends Tab implements Observer {
 						int sourceID = Integer.parseInt(fromCombo.getItem(fromCombo.getSelectionIndex()));
 						if (toCombo.getSelectionIndex() == 0)	// all nodes
 						{
-							for (Packet packet : ParserManger.getParser().getPackets().values()) 
+							for (Packet packet : ParserManager.getParser().getPackets().values()) 
 							{
 								if (packet.getSourceNode().getId() == sourceID) 
 								{
@@ -196,7 +196,7 @@ public class HopCountTab extends Tab implements Observer {
 						else									// one nodes
 						{
 							int destID = Integer.parseInt(toCombo.getItem(toCombo.getSelectionIndex()));
-							for (Packet packet : ParserManger.getParser().getPackets().values()) 
+							for (Packet packet : ParserManager.getParser().getPackets().values()) 
 							{
 								if (packet.getSourceNode().getId() == sourceID && packet.getDestNode().getId() == destID) 
 								{
@@ -206,7 +206,7 @@ public class HopCountTab extends Tab implements Observer {
 						}
 					}
 					
-					// Calculate
+					// Calculate ans show result
 					for (Packet packet : listPacket) 
 					{					
 						TableItem tableItem = new TableItem(table, SWT.NONE);
@@ -224,8 +224,7 @@ public class HopCountTab extends Tab implements Observer {
 						if (minHopCount > packet.getListNodes().size()-1)
 							minHopCount = packet.getListNodes().size()-1;
 					}
-					
-					// show result
+
 					if (No == 1)
 					{
 						MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
@@ -289,12 +288,12 @@ public class HopCountTab extends Tab implements Observer {
 	void setItemFromComboToCombo() {
 		if (filterByCombo.getSelectionIndex() == 0)
 		{			
-			if (ParserManger.getParser().getNodes().size() > 0)
+			if (ParserManager.getParser().getNodes().size() > 0)
 			{				
 				fromCombo.add("All nodes");
 				toCombo.add("All nodes");
 				
-				for (Node node : ParserManger.getParser().getNodes().values()) 
+				for (Node node : ParserManager.getParser().getNodes().values()) 
 				{
 					fromCombo.add(node.getId() + "");
 					toCombo.add(node.getId() + "");
@@ -308,11 +307,11 @@ public class HopCountTab extends Tab implements Observer {
 			fromCombo.setItems(new String[] {});
 			toCombo.setItems(new String[] {});
 			 
-			ySeries = new double[ParserManger.getParser().getNodes().size()];
-			xSeries = new double[ParserManger.getParser().getNodes().size()];		
-			for (int i = 0; i < ParserManger.getParser().getNodes().size(); i++)
+			ySeries = new double[ParserManager.getParser().getNodes().size()];
+			xSeries = new double[ParserManager.getParser().getNodes().size()];		
+			for (int i = 0; i < ParserManager.getParser().getNodes().size(); i++)
 			{
-				Node node = ParserManger.getParser().getNodes().get(i);
+				Node node = ParserManager.getParser().getNodes().get(i);
 				xSeries[i]=node.getX();
 				ySeries[i]=node.getY();
 			}
@@ -354,8 +353,8 @@ public class HopCountTab extends Tab implements Observer {
 			double totalHopCount=0;
 			double totalTime=0;
 			LinkedHashMap<Packet,Integer> listHopCountPacket = new LinkedHashMap<Packet,Integer>();
-			for (int i=0;i<ParserManger.getParser().getPackets().size();i++){ 
-				 Packet packet=ParserManger.getParser().getPackets().get(i);
+			for (int i=0;i<ParserManager.getParser().getPackets().size();i++){ 
+				 Packet packet=ParserManager.getParser().getPackets().get(i);
 				 for(int j=0;j<this.listNodeAreaSource.size();j++)
 					 	for(int k=0;k<this.listNodeAreaDest.size();k++){
 					 		 if(this.listNodeAreaSource.get(j).getId() == packet.getSourceNode().getId() 

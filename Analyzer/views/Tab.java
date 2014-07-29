@@ -41,15 +41,15 @@ import org.swtchart.Chart;
 
 import controllers.Configure;
 import controllers.chart2d.ChangeGraphInfo;
-import controllers.parser.ParserManger;
+import controllers.parser.ParserManager;
 
 public abstract class Tab {
 	/**
-	* Common groups and composites. 
-	*/
-	Composite tabFolderPage;
+	 * Common groups and composites. 
+	 */
+	private Composite tabFolderPage;
 	
-	SashForm sash;
+	private SashForm sash;
 	
 	protected Group layoutGroup;
 
@@ -65,15 +65,15 @@ public abstract class Tab {
 	/**
 	* Common controls for modifying the example layout. 
 	*/
-	String[] names;
+	private String[] names;
 	
-	Control[] children;
+	private Control[] children;
 	
 	protected Button analyze;
 
-	Button exportImage;
+	private Button exportImage;
 
-	Button changeInfoGraph;
+	private Button changeInfoGraph;
 	protected Chart chart;
 	
 	/**
@@ -368,21 +368,21 @@ public abstract class Tab {
 		/* Add listener to button load trace file */
 		loadFile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				ParserManger.initParser();
+				ParserManager.initParser();
 			}
 		});
 	
 		/* Add listener to button load trace file */
 		loadTraceFile.addSelectionListener(new SelectionAdapter() {	
 			public void widgetSelected(SelectionEvent e) {
-				ParserManger.initParser();				
+				ParserManager.initParser();				
 			}
 		});
 	
 		/* Add listener to button load neighbor file */
 		loadNeighborFile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				ParserManger.initParser();
+				ParserManager.initParser();
 			}
 		});
 		

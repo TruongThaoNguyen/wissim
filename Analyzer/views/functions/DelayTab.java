@@ -37,6 +37,7 @@ import views.Tab;
 import com.ibm.icu.text.DecimalFormat;
 
 import controllers.chart2d.ChartAllNode;
+import controllers.parser.ParserManager;
 
 /**
  * Delay function tab.
@@ -66,7 +67,7 @@ public class DelayTab extends Tab implements Observer{
 	/**
 	 * Creates the widgets in the "child" group.
 	 */
-	void createChildWidgets() {
+	protected void createChildWidgets() {
 		/* Add common controls */
 		super.createChildWidgets();
 
@@ -105,10 +106,10 @@ public class DelayTab extends Tab implements Observer{
 	/**
 	 * Creates the control widgets.
 	 */
-	void createControlWidgets() {
+	protected void createControlWidgets() {
 		/* Controls the type of Throughput */
 		Label filterByLabel=new Label(controlGroup, SWT.None);
-		filterByLabel.setText(Analyzer.getResourceString("Filter by"));
+		filterByLabel.setText("Filter by");
 		filterByLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 		
 		filterByCombo = new Combo(controlGroup, SWT.READ_ONLY);
@@ -126,24 +127,23 @@ public class DelayTab extends Tab implements Observer{
 		});
 		
 		Label fromLabel = new Label(controlGroup, SWT.None);
-		fromLabel.setText(Analyzer.getResourceString("From"));
+		fromLabel.setText("From");
 		fromLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 		
 		fromCombo = new Combo(controlGroup, SWT.READ_ONLY);
 		
 		Label toLabel = new Label(controlGroup, SWT.None);
-		toLabel.setText(Analyzer.getResourceString("To"));
+		toLabel.setText("To");
 		toLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 		
 		toCombo = new Combo(controlGroup, SWT.READ_ONLY);
-		setItemFromComboToCombo();
 		
 		analyze = new Button(controlGroup, SWT.PUSH);
-		analyze.setText(Analyzer.getResourceString("Analyze"));
+		analyze.setText("Analyze");
 		analyze.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 		
 		Button analyzeGroup = new Button(controlGroup, SWT.PUSH);
-		analyzeGroup.setText(Analyzer.getResourceString("Analyze Group"));
+		analyzeGroup.setText("Analyze Group");
 		analyzeGroup.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 		
 		/* Add listener to button analyze group */
@@ -176,55 +176,66 @@ public class DelayTab extends Tab implements Observer{
 					LinkedHashMap<Packet,Double> listDelayPacket = new LinkedHashMap<Packet,Double>();
 					ArrayList<Packet> listPacket = new ArrayList<Packet>();
 					
-					for (int i = 0; i < Analyzer.mParser.getListPacket().size(); i++)
-					{ 
-						Packet packet=Analyzer.mParser.getListPacket().get(i);
-					 
-						if (!fromCombo.getItem(fromCombo.getSelectionIndex()).equals("All nodes") && !toCombo.getItem(toCombo.getSelectionIndex()).equals("All nodes")) 
+					// find packets by source and destination
+					if (fromCombo.getSelectionIndex() == 0)		// all nodes
+					{
+						if (toCombo.getSelectionIndex() == 0)	// all nodes
 						{
-							if(fromCombo.getItem(fromCombo.getSelectionIndex()).equals((packet.sourceID)) && toCombo.getItem(toCombo.getSelectionIndex()).equals((packet.destID)) && packet.isSuccess )
+							listPacket.addAll(ParserManager.getParser().getPackets().values());
+						}						
+						else
+						{
+							int destID = Integer.parseInt(toCombo.getItem(toCombo.getSelectionIndex()));
+							for (Packet packet : ParserManager.getParser().getPackets().values()) 
 							{
-								listPacket.add(packet);
+								if (packet.getDestNode().getId() == destID)
+								{
+									listPacket.add(packet); 
+								}
 							}
 						}
-					 
-						if(!fromCombo.getItem(fromCombo.getSelectionIndex()).equals("All nodes") && toCombo.getItem(toCombo.getSelectionIndex()).equals("All nodes"))
-						{
-							if(fromCombo.getItem(fromCombo.getSelectionIndex()).equals((packet.sourceID)) && packet.isSuccess )
-							{
-								listPacket.add(packet);
-							}
-						}
-						if(fromCombo.getItem(fromCombo.getSelectionIndex()).equals("All nodes") && !toCombo.getItem(toCombo.getSelectionIndex()).equals("All nodes"))
-						{
-							if(toCombo.getItem(toCombo.getSelectionIndex()).equals((packet.destID)) && packet.isSuccess )
-							{
-								listPacket.add(packet);
-							}
-						}
-						if(fromCombo.getItem(fromCombo.getSelectionIndex()).equals("All nodes") && toCombo.getItem(toCombo.getSelectionIndex()).equals("All nodes"))
-						{
-							if(packet.isSuccess )
-							{
-								listPacket.add(packet);
-							}
-						}				 
 					}
-				
-					for(int i =0 ;i < listPacket.size(); i++){
-						Packet packet = listPacket.get(i);
-						TableItem tableItem= new TableItem(table, SWT.NONE);
-						tableItem.setText(0,Integer.toString(No++));
-						tableItem.setText(1,packet.id);
-						tableItem.setText(2,new DecimalFormat("0.00000000").format(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)));
-						tableItem.setText(3,packet.sourceID +"---"+packet.destID);
-						totalDelay+=(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
-						listDelayPacket.put(packet,(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)));
+					else										// one nodes
+					{
+						int sourceID = Integer.parseInt(fromCombo.getItem(fromCombo.getSelectionIndex()));
+						if (toCombo.getSelectionIndex() == 0)	// all nodes
+						{
+							for (Packet packet : ParserManager.getParser().getPackets().values()) 
+							{
+								if (packet.getSourceNode().getId() == sourceID) 
+								{
+									listPacket.add(packet); 
+								}
+							}
+						}
+						else									// one nodes
+						{
+							int destID = Integer.parseInt(toCombo.getItem(toCombo.getSelectionIndex()));
+							for (Packet packet : ParserManager.getParser().getPackets().values()) 
+							{
+								if (packet.getSourceNode().getId() == sourceID && packet.getDestNode().getId() == destID) 
+								{
+									listPacket.add(packet); 
+								}
+							}
+						}
+					}
 					
-						if (maxDelay < (Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)))
-							maxDelay = (Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
-						if (minDelay > (Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)))
-							minDelay = (Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
+					// Calculate and show result
+					for (Packet packet : listPacket) 
+					{												
+						TableItem tableItem = new TableItem(table, SWT.NONE);
+						tableItem.setText(0, Integer.toString(No++));
+						tableItem.setText(1, packet.getId() + "");
+						tableItem.setText(2, new DecimalFormat("0.00000000").format(packet.getEndTime()-packet.getStartTime()));
+						tableItem.setText(3, packet.getSourceNode().getId() +"---"+packet.getDestNode().getId());
+						totalDelay+=(packet.getEndTime()-packet.getStartTime());
+						listDelayPacket.put(packet,(packet.getEndTime()-packet.getStartTime()));
+					
+						if (maxDelay < (packet.getEndTime()-packet.getStartTime()))
+							maxDelay = (packet.getEndTime()-packet.getStartTime());
+						if (minDelay > (packet.getEndTime()-packet.getStartTime()))
+							minDelay = (packet.getEndTime()-packet.getStartTime());
 					}
 				
 					if (No == 1)
@@ -267,34 +278,36 @@ public class DelayTab extends Tab implements Observer{
 		super.createControlWidgets(); 
 	}
 	
-	/**
-	 * Set up item for fromCombo and toCombo 
-	 */
-	void setItemFromComboToCombo(){
-		if (filterByCombo.getSelectionIndex()==0){
-			String[] itemList=new String[Analyzer.mParser.getListNodes().size()+1] ; 
-			if(Analyzer.mParser.getListNodes().size()>0)
-			{
-				itemList[0]="All nodes";
-				for (int i=0;i<Analyzer.mParser.getListNodes().size();i++) { 
-					 Node node=Analyzer.mParser.getListNodes().get(i);
-					 itemList[i+1]=Integer.toString(node.id);
+	/* Set up item for fromCombo and toCombo */
+	void setItemFromComboToCombo() {
+		if (filterByCombo.getSelectionIndex() == 0)
+		{			
+			if (ParserManager.getParser().getNodes().size() > 0)
+			{				
+				fromCombo.add("All nodes");
+				toCombo.add("All nodes");
+				
+				for (Node node : ParserManager.getParser().getNodes().values()) 
+				{
+					fromCombo.add(node.getId() + "");
+					toCombo.add(node.getId() + "");
 				}
-				fromCombo.setItems(itemList);
-				toCombo.setItems(itemList);
 			}
 		}
-		if (filterByCombo.getSelectionIndex()==1){
+		
+		if (filterByCombo.getSelectionIndex() == 1)
+		{
 			super.refreshLayoutComposite();
 			fromCombo.setItems(new String[] {});
 			toCombo.setItems(new String[] {});
 			 
-			ySeries = new double[Analyzer.mParser.getListNodes().size()];
-			xSeries = new double[Analyzer.mParser.getListNodes().size()];		
-			for(int i=0;i<Analyzer.mParser.getListNodes().size();i++) {
-				Node node = Analyzer.mParser.getListNodes().get(i);
-				xSeries[i]=node.x;
-				ySeries[i]=node.y;
+			ySeries = new double[ParserManager.getParser().getNodes().size()];
+			xSeries = new double[ParserManager.getParser().getNodes().size()];		
+			for (int i = 0; i < ParserManager.getParser().getNodes().size(); i++)
+			{
+				Node node = ParserManager.getParser().getNodes().get(i);
+				xSeries[i]=node.getX();
+				ySeries[i]=node.getY();
 			}
 			chartAllNode = new ChartAllNode(xSeries, ySeries);
 			chartAllNode.addObserver(this);
@@ -319,14 +332,14 @@ public class DelayTab extends Tab implements Observer{
 			
 		for (int i=0;i<this.listNodeAreaSource.size();i++){ 
 			Node node=this.listNodeAreaSource.get(i);
-			itemListSource[i]=Integer.toString(node.id);
+			itemListSource[i]=Integer.toString(node.getId());
 		}
 		
 		fromCombo.setItems(itemListSource);
 		
 		for (int i=0;i<this.listNodeAreaDest.size();i++){ 
 			 Node node=this.listNodeAreaDest.get(i);
-			 itemListDest[i]=Integer.toString(node.id);
+			 itemListDest[i]=Integer.toString(node.getId());
 		}
 		
 		toCombo.setItems(itemListDest);
@@ -337,28 +350,28 @@ public class DelayTab extends Tab implements Observer{
 		double minDelay=1000000000;
 		double totalDelay=0;
 		LinkedHashMap<Packet,Double> listDelayPacket = new LinkedHashMap<Packet,Double>();
-		
-		for (int i=0;i<Analyzer.mParser.getListPacket().size();i++){ 
-			Packet packet=Analyzer.mParser.getListPacket().get(i);
+			
+		for (Packet	packet : ParserManager.getParser().getPackets().values()) 
+		{
 			for(int j=0;j<this.listNodeAreaSource.size();j++)
 			{
 				for(int k=0;k<this.listNodeAreaDest.size();k++)
 				{
-					if(this.listNodeAreaSource.get(j).id == Integer.parseInt(packet.sourceID) && this.listNodeAreaDest.get(k).id==Integer.parseInt(packet.destID) && packet.isSuccess )
+					if(this.listNodeAreaSource.get(j).getId() == packet.getSourceNode().getId() && this.listNodeAreaDest.get(k).getId() == packet.getDestNode().getId() && packet.isSuccess())
 					{
 						TableItem tableItem= new TableItem(table, SWT.NONE);
 						tableItem.setText(0,Integer.toString(No++));
-						tableItem.setText(1,packet.id);
-						tableItem.setText(2,new DecimalFormat("0.00000000").format(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)));
-						tableItem.setText(3,packet.sourceID+"--"+packet.destID);
+						tableItem.setText(1,Integer.toString(packet.getId()));
+						tableItem.setText(2,new DecimalFormat("0.00000000").format(packet.getEndTime()-packet.getStartTime()));
+						tableItem.setText(3,packet.getSourceNode().getId()+"--"+packet.getDestNode().getId());
 							 
-						totalDelay += (Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
-						listDelayPacket.put(packet,(Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)));
+						totalDelay += (packet.getEndTime()-packet.getStartTime());
+						listDelayPacket.put(packet,(packet.getEndTime()-packet.getStartTime()));
 							
-						if (maxDelay < (Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)))
-							maxDelay = (Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
-						if(minDelay > (Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime)))
-							minDelay = (Double.parseDouble(packet.endTime)-Double.parseDouble(packet.startTime));
+						if (maxDelay < (packet.getEndTime()-packet.getStartTime()))
+							maxDelay = (packet.getEndTime()-packet.getStartTime());
+						if(minDelay > (packet.getEndTime()-packet.getStartTime()))
+							minDelay = (packet.getEndTime()-packet.getStartTime());
 					}
 				}  
 			}
@@ -394,8 +407,8 @@ public class DelayTab extends Tab implements Observer{
 		double expectedValue1=0; //
 		double expectedValue2=0; // 
 		for (Packet i : listDelayPacket.keySet()) {
-			expectedValue1 += listDelayPacket.get(i)*listDelayPacket.get(i) * ((Double.parseDouble(i.endTime)-Double.parseDouble(i.startTime))/totalDelay);
-			expectedValue2 += listDelayPacket.get(i)*((Double.parseDouble(i.endTime)-Double.parseDouble(i.startTime))/totalDelay);
+			expectedValue1 += listDelayPacket.get(i)*listDelayPacket.get(i) * ((i.getEndTime()-i.getStartTime())/totalDelay);
+			expectedValue2 += listDelayPacket.get(i)*((i.getEndTime()-i.getStartTime())/totalDelay);
 		}
 		variances=expectedValue1-expectedValue2*expectedValue2;
 		return variances;
@@ -408,7 +421,7 @@ public class DelayTab extends Tab implements Observer{
 		if(listDelayPacket.size()!=0){
 			for (Packet i : listDelayPacket.keySet()) {
 				ySeries[j]=listDelayPacket.get(i);
-				xSeries[j]=Double.parseDouble(i.startTime);
+				xSeries[j]=i.getStartTime();
 				j++;
 			}
 		}
@@ -417,7 +430,7 @@ public class DelayTab extends Tab implements Observer{
 	/**
 	 * Creates the example layout.
 	 */
-	void createLayout() {
+	protected void createLayout() {
 		fillLayout = new FillLayout();
 		layoutComposite.setLayout(fillLayout);
 		super.createLayout();
@@ -426,14 +439,14 @@ public class DelayTab extends Tab implements Observer{
 	/**
 	 * Disposes the editors without placing their contents into the table.
 	 */
-	void disposeEditors() {
+	protected void disposeEditors() {
 		
 	}
 
 	/**
 	 * Returns the layout data field names.
 	 */
-	String[] getLayoutDataFieldNames() {
+	protected String[] getLayoutDataFieldNames() {
 		return new String[] { "No", "Packet","Time","Source-Dest" };
 	}
 
@@ -447,14 +460,14 @@ public class DelayTab extends Tab implements Observer{
 	/**
 	 * Takes information from TableEditors and stores it.
 	 */
-	void resetEditors() {
+	protected void resetEditors() {
 		setLayoutState();
 		refreshLayoutComposite();
 		layoutComposite.layout(true);
 		layoutGroup.layout(true);
 	}
 	
-	void refreshLayoutComposite() {
+	protected void refreshLayoutComposite() {
 		super.refreshLayoutComposite();
 		chart = new Chart(layoutComposite, SWT.NONE);
 		chart.getTitle().setText("Delay");
@@ -496,7 +509,7 @@ public class DelayTab extends Tab implements Observer{
 	/**
 	 * Sets the state of the layout.
 	 */
-	void setLayoutState() {
+	protected void setLayoutState() {
 		
 	}
 }
