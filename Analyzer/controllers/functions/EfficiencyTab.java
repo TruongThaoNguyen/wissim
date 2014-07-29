@@ -41,6 +41,7 @@ import controllers.chart2d.ChartAllNodeMultiArea;
 import controllers.chart3d.SurfaceChartEfficiency;
 import controllers.chart3d.SurfaceChartThroughput;
 import views.Analyzer;
+import views.Tab;
 
 public class EfficiencyTab extends Tab implements Observer{
   

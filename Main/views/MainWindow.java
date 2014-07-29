@@ -29,7 +29,7 @@ public class MainWindow extends ApplicationWindow {
 	/**
 	 * Analyzer component.
 	 */
-	private static Analyzer analyzer;
+	private Analyzer analyzer;
 	
 	/**
 	 * Visualizer component.
@@ -77,7 +77,7 @@ public class MainWindow extends ApplicationWindow {
 	
 		
 		editor   = new Editor(mainComposite, menuManager, statusLineManager);
-//		analyzer = new Analyzer(mainComposite, menuManager, statusLineManager);
+		analyzer = new Analyzer(mainComposite, menuManager, statusLineManager);
 		visualizer = new Visualizer(mainComposite, menuManager, statusLineManager);
 		
 		Button btnEditor = new Button(featureComposite, SWT.PUSH);
@@ -88,7 +88,6 @@ public class MainWindow extends ApplicationWindow {
 			public void handleEvent(Event e) 
 			{
 				((StackLayout)mainComposite.getLayout()).topControl = editor;
-//				mainComposite.setLayout(new FillLayout());
 				mainComposite.layout();						
 				editor.UpdateMenu();					
 			}
@@ -100,12 +99,7 @@ public class MainWindow extends ApplicationWindow {
 		btnAnalyzer.addListener(SWT.Selection, new Listener() 
 		{
 			public void handleEvent(Event e) 
-			{
-				
-				if(analyzer == null || !Analyzer.checkFileFormat){
-					analyzer = new Analyzer(mainComposite, menuManager, statusLineManager);	
-					System.out.println("Init completed");
-				}
+			{				
 				((StackLayout)mainComposite.getLayout()).topControl = analyzer;
 				mainComposite.layout();
 				analyzer.UpdateMenu();

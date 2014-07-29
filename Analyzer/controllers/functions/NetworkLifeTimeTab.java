@@ -45,6 +45,7 @@ import controllers.chart2d.BarChart;
 import controllers.chart2d.ChartAllNodeMultiArea;
 import controllers.parser.ns2parser.FullParser;
 import views.Analyzer;
+import views.Tab;
 
 public class NetworkLifeTimeTab extends Tab implements Observer {
   

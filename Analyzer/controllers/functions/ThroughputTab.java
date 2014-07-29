@@ -51,6 +51,7 @@ import com.ibm.icu.text.DecimalFormat;
 import controllers.chart2d.ChartAllNode;
 import controllers.chart3d.SurfaceChartThroughput;
 import views.Analyzer;
+import views.Tab;
 
 
 

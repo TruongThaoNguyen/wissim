@@ -1,7 +1,9 @@
 package models;
 
-import java.util.HashMap;
+import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Describe a node.
@@ -29,12 +31,12 @@ public class Node {
 	 * Energy.
 	 * store as a HashMap, hash by time
 	 */
-	private HashMap<Double, Double> energy;
+	private AbstractMap<Double, Double> energy = new ConcurrentHashMap<Double, Double>();
 	
 	/**
 	 * list of events that belong to this node.
 	 */
-	private List<Event> event;
+	private List<Event> event = new ArrayList<Event>();
 	
 	/**
 	 * create new node.
@@ -48,6 +50,10 @@ public class Node {
 		this.y = y;
 	}	
 	
+	/**
+	 * get id of node.
+	 * @return id
+	 */
 	public int getId() {
 		return id;
 	}
@@ -58,5 +64,18 @@ public class Node {
 	
 	public float getY() {
 		return y;
+	}
+
+	public List<Event> getEvent() {
+		return event;
+	}
+	
+	/**
+	 * get Energy.
+	 * Energy store by map of time and value.
+	 * @return
+	 */
+	public AbstractMap<Double, Double> getEnergy() {
+		return energy;
 	}	
 }

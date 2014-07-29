@@ -21,6 +21,11 @@ import nu.xom.ParsingException;
  */
 public final class Configure {
 	/**
+	 * slash symbol.
+	 */
+	private static String slash;
+
+	/**
 	 * Path to configure storage file.
 	 */
 	private static String configures = getHomePath() + "/.wissim/configure.xml";
@@ -63,7 +68,7 @@ public final class Configure {
 	 * @return the tclFile name
 	 */
 	public static String getTclFile() {
-		if (tclFile.contains("/")) {
+		if (tclFile.contains(slash())) {
 			return tclFile;
 		}
 		return directory + tclFile;
@@ -75,7 +80,7 @@ public final class Configure {
 	 * @return new file name.
 	 */
 	public static String setTclFile(final String value) {
-		int i = value.lastIndexOf("/");
+		int i = value.lastIndexOf(slash());
 		if (i != -1) {			
 			directory = value.substring(0, i + 1);
 			return tclFile = value.substring(i + 1);
@@ -97,7 +102,7 @@ public final class Configure {
 	 * @return file name
 	 */
 	public static String setTraceFile(final String value) {
-		int i = value.lastIndexOf("/");
+		int i = value.lastIndexOf(slash());
 		if (i != -1) {			
 			directory = value.substring(0, i + 1);
 			return traceFile = value.substring(i + 1);
@@ -110,7 +115,7 @@ public final class Configure {
 	 * @return the namTraceFile
 	 */
 	public static String getNamTraceFile() {
-		if (namTraceFile.contains("/")) {
+		if (namTraceFile.contains(slash())) {
 			return namTraceFile;
 		}		
 		return getFilePath(directory, namTraceFile);
@@ -140,9 +145,9 @@ public final class Configure {
 	 */
 	public static String setDirectory(String dir) {
 		if (dir.endsWith(".tcl")) {
-			dir = dir.substring(0, dir.lastIndexOf("/"));
+			dir = dir.substring(0, dir.lastIndexOf(slash()));
 		}
-		return directory = dir + "/";	
+		return directory = dir + slash();	
 	}
 
 	/**
@@ -173,7 +178,7 @@ public final class Configure {
 	 * @return path to ns2 installed directory
 	 */
 	public static String setNS2Path(final String path) {
-		if (!path.endsWith("/")) 	ns2Path = path + "/";		
+		if (!path.endsWith(slash())) 	ns2Path = path + slash();		
 		else						ns2Path = path;
 		
 		Element eGraphicSettings = new Element("configure");
@@ -201,13 +206,11 @@ public final class Configure {
 	 * @param fileName file name
 	 * @return full path to file
 	 */
-	public static String getFilePath(String directory, String fileName) {
-		String slash = "/";		
-		
-		if (directory.substring(directory.length() - 1).equals(slash))
+	public static String getFilePath(String directory, String fileName) {				
+		if (directory.substring(directory.length() - 1).equals(slash()))
 			return directory + fileName;		
 		else
-			return directory + slash + fileName;
+			return directory + slash() + fileName;
 	}
 
 	public static List<List<Integer>> getGroups()
@@ -225,5 +228,18 @@ public final class Configure {
 		}
 		
 		return re;
+	}
+	
+	private static String slash() {
+		if (slash == null || slash.isEmpty())
+		{
+			if (System.getProperty("os.name").startsWith("Windows")) {
+				slash = "\\";
+			}
+			else {
+				slash = "/" ;
+			}
+		}
+		return slash;
 	}
 }

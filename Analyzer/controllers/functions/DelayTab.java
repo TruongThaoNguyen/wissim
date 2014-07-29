@@ -32,6 +32,7 @@ import org.swtchart.ISeries.SeriesType;
 import org.swtchart.LineStyle;
 
 import views.Analyzer;
+import views.Tab;
 
 import com.ibm.icu.text.DecimalFormat;
 

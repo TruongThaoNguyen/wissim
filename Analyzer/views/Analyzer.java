@@ -1,13 +1,6 @@
 package views;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.MissingResourceException;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
@@ -15,8 +8,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
@@ -28,11 +19,8 @@ import controllers.functions.EnergyTab;
 import controllers.functions.HopCountTab;
 import controllers.functions.NetworkLifeTimeTab;
 import controllers.functions.SleepPeriodTab;
-import controllers.functions.Tab;
 import controllers.functions.ThroughputTab;
-import controllers.parser.ns2parser.NS2Parser;
-import controllers.parser.ns2parser.EventParser;
-import controllers.parser.ns2parser.FullParser;
+import controllers.parser.ParserManger;
 
 /**
  * main Control for Analyzer.
@@ -40,13 +28,11 @@ import controllers.parser.ns2parser.FullParser;
  *
  */
 public class Analyzer extends MainContent {
-
-	public static NS2Parser mParser;
-	public TabFolder tabFolder;
-	public static boolean checkFileFormat = false;
-	public static Composite composite;
-	public static String filePathNode=""; 
-	public static String filePathEvent="";
+	
+	/**
+	 * tab folder to control all function tab.
+	 */
+	private TabFolder tabFolder;
 	
 	/**
 	 * Create new Analyzer.
@@ -54,97 +40,15 @@ public class Analyzer extends MainContent {
 	 * @param menuManager main menu manager
 	 * @param statusLineManager main status line manager
 	 */
-	public Analyzer(Composite parent, MenuManager menuManager, StatusLineManager statusLineManager) {
-		super(parent, menuManager, statusLineManager);	
-		composite = parent;	
-		composite.getShell().setCursor(new Cursor(composite.getDisplay(), SWT.CURSOR_ARROW));
-		initAnalyzer();
+	public Analyzer(final Composite parent, MenuManager menuManager, StatusLineManager statusLineManager) {
+		super(parent, menuManager, statusLineManager);					
+		getShell().setCursor(new Cursor(getDisplay(), SWT.CURSOR_ARROW));
+		ParserManger.initParser();
 	}
 	
 	@Override
 	protected void updateMenu() {
 	
-	}
-	
-	/**
-	 * Open trace files then creates function tabs.
-	 */
-	public void initAnalyzer(){
-		if(mParser == null)
-		{
-		    try 
-		    {
-		    	JOptionPane.showMessageDialog(null, "Let choose file! First, let choose neighbors file to get position of nodes.");
-		    	
-		    	try 
-		    	{ 
-		    		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); 
-		    	} catch (ClassNotFoundException | InstantiationException | IllegalAccessException	| UnsupportedLookAndFeelException ex)
-		    	{ 
-		    		// DO NOTHING
-		    	}
-		    	
-		    	JFileChooser chooser = new JFileChooser();
-		    	JFileChooser chooserTrace = new JFileChooser();
-		
-				chooser.showOpenDialog(null);
-				File file = chooser.getSelectedFile();
-				if (file != null)
-				{
-					filePathNode = file.getAbsolutePath();				
-					
-					JOptionPane.showMessageDialog(null, "Second, let choose trace file to get information of events.");	
-					
-					chooserTrace.showOpenDialog(null);
-				    file = chooserTrace.getSelectedFile();
-				    if (file != null) 
-				    {
-						filePathEvent = file.getAbsolutePath();
-					}
-				}
-				
-			    if (filePathEvent != "" && filePathNode != "")
-			    {
-				    onFileOpen(filePathNode, filePathEvent);
-				    checkFileFormat = true;
-			    }
-		    }
-		    catch (IOException e1) 
-		    {
-				e1.printStackTrace();
-			}
-		    
-		    if (checkFileFormat)
-		    {
-		    	createContents();
-		    }
-		}
-	}
-	
-	/**
-	 * read file load.
-	 * @param filePathNode
-	 * @param filePathEvent
-	 * @throws IOException
-	 */
-	public static void onFileOpen(String filePathNode, String filePathEvent) throws IOException 
-	{
-		String returnvalue = NS2Parser.getHeaderFileParser(filePathEvent);
-		if (returnvalue.equals("Y")) {
-			mParser = new FullParser();
-		} else {
-			mParser = new EventParser();	
-		}
-		
-		composite.getShell().setCursor(new Cursor(composite.getDisplay(), SWT.CURSOR_WAIT));		
-		mParser.ConvertTraceFile(filePathNode, filePathEvent);
-		System.out.println("Trace completed");		
-		composite.getShell().setCursor(new Cursor(composite.getDisplay(), SWT.CURSOR_ARROW));
-		
-		MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_WORKING | SWT.OK);		
-		dialog.setText("Ok");
-		dialog.setMessage("Trace completed!");
-		dialog.open();
 	}
 	
 	/**
@@ -170,24 +74,16 @@ public class Analyzer extends MainContent {
 			item.setText(tabs[i].getTabText());
 			item.setControl(tabs[i].createTabFolderPage(tabFolder));
 		}
-	}
-	
-	/**
-	* Gets a string from the resource bundle. We don't want to crash because of
-	* a missing String. Returns the key if not found.
-	*/
-	@Deprecated
-	public static String getResourceString(String key) {
-		return key;
-	}
+	}	
 	
 	/**
 	* Gets a string from the resource bundle and binds it with the given
 	* arguments. If the key is not found, return the key.
+	* @return string
 	*/
 	public static String getResourceString(String key, Object[] args) {
 		try {
-			return MessageFormat.format(getResourceString(key), args);
+			return MessageFormat.format(key, args);
 		}
 		catch (MissingResourceException e) {
 			return key;
@@ -201,7 +97,7 @@ public class Analyzer extends MainContent {
 	* Disposes of all resources associated with a particular instance of the
 	* LayoutExample.
 	*/
-	public void dispose() {
-			tabFolder = null;
+	public final void dispose() {
+		tabFolder = null;
 	}
 }

@@ -53,6 +53,7 @@ import controllers.chart3d.SurfaceChartEnergy;
 
 import controllers.parser.ns2parser.FullParser;
 import views.Analyzer;
+import views.Tab;
 
 
 public class EnergyTab extends Tab implements Observer{

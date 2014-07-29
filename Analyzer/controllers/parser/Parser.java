@@ -1,29 +1,34 @@
 package controllers.parser;
 
-import java.util.HashMap;
+import java.util.AbstractMap;
 import java.util.List;
 
 import models.Event;
 import models.Packet;
 import models.Node;
 
+/**
+ * Interface for Parser.
+ * @author Trongnguyen
+ * Identify general parse methods.
+ */
 public interface Parser {		
 	
 	/**
 	 * get list of nodes.
 	 * @return HashMap of WirelessNode by id.
 	 */
-	public HashMap<Integer, Node> getNodes();
+	AbstractMap<Integer, Node> getNodes();
 	
 	/**
 	 * get list of packets.
 	 * @return HashMap of Packet by id.
 	 */
-	public HashMap<Integer, Packet> getPackets();
+	AbstractMap<Integer, Packet> getPackets();
 	
 	/**
 	 * get list of events.
 	 * @return HashMap of events by time.
 	 */
-	public List<Event> getEvent();
+	List<Event> getEvent();
 }

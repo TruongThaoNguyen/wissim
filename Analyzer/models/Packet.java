@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,19 +12,34 @@ public class Packet {
 	/**
 	 * packet's id.
 	 */
-	public String id;
+	private int id;
 	
 	/**
 	 * list of events that belong to this packet.
 	 * all the feature base on this this.
 	 */
-	private List<Event> event;
+	private List<Event> event = new ArrayList<Event>();
+	
+	
+	/**
+	 * @param id
+	 */
+	public Packet(int id) {
+		this.id = id;
+	}
+
+	/**
+	 * @return Event list
+	 */
+	public List<Event> getEvent() {
+		return event;
+	}
 	
 	/**
 	 * identify of this packet.
 	 * @return packet's id
 	 */
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -51,13 +67,13 @@ public class Packet {
 	 * get source node that sent this packet.
 	 * @return source node
 	 */
-	public Node getSourceID() {
+	public Node getSourceNode() {
 		// TODO: get source node of from first event
 		return null;
 	}
 
 	/**
-	 * get source node's layer
+	 * get source node's layer.
 	 * @return source layer
 	 */
 	public String getSourceLayer() {
@@ -66,16 +82,16 @@ public class Packet {
 	}	
 
 	/**
-	 * get destination node
+	 * get destination node.
 	 * @return destination node
 	 */
-	public Node getDestID() {
+	public Node getDestNode() {
 		// TODO: get destination node form CMN_header of first event
 		return null;
 	}
 
 	/**
-	 * get the last node packet passing
+	 * get the last node packet passing.
 	 * @return node
 	 */
 	public Node getLastNode() {
@@ -84,10 +100,10 @@ public class Packet {
 	}
 	
 	/**
-	 * get list of all node that packet passing
+	 * get list of all node that packet passing.
 	 * @return
 	 */
-	public List<Node> getTranferNodes() {
+	public List<Node> getListNodes() {
 		// TODO: get list of forward nodes form event list
 		return null;
 	}

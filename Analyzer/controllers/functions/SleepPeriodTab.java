@@ -50,6 +50,7 @@ import controllers.chart2d.ChartAllNode;
 import controllers.chart2d.ChartAllNodeMultiArea;
 import controllers.chart3d.SurfaceChartEnergy;
 import views.Analyzer;
+import views.Tab;
 
 
 public class SleepPeriodTab extends Tab implements Observer{
