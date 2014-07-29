@@ -10,9 +10,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-import com.ibm.icu.text.MessageFormat;
+import views.functions.HopCountTab;
 
-import controllers.functions.HopCountTab;
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * main Control for Analyzer.

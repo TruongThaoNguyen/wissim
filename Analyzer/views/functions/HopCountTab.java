@@ -1,4 +1,4 @@
-package controllers.functions;
+package views.functions;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

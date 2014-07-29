@@ -1,4 +1,4 @@
-package controllers.functions;
+package views.functions;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
