@@ -89,7 +89,7 @@ public class EnergyTab extends Tab implements Observer{
 	   // GridData gridData=new GridData(GridData.FILL_HORIZONTAL);
 	   
 	    Label filterByLabel=new Label(controlGroup, SWT.None);
-	    filterByLabel.setText(Analyzer.getResourceString("Filter by"));
+	    filterByLabel.setText("Filter by");
 	    filterByLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 	    
 	    filterByCombo = new Combo(controlGroup, SWT.READ_ONLY);
