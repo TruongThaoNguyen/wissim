@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import models.NodeEnergy;
 import models.Node;
 
 import org.eclipse.swt.SWT;
@@ -50,8 +49,6 @@ import controllers.chart2d.ChartAllNode;
 import controllers.chart2d.ChartAllNodeMultiArea;
 import controllers.chart3d.SurfaceChartEnergy;
 
-
-import controllers.parser.ns2parser.FullParser;
 import views.Analyzer;
 import views.Tab;
 
