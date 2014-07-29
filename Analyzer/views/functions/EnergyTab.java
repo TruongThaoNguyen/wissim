@@ -114,7 +114,7 @@ public class EnergyTab extends Tab implements Observer{
 	    setItemEqualCombo();
 	    
 	    analyze = new Button(controlGroup, SWT.PUSH);
-	    analyze.setText(Analyzer.getResourceString("Analyze"));
+	    analyze.setText("Analyze");
 	    analyze.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 	    
 	    /* Add listener to add an element to the table */
