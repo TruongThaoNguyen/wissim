@@ -297,5 +297,3 @@ public class EfficiencyTab extends Tab implements Observer{
 		
 	}
 }
-
-
