@@ -75,7 +75,7 @@ public class EnergyTab extends Tab implements Observer{
   /**
    * Creates the widgets in the "child" group.
    */
-  void createChildWidgets() {
+  protected void createChildWidgets() {
     /* Add common controls */
     super.createChildWidgets();  
     
