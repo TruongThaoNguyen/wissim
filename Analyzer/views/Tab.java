@@ -65,7 +65,7 @@ public abstract class Tab {
 	/**
 	* Common controls for modifying the example layout. 
 	*/
-	private String[] names;
+	public String[] names;
 	
 	private Control[] children;
 	
@@ -80,7 +80,7 @@ public abstract class Tab {
 	* Common values for working with TableEditors.
 	*/
 	public Table table;
-	public double[] ySeries ;
+	public double[] ySeries;
 	public double[] xSeries;
 	int index;
 	

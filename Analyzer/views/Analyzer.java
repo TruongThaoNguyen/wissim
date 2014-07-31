@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.TabItem;
 
 import views.functions.DelayTab;
 import views.functions.EfficiencyTab;
+import views.functions.EnergyTab;
 import views.functions.HopCountTab;
 
 import com.ibm.icu.text.MessageFormat;
@@ -56,7 +57,7 @@ public class Analyzer extends MainContent {
 			new DelayTab(this),
 			new HopCountTab(this),
 			new EfficiencyTab(this),
-	//		new EnergyTab(this),
+			new EnergyTab(this),
 	//		new NetworkLifeTimeTab(this),
 	//		new SleepPeriodTab(this)
 		};

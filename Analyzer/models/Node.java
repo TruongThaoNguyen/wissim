@@ -1,9 +1,9 @@
 package models;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Describe a node.
@@ -20,18 +20,18 @@ public class Node {
 	/**
 	 * group id.
 	 */
-	public int groupID;
+	private int groupID;
 	
 	/**
 	 * position.
 	 */
 	private float x, y;
-	
+
 	/**
 	 * Energy.
 	 * store as a HashMap, hash by time
-	 */
-	private AbstractMap<Double, Double> energy = new ConcurrentHashMap<Double, Double>();
+	 */		
+	private ConcurrentSkipListMap<Double, Double> energy = new ConcurrentSkipListMap<>(); 
 	
 	/**
 	 * list of events that belong to this node.
@@ -49,7 +49,7 @@ public class Node {
 		this.x = x;
 		this.y = y;
 	}	
-	
+
 	/**
 	 * get id of node.
 	 * @return id
@@ -58,11 +58,25 @@ public class Node {
 		return id;
 	}
 	
-	public float getX() {
+	/**
+	 * @return the groupID
+	 */
+	public int getGroupID() {
+		return groupID;
+	}
+
+	/**
+	 * @param groupID the groupID to set
+	 */
+	public void setGroupID(int groupID) {
+		this.groupID = groupID;
+	}
+	
+	public double getX() {
 		return x;
 	}
 	
-	public float getY() {
+	public double getY() {
 		return y;
 	}
 
@@ -75,7 +89,7 @@ public class Node {
 	 * Energy store by map of time and value.
 	 * @return
 	 */
-	public AbstractMap<Double, Double> getEnergy() {
+	public ConcurrentSkipListMap<Double, Double> getEnergy() {
 		return energy;
 	}	
 }
