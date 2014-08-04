@@ -14,6 +14,9 @@ import views.functions.DelayTab;
 import views.functions.EfficiencyTab;
 import views.functions.EnergyTab;
 import views.functions.HopCountTab;
+import views.functions.NetworkLifeTimeTab;
+import views.functions.SleepPeriodTab;
+import views.functions.ThroughputTab;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -53,13 +56,13 @@ public class Analyzer extends MainContent {
 		tabFolder = new TabFolder(this, SWT.NULL);
 		Tab[] tabs = new Tab[] 
 		{ 
-	//		new ThroughputTab(this),
+			new ThroughputTab(this),
 			new DelayTab(this),
 			new HopCountTab(this),
 			new EfficiencyTab(this),
-			new EnergyTab(this),
+	//		new EnergyTab(this),
 	//		new NetworkLifeTimeTab(this),
-	//		new SleepPeriodTab(this)
+			new SleepPeriodTab(this)
 		};
 		
 		for (int i = 0; i < tabs.length; i++) 
