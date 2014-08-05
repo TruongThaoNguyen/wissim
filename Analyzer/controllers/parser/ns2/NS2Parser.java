@@ -16,7 +16,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import models.Event;
 import models.Node;
 import models.Packet;
-import controllers.Configure;
 import controllers.parser.Parser;
 
 /**
@@ -56,10 +55,7 @@ public class NS2Parser implements Parser {
 	/**
 	 * create new NS2 parer.
 	 */
-	public NS2Parser() {							
-//		new Thread() {
-//			public void run() {
-
+	public NS2Parser() {
 //				// try with default directory								
 //				try 
 //				{
@@ -114,22 +110,20 @@ public class NS2Parser implements Parser {
 						}
 					}
 				}
-//			}
-//		}.start();
 	}
 	
 	@Override
-	public synchronized AbstractMap<Integer, Node> getNodes() {		
+	public AbstractMap<Integer, Node> getNodes() {		
 		return node;
 	}
 
 	@Override
-	public synchronized AbstractMap<Integer, Packet> getPackets() {
+	public AbstractMap<Integer, Packet> getPackets() {
 		return packet;
 	}
 
 	@Override
-	public synchronized List<Event> getEvent() {
+	public List<Event> getEvent() {
 		return event;
 	}
 	

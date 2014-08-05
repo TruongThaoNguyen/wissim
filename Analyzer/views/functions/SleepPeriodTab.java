@@ -1,6 +1,7 @@
 package views.functions;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -36,7 +37,7 @@ public class SleepPeriodTab extends Tab implements Observer{
 	Button resetButton;
 	Text avgText,maxText,minText;
 	
-	ArrayList<ArrayList<Node>> listNodeAreas;
+	List<List<Node>> listNodeAreas;
 	ChartAllNodeMultiArea chartAllNodeSleepTime;
 	ArrayList<Double> listSleepTimeOfAreas,listAvgSleepTimeOfAreas;
 	/*constant of network*/
@@ -48,7 +49,7 @@ public class SleepPeriodTab extends Tab implements Observer{
 	 */
 	public SleepPeriodTab(Analyzer instance) {
 		super(instance);
-		listNodeAreas = new ArrayList<ArrayList<Node>>();
+		listNodeAreas = new ArrayList<List<Node>>();
 		listSleepTimeOfAreas = new ArrayList<Double>(); 
 		listAvgSleepTimeOfAreas = new ArrayList<Double>();
 	}
@@ -211,7 +212,7 @@ public class SleepPeriodTab extends Tab implements Observer{
 						double areaSleepTime;
 						int No=1;
 						for(int i=0; i<listNodeAreas.size(); i++){
-							ArrayList<Node> listNodeOfOneArea = listNodeAreas.get(i);
+							List<Node> listNodeOfOneArea = listNodeAreas.get(i);
 							areaSleepTime = 0;
 							for(int j=0; j<listNodeOfOneArea.size(); j++){
 								TableItem tableItem= new TableItem(table, SWT.NONE);

@@ -1,6 +1,7 @@
 package controllers.chart2d;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 
 import models.Node;
@@ -50,8 +51,8 @@ public class ChartAllNodeMultiArea extends Observable{
 	private static int currentY;
 
 	private static boolean drag = false, dragMove = false, checkMove = false;
-	public ArrayList<ArrayList<Node>> listNodeArea;
-	public ArrayList<Node> listNodeOfOneArea;
+	public List<List<Node>> listNodeArea;
+	public List<Node> listNodeOfOneArea;
 	public Chart chartAllNode;
 	Menu popupMenu;
 	
@@ -69,7 +70,7 @@ public class ChartAllNodeMultiArea extends Observable{
 	 */
 	public void createChart(Composite parent) 
 	{
-		listNodeArea = new ArrayList<ArrayList<Node>>();
+		listNodeArea = new ArrayList<List<Node>>();
 		listNodeOfOneArea = new ArrayList<Node>();
 		
 		// create a chart

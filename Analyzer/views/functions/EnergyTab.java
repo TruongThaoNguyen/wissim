@@ -40,7 +40,7 @@ public class EnergyTab extends Tab implements Observer{
 	FillLayout fillLayout;
 	Combo filterByCombo,equalCombo; 
 	Button resetButton;
-	ArrayList<ArrayList<Node>> listNodeAreas;
+	List<List<Node>> listNodeAreas;
 	ChartAllNodeMultiArea chartAllNodeEnergy;
 	ArrayList<Double> listEnergyOfAreas,listAvgEnergyOfAreas;
 	/**
@@ -48,7 +48,7 @@ public class EnergyTab extends Tab implements Observer{
 	 */
 	public EnergyTab(Analyzer instance) {
 		super(instance);
-		listNodeAreas = new ArrayList<ArrayList<Node>>();
+		listNodeAreas = new ArrayList<List<Node>>();
 		listEnergyOfAreas = new ArrayList<Double>(); 
 		listAvgEnergyOfAreas = new ArrayList<Double>(); 
 	}

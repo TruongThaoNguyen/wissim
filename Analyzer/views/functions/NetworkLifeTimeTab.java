@@ -5,9 +5,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.rmi.CORBA.Tie;
 
@@ -43,28 +46,34 @@ import com.ibm.icu.text.DecimalFormat;
 
 import controllers.chart2d.BarChart;
 import controllers.chart2d.ChartAllNodeMultiArea;
+import controllers.parser.ParserManager;
 import views.Analyzer;
 import views.Tab;
 
 public class NetworkLifeTimeTab extends Tab implements Observer {
 	
-	/* The example layout instance */
+	/**
+	 * list of areas.
+	 * each area is a sublist of nodes in this area.
+	 */
+	private List<List<Node>> listNodeAreas;
+	
 	FillLayout fillLayout;
 	Text deadPercentText,lifeTimeText,energyNodeDeadText;
 	Combo filterByCombo;
 	Button resetButton;
-	ArrayList<ArrayList<Node>> listNodeAreas;
+	
 	ChartAllNodeMultiArea chartAllNodeLifeTime;
 	ArrayList<Double> listLifeTimeOfAreas;
 	final static double MAX_TIME = 100000;
-	//boolean checkLoadEnergy = false;
+	boolean checkLoadEnergy = false;
 
 	/**
 	 * Creates the Tab within a given instance of LayoutExample.
 	 */
 	public NetworkLifeTimeTab(Analyzer instance) {
 		super(instance);
-		listNodeAreas = new ArrayList<ArrayList<Node>>();
+		listNodeAreas = new ArrayList<List<Node>>();
 		listLifeTimeOfAreas = new ArrayList<Double>();
 	}
 
@@ -143,157 +152,125 @@ public class NetworkLifeTimeTab extends Tab implements Observer {
 			
 		/* Analyze listener	*/
 		analyze.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {				
-				int percentNodeDead;
-				table.removeAll();
-				int No=1;
-				try
+			public void widgetSelected(SelectionEvent e) {	
+				CalculateLifeTime();								 								
+			}			
+		});
+		 
+		/* Add common controls */
+		super.createControlWidgets();	 
+	}
+	
+	private void CalculateLifeTime()
+	{			
+		table.removeAll();
+		int No = 1;
+		int percentNodeDead = Integer.parseInt(deadPercentText.getText());
+		
+		// check condition
+		if (percentNodeDead == 0 || percentNodeDead > 100)
+		{
+			MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
+			dialog.setText("Error");
+			dialog.setMessage("Input không hợp lệ! Bạn phải nhập vào ô phần trăm một số >0 và <=100");
+			dialog.open(); 
+			deadPercentText.setText("");
+			deadPercentText.setFocus();
+			
+			return;
+		}
+			
+		SortedMap<Node, Double> deadNode = new TreeMap<>();
+		
+		if (filterByCombo.getSelectionIndex() == 0)	// all nodes
+		{						
+			lifeTimeText.setText("Not die!");
+
+			for (Node node : ParserManager.getParser().getNodes().values()) 
+			{
+				for (double time : node.getEnergy().keySet()) 
 				{
-					Analyzer.mParser.setEnergyNodeDead(Double.parseDouble(energyNodeDeadText.getText()));
-					try
+					if (node.getEnergy().get(time) <= 0)
 					{
-						percentNodeDead = Integer.parseInt(deadPercentText.getText());
-						if (percentNodeDead == 0 || percentNodeDead > 100)
+						deadNode.put(node, time);
+						break;
+					}
+				}
+			}
+		}
+		else	// selected nodes
+		{
+			if (listNodeAreas.size() == 0)
+			{
+				MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
+				dialog.setText("Error");
+				dialog.setMessage("some thing wrong!");
+				dialog.open(); 
+			}
+			else
+			{					 						 
+				for (List<Node> area : listNodeAreas) 
+				{
+					for (Node node : area) 
+					{
+						for (double time : node.getEnergy().keySet()) 
 						{
-							MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
-							dialog.setText("Error");
-							dialog.setMessage("Input không hợp lệ! Bạn phải nhập vào ô phần trăm một số >0 và <=100");
-							dialog.open(); 
-							deadPercentText.setText("");
-							deadPercentText.setFocus();
-						} 
-						else
-						{
-							if (!checkLoadEnergy)
+							if (node.getEnergy().get(time) <= 0)
 							{
-								Analyzer.mParser.setNetworkLifeTime();
-								checkLoadEnergy = true;
-							}								 
-							if (filterByCombo.getSelectionIndex() == 0)
-							{
-								Analyzer.mParser.setNumberNodeDead(Analyzer.mParser.getListNodes().size()*percentNodeDead/100);
-								lifeTimeText.setText(" ");
-								for(Integer i : Analyzer.mParser.getListNodeDead().keySet()){
-									TableItem tableItem= new TableItem(table, SWT.NONE);
-									tableItem.setText(0,Integer.toString(No++));
-									tableItem.setText(1,Integer.toString(i));
-									tableItem.setText(2,Double.toString(Analyzer.mParser.getListNodeDead().get(i)));
-									if(No > Analyzer.mParser.getNumberNodeDead() ){
-										 lifeTimeText.setText(Double.toString(Analyzer.mParser.getListNodeDead().get(i)));
-										 break;
-									 }
-									 }
-									 if(lifeTimeText.getText().equals(" "))
-										 lifeTimeText.setText("Not die!");
-								 }
-								 else{
-					 						if(listNodeAreas.size() == 0){
-					 							MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
-					 						dialog.setText("Error");
-					 						dialog.setMessage("some thing wrong!");
-					 							dialog.open(); 
-					 						}
-					 						else{					 						 
-					 							listLifeTimeOfAreas.clear();
-					 							double lifeTimeOneArea=0;	
-					 							double timeDie[];
-					 							int numberNodeDeadOfArea;
-					 							Map<Integer,Double> listNodeDeadArea;
-					 								for(int i=0; i<listNodeAreas.size(); i++){
-					 									ArrayList<Node> listNodeOfOneArea = listNodeAreas.get(i);
-					 									numberNodeDeadOfArea = listNodeOfOneArea.size()*percentNodeDead/100;
-					 									if(numberNodeDeadOfArea == 0)
-					 										lifeTimeOneArea = 0;
-					 									else{
-						 									timeDie = new double[listNodeOfOneArea.size()];
-						 									listNodeDeadArea = new LinkedHashMap<Integer,Double>();
-						 									for(int j=0; j<listNodeOfOneArea.size(); j++){
-						 										if(Analyzer.mParser.getListNodeDead().containsKey(listNodeOfOneArea.get(j).id))
-						 											timeDie[j] = Analyzer.mParser.getListNodeDead().get(listNodeOfOneArea.get(j).id);
-						 										else {
-						 											timeDie[j] = MAX_TIME;
-						 											Analyzer.mParser.getListNodeDead().put(listNodeOfOneArea.get(j).id, timeDie[j]);
-						 										}
-						 										listNodeDeadArea.put(listNodeOfOneArea.get(j).id, timeDie[j]);	
-						 									}
-						 									Arrays.sort(timeDie);
-						 									lifeTimeOneArea = timeDie[numberNodeDeadOfArea-1];
-						 									if(lifeTimeOneArea == MAX_TIME)
-						 										lifeTimeOneArea = -10;
-						 									listNodeDeadArea = Analyzer.mParser.sortByValue(listNodeDeadArea);
-						 										for(Integer k : listNodeDeadArea.keySet()){
-							 								 if(listNodeDeadArea.get(k) <= lifeTimeOneArea){
-							 								 	 TableItem tableItem= new TableItem(table, SWT.NONE);
-							 								 	 tableItem.setText(0,Integer.toString(No++));
-														 tableItem.setText(1,Integer.toString(k));
-														 tableItem.setText(2,Double.toString(listNodeDeadArea.get(k)));
-														 tableItem.setText(3, Integer.toString(i+1));
-														 lifeTimeText.setText(" ");														 
-							 								 }
-							 								 else 
-							 									 break;
-							 								}
-					 									}
-					 									listLifeTimeOfAreas.add(lifeTimeOneArea);
-					 									new TableItem(table, SWT.NONE);
-					 								}
-					 							Shell shell = new Shell();		
-					 							new BarChart(shell,listLifeTimeOfAreas,"Life Time with Energy: "+
-					 																									 Analyzer.mParser.getEnergyNodeDead()+", Percent: "+percentNodeDead+"%");
-					 							
-					 						}
-				 						}
-								 
-							 }
+								deadNode.put(node, time);
+								break;
 							}
-							catch(NumberFormatException e1){
-								MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
-							dialog.setText("Error");
-							dialog.setMessage("Input không hợp lệ! Bạn phải nhập vào ô phần trăm một số tự nhiên");
-								dialog.open(); 
-								deadPercentText.setText("");
-								deadPercentText.setFocus();
-							}
-						}
-						catch(NumberFormatException e2){
-							MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
-						dialog.setText("Error");
-						dialog.setMessage("Input không hợp lệ! Bạn phải nhập vào ô năng lượng một số");
-							dialog.open(); 
-							energyNodeDeadText.setText("");
-							energyNodeDeadText.setFocus();
 						}
 					}
-
 				}
-			});		
-		 
-			/* Add common controls */
-			super.createControlWidgets();
-	 
-	}
-	void initDataFilterByComboChange(){
-		if(filterByCombo.getSelectionIndex()==0){
-		resetButton.setVisible(false);
-		}
-		if(filterByCombo.getSelectionIndex()==1){
-		 super.refreshLayoutComposite();
-		 //listNodeAreas.clear();
-		 ySeries = new double[Analyzer.mParser.getListNodes().size()];
-			 xSeries = new double[Analyzer.mParser.getListNodes().size()];		
-			for(int j=0;j<Analyzer.mParser.getListNodes().size();j++) {
-				Node node = Analyzer.mParser.getListNodes().get(j);
-				xSeries[j]=node.x;
-				ySeries[j]=node.y;
+				Shell shell = new Shell();		
+				new BarChart(shell, listLifeTimeOfAreas, "Life Time with Energy: " + 0 + ", Percent: " + percentNodeDead + "%");
 			}
-		 chartAllNodeLifeTime = new ChartAllNodeMultiArea(xSeries, ySeries);
-		 chartAllNodeLifeTime.addObserver(this);
-		 chartAllNodeLifeTime.createChart(layoutComposite);
-		 resetButton.setVisible(true);
-		 chartAllNodeLifeTime.listNodeArea = this.listNodeAreas;
-				 chartAllNodeLifeTime.chartAllNode.getPlotArea().redraw();
+		}
+
+		int count = percentNodeDead * ParserManager.getParser().getNodes().size() / 100;
+		
+		for (Node node : deadNode.keySet()) {
+			TableItem  tableItem = new TableItem(table, SWT.NONE);
+			tableItem.setText(0, Integer.toString(No++));
+			tableItem.setText(1, Integer.toString(node.getId()));
+			tableItem.setText(2, deadNode.get(node).toString());
+			
+			if (No > count)
+			{
+				lifeTimeText.setText(deadNode.get(node).toString());
+				break;	
+			}
 		}
 	}
+	
+	void initDataFilterByComboChange(){		
+		if(filterByCombo.getSelectionIndex()==0)
+		{
+			resetButton.setVisible(false);
+		}
+		if(filterByCombo.getSelectionIndex()==1)
+		{
+			super.refreshLayoutComposite();
+
+			ySeries = new double[ParserManager.getParser().getNodes().size()];
+			xSeries = new double[ParserManager.getParser().getNodes().size()];		
+			
+			int j = 0;
+			for (Node node : ParserManager.getParser().getNodes().values()) {
+				xSeries[j]=node.getX();
+				ySeries[j]=node.getY();
+				j++;
+			}
+			chartAllNodeLifeTime = new ChartAllNodeMultiArea(xSeries, ySeries);
+			chartAllNodeLifeTime.addObserver(this);
+			chartAllNodeLifeTime.createChart(layoutComposite);
+			resetButton.setVisible(true);
+			chartAllNodeLifeTime.listNodeArea = this.listNodeAreas;
+			chartAllNodeLifeTime.chartAllNode.getPlotArea().redraw();
+		}
+	}
+	
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		if (arg0 instanceof ChartAllNodeMultiArea ) {
@@ -303,11 +280,12 @@ public class NetworkLifeTimeTab extends Tab implements Observer {
 	/**
 	 * Creates the example layout.
 	 */
-	void createLayout() {
+
+	protected void createLayout() {
 		fillLayout = new FillLayout();
 		layoutComposite.setLayout(fillLayout);
 		resetButton = new Button(layoutGroup, SWT.PUSH);
-		resetButton.setText("Reset"));
+		resetButton.setText("Reset");
 		resetButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 		/*Add listener to button drawChart*/
 		resetButton.addSelectionListener(new SelectionAdapter() {
@@ -325,14 +303,14 @@ public class NetworkLifeTimeTab extends Tab implements Observer {
 	/**
 	 * Disposes the editors without placing their contents into the table.
 	 */
-	void disposeEditors() {
+	protected void disposeEditors() {
 		
 	}
 
 	/**
 	 * Returns the layout data field names.
 	 */
-	String[] getLayoutDataFieldNames() {
+	protected String[] getLayoutDataFieldNames() {
 		return new String[] { "No", "NodeID","Dead time","Group" };
 	}
 
@@ -346,19 +324,19 @@ public class NetworkLifeTimeTab extends Tab implements Observer {
 	/**
 	 * Takes information from TableEditors and stores it.
 	 */
-	void resetEditors() {
+	protected void resetEditors() {
 		setLayoutState();
 		refreshLayoutComposite();
 		layoutComposite.layout(true);
 		layoutGroup.layout(true);
 	}
-	void refreshLayoutComposite() {
+	protected void refreshLayoutComposite() {
 					
 		}
 	/**
 	 * Sets the state of the layout.
 	 */
-	void setLayoutState() {
+	protected void setLayoutState() {
 		
 	}
 }

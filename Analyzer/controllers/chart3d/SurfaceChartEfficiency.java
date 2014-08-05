@@ -7,28 +7,36 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.HashMap;
 
+import controllers.parser.ParserManager;
 import models.Node;
 import models.Packet;
-import views.Analyzer;
 
 public class SurfaceChartEfficiency {
 	public static void createData() throws IOException{
-		//TraceFile.ConvertTraceFile();
-		double totalDrop[]=new double[Analyzer.mParser.getListNodes().size()];
-        for(int i=0;i<Analyzer.mParser.getListPacket().size();i++){
-        	Packet packet = Analyzer.mParser.getListPacket().get(i);
-        	if(!packet.isSuccess && packet.getType().equals("cbr"))
-        		totalDrop[Integer.parseInt(packet.sourceID)]++;
+		HashMap<Node, Integer> totalDrop = new HashMap<Node, Integer>();
+		
+		for (Node node : ParserManager.getParser().getNodes().values()) 
+		{
+			totalDrop.put(node, 0);
+		}		
+        	
+        for (Packet packet : ParserManager.getParser().getPackets().values()) 
+        {		
+        	if (!packet.isSuccess() && packet.getType().equals("cbr"))
+        	{
+        		totalDrop.put(packet.getSourceNode(), totalDrop.get(packet.getSourceNode()) + 1);
+        	}
         }
         
 		FileOutputStream fos= new FileOutputStream("DataEfficiency",false);
-        PrintWriter pw= new PrintWriter(fos);
-        for(int i=0;i<totalDrop.length;i++){
-        	Node node = Analyzer.mParser.getListNodes().get(i);
-        	if (totalDrop[i] !=0)
-        		pw.println(node.x+" "+node.y+" "+totalDrop[i]);
-        }
+        PrintWriter pw = new PrintWriter(fos);
+                
+        for (Node node : totalDrop.keySet()) {
+			pw.println(node.getX() + " " + node.getY() + " " + totalDrop.get(node));
+		}
+        
         pw.close();
 	}
 	public static void drawChart3D(){

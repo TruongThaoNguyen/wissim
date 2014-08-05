@@ -1,7 +1,9 @@
 package views.functions;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -151,104 +153,128 @@ public class ThroughputTab extends Tab implements Observer{
 		/* Add listener to button analyze */
 		analyze.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if(fromCombo.getSelectionIndex()==-1 || toCombo.getSelectionIndex()==-1){
-					MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
-					dialog.setText("Error");
-					dialog.setMessage("Let choose source node and destination node!");
-					dialog.open(); 
-				}
-				else
-				{	
-					table.removeAll();
-					int No=1;
-					double maxThroughput=0;
-					double minThroughput=1000000000;
-					double totalSize=0;
-					double totalTime=0;					
-					LinkedHashMap<Packet,Double> listThroughputPacket = new LinkedHashMap<Packet,Double>();
-					ArrayList<Packet> listPacket = new ArrayList<Packet>();
-					
-					for (Packet packet : ParserManager.getParser().getPackets().values()) 
-					{					
-						if(!fromCombo.getItem(fromCombo.getSelectionIndex()).equals("All nodes") && !toCombo.getItem(toCombo.getSelectionIndex()).equals("All nodes"))
-						{
-							if (fromCombo.getItem(fromCombo.getSelectionIndex()).equals(packet.getSourceNode().getId()) && toCombo.getItem(toCombo.getSelectionIndex()).equals(packet.getDestNode().getId()) && packet.isSuccess() ){
-								 listPacket.add(packet);
-							 }
-						 }
-						 if(!fromCombo.getItem(fromCombo.getSelectionIndex()).equals("All nodes") 
-								 && toCombo.getItem(toCombo.getSelectionIndex()).equals("All nodes")){
-							 if(fromCombo.getItem(fromCombo.getSelectionIndex()).equals((packet.getSourceNode().getId())) && packet.isSuccess() ){
-								 listPacket.add(packet);
-							 }
-						 }
-						 if(fromCombo.getItem(fromCombo.getSelectionIndex()).equals("All nodes") 
-								 && !toCombo.getItem(toCombo.getSelectionIndex()).equals("All nodes")){
-							 if(toCombo.getItem(toCombo.getSelectionIndex()).equals((packet.getDestNode().getId())) && packet.isSuccess() ){
-								 listPacket.add(packet);
-							 }
-						 }
-						 if(fromCombo.getItem(fromCombo.getSelectionIndex()).equals("All nodes") 
-								 && toCombo.getItem(toCombo.getSelectionIndex()).equals("All nodes")){
-							 if(packet.isSuccess() ){
-								 listPacket.add(packet);
-							 }
-						 }						 
-						 
-					}
-					
-					for (Packet packet : listPacket)
-					{
-						TableItem tableItem= new TableItem(table, SWT.NONE);
-						tableItem.setText(0,Integer.toString(No++));
-						tableItem.setText(1,Integer.toString(packet.getId()));
-						tableItem.setText(2,singlePacketThroughput(packet));
-						tableItem.setText(3,packet.getSourceNode().getId() +"---"+packet.getDestNode().getId());
-						totalSize += packet.getSize();
-						totalTime += packet.getEndTime() - packet.getStartTime();
-						listThroughputPacket.put(packet, packet.getSize() / (packet.getEndTime() - packet.getStartTime()));
-						
-						maxThroughput = Math.max(maxThroughput, packet.getSize() / (packet.getEndTime() - packet.getStartTime()));
-						minThroughput = Math.min(minThroughput, packet.getSize() / (packet.getEndTime() - packet.getStartTime()));
-					}
-					if(No==1){
-						MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
-						dialog.setText("Error");
-						dialog.setMessage("No packet from node "+fromCombo.getItem(fromCombo.getSelectionIndex())+
-								" to node "+toCombo.getItem(toCombo.getSelectionIndex())+"!");
-							dialog.open(); 
-							avgText.setText("0");
-						variantText.setText("0");
-						maxText.setText("0");
-						minText.setText("0");
-						xSeries=new double[0];
-						ySeries=new double[0];
-					}
-					else{
-						DecimalFormat df = new DecimalFormat("0.00");
-						String str= df.format(totalSize/totalTime);
-						//set mean
-						avgText.setText(str);
-						//set text variant
-						variantText.setText(df.format(variancesThroughput(listThroughputPacket,totalTime))); 
-						maxText.setText(df.format(maxThroughput));
-						minText.setText(df.format(minThroughput));
-						//init line chart
-						initXYseries(listThroughputPacket);
-						
-					}
-					if(filterByCombo.getSelectionIndex()==0)
-						resetEditors();
-				}
-					
-				}
-			});		
+				calculate();
+			}
+		});		
 		 
 			
-			/* Add common controls */
-			super.createControlWidgets();
-
-	 
+		/* Add common controls */
+		super.createControlWidgets();
+	}
+	
+	private void calculate() 
+	{
+		if (fromCombo.getSelectionIndex() == -1 || toCombo.getSelectionIndex() == -1)
+		{
+			MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
+			dialog.setText("Error");
+			dialog.setMessage("Let choose source node and destination node!");
+			dialog.open(); 
+		}
+		else
+		{	
+			table.removeAll();
+			int No = 1;
+			double maxThroughput = 0;
+			double minThroughput = Double.MAX_VALUE;
+			double totalSize = 0;
+			double totalTime = 0;					
+			AbstractMap<Packet,Double> listThroughputPacket = new LinkedHashMap<Packet,Double>();
+			List<Packet> listPacket = new ArrayList<Packet>();
+			
+			// find packets by source and destination
+			if (fromCombo.getSelectionIndex() == 0)		// all nodes
+			{
+				if (toCombo.getSelectionIndex() == 0)	// all nodes
+				{
+					listPacket.addAll(ParserManager.getParser().getPackets().values());
+				}						
+				else
+				{
+					int destID = Integer.parseInt(toCombo.getItem(toCombo.getSelectionIndex()));
+					for (Packet packet : ParserManager.getParser().getPackets().values()) 
+					{
+						if (packet.getDestNode().getId() == destID)
+						{
+							listPacket.add(packet); 
+						}
+					}
+				}
+			}
+			else										// one nodes
+			{
+				int sourceID = Integer.parseInt(fromCombo.getItem(fromCombo.getSelectionIndex()));
+				if (toCombo.getSelectionIndex() == 0)	// all nodes
+				{
+					for (Packet packet : ParserManager.getParser().getPackets().values()) 
+					{
+						if (packet.getSourceNode().getId() == sourceID) 
+						{
+							listPacket.add(packet); 
+						}
+					}
+				}
+				else									// one nodes
+				{
+					int destID = Integer.parseInt(toCombo.getItem(toCombo.getSelectionIndex()));
+					for (Packet packet : ParserManager.getParser().getPackets().values()) 
+					{
+						if (packet.getSourceNode().getId() == sourceID && packet.getDestNode().getId() == destID) 
+						{
+							listPacket.add(packet); 
+						}
+					}
+				}
+			}
+		
+			for (Packet packet : listPacket)
+			{
+				TableItem tableItem= new TableItem(table, SWT.NONE);
+				tableItem.setText(0,Integer.toString(No++));
+				tableItem.setText(1,Integer.toString(packet.getId()));
+				tableItem.setText(2,singlePacketThroughput(packet));
+				tableItem.setText(3,packet.getSourceNode().getId() + "---" + packet.getDestNode().getId());
+				totalSize += packet.getSize();
+				totalTime += packet.getEndTime() - packet.getStartTime();
+				listThroughputPacket.put(packet, packet.getSize() / (packet.getEndTime() - packet.getStartTime()));
+				
+				maxThroughput = Math.max(maxThroughput, packet.getSize() / (packet.getEndTime() - packet.getStartTime()));
+				minThroughput = Math.min(minThroughput, packet.getSize() / (packet.getEndTime() - packet.getStartTime()));
+			}
+			
+			if (No == 1)
+			{
+				MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
+				dialog.setText("Error");
+				dialog.setMessage("No packet from node "+fromCombo.getItem(fromCombo.getSelectionIndex()) +
+								  " to node "+toCombo.getItem(toCombo.getSelectionIndex())+"!");
+				dialog.open(); 
+				avgText.setText("0");
+				variantText.setText("0");
+				maxText.setText("0");
+				minText.setText("0");
+				xSeries=new double[0];
+				ySeries=new double[0];
+			}
+			else{
+				DecimalFormat df = new DecimalFormat("0.00");
+				String str= df.format(totalSize/totalTime);
+		
+				//set mean
+				avgText.setText(str);
+				
+				//set text variant
+				variantText.setText(df.format(variancesThroughput(listThroughputPacket,totalTime))); 
+				maxText.setText(df.format(maxThroughput));
+				minText.setText(df.format(minThroughput));
+				
+				//init line chart
+				initXYseries(listThroughputPacket);
+				
+			}
+			if(filterByCombo.getSelectionIndex()==0)
+				resetEditors();
+		}		
 	}
 	
 	/* Set up item for fromCombo and toCombo */
@@ -371,7 +397,8 @@ public class ThroughputTab extends Tab implements Observer{
 		return str;
 	} 
 	
-	public double variancesThroughput(LinkedHashMap<Packet,Double> listThroughputPacket,Double totalTime){
+	public double variancesThroughput(AbstractMap<Packet,Double> listThroughputPacket,Double totalTime)
+	{
 		double variances=0; // E(X*X)-E(X)*E(X)
 		double expectedValue1=0; // E(X*X)=x*x*p+....
 		double expectedValue2=0; // E(X)=x*p+....
@@ -384,7 +411,7 @@ public class ThroughputTab extends Tab implements Observer{
 		return variances;
 	}
 	
-	public void initXYseries(LinkedHashMap<Packet,Double> listThroughputPacket){
+	public void initXYseries(AbstractMap<Packet,Double> listThroughputPacket){
 		int j=0;
 		xSeries=new double[listThroughputPacket.size()];
 		ySeries=new double[listThroughputPacket.size()];

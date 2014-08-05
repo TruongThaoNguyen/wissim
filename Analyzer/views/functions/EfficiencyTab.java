@@ -1,6 +1,7 @@
 package views.functions;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -39,7 +40,7 @@ public class EfficiencyTab extends Tab implements Observer{
 	Combo criteriaCombo; 
 	Combo filterByCombo;
 	Button resetButton;
-	ArrayList<ArrayList<Node>> listNodeAreas;
+	List<List<Node>> listNodeAreas;
 	ChartAllNodeMultiArea chartAllNodeEfficiency;
 	ArrayList<Double> listEfficiencyOfAreas;
 	/**
@@ -47,7 +48,7 @@ public class EfficiencyTab extends Tab implements Observer{
 	 */
 	public EfficiencyTab(Analyzer instance) {
 		super(instance);
-		listNodeAreas = new ArrayList<ArrayList<Node>>();
+		listNodeAreas = new ArrayList<List<Node>>();
 		listEfficiencyOfAreas = new ArrayList<Double>();
 	}
 
@@ -123,10 +124,10 @@ public class EfficiencyTab extends Tab implements Observer{
 						double numberDroppedPacket,numberPacketOfArea;
 						int No=1;
 						boolean checkBelongTo;
-						ArrayList<Node> listNodeOfSourceArea = listNodeAreas.get(0);
+						List<Node> listNodeOfSourceArea = listNodeAreas.get(0);
 						
 						for(int i=0; i<listNodeAreas.size(); i++){
-							ArrayList<Node> listNodeOfOneArea = listNodeAreas.get(i);
+							List<Node> listNodeOfOneArea = listNodeAreas.get(i);
 							numberDroppedPacket = 0;
 							numberPacketOfArea = 0;
 							
