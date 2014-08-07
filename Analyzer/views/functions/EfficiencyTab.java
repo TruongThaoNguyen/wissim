@@ -43,6 +43,7 @@ public class EfficiencyTab extends Tab implements Observer{
 	List<List<Node>> listNodeAreas;
 	ChartAllNodeMultiArea chartAllNodeEfficiency;
 	ArrayList<Double> listEfficiencyOfAreas;
+	
 	/**
 	 * Creates the Tab within a given instance of LayoutExample.
 	 */
@@ -63,13 +64,11 @@ public class EfficiencyTab extends Tab implements Observer{
 		gridData.horizontalSpan = 3;
 		
 		Label lblE = new Label(childGroup, SWT.NONE);
-	lblE.setText("E=");
-	lblE.setLayoutData(gridData);
-	eText = new Text(childGroup, SWT.BORDER);
-	eText.setEditable(false);
-	eText.setLayoutData(gridData);
-	
-	
+		lblE.setText("E=");
+		lblE.setLayoutData(gridData);
+		eText = new Text(childGroup, SWT.BORDER);
+		eText.setEditable(false);
+		eText.setLayoutData(gridData);
 	}
 
 	/**
@@ -105,78 +104,91 @@ public class EfficiencyTab extends Tab implements Observer{
 		/* Analyze listener	*/
 		analyze.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if(filterByCombo.getSelectionIndex()==0){
-					DecimalFormat df = new DecimalFormat("0.00");
-					String str= df.format(ratioDroppedPacket());
-					eText.setText(str+" %");
-					SurfaceChartEfficiency.drawChart3D();
-				}
-				if(filterByCombo.getSelectionIndex()==1){
-					if(listNodeAreas.size() == 0){
-						MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
-						dialog.setText("Error");
-						dialog.setMessage("Let choose group!");
-						dialog.open(); 
-					}
-					else{
-						table.removeAll();
-						listEfficiencyOfAreas.clear();
-						double numberDroppedPacket,numberPacketOfArea;
-						int No=1;
-						boolean checkBelongTo;
-						List<Node> listNodeOfSourceArea = listNodeAreas.get(0);
-						
-						for(int i=0; i<listNodeAreas.size(); i++){
-							List<Node> listNodeOfOneArea = listNodeAreas.get(i);
-							numberDroppedPacket = 0;
-							numberPacketOfArea = 0;
-							
-							for (Packet packet : ParserManager.getParser().getPackets().values()) 
-							{							
-								checkBelongTo = false;
-								for(int k = 0;k < listNodeOfOneArea.size(); k++){
-									for(int t = 0;t < listNodeOfSourceArea.size(); t++){
-										Node nodeDest = listNodeOfOneArea.get(k);
-										Node nodeSource = listNodeOfSourceArea.get(t);
-										if((nodeDest.getId() == packet.getDestNode().getId()) && (nodeSource.getId() == packet.getSourceNode().getId())){
-											checkBelongTo = true;
-											numberPacketOfArea++;
-											break;
-										}
-									}
-								} 
-								if(checkBelongTo	&& packet.getType().equals("cbr")){
-									TableItem tableItem= new TableItem(table, SWT.NONE);
-									tableItem.setText(0,Integer.toString(No++));
-									tableItem.setText(1,Integer.toString(packet.getId()));
-									tableItem.setText(2,packet.getSourceNode().getId()+"---"+packet.getDestNode().getId());
-									tableItem.setText(3,Integer.toString(packet.getSize()));
-									tableItem.setText(4,Boolean.toString(packet.isSuccess()));
-										 tableItem.setText(5, Integer.toString(i+1));
-										if(!packet.isSuccess())
-											numberDroppedPacket++;
-									}
-								}
-								if(numberPacketOfArea != 0){
-									listEfficiencyOfAreas.add(100-((numberDroppedPacket/numberPacketOfArea)*100));
-										new TableItem(table, SWT.NONE);
-								}
-								else{
-									listEfficiencyOfAreas.add(-1.0);
-								}
-							}
-							Shell shell = new Shell();		
-							new BarChart(shell,listEfficiencyOfAreas,"Efficiency (%)");
-							eText.setText("");
-					}
-				}
-				
+				Calculater();
 			}
 		});		
 	 
 		/* Add common controls */
 		super.createControlWidgets();
  
+	}
+	
+	/**
+	 * Main control.
+	 */
+	private void Calculater() 
+	{
+		if (filterByCombo.getSelectionIndex() == 0)
+		{
+			DecimalFormat df = new DecimalFormat("0.00");
+			String str= df.format(ratioDroppedPacket());
+			eText.setText(str+" %");
+			SurfaceChartEfficiency.drawChart3D();
+		}
+		
+		if (filterByCombo.getSelectionIndex() == 1)
+		{
+			if (listNodeAreas.size() == 0)
+			{
+				MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
+				dialog.setText("Error");
+				dialog.setMessage("Let choose group!");
+				dialog.open(); 
+			}
+			else
+			{
+				table.removeAll();
+				listEfficiencyOfAreas.clear();
+				double numberDroppedPacket,numberPacketOfArea;
+				int No=1;
+				boolean checkBelongTo;
+				List<Node> listNodeOfSourceArea = listNodeAreas.get(0);
+				
+				for(int i=0; i<listNodeAreas.size(); i++){
+					List<Node> listNodeOfOneArea = listNodeAreas.get(i);
+					numberDroppedPacket = 0;
+					numberPacketOfArea = 0;
+					
+					for (Packet packet : ParserManager.getParser().getPackets().values()) 
+					{							
+						checkBelongTo = false;
+						for(int k = 0;k < listNodeOfOneArea.size(); k++){
+							for(int t = 0;t < listNodeOfSourceArea.size(); t++){
+								Node nodeDest = listNodeOfOneArea.get(k);
+								Node nodeSource = listNodeOfSourceArea.get(t);
+								if((nodeDest.getId() == packet.getDestNode().getId()) && (nodeSource.getId() == packet.getSourceNode().getId())){
+									checkBelongTo = true;
+									numberPacketOfArea++;
+									break;
+								}
+							}
+						} 
+						if(checkBelongTo	&& packet.getType().equals("cbr")){
+							TableItem tableItem= new TableItem(table, SWT.NONE);
+							tableItem.setText(0,Integer.toString(No++));
+							tableItem.setText(1,Integer.toString(packet.getId()));
+							tableItem.setText(2,packet.getSourceNode().getId()+"---"+packet.getDestNode().getId());
+							tableItem.setText(3,Integer.toString(packet.getSize()));
+							tableItem.setText(4,Boolean.toString(packet.isSuccess()));
+								 tableItem.setText(5, Integer.toString(i+1));
+								if(!packet.isSuccess())
+									numberDroppedPacket++;
+							}
+						}
+						if(numberPacketOfArea != 0){
+							listEfficiencyOfAreas.add(100-((numberDroppedPacket/numberPacketOfArea)*100));
+								new TableItem(table, SWT.NONE);
+						}
+						else{
+							listEfficiencyOfAreas.add(-1.0);
+						}
+					}
+					Shell shell = new Shell();		
+					new BarChart(shell,listEfficiencyOfAreas,"Efficiency (%)");
+					eText.setText("");
+			}
+		}
+	
 	}
 	
 	double ratioDroppedPacket(){

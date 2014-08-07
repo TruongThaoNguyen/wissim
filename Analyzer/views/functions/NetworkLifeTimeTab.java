@@ -1,54 +1,35 @@
 package views.functions;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import javax.rmi.CORBA.Tie;
-
 import models.Node;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.swtchart.Chart;
-import org.swtchart.ILineSeries;
-import org.swtchart.ISeries.SeriesType;
 
-import com.ibm.icu.text.DecimalFormat;
-
+import views.Analyzer;
+import views.Tab;
 import controllers.chart2d.BarChart;
 import controllers.chart2d.ChartAllNodeMultiArea;
 import controllers.parser.ParserManager;
-import views.Analyzer;
-import views.Tab;
 
 public class NetworkLifeTimeTab extends Tab implements Observer {
 	

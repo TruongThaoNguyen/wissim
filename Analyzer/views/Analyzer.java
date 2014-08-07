@@ -60,9 +60,9 @@ public class Analyzer extends MainContent {
 			new DelayTab(this),
 			new HopCountTab(this),
 			new EfficiencyTab(this),
-	//		new EnergyTab(this),
-	//		new NetworkLifeTimeTab(this),
-			new SleepPeriodTab(this)
+		//	new EnergyTab(this),
+		//	new NetworkLifeTimeTab(this),
+		//	new SleepPeriodTab(this)
 		};
 		
 		for (int i = 0; i < tabs.length; i++) 

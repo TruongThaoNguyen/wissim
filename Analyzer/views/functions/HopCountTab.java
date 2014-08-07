@@ -45,11 +45,11 @@ import controllers.parser.ParserManager;
  *
  */
 public class HopCountTab extends Tab implements Observer {
-	FillLayout fillLayout;
-	Text avgText,variantText,maxText,minText;
-	Combo filterByCombo,fromCombo,toCombo; 
-	ArrayList<Node> listNodeAreaSource,listNodeAreaDest;
-	ChartAllNode chartAllNode;
+	private FillLayout fillLayout;
+	private Text avgText,variantText,maxText,minText;
+	private Combo filterByCombo,fromCombo,toCombo; 
+	private ArrayList<Node> listNodeAreaSource,listNodeAreaDest;
+	private ChartAllNode chartAllNode;
 	
 	/**
 	 * Creates the Tab within a given instance of LayoutExample.
@@ -404,7 +404,6 @@ public class HopCountTab extends Tab implements Observer {
 		//		resetEditors();
 	}
 
-		
 	public double variancesHopCount(LinkedHashMap<Packet,Integer> listHopCountPacket,Double totalTime){
 		double variances=0; //	E(X*X)-E(X)*E(X)
 		double expectedValue1=0; // E(X*X)=x*x*p+....

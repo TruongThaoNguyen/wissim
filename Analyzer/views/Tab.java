@@ -119,6 +119,7 @@ public abstract class Tab {
 	/**
 	* Creates the "child" group. This is the group that allows you to add
 	* children to the layout. It exists within the controlGroup.
+	 * @wbp.parser.entryPoint
 	*/
 	void createChildGroup() {
 		childGroup = new Group(controlGroup, SWT.NONE);
@@ -190,11 +191,17 @@ public abstract class Tab {
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setText(columnHeaders[i]);
 			if (i == 0)
+			{
 				column.setWidth(30);
-			else if (i == 1 || i==2 || i==3)
-				column.setWidth(100);
-			else
+			}
+			else if (i == columnHeaders.length - 1) 
+			{
 				column.pack();
+			}
+			else 
+			{
+				column.setWidth(100);
+			}
 		}	
 	}
 	

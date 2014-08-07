@@ -256,7 +256,8 @@ public class ThroughputTab extends Tab implements Observer{
 				xSeries=new double[0];
 				ySeries=new double[0];
 			}
-			else{
+			else
+			{
 				DecimalFormat df = new DecimalFormat("0.00");
 				String str= df.format(totalSize/totalTime);
 		
@@ -273,7 +274,9 @@ public class ThroughputTab extends Tab implements Observer{
 				
 			}
 			if(filterByCombo.getSelectionIndex()==0)
+			{
 				resetEditors();
+			}
 		}		
 	}
 	

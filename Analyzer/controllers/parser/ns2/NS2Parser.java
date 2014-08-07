@@ -67,17 +67,9 @@ public class NS2Parser implements Parser {
 //					
 //					System.out.print("done");
 //				} 
-//				catch (Exception e) 
+//				catch (Exception e)
 				{													
-					JOptionPane.showMessageDialog(null, "Let choose file! First, let choose neighbors file to get position of nodes.");
-				    
-			    	try 
-			    	{ 
-			    		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); 
-			    	} catch (ClassNotFoundException | InstantiationException | IllegalAccessException	| UnsupportedLookAndFeelException ex)
-			    	{ 
-			    		// DO NOTHING
-			    	}
+					JOptionPane.showMessageDialog(null, "Let choose file! First, let choose neighbors file to get position of nodes.");				    
 					    	
 					JFileChooser chooser = new JFileChooser();
 					JFileChooser chooserTrace = new JFileChooser();
