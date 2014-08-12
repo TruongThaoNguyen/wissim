@@ -59,8 +59,8 @@ public class Analyzer extends MainContent {
 			new ThroughputTab(this),
 			new DelayTab(this),
 			new HopCountTab(this),
-			new EfficiencyTab(this),
-		//	new EnergyTab(this),
+		//	new EfficiencyTab(this),
+			new EnergyTab(this),
 		//	new NetworkLifeTimeTab(this),
 		//	new SleepPeriodTab(this)
 		};

@@ -30,7 +30,7 @@ public class SurfaceChartEfficiency {
         	}
         }
         
-		FileOutputStream fos= new FileOutputStream("DataEfficiency",false);
+		FileOutputStream fos= new FileOutputStream("DataEnergy",false);
         PrintWriter pw = new PrintWriter(fos);
                 
         for (Node node : totalDrop.keySet()) {

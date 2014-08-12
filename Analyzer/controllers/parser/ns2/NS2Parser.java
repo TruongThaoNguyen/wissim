@@ -10,8 +10,6 @@ import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import models.Event;
 import models.Node;
@@ -161,7 +159,7 @@ public class NS2Parser implements Parser {
 							
 				switch (retval[0]) {			
 					case "N" :	// Energy: N -t 0.147751 -n 3 -e 999.998548
-						node.get(4).getEnergy().put(Double.parseDouble(retval[2]), Double.parseDouble(retval[6]));					
+						node.get(Integer.parseInt(retval[4])).getEnergy().put(Double.parseDouble(retval[2]), Double.parseDouble(retval[6]));					
 						break;
 					
 					case "s" : // send
