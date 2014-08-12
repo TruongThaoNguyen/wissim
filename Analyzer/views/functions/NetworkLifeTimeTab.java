@@ -147,6 +147,7 @@ public class NetworkLifeTimeTab extends Tab implements Observer {
 		table.removeAll();
 		int No = 1;
 		int percentNodeDead = Integer.parseInt(deadPercentText.getText());
+		double energyNodeDead = Double.parseDouble(energyNodeDeadText.getText());
 		
 		// check condition
 		if (percentNodeDead == 0 || percentNodeDead > 100)
@@ -160,8 +161,8 @@ public class NetworkLifeTimeTab extends Tab implements Observer {
 			
 			return;
 		}
-			
-		SortedMap<Node, Double> deadNode = new TreeMap<>();
+		
+		SortedMap<Double, Node> deadNodes = new TreeMap<>();
 		
 		if (filterByCombo.getSelectionIndex() == 0)	// all nodes
 		{						
@@ -169,11 +170,11 @@ public class NetworkLifeTimeTab extends Tab implements Observer {
 
 			for (Node node : ParserManager.getParser().getNodes().values()) 
 			{
-				for (double time : node.getEnergy().keySet()) 
-				{
-					if (node.getEnergy().get(time) <= 0)
+				for (Double time : node.getEnergy().keySet()) 
+				{					
+					if (node.getEnergy().get(time) <= energyNodeDead)
 					{
-						deadNode.put(node, time);
+						deadNodes.put(time, node);				
 						break;
 					}
 				}
@@ -194,11 +195,11 @@ public class NetworkLifeTimeTab extends Tab implements Observer {
 				{
 					for (Node node : area) 
 					{
-						for (double time : node.getEnergy().keySet()) 
+						for (Double time : node.getEnergy().keySet()) 
 						{
-							if (node.getEnergy().get(time) <= 0)
+							if (node.getEnergy().get(time) <= energyNodeDead)
 							{
-								deadNode.put(node, time);
+								deadNodes.put(time, node);
 								break;
 							}
 						}
@@ -211,15 +212,17 @@ public class NetworkLifeTimeTab extends Tab implements Observer {
 
 		int count = percentNodeDead * ParserManager.getParser().getNodes().size() / 100;
 		
-		for (Node node : deadNode.keySet()) {
+		for (Double time : deadNodes.keySet()) {		
+			Node node = deadNodes.get(time);
+			
 			TableItem  tableItem = new TableItem(table, SWT.NONE);
 			tableItem.setText(0, Integer.toString(No++));
 			tableItem.setText(1, Integer.toString(node.getId()));
-			tableItem.setText(2, deadNode.get(node).toString());
+			tableItem.setText(2, time.toString());
 			
 			if (No > count)
 			{
-				lifeTimeText.setText(deadNode.get(node).toString());
+				lifeTimeText.setText(time.toString());
 				break;	
 			}
 		}

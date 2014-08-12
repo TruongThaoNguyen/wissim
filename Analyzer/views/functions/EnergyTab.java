@@ -102,131 +102,135 @@ public class EnergyTab extends Tab implements Observer{
 		{
 			public void widgetSelected(SelectionEvent e) 
 			{
-				if (!ParserManager.getParser().getNodes().get(0).getEnergy().isEmpty())
-				{
-					if (filterByCombo.getSelectionIndex() == 0)	// by IDs
-					{
-						if (equalCombo.getSelectionIndex() == -1)
-						{
-							MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
-							dialog.setText("Error");
-							dialog.setMessage("Let choose node!");
-							dialog.open();
-							return;
-						}
-	
-						table.removeAll();
-						int No = 0;
-						String index = equalCombo.getItem(equalCombo.getSelectionIndex()); 
-					
-						if (index.equals("All nodes"))
-						{						
-							xSeries = new double[0];
-							ySeries = new double[0];
-							
-							FileOutputStream fos;
-							try 
-							{
-								fos = new FileOutputStream("DataEnergy", false);
-								PrintWriter pw = new PrintWriter(fos);
-								
-								for (Node node : ParserManager.getParser().getNodes().values()) 
-								{
-									TableItem tableItem = new TableItem(table, SWT.NONE);
-									tableItem.setText(0, Integer.toString(No++));
-									tableItem.setText(1, Integer.toString(node.getId()));
-									tableItem.setText(3, node.getEnergy().lastKey().toString());
-									tableItem.setText(4, node.getEnergy().get(node.getEnergy().lastKey()).toString());										
-									
-									/*init dataEnergy*/									 
-									pw.println(node.getX() + " " + node.getY() + " " + (node.getEnergy().get(node.getEnergy().lastKey()) - node.getEnergy().get(node.getEnergy().lastKey())));																				
-								}
-								pw.close();
-								SurfaceChartEnergy.drawChart3D();									
-							}
-							catch (FileNotFoundException e1) 
-							{
-								e1.printStackTrace();
-							}						
-						}
-						else	//  individual node
-						{
-							Node node = ParserManager.getParser().getNodes().get(Integer.parseInt(equalCombo.getItem(equalCombo.getSelectionIndex())));
-							
-							// initialize line chart								
-							xSeries = new double[node.getEnergy().size()];
-							ySeries = new double[node.getEnergy().size()];
-							
-							for (Double time : node.getEnergy().keySet())
-							{
-								Double energy = node.getEnergy().get(time);
-								
-								xSeries[No] = time;
-								ySeries[No] = energy;									
-								
-								TableItem tableItem = new TableItem(table, SWT.NONE);
-								tableItem.setText(0, Integer.toString(++No));
-								tableItem.setText(1, index);
-								tableItem.setText(3, time.toString());
-								tableItem.setText(4, energy.toString());
-							}
-						}
-						resetEditors();
-					}
-					else						// by label
-					{
-						if (listNodeAreas.size() == 0)
-						{
-							MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
-							dialog.setText("Error");
-							dialog.setMessage("Let choose areas!");
-							dialog.open(); 
-						}
-						else
-						{
-							table.removeAll();
-							listEnergyOfAreas.clear();
-							listAvgEnergyOfAreas.clear();
-							double areaEnergy;
-							int No = 1;
-							
-							for (List<Node> listNodeOfOneArea : listNodeAreas) 
-							{							
-								areaEnergy = 0;
-								
-								for (Node node : listNodeOfOneArea) 
-								{
-									TableItem tableItem= new TableItem(table, SWT.NONE);
-									tableItem.setText(0, Integer.toString(No++));
-									tableItem.setText(1, Integer.toString(node.getId()));
-									tableItem.setText(2, Integer.toString(node.getGroupID()));
-									tableItem.setText(3, node.getEnergy().lastKey().toString());
-									tableItem.setText(4, node.getEnergy().get(node.getEnergy().lastKey()).toString());
-							
-									areaEnergy += node.getEnergy().get(node.getEnergy().firstKey()) - node.getEnergy().get(node.getEnergy().lastKey()); 
-								}
-								listEnergyOfAreas.add(areaEnergy);
-								listAvgEnergyOfAreas.add(areaEnergy/listNodeOfOneArea.size());
-								new TableItem(table, SWT.NONE);
-							}
-							Shell shell = new Shell();		
-							new BarChart(shell,listEnergyOfAreas,"Total Energy");
-							new BarChart(new Shell(),listAvgEnergyOfAreas,"Average Energy");
-						}
-					}
-				}
-				else
-				{
-					MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
-					dialog.setText("Error");
-					dialog.setMessage("Trace file don't have energy information!");
-					dialog.open();
-				}
+				calculate();
 			}
 		});		
 		 
 		/* Add common controls */
 		super.createControlWidgets();
+	}
+	
+	private void calculate() {
+		if (!ParserManager.getParser().getNodes().get(0).getEnergy().isEmpty())
+		{
+			if (filterByCombo.getSelectionIndex() == 0)	// by IDs
+			{
+				if (equalCombo.getSelectionIndex() == -1)
+				{
+					MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
+					dialog.setText("Error");
+					dialog.setMessage("Let choose node!");
+					dialog.open();
+					return;
+				}
+
+				table.removeAll();
+				int No = 0;
+				String index = equalCombo.getItem(equalCombo.getSelectionIndex()); 
+			
+				if (index.equals("All nodes"))
+				{						
+					xSeries = new double[0];
+					ySeries = new double[0];
+					
+					FileOutputStream fos;
+					try 
+					{
+						fos = new FileOutputStream("DataEnergy", false);
+						PrintWriter pw = new PrintWriter(fos);
+						
+						for (Node node : ParserManager.getParser().getNodes().values()) 
+						{
+							TableItem tableItem = new TableItem(table, SWT.NONE);
+							tableItem.setText(0, Integer.toString(No++));
+							tableItem.setText(1, Integer.toString(node.getId()));
+							tableItem.setText(3, node.getEnergy().lastKey().toString());
+							tableItem.setText(4, node.getEnergy().get(node.getEnergy().lastKey()).toString());										
+							
+							/*init dataEnergy*/									 
+							pw.println(node.getX() + " " + node.getY() + " " + (node.getEnergy().get(node.getEnergy().firstKey()) - node.getEnergy().get(node.getEnergy().lastKey())));																				
+						}
+						pw.close();
+						SurfaceChartEnergy.drawChart3D();									
+					}
+					catch (FileNotFoundException e1) 
+					{
+						e1.printStackTrace();
+					}						
+				}
+				else	//  individual node
+				{
+					Node node = ParserManager.getParser().getNodes().get(Integer.parseInt(equalCombo.getItem(equalCombo.getSelectionIndex())));
+					
+					// initialize line chart								
+					xSeries = new double[node.getEnergy().size()];
+					ySeries = new double[node.getEnergy().size()];
+					
+					for (Double time : node.getEnergy().keySet())
+					{
+						Double energy = node.getEnergy().get(time);
+						
+						xSeries[No] = time;
+						ySeries[No] = energy;									
+						
+						TableItem tableItem = new TableItem(table, SWT.NONE);
+						tableItem.setText(0, Integer.toString(++No));
+						tableItem.setText(1, index);
+						tableItem.setText(3, time.toString());
+						tableItem.setText(4, energy.toString());
+					}
+				}
+				resetEditors();
+			}
+			else						// by label
+			{
+				if (listNodeAreas.size() == 0)
+				{
+					MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
+					dialog.setText("Error");
+					dialog.setMessage("Let choose areas!");
+					dialog.open(); 
+				}
+				else
+				{
+					table.removeAll();
+					listEnergyOfAreas.clear();
+					listAvgEnergyOfAreas.clear();
+					double areaEnergy;
+					int No = 1;
+					
+					for (List<Node> listNodeOfOneArea : listNodeAreas) 
+					{							
+						areaEnergy = 0;
+						
+						for (Node node : listNodeOfOneArea) 
+						{
+							TableItem tableItem= new TableItem(table, SWT.NONE);
+							tableItem.setText(0, Integer.toString(No++));
+							tableItem.setText(1, Integer.toString(node.getId()));
+							tableItem.setText(2, Integer.toString(node.getGroupID()));
+							tableItem.setText(3, node.getEnergy().lastKey().toString());
+							tableItem.setText(4, node.getEnergy().get(node.getEnergy().lastKey()).toString());
+					
+							areaEnergy += node.getEnergy().get(node.getEnergy().firstKey()) - node.getEnergy().get(node.getEnergy().lastKey()); 
+						}
+						listEnergyOfAreas.add(areaEnergy);
+						listAvgEnergyOfAreas.add(areaEnergy/listNodeOfOneArea.size());
+						new TableItem(table, SWT.NONE);
+					}
+					Shell shell = new Shell();		
+					new BarChart(shell,listEnergyOfAreas,"Total Energy");
+					new BarChart(new Shell(),listAvgEnergyOfAreas,"Average Energy");
+				}
+			}
+		}
+		else
+		{
+			MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
+			dialog.setText("Error");
+			dialog.setMessage("Trace file don't have energy information!");
+			dialog.open();
+		}
 	}
 	
 	/**

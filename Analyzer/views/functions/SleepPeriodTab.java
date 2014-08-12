@@ -31,7 +31,9 @@ import controllers.parser.ParserManager;
 
 public class SleepPeriodTab extends Tab implements Observer{
 	
-	/* The example layout instance */
+	/**
+	 *  The example layout instance 
+	 */
 	FillLayout fillLayout;
 	Combo filterByCombo,equalCombo; 
 	Button resetButton;
@@ -40,10 +42,14 @@ public class SleepPeriodTab extends Tab implements Observer{
 	List<List<Node>> listNodeAreas;
 	ChartAllNodeMultiArea chartAllNodeSleepTime;
 	ArrayList<Double> listSleepTimeOfAreas,listAvgSleepTimeOfAreas;
-	/*constant of network*/
+	
+	/**
+	 * constant of network
+	 */
 	public final static double STOP_TIME = 500;
 	public final static double TRANSITION_TIME = 0.0129;
 	static double sleepTime[];
+	
 	/**
 	 * Creates the Tab within a given instance of LayoutExample.
 	 */
@@ -54,26 +60,27 @@ public class SleepPeriodTab extends Tab implements Observer{
 		listAvgSleepTimeOfAreas = new ArrayList<Double>();
 	}
 	
-	static void initSleepTime(){
+	static void initSleepTime() {
 		/* init sleeptime */
 		sleepTime = new double[ParserManager.getParser().getNodes().size()];
-		for(int i = 0; i< sleepTime.length; i++)
-		{
-			sleepTime[i] = STOP_TIME;
-		}
 		
-		for (Packet	packet : ParserManager.getParser().getPackets().values()) 
-		{		 
+		for (int i = 0; i < sleepTime.length; i++)
+			sleepTime[i] = STOP_TIME;
+		
+		for (Packet packet : ParserManager.getParser().getPackets().values()) 
+		{		
+			// node	packet 
 			sleepTime[packet.getSourceNode().getId()] -= TRANSITION_TIME;								
- 						 							
-			for (Node node : packet.getListNodes())
-			{							 
-				sleepTime[node.getId()] -= TRANSITION_TIME * 2;					
+
+			for (Node node : packet.getListNodes()) 
+			{
+				sleepTime[node.getId()] -= TRANSITION_TIME*2;	
 			}
 			
-			sleepTime[packet.getLastNode().getId()] += TRANSITION_TIME;
+			sleepTime[packet.getListNodes().get(packet.getListNodes().size() - 1).getId()] += TRANSITION_TIME; 
 		}
 	}
+	
 	/**
 	 * Creates the widgets in the "child" group.
 	 */
@@ -89,14 +96,14 @@ public class SleepPeriodTab extends Tab implements Observer{
 		avgText = new Text(childGroup, SWT.BORDER);
 		avgText.setEditable(false);
 		avgText.setLayoutData(gridData);
-	
+		
 		Label lblMax = new Label(childGroup, SWT.NONE);
 		lblMax.setText("Max");
 		lblMax.setLayoutData(gridData);
 		maxText = new Text(childGroup, SWT.BORDER);
 		maxText.setEditable(false);
 		maxText.setLayoutData(gridData);
-	
+		
 		Label lblMin = new Label(childGroup, SWT.NONE);
 		lblMin.setText("Min");
 		lblMin.setLayoutData(gridData);
@@ -108,10 +115,7 @@ public class SleepPeriodTab extends Tab implements Observer{
 	/**
 	 * Creates the control widgets.
 	 */
-	protected void createControlWidgets() {
-		/* Controls the type of Throughput */
-		// GridData gridData=new GridData(GridData.FILL_HORIZONTAL);
-		 
+	protected void createControlWidgets() {		 
 		Label filterByLabel=new Label(controlGroup, SWT.None);
 		filterByLabel.setText("Filter by");
 		filterByLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
@@ -121,15 +125,15 @@ public class SleepPeriodTab extends Tab implements Observer{
 		filterByCombo.select(0);
 		/* Add listener */
 		filterByCombo.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				//System.out.println(filterByCombo.getSelectionIndex());
+				public void widgetSelected(SelectionEvent e) {
+					//System.out.println(filterByCombo.getSelectionIndex());
 					setItemEqualCombo();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// System.out.println("nghia");
-			}
-		});
-			
+				}
+				public void widgetDefaultSelected(SelectionEvent e) {
+				 // System.out.println("nghia");
+				}
+			});
+		
 		Label equalLabel=new Label(controlGroup, SWT.None);
 		equalLabel.setText("equals to");
 		equalLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
@@ -139,143 +143,162 @@ public class SleepPeriodTab extends Tab implements Observer{
 		analyze = new Button(controlGroup, SWT.PUSH);
 		analyze.setText("Analyze");
 		analyze.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
-		 
+	 
 		/* Add listener to add an element to the table */
 		analyze.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if(filterByCombo.getSelectionIndex()==0){
-					if(equalCombo.getSelectionIndex()==-1 ){
-						MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
-						dialog.setText("Error");
-						dialog.setMessage("Let choose node!");
-						dialog.open(); 
-					}
-					else{	
-						initSleepTime();
-						
-						table.removeAll();
-						int No=1;
-
-						if(!equalCombo.getItem(equalCombo.getSelectionIndex()).equals("All nodes")){
-							//NodeTrace node = TraceFile.getListNodes().get(Integer.parseInt(equalCombo.getItem(equalCombo.getSelectionIndex())));
-							double sleepTimeOfNode;
-							int nodeID = Integer.parseInt(equalCombo.getItem(equalCombo.getSelectionIndex()));
-							sleepTimeOfNode = sleepTime[nodeID];
-
-							TableItem tableItem= new TableItem(table, SWT.NONE);
-							tableItem.setText(0, Integer.toString(No++));
-							tableItem.setText(1, equalCombo.getItem(equalCombo.getSelectionIndex()));
-							tableItem.setText(3, Double.toString(sleepTimeOfNode));
-								
-							avgText.setText(Double.toString(sleepTimeOfNode));
-							maxText.setText(Double.toString(sleepTimeOfNode));
-							minText.setText(Double.toString(sleepTimeOfNode));
-						}
-						else
-						{						
-							double maxSleepTime = 0;
-							double minSleepTime = STOP_TIME;
-							double totalSleepTime = 0;
-
-							for(int i = 0; i< sleepTime.length; i++){
-								TableItem tableItem= new TableItem(table, SWT.NONE);
-								tableItem.setText(0, Integer.toString(No++));
-								tableItem.setText(1, Integer.toString(i));
-								tableItem.setText(3, Double.toString(sleepTime[i]));
-
-								totalSleepTime += sleepTime[i];
-									
-								if (minSleepTime >= sleepTime[i])
-									minSleepTime = sleepTime[i];
-								if (maxSleepTime <= sleepTime[i])
-									maxSleepTime = sleepTime[i];
-							}
-							avgText.setText(Double.toString(totalSleepTime/(No-1)));
-							maxText.setText(Double.toString(maxSleepTime));
-							minText.setText(Double.toString(minSleepTime));							
-						}
-					}
-				}					
-				else
-				{
-					if(listNodeAreas.size() == 0){
-						MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
-						dialog.setText("Error");
-						dialog.setMessage("Let choose group!");
-						dialog.open(); 
-					}
-					else
-					{
-						table.removeAll();
-						listSleepTimeOfAreas.clear();
-						listAvgSleepTimeOfAreas.clear();
-						double areaSleepTime;
-						int No=1;
-						for(int i=0; i<listNodeAreas.size(); i++){
-							List<Node> listNodeOfOneArea = listNodeAreas.get(i);
-							areaSleepTime = 0;
-							for(int j=0; j<listNodeOfOneArea.size(); j++){
-								TableItem tableItem= new TableItem(table, SWT.NONE);
-								tableItem.setText(0,Integer.toString(No++));
-								tableItem.setText(1,Integer.toString(listNodeOfOneArea.get(j).getId()));
-								tableItem.setText(2, Integer.toString(i+1));
-								tableItem.setText(3, Double.toString(sleepTime[listNodeOfOneArea.get(j).getId()]));
-								
-								areaSleepTime += sleepTime[listNodeOfOneArea.get(j).getId()];
-							}
-							listSleepTimeOfAreas.add(areaSleepTime);
-							listAvgSleepTimeOfAreas.add(areaSleepTime/listNodeOfOneArea.size());
-							new TableItem(table, SWT.NONE);
-						}
-						Shell shell = new Shell();		
-						new BarChart(shell,listSleepTimeOfAreas,"Total Sleep Time");
-						new BarChart(new Shell(),listAvgSleepTimeOfAreas,"Average Sleep Time");
-						avgText.setText("");
-						maxText.setText("");
-						minText.setText("");	
-					}
-				}
+				calculate();
 			}
 		});		
-		 
+	 
 		/* Add common controls */
 		super.createControlWidgets();
 	}
 	
-	/* Set up item for equalCombo */
-	void setItemEqualCombo(){
-		int i;
-		if(filterByCombo.getSelectionIndex()==0){
-			String[] itemList=new String[ParserManager.getParser().getNodes().size()+1] ; 
-			if(ParserManager.getParser().getNodes().size()>0)
+	private void calculate() {
+		initSleepTime();
+		
+		if (filterByCombo.getSelectionIndex() == 0)		// by IDs 
+		{
+			if (equalCombo.getSelectionIndex() == -1 )
 			{
-				itemList[0]="All nodes";
-				for (i=0;i<ParserManager.getParser().getNodes().size();i++){ 
-					 Node node=ParserManager.getParser().getNodes().get(i);
-					 itemList[i+1]=Integer.toString(node.getId());
-				}
-				equalCombo.setItems(itemList);
+				MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
+				dialog.setText("Error");
+				dialog.setMessage("Let choose node!");
+				dialog.open(); 
 			}
-		resetButton.setVisible(false);
+			else
+			{	
+				table.removeAll();
+				int No=1;
+			
+				if (!equalCombo.getItem(equalCombo.getSelectionIndex()).equals("All nodes"))
+				{
+					double sleepTimeOfNode;
+					int nodeID = Integer.parseInt(equalCombo.getItem(equalCombo.getSelectionIndex()));
+					sleepTimeOfNode = sleepTime[nodeID];
+				
+					TableItem tableItem= new TableItem(table, SWT.NONE);
+					tableItem.setText(0, Integer.toString(No++));
+					tableItem.setText(1, equalCombo.getItem(equalCombo.getSelectionIndex()));
+					tableItem.setText(3, Double.toString(sleepTimeOfNode));
+				 
+					avgText.setText(Double.toString(sleepTimeOfNode));
+					maxText.setText(Double.toString(sleepTimeOfNode));
+					minText.setText(Double.toString(sleepTimeOfNode));
+				}
+				else
+				{						
+					double maxSleepTime = 0;
+					double minSleepTime = STOP_TIME;
+					double totalSleepTime = 0;
+				
+					for (int i = 0; i < sleepTime.length; i++)
+					{
+						TableItem tableItem= new TableItem(table, SWT.NONE);
+						tableItem.setText(0, Integer.toString(No++));
+						tableItem.setText(1, Integer.toString(i));
+						tableItem.setText(3, Double.toString(sleepTime[i]));
+					 
+						totalSleepTime += sleepTime[i];
+					 
+						if (minSleepTime >= sleepTime[i])
+							minSleepTime = sleepTime[i];
+						if (maxSleepTime <= sleepTime[i])
+							maxSleepTime = sleepTime[i];
+					}
+					avgText.setText(Double.toString(totalSleepTime/(No-1)));
+					maxText.setText(Double.toString(maxSleepTime));
+					minText.setText(Double.toString(minSleepTime));							
+				}
+			}
 		}
-		if(filterByCombo.getSelectionIndex()==1){
-		 equalCombo.setItems(new String[] {});
-		 super.refreshLayoutComposite();
+		else
+		{
+			if (listNodeAreas.size() == 0)
+			{
+				MessageBox dialog = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK);
+				dialog.setText("Error");
+				dialog.setMessage("Let choose group!");
+				dialog.open(); 
+			}
+			else
+			{
+				table.removeAll();
+				listSleepTimeOfAreas.clear();
+				listAvgSleepTimeOfAreas.clear();
+				double areaSleepTime;
+				int No=1;
+				
+				for (List<Node> listNodeOfOneArea : listNodeAreas) 
+				{				
+					areaSleepTime = 0;
+					
+					for (Node node : listNodeOfOneArea) 
+					{					
+						TableItem tableItem= new TableItem(table, SWT.NONE);
+						tableItem.setText(0, Integer.toString(No++));
+						tableItem.setText(1, Integer.toString(node.getId()));
+						tableItem.setText(2, Integer.toString(listNodeAreas.indexOf(listNodeOfOneArea) + 1));
+						tableItem.setText(3, Double.toString(sleepTime[node.getId()]));
+						
+						areaSleepTime += sleepTime[node.getId()];
+					}
+					listSleepTimeOfAreas.add(areaSleepTime);
+					listAvgSleepTimeOfAreas.add(areaSleepTime/listNodeOfOneArea.size());
+					new TableItem(table, SWT.NONE);
+				}
+				Shell shell = new Shell();		
+				new BarChart(shell,listSleepTimeOfAreas,"Total Sleep Time");
+				new BarChart(new Shell(),listAvgSleepTimeOfAreas,"Average Sleep Time");
+				avgText.setText("");
+				maxText.setText("");
+				minText.setText("");	
+			}
+		}
+	}
+	
+	/* Set up item for equalCombo */
+	void setItemEqualCombo()
+	{		
+		if (filterByCombo.getSelectionIndex() == 0)
+		{
+			String[] itemList = new String[ParserManager.getParser().getNodes().size() + 1] ; 
+			itemList[0] = "All nodes";
+	
+			int i = 1;
+			for (Node node : ParserManager.getParser().getNodes().values()) 
+			{
+				itemList[i++] = Integer.toString(node.getId());
+			}
+			equalCombo.setItems(itemList);
+			resetButton.setVisible(false);
+		}
+		
+		if (filterByCombo.getSelectionIndex() == 1)
+		{
+			equalCombo.setItems(new String[] {});
+			super.refreshLayoutComposite();
 		 
-		 ySeries = new double[ParserManager.getParser().getNodes().size()];
-			 xSeries = new double[ParserManager.getParser().getNodes().size()];		
-			for(int j=0;j<ParserManager.getParser().getNodes().size();j++) {
-				Node node = ParserManager.getParser().getNodes().get(j);
+			int size = ParserManager.getParser().getNodes().size();
+			ySeries = new double[size];
+			xSeries = new double[size];		
+			
+			int j = 0;			
+			for (Node node : ParserManager.getParser().getNodes().values()) 
+			{			
 				xSeries[j]=node.getX();
 				ySeries[j]=node.getY();
+				j++;
 			}
-		 chartAllNodeSleepTime = new ChartAllNodeMultiArea(xSeries, ySeries);
-		 chartAllNodeSleepTime.addObserver(this);
-		 chartAllNodeSleepTime.createChart(layoutComposite);
-		 //chartAllNodeEnergy.setExpandHorizontal(true);
-		 resetButton.setVisible(true);
-		 chartAllNodeSleepTime.listNodeArea = this.listNodeAreas;
-		 chartAllNodeSleepTime.chartAllNode.getPlotArea().redraw();
+		 
+			chartAllNodeSleepTime = new ChartAllNodeMultiArea(xSeries, ySeries);
+			chartAllNodeSleepTime.addObserver(this);
+			chartAllNodeSleepTime.createChart(layoutComposite);
+
+			resetButton.setVisible(true);
+			chartAllNodeSleepTime.listNodeArea = this.listNodeAreas;
+			chartAllNodeSleepTime.chartAllNode.getPlotArea().redraw();
 		}
 	}
 	@Override
