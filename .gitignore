@@ -17,4 +17,5 @@ test_store/**
 /bin/
 synchronization.log
 /bin/
+.classpath
 

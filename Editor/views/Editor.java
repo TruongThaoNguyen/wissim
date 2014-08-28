@@ -241,7 +241,7 @@ public class Editor extends MainContent implements Observer {
 		composite.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
 		text = new StyledText(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
-		text.setTextDirection(335544320);
+		//text.setTextDirection(335544320);
 		text.setFont(SWTResourceManager.getFont("Ubuntu Mono", 12, SWT.NORMAL));
 		formToolkit.adapt(text, true, true);
 
